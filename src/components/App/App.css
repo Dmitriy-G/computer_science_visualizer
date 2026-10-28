@@ -1,0 +1,121 @@
+.application {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+.app-header {
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 28px;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+}
+.menu-trigger {
+  flex-shrink: 0;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 650;
+  font-size: 14px;
+}
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 24px;
+  border-radius: 11px;
+  letter-spacing: -2px;
+  padding-right: 3px;
+}
+.brand-caption {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.header-divider {
+  height: 28px;
+  width: 1px;
+  background: var(--border);
+  margin: 0 4px;
+}
+.selected-name {
+  font-size: 13px;
+  color: var(--muted);
+}
+.count-badge {
+  color: #3e617b;
+  background: #edf3f7;
+  border-radius: 20px;
+  padding: 6px 10px;
+  font: 11px var(--mono);
+  white-space: nowrap;
+}
+.reset-structure {
+  margin-left: auto;
+  font-size: 12px;
+}
+.workspace {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+.workspace-hint {
+  padding: 30px 40px;
+  background: #fff;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+.workspace-hint h1 {
+  font-size: 22px;
+  margin: 7px 0 0;
+  letter-spacing: -0.6px;
+}
+.workspace-hint p {
+  max-width: 460px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin-right: auto;
+}
+@media (max-width: 700px) {
+  .app-header {
+    gap: 12px;
+    padding: 14px 16px;
+    flex-wrap: wrap;
+  }
+  .header-divider {
+    display: none;
+  }
+  .brand {
+    margin-right: auto;
+  }
+  .brand-caption {
+    display: none;
+  }
+  .selected-name {
+    flex-basis: auto;
+  }
+  .reset-structure {
+    margin-left: 0;
+  }
+  .workspace-hint {
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 24px;
+  }
+  .workspace-hint p {
+    flex-basis: 100%;
+    margin: 0;
+  }
+}

@@ -1,0 +1,239 @@
+.insertion-panel {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  background: #fff;
+  border-top: 1px solid var(--border);
+}
+.action-controls {
+  padding: 30px 32px;
+  border-right: 1px solid var(--border);
+}
+.action-controls h2 {
+  font-size: 23px;
+  letter-spacing: -0.8px;
+  font-weight: 600;
+  margin: 12px 0 8px;
+}
+.action-summary {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 0 0 22px;
+}
+.action-inputs {
+  display: flex;
+  gap: 12px;
+}
+.action-inputs label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.action-inputs input,
+.action-inputs select {
+  width: 100%;
+  min-width: 0;
+  height: 38px;
+  border: 1px solid #d7e0e9;
+  border-radius: 7px;
+  background: #fff;
+  padding: 8px 10px;
+  color: var(--ink);
+  font: 13px var(--mono);
+}
+.action-inputs input:disabled {
+  background: #f5f7fa;
+  color: #8d9aab;
+}
+.input-hint {
+  font-size: 10px;
+  color: var(--muted);
+  min-height: 28px;
+  margin: 10px 0 12px;
+  line-height: 1.5;
+}
+.input-error {
+  color: #b43d31;
+}
+.playback-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.playback-controls .icon-button {
+  width: 34px;
+  height: 36px;
+  font-size: 18px;
+}
+.play-button {
+  margin-right: auto;
+  min-width: 96px;
+  justify-content: center;
+}
+.action-explanation {
+  padding: 24px 36px;
+  min-width: 0;
+}
+.animation-phases {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 26px;
+}
+.animation-phases li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  font-size: 10px;
+  color: #8997a7;
+  white-space: nowrap;
+}
+.animation-phases li:not(:last-child)::after {
+  content: '';
+  height: 1px;
+  background: #e6ecf2;
+  flex: 1;
+  margin: 0 10px;
+}
+.phase-number {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid #d9e2ec;
+  font: 10px var(--mono);
+}
+.animation-phases .phase-current {
+  color: var(--accent);
+  font-weight: 650;
+}
+.phase-current .phase-number {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.animation-phases .phase-done {
+  color: #568779;
+}
+.phase-done .phase-number {
+  background: #edf7f2;
+  border-color: #c9e0d6;
+}
+.step-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.step-counter {
+  font: 10px var(--mono);
+  color: #8190a2;
+  letter-spacing: 1px;
+}
+.playback-status {
+  color: #577ead;
+  font: 10px var(--mono);
+  background: #eef4fd;
+  border-radius: 4px;
+  padding: 4px 6px;
+}
+.status-complete {
+  color: #38765c;
+  background: #eaf6ef;
+}
+.step-description h3 {
+  font-size: 20px;
+  font-weight: 550;
+  letter-spacing: -0.4px;
+  margin: 10px 0 8px;
+}
+.step-description p {
+  min-height: 43px;
+  max-width: 840px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 0 0 15px;
+}
+.step-code {
+  margin: 0 0 19px;
+  padding: 12px 15px;
+  background: #f5f8fc;
+  color: #36658f;
+  border: 1px solid #e5ecf4;
+  border-radius: 7px;
+  font: 12px var(--mono);
+  overflow-x: auto;
+}
+.timeline-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: #7d8d9e;
+  font-size: 10px;
+}
+.timeline-slider {
+  width: 100%;
+  margin: 10px 0 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+  height: 16px;
+}
+@media (min-width: 1500px) {
+  .insertion-panel {
+    grid-template-columns: 360px minmax(0, 1fr);
+  }
+  .action-controls {
+    padding: 34px 40px;
+  }
+  .action-explanation {
+    padding: 28px 44px;
+  }
+}
+@media (max-width: 1050px) {
+  .animation-phases {
+    flex-wrap: wrap;
+    gap: 10px 16px;
+  }
+  .animation-phases li {
+    flex: 0 0 auto;
+  }
+  .animation-phases li::after {
+    display: none;
+  }
+  .action-explanation {
+    padding: 24px;
+  }
+}
+@media (max-width: 700px) {
+  .insertion-panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .action-controls {
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 24px;
+  }
+  .action-summary {
+    margin-bottom: 16px;
+  }
+  .action-inputs {
+    max-width: 340px;
+  }
+  .playback-controls {
+    max-width: 340px;
+  }
+  .timeline-label {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .step-description h3 {
+    font-size: 19px;
+  }
+}
