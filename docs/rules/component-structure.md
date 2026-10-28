@@ -51,7 +51,7 @@ src/components/
 
 ## Renderer
 
-Place the shared `Renderer` component in `src/components/renderer/`. Keep the
+Place the shared `Renderer` component in `../../src/components/Renderer/`. Keep the
 folder name lowercase as shown. It displays data structures and animates their
 dynamic changes. Reuse it across data structure actions instead of creating a
 separate rendering system for every action.

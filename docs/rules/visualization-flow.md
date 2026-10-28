@@ -10,6 +10,23 @@
 5. Selecting an implemented action starts its detailed animation. Honor
    reduced-motion preferences by waiting for the user to press Play instead.
 
+Keep the detailed animation controls collapsed initially behind an **Animation
+controls** disclosure button. Clicking it opens the controls and explanation;
+the close (X) button hides them again. Toggling this panel must preserve the
+current animation, playback state, and entered value.
+
+When an action is selected, show its algorithm information in the upper-right
+of the canvas, independently of the collapsed controls. Include time complexity,
+additional memory complexity, and definitions of only the terms and letters used
+by that action. Each action owns its summary, complexity explanations, and glossary
+in its sequence class; the shared renderer only displays the supplied information.
+Do not add generic definitions or unused variables to every action. For example,
+middle insertion explains `n`, `O(n)`, and `O(1)` without introducing `k`.
+Values such as the original input size must describe the current run, including
+after completion and replay. Clear the card on structure
+selection or reset. On smaller screens, let the card wrap above the diagram so
+it does not overlap nodes or controls.
+
 Keep structure selection and action selection distinct. Only offer working actions;
 identify structures with previews but no animated actions clearly.
 

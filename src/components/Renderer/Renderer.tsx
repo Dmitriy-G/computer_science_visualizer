@@ -1,10 +1,13 @@
 import { Component, createRef } from 'react'
 import type { CSSProperties, ReactNode } from 'react'
 import type { Scene, SceneEdge, SceneNode } from '../../visualization/Scene.ts'
+import type { AlgorithmInformation } from '../../visualization/AlgorithmInformation.ts'
+import AlgorithmInfo from './AlgorithmInfo/AlgorithmInfo.tsx'
 import './Renderer.css'
 
 interface RendererProps {
   readonly scene: Scene | null
+  readonly algorithmInformation: AlgorithmInformation | null
   readonly onOpenMenu: () => void
 }
 
@@ -187,29 +190,38 @@ export default class Renderer extends Component<
     const scene = this.props.scene
     return (
       <section className="renderer" aria-label="Visualization workspace">
-        <div className="canvas-label">
-          <span className="canvas-dot" />
-          {scene ? 'LIVE CANVAS' : 'EMPTY CANVAS'}
-        </div>
-        <div
-          className="renderer-viewport"
-          ref={this.viewport}
-          tabIndex={scene ? 0 : -1}
-          aria-label={scene ? 'Scrollable data structure canvas' : undefined}
-        >
-          {scene ? (
-            this.renderScene(scene)
-          ) : (
-            <div className="empty-canvas">
-              <span className="empty-diagram" aria-hidden="true">
-                □<span>—</span>□<span>—</span>□
-              </span>
-              <h1>Make the invisible visible.</h1>
-              <p>Choose a data structure to bring it to life.</p>
-              <button className="text-button" onClick={this.props.onOpenMenu}>
-                Open the menu <span aria-hidden="true">↗</span>
-              </button>
+        {scene && (
+          <div className="renderer-heading">
+            <div className="canvas-label">
+              <span className="canvas-dot" />
+              LIVE CANVAS
             </div>
+          </div>
+        )}
+        <div className="renderer-content">
+          <div
+            className="renderer-viewport"
+            ref={this.viewport}
+            tabIndex={scene ? 0 : -1}
+            aria-label={scene ? 'Scrollable data structure canvas' : undefined}
+          >
+            {scene ? (
+              this.renderScene(scene)
+            ) : (
+              <div className="empty-canvas">
+                <span className="empty-diagram" aria-hidden="true">
+                  □<span>—</span>□<span>—</span>□
+                </span>
+                <h1>Make the invisible visible.</h1>
+                <p>Choose a data structure to bring it to life.</p>
+                <button className="text-button" onClick={this.props.onOpenMenu}>
+                  Open the menu <span aria-hidden="true">↗</span>
+                </button>
+              </div>
+            )}
+          </div>
+          {scene && this.props.algorithmInformation && (
+            <AlgorithmInfo information={this.props.algorithmInformation} />
           )}
         </div>
         <div className="canvas-footer">
@@ -231,11 +243,6 @@ export default class Renderer extends Component<
           ) : (
             <span>No structure selected</span>
           )}
-          <span className="canvas-tip">
-            {scene
-              ? 'Scroll to explore the canvas'
-              : 'Start with the menu in the top left'}
-          </span>
         </div>
       </section>
     )

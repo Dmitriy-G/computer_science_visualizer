@@ -37,7 +37,7 @@ Commit `package-lock.json` when generated; do not commit `node_modules/` or `dis
 - `src/main.tsx`: React entry point with StrictMode and global styles.
 - `src/components/App/App.tsx`: root application class component.
 - `src/components/MainMenu/`: structure and action selection.
-- `src/components/renderer/`: shared scene renderer.
+- `src/components/Renderer/`: shared scene renderer.
 - `src/components/DataStructures/<StructureName>/`: each structure's model,
   layout, supporting types, and action folders, kept together.
 - `src/visualization/`: shared scene contracts, structure catalog, and animation

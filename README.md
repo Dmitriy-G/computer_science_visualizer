@@ -16,7 +16,9 @@ first step to change the inserted value. Completion commits the new node;
 rewinding or replaying restores the original list before applying the action again.
 
 Only linked list middle insertion currently has an animated action. The other
-structures have previews. **Reset to 10 nodes** restores the selected example.
+structures have previews. **Reset** restores the selected 10-element example.
+When an action is selected, its overview in the upper-right of the canvas explains
+time complexity, additional memory, and only the terms used by that action.
 
 ## Development
 

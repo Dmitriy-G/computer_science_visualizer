@@ -2,11 +2,46 @@ import { LinkedList } from '../LinkedList.ts'
 import { LinkedListLayout } from '../LinkedListLayout.ts'
 import type { LinkedListFrame } from '../LinkedListLayout.ts'
 import type { AnimationStep } from '../../../../visualization/Scene.ts'
+import type { AlgorithmInformation } from '../../../../visualization/AlgorithmInformation.ts'
 
 export class InsertionAnimation {
   public readonly steps: readonly AnimationStep[]
   public readonly result: LinkedList
   public readonly insertionIndex: number
+
+  public static describe(size: number): AlgorithmInformation {
+    return {
+      name: 'Insert in the middle',
+      summary:
+        'Follow the linked list to its middle, then connect a new node between its neighbors.',
+      time: {
+        order: 'O(n)',
+        explanation:
+          'Finding the middle visits about half of the n nodes, so traversal is O(n). Updating the two next pointers takes O(1).',
+      },
+      memory: {
+        order: 'O(1)',
+        explanation:
+          'One new node and a fixed number of pointers. The list itself occupies O(n) memory.',
+      },
+      terms: [
+        {
+          symbol: 'n',
+          meaning: `The number of nodes before insertion. For this run, n = ${size}.`,
+        },
+        {
+          symbol: 'O(n)',
+          meaning:
+            'Linear: traversal work grows in proportion to the number of nodes.',
+        },
+        {
+          symbol: 'O(1)',
+          meaning:
+            'Constant: pointer updates and additional memory stay bounded as the list grows.',
+        },
+      ],
+    }
+  }
 
   constructor(list: LinkedList, value: number) {
     if (list.length < 2)

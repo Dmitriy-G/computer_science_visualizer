@@ -1,10 +1,12 @@
 import { Component, createRef } from 'react'
 import MainMenu from '../MainMenu/MainMenu.tsx'
-import Renderer from '../renderer/Renderer.tsx'
+import Renderer from '../Renderer/Renderer.tsx'
 import AddInTheMiddle from '../DataStructures/LinkedList/AddInTheMiddle/AddInTheMiddle.tsx'
+import { InsertionAnimation } from '../DataStructures/LinkedList/AddInTheMiddle/InsertionAnimation.ts'
 import { LinkedList } from '../DataStructures/LinkedList/LinkedList.ts'
 import { StructureCatalog } from '../../visualization/StructureCatalog.ts'
 import type { Scene, StructureKind } from '../../visualization/Scene.ts'
+import type { AlgorithmInformation } from '../../visualization/AlgorithmInformation.ts'
 import './App.css'
 
 interface AppState {
@@ -14,6 +16,7 @@ interface AppState {
   readonly scene: Scene | null
   readonly actionOpen: boolean
   readonly actionSession: number
+  readonly algorithmInformation: AlgorithmInformation | null
 }
 
 export default class App extends Component<Record<string, never>, AppState> {
@@ -30,6 +33,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       scene: null,
       actionOpen: false,
       actionSession: 0,
+      algorithmInformation: null,
     }
   }
 
@@ -60,6 +64,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       scene: StructureCatalog.createPreview(kind, this.list),
       actionOpen: false,
       menuScreen: 'actions',
+      algorithmInformation: null,
       actionSession: this.state.actionSession + 1,
     })
   }
@@ -68,6 +73,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.setState({
       actionOpen: true,
       menuOpen: false,
+      algorithmInformation: InsertionAnimation.describe(this.list.length),
       actionSession: this.state.actionSession + 1,
     })
   }
@@ -79,6 +85,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       scene: StructureCatalog.createPreview(this.state.selected, this.list),
       actionOpen: false,
       actionSession: this.state.actionSession + 1,
+      algorithmInformation: null,
     })
   }
 
@@ -123,17 +130,36 @@ export default class App extends Component<Record<string, never>, AppState> {
               <span className="brand-caption">Visualize the idea.</span>
             </span>
           </div>
-          <span className="header-divider" />
-          <span className="selected-name">
-            {selected ? StructureCatalog.getName(selected) : 'Empty canvas'}
-          </span>
+          {selected && (
+            <>
+              <span className="header-divider" />
+              <span className="selected-name">
+                {StructureCatalog.getName(selected)}
+              </span>
+            </>
+          )}
           {scene && <span className="count-badge">{scene.count} elements</span>}
           {selected && (
             <button
-              className="text-button reset-structure"
+              className="primary-button reset-structure"
               onClick={this.resetStructure}
             >
-              Reset to 10 nodes
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M4 10a8 8 0 1 1 1.8 7M4 4v6h6"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              Reset
             </button>
           )}
         </header>
@@ -149,7 +175,11 @@ export default class App extends Component<Record<string, never>, AppState> {
         />
 
         <main className="workspace">
-          <Renderer scene={scene} onOpenMenu={this.openMenu} />
+          <Renderer
+            scene={scene}
+            algorithmInformation={this.state.algorithmInformation}
+            onOpenMenu={this.openMenu}
+          />
           {this.state.actionOpen && selected === 'linked-list' && (
             <AddInTheMiddle
               key={this.state.actionSession}
