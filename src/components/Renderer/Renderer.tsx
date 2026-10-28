@@ -1,6 +1,12 @@
 import { Component, createRef } from 'react'
 import type { CSSProperties, ReactNode } from 'react'
-import type { Scene, SceneEdge, SceneNode } from '../../visualization/Scene.ts'
+import type {
+  Scene,
+  SceneEdge,
+  SceneNode,
+  SceneSlot,
+  SceneAnnotation,
+} from '../../visualization/Scene.ts'
 import type { AlgorithmInformation } from '../../visualization/AlgorithmInformation.ts'
 import AlgorithmInfo from './AlgorithmInfo/AlgorithmInfo.tsx'
 import './Renderer.css'
@@ -22,8 +28,7 @@ export default class Renderer extends Component<
     if (previous.scene?.kind !== this.props.scene?.kind) {
       this.viewport.current?.scrollTo({ left: 0, behavior: 'instant' })
     }
-    if (previous.scene?.focusId !== this.props.scene?.focusId)
-      this.revealCurrentNode()
+    if (previous.scene !== this.props.scene) this.revealCurrentNode()
   }
 
   private revealCurrentNode(): void {
@@ -120,20 +125,57 @@ export default class Renderer extends Component<
         </text>
         {node.tone !== 'default' && (
           <text className="node-status" textAnchor="middle" y="-56">
-            {node.tone === 'active'
-              ? 'CURRENT'
-              : node.tone === 'new'
-                ? 'NEW'
-                : 'VISITED'}
+            {node.status ??
+              (node.tone === 'active'
+                ? 'CURRENT'
+                : node.tone === 'new'
+                  ? 'NEW'
+                  : 'VISITED')}
           </text>
         )}
       </g>
     )
   }
 
+  private renderSlot(slot: SceneSlot): ReactNode {
+    return (
+      <g
+        key={slot.id}
+        className={`scene-slot${slot.empty ? ' slot-empty' : ''}${slot.highlighted ? ' slot-highlighted' : ''}`}
+        style={{
+          transform: `translate(${slot.x}px, ${slot.y}px)`,
+          opacity: slot.opacity,
+        }}
+      >
+        <rect x="-39" y="-39" width="78" height="78" rx="15" />
+        <text className="node-label" textAnchor="middle" y="61">
+          {slot.label}
+        </text>
+      </g>
+    )
+  }
+
+  private renderAnnotation(annotation: SceneAnnotation): ReactNode {
+    return (
+      <text
+        key={annotation.id}
+        className="scene-annotation"
+        style={{
+          transform: `translate(${annotation.x}px, ${annotation.y}px)`,
+          opacity: annotation.opacity,
+        }}
+      >
+        {annotation.text}
+      </text>
+    )
+  }
+
   private renderScene(scene: Scene): ReactNode {
     const nodeMap = new Map<string, SceneNode>()
     const elements: ReactNode[] = []
+    for (const annotation of scene.annotations ?? [])
+      elements.push(this.renderAnnotation(annotation))
+    for (const slot of scene.slots ?? []) elements.push(this.renderSlot(slot))
     for (const node of scene.nodes) nodeMap.set(node.id, node)
     for (const edge of scene.edges)
       elements.push(this.renderEdge(edge, nodeMap))
@@ -150,7 +192,7 @@ export default class Renderer extends Component<
         aria-labelledby="scene-title scene-description"
       >
         <title id="scene-title">
-          {scene.kind.replaceAll('-', ' ')} visualization
+          {`${scene.kind.replaceAll('-', ' ')} visualization`}
         </title>
         <desc id="scene-description">
           {scene.count} elements. Blue marks the current node, teal marks

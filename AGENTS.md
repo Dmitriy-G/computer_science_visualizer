@@ -3,8 +3,8 @@
 ## Purpose and stack
 
 Build an interactive data structures visualizer with TypeScript and React, using Vite.
-The app uses TypeScript and React class components. Linked list middle insertion
-is the first animated action; array, binary tree, and graph previews are also available.
+The app uses TypeScript and React class components. Linked list and array middle
+insertion are animated actions; binary tree and graph previews are also available.
 Use npm for dependency management.
 
 ## Required project rules
@@ -38,6 +38,7 @@ Commit `package-lock.json` when generated; do not commit `node_modules/` or `dis
 - `src/components/App/App.tsx`: root application class component.
 - `src/components/MainMenu/`: structure and action selection.
 - `src/components/Renderer/`: shared scene renderer.
+- `src/components/ActionPlayback/`: shared playback controls and animation session.
 - `src/components/DataStructures/<StructureName>/`: each structure's model,
   layout, supporting types, and action folders, kept together.
 - `src/visualization/`: shared scene contracts, structure catalog, and animation
@@ -63,6 +64,9 @@ Create directories when needed, rather than adding empty scaffolding.
 - Follow the existing two-space indentation, single quotes, and no-semicolon style.
 - Keep state immutable and use stable keys for rendered nodes.
 - Keep data structure operations separate from rendering and animation timing.
+- The Array feature models fully occupied fixed-size arrays. Insertion creates
+  a separate array of exactly the original length plus one and preserves the
+  original. Do not add spare capacity, in-place growth, or capacity doubling.
 - Prefer deterministic operation steps so future visualizations can support stepping,
   pausing, and resetting. Clean up timers, subscriptions, and animations in class
   lifecycle methods, including under StrictMode.

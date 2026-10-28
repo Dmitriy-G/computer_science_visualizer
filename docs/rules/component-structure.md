@@ -6,7 +6,7 @@ All React components belong under `src/components/`.
 
 Use `src/components/DataStructures/` for data structure components and related
 entities. Paths in these rules are relative to the project root. Give each
-data structure its own PascalCase folder, such as `LinkedList` or `ArrayList`.
+data structure its own PascalCase folder, such as `LinkedList` or `Array`.
 
 Keep all entities specific to one structure together in that structure's folder:
 its model class, layout class, supporting types, and action folders. Follow the
@@ -32,16 +32,16 @@ src/components/
         AddInTheMiddle.tsx
         AddInTheMiddle.css
         InsertionAnimation.ts
-    ArrayList/
-      ArrayList.ts
-      ArrayListLayout.ts
+    Array/
+      FixedArray.ts
+      ArrayLayout.ts
       AddInTheMiddle/
         AddInTheMiddle.tsx
         AddInTheMiddle.css
       SearchByElementValue/
         SearchByElementValue.tsx
         SearchByElementValue.css
-  renderer/
+  Renderer/
     Renderer.tsx
     Renderer.css
   MainMenu/
@@ -51,12 +51,20 @@ src/components/
 
 ## Renderer
 
-Place the shared `Renderer` component in `../../src/components/Renderer/`. Keep the
-folder name lowercase as shown. It displays data structures and animates their
+Place the shared `Renderer` component in `src/components/Renderer/`. Match the
+folder's PascalCase spelling exactly. It displays data structures and animates their
 dynamic changes. Reuse it across data structure actions instead of creating a
 separate rendering system for every action.
 
 Keep data structure operations separate from rendering and animation timing.
+
+## Shared action playback
+
+Use `src/components/ActionPlayback/` for the shared playback component and its
+styles. Each action's component supplies its own class-based definition with phase
+labels, explanations, and a factory method that creates its animation plan.
+Keep structure-specific algorithms and model types in their action folders;
+reuse the common controls for playback, value input, seeking, and panel visibility.
 
 ## Shared visualization infrastructure
 

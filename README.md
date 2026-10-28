@@ -15,8 +15,16 @@ forward, scrub the timeline, replay, or adjust speed. Reset the animation to its
 first step to change the inserted value. Completion commits the new node;
 rewinding or replaying restores the original list before applying the action again.
 
-Only linked list middle insertion currently has an animated action. The other
-structures have previews. **Reset** restores the selected 10-element example.
+Choose **Array → Insert in the middle** to see an original fixed array and a
+separate newly allocated array with exactly one extra slot. Copy the prefix to
+the same indices, place the new value in the middle, then copy the suffix one
+index farther right in the new array. The original values stay in place throughout
+copying. Once the result is complete, switch to it and release the original if
+unused. The default array has exactly 10 slots, and the first result has 11.
+Both time and additional memory are O(n).
+
+Linked list and array middle insertion have animated actions. Binary tree and graph
+have previews. **Reset** restores the selected 10-element example.
 When an action is selected, its overview in the upper-right of the canvas explains
 time complexity, additional memory, and only the terms used by that action.
 
@@ -47,9 +55,9 @@ npm run typecheck
 npm test
 ```
 
-Tests cover linked list edge cases, the insertion sequence, final pointer
-connections, structure previews, and playback cancellation, stepping, speed,
-and replay. They run with Node.js's built-in test runner and experimental
+Tests cover linked list and array edge cases, insertion sequences, final pointer
+connections, fixed-array allocation, preserved originals, prefix/suffix copies, structure previews,
+and playback cancellation, stepping, speed, and replay. They run with Node.js's built-in test runner and experimental
 TypeScript stripping; the experimental warning on Node.js 22 is expected.
 
 See [AGENTS.md](AGENTS.md) for project structure and development conventions,

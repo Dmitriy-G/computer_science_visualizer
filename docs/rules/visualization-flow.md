@@ -21,7 +21,9 @@ additional memory complexity, and definitions of only the terms and letters used
 by that action. Each action owns its summary, complexity explanations, and glossary
 in its sequence class; the shared renderer only displays the supplied information.
 Do not add generic definitions or unused variables to every action. For example,
-middle insertion explains `n`, `O(n)`, and `O(1)` without introducing `k`.
+linked list insertion explains `n`, `O(n)`, and `O(1)` without introducing `k`.
+Fixed-array insertion uses only `n` and `O(n)` because both copying and additional
+storage are linear.
 Values such as the original input size must describe the current run, including
 after completion and replay. Clear the card on structure
 selection or reset. On smaller screens, let the card wrap above the diagram so
@@ -69,5 +71,33 @@ Use separate frames for unlinking and opening space, and for the two pointer
 connections. Include a visible current-node marker and text labels for visited
 and new nodes, so color is not the only indication of state.
 
-The current implementation covers this action. Search and other insertion actions
-can be added through their own action folders and sequence classes.
+## Array / AddInTheMiddle
+
+The Array feature is a simple fixed-size array, with every slot occupied. Its
+length never changes. Insertion at zero-based index `floor(length / 2)` produces
+a separate fixed array of exactly the original length plus one. Keep the original
+array visible and unchanged while building the result. Never model this feature
+as a dynamic array with spare capacity or automatic buffer growth.
+
+1. **Locate:** identify the insertion index in the original fixed array.
+2. **Allocate:** show an empty result array of exactly `n + 1` slots in a second
+   labeled row, below the original array of `n` slots.
+3. **Prefix:** read and copy each element before the middle to the same index in
+   the result. Use separate reading and copying frames. Preserve the source value.
+4. **Insert:** show the new value above the result's middle slot and lower it in.
+5. **Suffix:** copy each remaining original element into the result at its old
+   index plus one. The original array's values and slots must stay fixed.
+6. **Replace:** show both arrays with the result fully populated and explain that
+   both allocations coexist in memory.
+7. **Finish:** switch to the completed result, fade the old row, and update the
+   element count. The original storage can be released once it is unused.
+
+The default array has exactly 10 occupied slots; the first insertion allocates a
+new array of exactly 11 slots. Subsequent insertions repeat the same operation
+with a new exact-sized result. Time and additional memory are both O(n). Explain
+only `n` and `O(n)` in this action's glossary. Label copied values **COPIED**,
+and explicitly label the original and new rows; do not label copies **SHIFTED**.
+
+Both insertion actions reuse the shared class-based playback controls. Plans keep
+the original model unchanged so replay, stepping backward, and reset are safe.
+Search and other actions can be added through their own action folders and plans.

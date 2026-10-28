@@ -1,5 +1,7 @@
 import { LinkedList } from '../components/DataStructures/LinkedList/LinkedList.ts'
 import { LinkedListLayout } from '../components/DataStructures/LinkedList/LinkedListLayout.ts'
+import { FixedArray } from '../components/DataStructures/Array/FixedArray.ts'
+import { ArrayLayout } from '../components/DataStructures/Array/ArrayLayout.ts'
 import type { Scene, SceneEdge, SceneNode, StructureKind } from './Scene.ts'
 
 export interface StructureDefinition {
@@ -20,7 +22,7 @@ export class StructureCatalog {
     {
       kind: 'array',
       name: 'Array',
-      description: 'Values in consecutive indexed slots',
+      description: 'A fixed number of consecutive indexed slots',
       symbol: '[]',
     },
     {
@@ -44,9 +46,14 @@ export class StructureCatalog {
     return 'Data structure'
   }
 
-  public static createPreview(kind: StructureKind, list: LinkedList): Scene {
+  public static createPreview(
+    kind: StructureKind,
+    list: LinkedList,
+    array: FixedArray = FixedArray.createDefault(),
+  ): Scene {
     if (kind === 'linked-list')
       return new LinkedListLayout().create(list.getEntries())
+    if (kind === 'array') return new ArrayLayout().create(array.getEntries())
 
     const nodes: SceneNode[] = []
     const edges: SceneEdge[] = []
@@ -68,7 +75,7 @@ export class StructureCatalog {
         value: (index + 1) * 10,
         x,
         y,
-        label: kind === 'array' ? `index ${index}` : `node ${index + 1}`,
+        label: `node ${index + 1}`,
         tone: 'default',
         opacity: 1,
       })

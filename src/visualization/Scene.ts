@@ -9,6 +9,25 @@ export interface SceneNode {
   readonly label: string
   readonly tone: NodeTone
   readonly opacity: number
+  readonly status?: string
+}
+
+export interface SceneSlot {
+  readonly id: string
+  readonly x: number
+  readonly y: number
+  readonly label: string
+  readonly empty: boolean
+  readonly highlighted: boolean
+  readonly opacity: number
+}
+
+export interface SceneAnnotation {
+  readonly id: string
+  readonly x: number
+  readonly y: number
+  readonly text: string
+  readonly opacity: number
 }
 
 export interface SceneEdge {
@@ -28,6 +47,8 @@ export interface Scene {
   readonly height: number
   readonly focusId: string | null
   readonly count: number
+  readonly slots?: readonly SceneSlot[]
+  readonly annotations?: readonly SceneAnnotation[]
 }
 
 export interface AnimationStep {

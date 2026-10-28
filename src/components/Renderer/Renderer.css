@@ -67,6 +67,32 @@
     opacity 450ms ease;
   transform-box: view-box;
 }
+.scene-slot {
+  transition:
+    transform 650ms ease,
+    opacity 450ms ease;
+}
+.scene-annotation {
+  fill: #526b88;
+  font: 12px var(--mono);
+  transition:
+    transform 650ms ease,
+    opacity 450ms ease;
+}
+.scene-slot rect {
+  fill: #f0f4f9;
+  stroke: #d6e0ec;
+  stroke-width: 1;
+}
+.slot-empty rect {
+  fill: #ffffffa8;
+  stroke-dasharray: 5 4;
+}
+.slot-highlighted rect {
+  fill: #e8f1ff;
+  stroke: #5486cd;
+  stroke-width: 2;
+}
 .node-body {
   fill: #fff;
   stroke: #becbd9;
@@ -243,6 +269,8 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .scene-node,
+  .scene-slot,
+  .scene-annotation,
   .node-body,
   .node-halo,
   .scene-edge {

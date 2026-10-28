@@ -3,6 +3,9 @@ import MainMenu from '../MainMenu/MainMenu.tsx'
 import Renderer from '../Renderer/Renderer.tsx'
 import AddInTheMiddle from '../DataStructures/LinkedList/AddInTheMiddle/AddInTheMiddle.tsx'
 import { InsertionAnimation } from '../DataStructures/LinkedList/AddInTheMiddle/InsertionAnimation.ts'
+import ArrayAddInTheMiddle from '../DataStructures/Array/AddInTheMiddle/AddInTheMiddle.tsx'
+import { InsertionAnimation as ArrayInsertionAnimation } from '../DataStructures/Array/AddInTheMiddle/InsertionAnimation.ts'
+import { FixedArray } from '../DataStructures/Array/FixedArray.ts'
 import { LinkedList } from '../DataStructures/LinkedList/LinkedList.ts'
 import { StructureCatalog } from '../../visualization/StructureCatalog.ts'
 import type { Scene, StructureKind } from '../../visualization/Scene.ts'
@@ -21,8 +24,10 @@ interface AppState {
 
 export default class App extends Component<Record<string, never>, AppState> {
   private list = LinkedList.createDefault()
+  private array = FixedArray.createDefault()
   private readonly menuButton = createRef<HTMLButtonElement>()
   private readonly actionPanel = createRef<AddInTheMiddle>()
+  private readonly arrayActionPanel = createRef<ArrayAddInTheMiddle>()
 
   constructor(props: Record<string, never>) {
     super(props)
@@ -39,6 +44,7 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private openMenu = (): void => {
     this.actionPanel.current?.pausePlayback()
+    this.arrayActionPanel.current?.pausePlayback()
     this.setState({
       menuOpen: true,
       menuScreen: this.state.selected ? 'actions' : 'structures',
@@ -59,9 +65,10 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private selectStructure = (kind: StructureKind): void => {
     this.list = LinkedList.createDefault()
+    this.array = FixedArray.createDefault()
     this.setState({
       selected: kind,
-      scene: StructureCatalog.createPreview(kind, this.list),
+      scene: StructureCatalog.createPreview(kind, this.list, this.array),
       actionOpen: false,
       menuScreen: 'actions',
       algorithmInformation: null,
@@ -70,10 +77,18 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private selectAction = (): void => {
+    if (
+      this.state.selected !== 'array' &&
+      this.state.selected !== 'linked-list'
+    )
+      return
     this.setState({
       actionOpen: true,
       menuOpen: false,
-      algorithmInformation: InsertionAnimation.describe(this.list.length),
+      algorithmInformation:
+        this.state.selected === 'array'
+          ? ArrayInsertionAnimation.describe(this.array.length)
+          : InsertionAnimation.describe(this.list.length),
       actionSession: this.state.actionSession + 1,
     })
   }
@@ -81,8 +96,13 @@ export default class App extends Component<Record<string, never>, AppState> {
   private resetStructure = (): void => {
     if (this.state.selected === null) return
     this.list = LinkedList.createDefault()
+    this.array = FixedArray.createDefault()
     this.setState({
-      scene: StructureCatalog.createPreview(this.state.selected, this.list),
+      scene: StructureCatalog.createPreview(
+        this.state.selected,
+        this.list,
+        this.array,
+      ),
       actionOpen: false,
       actionSession: this.state.actionSession + 1,
       algorithmInformation: null,
@@ -91,6 +111,11 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private updateScene = (scene: Scene, list: LinkedList): void => {
     this.list = list
+    this.setState({ scene })
+  }
+
+  private updateArrayScene = (scene: Scene, array: FixedArray): void => {
+    this.array = array
     this.setState({ scene })
   }
 
@@ -188,6 +213,14 @@ export default class App extends Component<Record<string, never>, AppState> {
               onSceneChange={this.updateScene}
             />
           )}
+          {this.state.actionOpen && selected === 'array' && (
+            <ArrayAddInTheMiddle
+              key={this.state.actionSession}
+              ref={this.arrayActionPanel}
+              array={this.array}
+              onSceneChange={this.updateArrayScene}
+            />
+          )}
           {selected && !this.state.actionOpen && (
             <section className="workspace-hint" aria-label="Next step">
               <div>
@@ -197,10 +230,14 @@ export default class App extends Component<Record<string, never>, AppState> {
               <p>
                 {selected === 'linked-list'
                   ? 'Choose an action to watch every pointer change, one step at a time.'
-                  : 'Explore the 10-element preview. Animated actions for this structure are coming next.'}
+                  : selected === 'array'
+                    ? 'Choose an action to build a new fixed array, one copy at a time.'
+                    : 'Explore the 10-element preview. Animated actions for this structure are coming next.'}
               </p>
               <button className="primary-button" onClick={this.openMenu}>
-                {selected === 'linked-list' ? 'Choose an action' : 'Open menu'}{' '}
+                {selected === 'linked-list' || selected === 'array'
+                  ? 'Choose an action'
+                  : 'Open menu'}{' '}
                 <span aria-hidden="true">↗</span>
               </button>
             </section>

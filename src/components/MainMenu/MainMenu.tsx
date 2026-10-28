@@ -133,16 +133,23 @@ export default class MainMenu extends Component<
                 <p className="menu-section-label">
                   {StructureCatalog.getName(this.props.selected!)}
                 </p>
-                {this.props.selected === 'linked-list' ? (
+                {this.props.selected === 'linked-list' ||
+                this.props.selected === 'array' ? (
                   <button
                     className="action-choice"
                     onClick={this.props.onActionSelected}
                   >
                     <span className="action-choice-tag">
-                      POINTERS · INSERTION
+                      {this.props.selected === 'array'
+                        ? 'ALLOCATE · COPY'
+                        : 'POINTERS · INSERTION'}
                     </span>
                     <strong>Insert in the middle</strong>
-                    <span>Traverse, make space, insert, and reconnect.</span>
+                    <span>
+                      {this.props.selected === 'array'
+                        ? 'Allocate a new fixed array, copy the values, and insert.'
+                        : 'Traverse, make space, insert, and reconnect.'}
+                    </span>
                     <small>
                       7 phases · detailed animation{' '}
                       <span aria-hidden="true">→</span>
@@ -151,8 +158,8 @@ export default class MainMenu extends Component<
                 ) : (
                   <p className="menu-notice">
                     The 10-element preview is ready. Animated actions for this
-                    structure are not implemented yet. Choose Linked list to
-                    explore middle insertion.
+                    structure are not implemented yet. Choose Array or Linked
+                    list to explore middle insertion.
                   </p>
                 )}
               </>
