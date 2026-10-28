@@ -1,5 +1,5 @@
-import type { LinkedListEntry } from '../structures/LinkedList.ts'
-import type { Scene, SceneEdge, SceneNode } from './Scene.ts'
+import type { LinkedListEntry } from './LinkedList.ts'
+import type { Scene, SceneEdge, SceneNode } from '../../../visualization/Scene.ts'
 
 export interface LinkedListFrame {
   readonly activeIndex?: number

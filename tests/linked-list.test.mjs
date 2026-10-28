@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { LinkedList } from '../src/structures/LinkedList.ts'
-import { InsertionAnimation } from '../src/components/datastructures/LinkedList/AddInTheMiddle/InsertionAnimation.ts'
+import { LinkedList } from '../src/components/DataStructures/LinkedList/LinkedList.ts'
+import { InsertionAnimation } from '../src/components/DataStructures/LinkedList/AddInTheMiddle/InsertionAnimation.ts'
 import { StructureCatalog } from '../src/visualization/StructureCatalog.ts'
 
 class ListAssertions {

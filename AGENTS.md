@@ -38,9 +38,10 @@ Commit `package-lock.json` when generated; do not commit `node_modules/` or `dis
 - `src/components/App/App.tsx`: root application class component.
 - `src/components/MainMenu/`: structure and action selection.
 - `src/components/renderer/`: shared scene renderer.
-- `src/components/datastructures/`: structure-specific action components and plans.
-- `src/structures/`: data structure model classes.
-- `src/visualization/`: scene contracts, layouts, and animation playback classes.
+- `src/components/DataStructures/<StructureName>/`: each structure's model,
+  layout, supporting types, and action folders, kept together.
+- `src/visualization/`: shared scene contracts, structure catalog, and animation
+  playback classes used across structures.
 - `src/style.css`: global styles and initial app layout.
 - `tests/`: model, animation sequence, and playback tests.
 - `public/`: assets served without bundling.
@@ -56,6 +57,9 @@ Create directories when needed, rather than adding empty scaffolding.
   [code style rules](docs/rules/code-style.md).
 - Use `.tsx` for React components, `.ts` for other application code, and PascalCase
   for class and component names.
+- Follow the existing `DataStructures/LinkedList/` organization for new structures:
+  keep structure-specific entities beside their actions and reserve shared
+  infrastructure for code used across structures. Match path casing exactly.
 - Follow the existing two-space indentation, single quotes, and no-semicolon style.
 - Keep state immutable and use stable keys for rendered nodes.
 - Keep data structure operations separate from rendering and animation timing.

@@ -1,6 +1,6 @@
-import { LinkedList } from '../../../../structures/LinkedList.ts'
-import { LinkedListLayout } from '../../../../visualization/LinkedListLayout.ts'
-import type { LinkedListFrame } from '../../../../visualization/LinkedListLayout.ts'
+import { LinkedList } from '../LinkedList.ts'
+import { LinkedListLayout } from '../LinkedListLayout.ts'
+import type { LinkedListFrame } from '../LinkedListLayout.ts'
 import type { AnimationStep } from '../../../../visualization/Scene.ts'
 
 export class InsertionAnimation {

@@ -1,6 +1,6 @@
 import { Component } from 'react'
 import type { ChangeEvent, ReactNode } from 'react'
-import { LinkedList } from '../../../../structures/LinkedList.ts'
+import { LinkedList } from '../LinkedList.ts'
 import { AnimationController } from '../../../../visualization/AnimationController.ts'
 import type { TimelineObserver } from '../../../../visualization/AnimationController.ts'
 import type { Scene } from '../../../../visualization/Scene.ts'

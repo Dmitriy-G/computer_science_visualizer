@@ -1,5 +1,5 @@
-import { LinkedList } from '../structures/LinkedList.ts'
-import { LinkedListLayout } from './LinkedListLayout.ts'
+import { LinkedList } from '../components/DataStructures/LinkedList/LinkedList.ts'
+import { LinkedListLayout } from '../components/DataStructures/LinkedList/LinkedListLayout.ts'
 import type { Scene, SceneEdge, SceneNode, StructureKind } from './Scene.ts'
 
 export interface StructureDefinition {
