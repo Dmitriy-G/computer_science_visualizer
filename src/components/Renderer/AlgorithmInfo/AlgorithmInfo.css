@@ -27,20 +27,41 @@
   gap: 10px;
   margin: 0 0 16px;
 }
-.algorithm-complexities > div {
+.algorithm-complexity {
+  min-width: 0;
   padding: 12px;
   border: 1px solid #e0eaf7;
   border-radius: 8px;
   background: #f3f7fd;
 }
-.algorithm-complexities dt {
+.algorithm-info .algorithm-complexity h3 {
+  margin: 0 0 12px;
+  padding: 0;
+  border: 0;
+  color: #5c7088;
+  font-size: 11px;
+  font-weight: 400;
+}
+.algorithm-complexity dl {
+  margin: 0;
+}
+.algorithm-complexity dl > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 8px;
+  margin-top: 10px;
+}
+.algorithm-complexity dt {
   color: #5c7088;
   font-size: 11px;
 }
-.algorithm-complexities dd {
-  margin: 8px 0 0;
+.algorithm-complexity dd {
+  margin: 0;
   color: #2e66b1;
-  font: 600 21px var(--mono);
+  font: 600 14px var(--mono);
+  white-space: nowrap;
 }
 .complexity-explanation {
   margin: 8px 0;

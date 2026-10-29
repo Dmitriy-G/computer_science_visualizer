@@ -17,7 +17,8 @@ current animation, playback state, and entered value.
 
 When an action is selected, show its algorithm information in the upper-right
 of the canvas, independently of the collapsed controls. Include time complexity,
-additional memory complexity, and definitions of only the terms and letters used
+additional memory complexity, with labeled best, average, and worst cases for
+both costs, and definitions of only the terms and letters used
 by that action. Each action owns its summary, complexity explanations, and glossary
 in its sequence class; the shared renderer only displays the supplied information.
 Do not add generic definitions or unused variables to every action. For example,
@@ -101,3 +102,28 @@ and explicitly label the original and new rows; do not label copies **SHIFTED**.
 Both insertion actions reuse the shared class-based playback controls. Plans keep
 the original model unchanged so replay, stepping backward, and reset are safe.
 Search and other actions can be added through their own action folders and plans.
+
+## BinaryTree / Insert
+
+Use an unbalanced binary search tree. Its default example has 10 nodes and
+satisfies the search ordering. Smaller values go left; larger or equal values
+go right. Duplicates are separate nodes with stable IDs. Do not perform rotations.
+
+1. **Start:** highlight the root, or identify an empty root pointer.
+2. **Compare:** show the comparison at each visited node, then follow the chosen
+   child in a separate frame. Mark the visited path and current node with text.
+3. **Locate:** identify the empty child position (or empty root).
+4. **Create:** show the new leaf with empty child pointers, labeled as pending.
+5. **Connect:** draw the parent-to-leaf pointer, or set the root pointer.
+6. **Finish:** commit the result and update the element count.
+
+Keep the original model unchanged, committing only on the final step. Rewinding
+restores the original; replay never adds duplicates beyond the requested node.
+Use the shared playback controls and renderer. Layout uses scene dimensions
+to accommodate additional levels and horizontal scrolling on narrow screens.
+The action's information explains O(h) time and O(1) extra memory for iterative
+insertion. Show best-case O(1), average-case O(log n) assuming distinct keys
+inserted in random order, and worst-case O(n) time. Additional memory is O(1)
+in all cases. Define n, h, O(h), O(log n), O(n), and O(1), and keep n tied to the
+original input size for the current run. Animation snapshots are visualization overhead,
+excluded from the algorithm memory cost.

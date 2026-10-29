@@ -2,6 +2,8 @@ import { LinkedList } from '../components/DataStructures/LinkedList/LinkedList.t
 import { LinkedListLayout } from '../components/DataStructures/LinkedList/LinkedListLayout.ts'
 import { FixedArray } from '../components/DataStructures/Array/FixedArray.ts'
 import { ArrayLayout } from '../components/DataStructures/Array/ArrayLayout.ts'
+import { BinaryTree } from '../components/DataStructures/BinaryTree/BinaryTree.ts'
+import { BinaryTreeLayout } from '../components/DataStructures/BinaryTree/BinaryTreeLayout.ts'
 import type { Scene, SceneEdge, SceneNode, StructureKind } from './Scene.ts'
 
 export interface StructureDefinition {
@@ -28,7 +30,7 @@ export class StructureCatalog {
     {
       kind: 'binary-tree',
       name: 'Binary tree',
-      description: 'A hierarchy of parent and child nodes',
+      description: 'A binary search tree: smaller left, larger or equal right',
       symbol: '⋔',
     },
     {
@@ -50,22 +52,20 @@ export class StructureCatalog {
     kind: StructureKind,
     list: LinkedList,
     array: FixedArray = FixedArray.createDefault(),
+    tree: BinaryTree = BinaryTree.createDefault(),
   ): Scene {
     if (kind === 'linked-list')
       return new LinkedListLayout().create(list.getEntries())
     if (kind === 'array') return new ArrayLayout().create(array.getEntries())
+    if (kind === 'binary-tree')
+      return new BinaryTreeLayout().create(tree.getEntries())
 
     const nodes: SceneNode[] = []
     const edges: SceneEdge[] = []
     for (let index = 0; index < 10; index += 1) {
       let x = 82 + index * 92
       let y = 240
-      if (kind === 'binary-tree') {
-        const depth = Math.floor(Math.log2(index + 1))
-        const position = index - (2 ** depth - 1)
-        x = ((position + 0.5) * 1000) / 2 ** depth
-        y = 65 + depth * 100
-      } else if (kind === 'graph') {
+      if (kind === 'graph') {
         const angle = (index * Math.PI * 2) / 10 - Math.PI / 2
         x = 500 + Math.cos(angle) * 340
         y = 245 + Math.sin(angle) * 170
@@ -80,9 +80,7 @@ export class StructureCatalog {
         opacity: 1,
       })
 
-      if (kind === 'binary-tree' && index > 0) {
-        edges.push(this.createEdge(kind, Math.floor((index - 1) / 2), index))
-      } else if (kind === 'graph') {
+      if (kind === 'graph') {
         edges.push(this.createEdge(kind, index, (index + 1) % 10))
       }
     }

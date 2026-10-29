@@ -236,8 +236,10 @@ test('replay is deterministic and prior scenes and source models cannot be chang
 
 test('fixed-array metadata always describes linear copying and linear extra memory using only relevant terms', () => {
   const information = InsertionAnimation.describe(10)
-  assert.equal(information.time.order, 'O(n)')
-  assert.equal(information.memory.order, 'O(n)')
+  for (const scenario of ['best', 'average', 'worst']) {
+    assert.equal(information.time[scenario], 'O(n)')
+    assert.equal(information.memory[scenario], 'O(n)')
+  }
   assert.deepEqual(
     information.terms.map((term) => term.symbol),
     ['n', 'O(n)'],

@@ -2,3 +2,4 @@
 import './linked-list.test.mjs'
 import './animation-controller.test.mjs'
 import './fixed-array.test.mjs'
+import './binary-tree.test.mjs'

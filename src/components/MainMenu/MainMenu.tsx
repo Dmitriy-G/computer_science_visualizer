@@ -134,7 +134,8 @@ export default class MainMenu extends Component<
                   {StructureCatalog.getName(this.props.selected!)}
                 </p>
                 {this.props.selected === 'linked-list' ||
-                this.props.selected === 'array' ? (
+                this.props.selected === 'array' ||
+                this.props.selected === 'binary-tree' ? (
                   <button
                     className="action-choice"
                     onClick={this.props.onActionSelected}
@@ -142,24 +143,33 @@ export default class MainMenu extends Component<
                     <span className="action-choice-tag">
                       {this.props.selected === 'array'
                         ? 'ALLOCATE · COPY'
-                        : 'POINTERS · INSERTION'}
+                        : this.props.selected === 'binary-tree'
+                          ? 'COMPARE · INSERTION'
+                          : 'POINTERS · INSERTION'}
                     </span>
-                    <strong>Insert in the middle</strong>
+                    <strong>
+                      {this.props.selected === 'binary-tree'
+                        ? 'Insert a value'
+                        : 'Insert in the middle'}
+                    </strong>
                     <span>
                       {this.props.selected === 'array'
                         ? 'Allocate a new fixed array, copy the values, and insert.'
-                        : 'Traverse, make space, insert, and reconnect.'}
+                        : this.props.selected === 'binary-tree'
+                          ? 'Compare, follow left or right, and connect a new leaf. Equal values go right.'
+                          : 'Traverse, make space, insert, and reconnect.'}
                     </span>
                     <small>
-                      7 phases · detailed animation{' '}
+                      {this.props.selected === 'binary-tree' ? 6 : 7} phases ·
+                      detailed animation{' '}
                       <span aria-hidden="true">→</span>
                     </small>
                   </button>
                 ) : (
                   <p className="menu-notice">
                     The 10-element preview is ready. Animated actions for this
-                    structure are not implemented yet. Choose Array or Linked
-                    list to explore middle insertion.
+                    structure are not implemented yet. Choose Array, Linked
+                    list, or Binary tree to explore insertion.
                   </p>
                 )}
               </>

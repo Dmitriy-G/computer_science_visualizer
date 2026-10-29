@@ -7,6 +7,9 @@ import ArrayAddInTheMiddle from '../DataStructures/Array/AddInTheMiddle/AddInThe
 import { InsertionAnimation as ArrayInsertionAnimation } from '../DataStructures/Array/AddInTheMiddle/InsertionAnimation.ts'
 import { FixedArray } from '../DataStructures/Array/FixedArray.ts'
 import { LinkedList } from '../DataStructures/LinkedList/LinkedList.ts'
+import { BinaryTree } from '../DataStructures/BinaryTree/BinaryTree.ts'
+import TreeInsert from '../DataStructures/BinaryTree/Insert/Insert.tsx'
+import { InsertionAnimation as TreeInsertionAnimation } from '../DataStructures/BinaryTree/Insert/InsertionAnimation.ts'
 import { StructureCatalog } from '../../visualization/StructureCatalog.ts'
 import type { Scene, StructureKind } from '../../visualization/Scene.ts'
 import type { AlgorithmInformation } from '../../visualization/AlgorithmInformation.ts'
@@ -25,9 +28,11 @@ interface AppState {
 export default class App extends Component<Record<string, never>, AppState> {
   private list = LinkedList.createDefault()
   private array = FixedArray.createDefault()
+  private tree = BinaryTree.createDefault()
   private readonly menuButton = createRef<HTMLButtonElement>()
   private readonly actionPanel = createRef<AddInTheMiddle>()
   private readonly arrayActionPanel = createRef<ArrayAddInTheMiddle>()
+  private readonly treeActionPanel = createRef<TreeInsert>()
 
   constructor(props: Record<string, never>) {
     super(props)
@@ -45,6 +50,7 @@ export default class App extends Component<Record<string, never>, AppState> {
   private openMenu = (): void => {
     this.actionPanel.current?.pausePlayback()
     this.arrayActionPanel.current?.pausePlayback()
+    this.treeActionPanel.current?.pausePlayback()
     this.setState({
       menuOpen: true,
       menuScreen: this.state.selected ? 'actions' : 'structures',
@@ -66,9 +72,15 @@ export default class App extends Component<Record<string, never>, AppState> {
   private selectStructure = (kind: StructureKind): void => {
     this.list = LinkedList.createDefault()
     this.array = FixedArray.createDefault()
+    this.tree = BinaryTree.createDefault()
     this.setState({
       selected: kind,
-      scene: StructureCatalog.createPreview(kind, this.list, this.array),
+      scene: StructureCatalog.createPreview(
+        kind,
+        this.list,
+        this.array,
+        this.tree,
+      ),
       actionOpen: false,
       menuScreen: 'actions',
       algorithmInformation: null,
@@ -79,7 +91,8 @@ export default class App extends Component<Record<string, never>, AppState> {
   private selectAction = (): void => {
     if (
       this.state.selected !== 'array' &&
-      this.state.selected !== 'linked-list'
+      this.state.selected !== 'linked-list' &&
+      this.state.selected !== 'binary-tree'
     )
       return
     this.setState({
@@ -88,7 +101,9 @@ export default class App extends Component<Record<string, never>, AppState> {
       algorithmInformation:
         this.state.selected === 'array'
           ? ArrayInsertionAnimation.describe(this.array.length)
-          : InsertionAnimation.describe(this.list.length),
+          : this.state.selected === 'binary-tree'
+            ? TreeInsertionAnimation.describe(this.tree.length)
+            : InsertionAnimation.describe(this.list.length),
       actionSession: this.state.actionSession + 1,
     })
   }
@@ -97,11 +112,13 @@ export default class App extends Component<Record<string, never>, AppState> {
     if (this.state.selected === null) return
     this.list = LinkedList.createDefault()
     this.array = FixedArray.createDefault()
+    this.tree = BinaryTree.createDefault()
     this.setState({
       scene: StructureCatalog.createPreview(
         this.state.selected,
         this.list,
         this.array,
+        this.tree,
       ),
       actionOpen: false,
       actionSession: this.state.actionSession + 1,
@@ -116,6 +133,11 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private updateArrayScene = (scene: Scene, array: FixedArray): void => {
     this.array = array
+    this.setState({ scene })
+  }
+
+  private updateTreeScene = (scene: Scene, tree: BinaryTree): void => {
+    this.tree = tree
     this.setState({ scene })
   }
 
@@ -221,6 +243,14 @@ export default class App extends Component<Record<string, never>, AppState> {
               onSceneChange={this.updateArrayScene}
             />
           )}
+          {this.state.actionOpen && selected === 'binary-tree' && (
+            <TreeInsert
+              key={this.state.actionSession}
+              ref={this.treeActionPanel}
+              tree={this.tree}
+              onSceneChange={this.updateTreeScene}
+            />
+          )}
           {selected && !this.state.actionOpen && (
             <section className="workspace-hint" aria-label="Next step">
               <div>
@@ -232,10 +262,12 @@ export default class App extends Component<Record<string, never>, AppState> {
                   ? 'Choose an action to watch every pointer change, one step at a time.'
                   : selected === 'array'
                     ? 'Choose an action to build a new fixed array, one copy at a time.'
-                    : 'Explore the 10-element preview. Animated actions for this structure are coming next.'}
+                    : selected === 'binary-tree'
+                      ? 'Compare values from the root and connect a new leaf in the binary search tree.'
+                      : 'Explore the 10-element preview. Animated actions for this structure are coming next.'}
               </p>
               <button className="primary-button" onClick={this.openMenu}>
-                {selected === 'linked-list' || selected === 'array'
+                {selected !== 'graph'
                   ? 'Choose an action'
                   : 'Open menu'}{' '}
                 <span aria-hidden="true">↗</span>

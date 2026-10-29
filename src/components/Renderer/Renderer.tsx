@@ -38,7 +38,11 @@ export default class Renderer extends Component<
     if (!scene || !viewport || !svg || !scene.focusId) return
     for (const node of scene.nodes) {
       if (node.id !== scene.focusId) continue
-      const x = (node.x * svg.clientWidth) / scene.width
+      const x =
+        svg.getBoundingClientRect().left -
+        viewport.getBoundingClientRect().left +
+        viewport.scrollLeft +
+        (node.x * svg.clientWidth) / scene.width
       if (
         x < viewport.scrollLeft + 70 ||
         x > viewport.scrollLeft + viewport.clientWidth - 70
@@ -187,7 +191,7 @@ export default class Renderer extends Component<
         ref={this.svg}
         className="scene-svg"
         viewBox={`0 0 ${scene.width} ${scene.height}`}
-        style={{ minWidth: scene.width * 0.8 }}
+        style={{ minWidth: scene.width * 0.8, maxWidth: scene.width * 1.2 }}
         role="img"
         aria-labelledby="scene-title scene-description"
       >

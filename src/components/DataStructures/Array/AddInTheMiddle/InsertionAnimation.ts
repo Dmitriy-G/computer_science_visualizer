@@ -15,14 +15,18 @@ export class InsertionAnimation {
       summary:
         'Build a new fixed-size array: copy the prefix, insert the value, then copy the suffix.',
       time: {
-        order: 'O(n)',
+        best: 'O(n)',
+        average: 'O(n)',
+        worst: 'O(n)',
         explanation:
-          'Copy each of the n original elements once and write one new value.',
+          'Best, average, and worst cases are O(n): copy each of the n original elements once and write one new value, regardless of their values.',
       },
       memory: {
-        order: 'O(n)',
+        best: 'O(n)',
+        average: 'O(n)',
+        worst: 'O(n)',
         explanation:
-          'Allocate a separate fixed array with n + 1 slots while the original array remains in memory.',
+          'All cases allocate a separate fixed array with n + 1 slots while the original array remains in memory.',
       },
       terms: [
         {

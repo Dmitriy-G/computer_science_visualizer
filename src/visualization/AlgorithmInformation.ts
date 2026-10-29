@@ -1,5 +1,7 @@
 export interface ComplexityInformation {
-  readonly order: string
+  readonly best: string
+  readonly average: string
+  readonly worst: string
   readonly explanation: string
 }
 

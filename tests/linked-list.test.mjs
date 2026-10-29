@@ -145,6 +145,16 @@ test('odd-length lists use floor(length / 2), and short-list input is explicit',
   assert.throws(() => new InsertionAnimation(new LinkedList(), 99), RangeError)
 })
 
+test('middle insertion metadata accounts for traversal in every case', () => {
+  const information = InsertionAnimation.describe(10)
+  for (const scenario of ['best', 'average', 'worst']) {
+    assert.equal(information.time[scenario], 'O(n)')
+    assert.equal(information.memory[scenario], 'O(1)')
+  }
+  assert.match(information.time.explanation, /always visits about half/)
+  assert.match(information.terms[0].meaning, /n = 10/)
+})
+
 test('every structure preview has ten elements and valid edge endpoints', () => {
   for (const structure of StructureCatalog.structures) {
     const scene = StructureCatalog.createPreview(

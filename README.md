@@ -23,8 +23,16 @@ copying. Once the result is complete, switch to it and release the original if
 unused. The default array has exactly 10 slots, and the first result has 11.
 Both time and additional memory are O(n).
 
-Linked list and array middle insertion have animated actions. Binary tree and graph
-have previews. **Reset** restores the selected 10-element example.
+Choose **Binary tree → Insert a value** to insert into a binary search tree.
+Compare from the root, follow left for smaller values or right for larger or
+equal values, find an empty child pointer, and create and connect a new leaf.
+Duplicates remain separate nodes. The tree does not rebalance itself. Insertion
+takes O(h) time, where h is the tree height, and O(1) additional algorithm memory.
+The new node remains pending until the final step; rewind and replay preserve
+the original tree. Subsequent insertions use the completed result.
+
+Linked list, array, and binary tree insertion have animated actions. Graph has a
+preview. **Reset** restores the selected 10-element example.
 When an action is selected, its overview in the upper-right of the canvas explains
 time complexity, additional memory, and only the terms used by that action.
 
@@ -55,8 +63,9 @@ npm run typecheck
 npm test
 ```
 
-Tests cover linked list and array edge cases, insertion sequences, final pointer
-connections, fixed-array allocation, preserved originals, prefix/suffix copies, structure previews,
+Tests cover linked list, array, and binary search tree edge cases, insertion sequences,
+final pointer connections, tree ordering and duplicate placement, fixed-array allocation,
+preserved originals, prefix/suffix copies, structure previews,
 and playback cancellation, stepping, speed, and replay. They run with Node.js's built-in test runner and experimental
 TypeScript stripping; the experimental warning on Node.js 22 is expected.
 
