@@ -14,20 +14,20 @@ export class InsertionAnimation {
     return {
       name: 'Insert in the middle',
       summary:
-        'Follow the linked list to its middle, then connect a new node between its neighbors.',
+        'Walk to the middle, then connect the new node.',
       time: {
         best: 'O(n)',
         average: 'O(n)',
         worst: 'O(n)',
         explanation:
-          'Best, average, and worst cases are O(n): finding the middle from the head always visits about half of the n nodes, regardless of their values. The predecessor is the node immediately before the insertion point. If a reference to it is already available, insertion takes O(1): only the two next pointers need updating. This action includes the traversal to find that predecessor.',
+          'Every case walks about half the list: O(n). Connecting the node afterward is O(1). Empty and single-node lists are constant-time boundary cases.',
       },
       memory: {
         best: 'O(1)',
         average: 'O(1)',
         worst: 'O(1)',
         explanation:
-          'All cases use one new node and a fixed number of pointers. The list itself occupies O(n) memory.',
+          'One new node and a few pointers: O(1). Animation storage excluded.',
       },
       terms: [
         {

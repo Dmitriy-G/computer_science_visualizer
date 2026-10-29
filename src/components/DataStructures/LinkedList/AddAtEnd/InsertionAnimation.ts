@@ -6,10 +6,10 @@ export class InsertionAnimation extends BoundaryInsertionAnimation {
   public static describe(size: number) {
     return AnimationSequence.information(
       'Insert at the end',
-      'Follow next pointers to the last node, then append a new node.',
+      'Walk to the last node, then append.',
       size,
       ['O(n)', 'O(n)', 'O(n)'],
-      'For nonempty lists, best, average, and worst cases are linear: there is no cached tail pointer, so every run traverses from the head to the last node. Updating the final pointer is constant time. An empty list is a boundary case requiring only a head update, just as empty middle insertion does.',
+      'Every case walks to the tail: O(n), since there is no cached tail pointer. Connecting the node takes O(1). An empty list is a constant-time boundary case.',
       'O(1)',
       'Allocate one new node and a fixed number of pointers.',
     )

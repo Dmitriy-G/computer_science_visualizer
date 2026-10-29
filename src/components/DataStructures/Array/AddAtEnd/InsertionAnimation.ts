@@ -4,7 +4,15 @@ import { AnimationSequence } from '../../../../visualization/AnimationSequence.t
 
 export class InsertionAnimation extends MiddleInsertionAnimation {
   public static describe(size: number) {
-    return AnimationSequence.information('Insert at the end', 'Copy every original element into a separate fixed array of exactly one more slot.', size, ['O(n)', 'O(n)', 'O(n)'], 'Copy every original element into a separate fixed array of exactly one more slot.', 'O(n)', 'Allocate exactly one additional result slot per original element, plus the inserted slot.')
+    return AnimationSequence.information(
+      'Insert at the end',
+      'Build a new fixed array with the value last.',
+      size,
+      ['O(n)', 'O(n)', 'O(n)'],
+      'Every case copies all n elements: O(n). The fixed array is full, so appending needs a new array. An empty input needs one write.',
+      'O(n)',
+      'Exactly n + 1 result slots in every case: O(n).',
+    )
   }
 
   constructor(model: FixedArray, value: number) { super(model, value, model.length) }

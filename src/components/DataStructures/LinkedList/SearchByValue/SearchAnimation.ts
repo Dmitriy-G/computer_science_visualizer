@@ -7,7 +7,15 @@ export class SearchAnimation extends AnimationSequence {
   public readonly foundId: string | null
 
   public static describe(size: number) {
-    return AnimationSequence.information('Search by value', 'Scan from the beginning and stop at the first equal value.', size, ['O(1)', 'O(n)', 'O(n)'], 'The first node can match immediately. Reaching a later position or exhausting the structure takes linear time.', 'O(1)', 'The iterative algorithm keeps a fixed number of references and counters.')
+    return AnimationSequence.information(
+      'Search by value',
+      'Follow next pointers until the first match.',
+      size,
+      ['O(1)', 'O(n)', 'O(n)'],
+      'Best O(1): the head matches. Worst O(n): the match is last or absent. Average O(n) assumes uniformly distributed matching positions.',
+      'O(1)',
+      'A current-node pointer and counter in every case.',
+    )
   }
 
   constructor(model: LinkedList, value: number) {
@@ -20,22 +28,22 @@ export class SearchAnimation extends AnimationSequence {
       if (entry.value === value) break
     }
     const scene = new LinkedListLayout().create(model.getEntries())
-    this.add(1, 'Start the search', 'Scan from the beginning and stop at the first equal value.', 'current = start', scene)
+    this.add(1, 'Start the search', 'Start at the head and stop at the first equal value.', 'current = head', scene)
     const visited: string[] = []
     for (let index = 0; index < path.length; index += 1) {
       const entry = path[index]
       this.add(2, `Compare ${value} with ${entry.value}`, 'Compare values in order and stop at the first match.', `if (${value} === ${entry.value}) return current`, AnimationSequence.mark(scene, entry.id, visited))
       visited.push(entry.id)
       if (index + 1 < path.length) {
-        this.add(2, 'Follow the search path', 'Move to the next candidate without changing the structure.', `current = ${'next candidate'}`, AnimationSequence.mark(scene, path[index + 1].id, visited))
+        this.add(2, 'Follow the next pointer', 'The current value differs. Follow its next pointer without changing the list.', 'current = current.next', AnimationSequence.mark(scene, path[index + 1].id, visited))
       }
     }
     const last = path[path.length - 1]
     const success = last !== undefined && last.value === value
     this.foundId = success ? last.id : null
-    const message = success ? `Found ${value}${` at index ${path.length - 1}`}` : `Value ${value} was not found`
+    const message = success ? `Found ${value} at index ${path.length - 1}` : `Value ${value} was not found`
     const resultScene = AnimationSequence.mark(scene, this.foundId, visited, 'FOUND')
     this.add(3, success ? 'Element found' : 'No matching element', message, success ? 'return current' : 'return notFound', resultScene)
-    this.add(4, 'Search complete', 'Search leaves the structure unchanged.', '// no mutation', resultScene)
+    this.add(4, 'Search complete', `${message}. The list is unchanged.`, '// no mutation', resultScene)
   }
 }

@@ -13,20 +13,20 @@ export class InsertionAnimation {
     return {
       name: 'Insert into a binary search tree',
       summary:
-        'Compare from the root: smaller values go left; larger or equal values go right. Attach a new leaf at an empty child pointer.',
+        'Smaller values go left; larger or equal values go right.',
       time: {
         best: 'O(1)',
         average: 'O(log n)',
         worst: 'O(n)',
         explanation:
-          'Insertion takes O(h), following one path bounded by the tree height. Best: O(1) for an empty root or an empty child of the root. Average: O(log n), assuming distinct keys inserted in random order. Worst: O(n) when the tree is a chain, including sorted or all-equal inputs.',
+          'O(h), bounded by tree height. Best O(1): an empty root or root child. Average O(log n) assumes distinct keys inserted in random order. Worst O(n): a chain from sorted or all-equal inputs.',
       },
       memory: {
         best: 'O(1)',
         average: 'O(1)',
         worst: 'O(1)',
         explanation:
-          'All cases create one new leaf and use a fixed number of pointers to find and connect it. Insertion is iterative.',
+          'One new leaf and a few pointers in every case; no recursion stack. Animation storage excluded.',
       },
       terms: [
         {
@@ -54,7 +54,7 @@ export class InsertionAnimation {
         {
           symbol: 'O(1)',
           meaning:
-            'Constant: additional algorithm memory stays bounded as the tree grows.',
+            'Constant: work or additional algorithm memory stays bounded as the tree grows.',
         },
       ],
     }

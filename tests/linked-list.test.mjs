@@ -151,7 +151,7 @@ test('middle insertion metadata accounts for traversal in every case', () => {
     assert.equal(information.time[scenario], 'O(n)')
     assert.equal(information.memory[scenario], 'O(1)')
   }
-  assert.match(information.time.explanation, /always visits about half/)
+  assert.match(information.time.explanation, /Every case walks about half/)
   assert.match(information.terms[0].meaning, /n = 10/)
 })
 

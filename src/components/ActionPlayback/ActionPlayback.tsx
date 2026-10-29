@@ -34,7 +34,7 @@ export default class ActionPlayback<TModel extends ActionModel<TModel>>
     this.animation = props.definition.create(this.original, initialValue)
     this.controller = new AnimationController(this.animation.steps, this)
     this.state = {
-      panelOpen: false,
+      panelOpen: true,
       index: 0,
       playing: false,
       value: String(initialValue),

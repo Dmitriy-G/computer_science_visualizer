@@ -18,10 +18,6 @@ export class DeletionLayout {
     return {
       kind: 'array', nodes, slots, edges: [], width: Math.max(1100, 160 + entries.length * 92), height: 580,
       focusId: reading >= 0 ? `source-${entries[reading].id}` : null, count: entries.length,
-      annotations: [
-        { id: 'original-label', x: 40, y: 55, text: `Original array: ${entries.length} fixed slots (unchanged)`, opacity: 1 },
-        { id: 'result-label', x: 40, y: 340, text: `New array: exactly ${entries.length - 1} fixed slots`, opacity: 1 },
-      ],
     }
   }
 }

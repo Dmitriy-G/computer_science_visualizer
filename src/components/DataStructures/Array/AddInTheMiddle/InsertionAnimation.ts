@@ -13,20 +13,20 @@ export class InsertionAnimation {
     return {
       name: 'Insert in the middle',
       summary:
-        'Build a new fixed-size array: copy the prefix, insert the value, then copy the suffix.',
+        'Copy into a new fixed array with the value in the middle.',
       time: {
         best: 'O(n)',
         average: 'O(n)',
         worst: 'O(n)',
         explanation:
-          'Best, average, and worst cases are O(n): copy each of the n original elements once and write one new value, regardless of their values.',
+          'Every case copies all n elements: O(n). Computing the middle is constant time; copying dominates. An empty input needs one write.',
       },
       memory: {
         best: 'O(n)',
         average: 'O(n)',
         worst: 'O(n)',
         explanation:
-          'All cases allocate a separate fixed array with n + 1 slots while the original array remains in memory.',
+          'Exactly n + 1 result slots in every case: O(n). Animation storage excluded.',
       },
       terms: [
         {

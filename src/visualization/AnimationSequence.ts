@@ -22,24 +22,18 @@ export class AnimationSequence {
     return { ...scene, nodes, focusId: activeId }
   }
 
-  public static message(scene: Scene, text: string): Scene {
-    return {
-      ...scene,
-      annotations: [...(scene.annotations ?? []), { id: 'action-result', x: 40, y: 35, text, opacity: 1 }],
-    }
-  }
-
   public static information(
     name: string,
     summary: string,
     size: number,
     time: readonly [string, string, string],
     timeExplanation: string,
-    memory: string,
+    memory: string | readonly [string, string, string],
     memoryExplanation: string,
     extraTerms: readonly AlgorithmTerm[] = [],
   ): AlgorithmInformation {
-    const symbols = new Set([...time, memory])
+    const memoryCases = typeof memory === 'string' ? [memory, memory, memory] : memory
+    const symbols = new Set([...time, ...memoryCases])
     const terms: AlgorithmTerm[] = [{ symbol: 'n', meaning: `Original number of elements for this run: n = ${size}.` }]
     for (const symbol of symbols) {
       let meaning = 'Constant work or storage, independent of input size.'
@@ -53,7 +47,12 @@ export class AnimationSequence {
       name,
       summary,
       time: { best: time[0], average: time[1], worst: time[2], explanation: timeExplanation },
-      memory: { best: memory, average: memory, worst: memory, explanation: `${memoryExplanation} Animation snapshots are visualization overhead and excluded from this cost.` },
+      memory: {
+        best: memoryCases[0],
+        average: memoryCases[1],
+        worst: memoryCases[2],
+        explanation: `${memoryExplanation} Animation storage excluded.`,
+      },
       terms,
     }
   }

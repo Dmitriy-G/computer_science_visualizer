@@ -1,5 +1,5 @@
 .algorithm-info {
-  width: 360px;
+  width: 420px;
   max-width: 100%;
   flex-shrink: 0;
   padding: 22px;
@@ -23,7 +23,7 @@
 }
 .algorithm-complexities {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
   gap: 10px;
   margin: 0 0 16px;
 }
@@ -46,16 +46,16 @@
   margin: 0;
 }
 .algorithm-complexity dl > div {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
   align-items: baseline;
-  justify-content: space-between;
-  gap: 4px 8px;
+  gap: 8px;
   margin-top: 10px;
 }
 .algorithm-complexity dt {
   color: #5c7088;
   font-size: 11px;
+  white-space: nowrap;
 }
 .algorithm-complexity dd {
   margin: 0;

@@ -72,13 +72,6 @@
     transform 650ms ease,
     opacity 450ms ease;
 }
-.scene-annotation {
-  fill: #526b88;
-  font: 12px var(--mono);
-  transition:
-    transform 650ms ease,
-    opacity 450ms ease;
-}
 .scene-slot rect {
   fill: #f0f4f9;
   stroke: #d6e0ec;
@@ -270,7 +263,6 @@
 @media (prefers-reduced-motion: reduce) {
   .scene-node,
   .scene-slot,
-  .scene-annotation,
   .node-body,
   .node-halo,
   .scene-edge {

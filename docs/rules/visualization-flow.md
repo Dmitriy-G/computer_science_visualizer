@@ -10,10 +10,10 @@
 5. Selecting an implemented action starts its detailed animation. Honor
    reduced-motion preferences by waiting for the user to press Play instead.
 
-Keep the detailed animation controls collapsed initially behind an **Animation
-controls** disclosure button. Clicking it opens the controls and explanation;
-the close (X) button hides them again. Toggling this panel must preserve the
-current animation, playback state, and entered value.
+Open the detailed animation controls and explanation by default when an action
+is selected. The **Animation controls** disclosure button toggles the panel;
+the close (X) button hides it. Toggling this panel must preserve the current
+animation, playback state, and entered value.
 
 When an action is selected, show its algorithm information in the upper-right
 of the canvas, independently of the collapsed controls. Include time complexity,
@@ -29,6 +29,21 @@ Values such as the original input size must describe the current run, including
 after completion and replay. Clear the card on structure
 selection or reset. On smaller screens, let the card wrap above the diagram so
 it does not overlap nodes or controls.
+
+Do not put standalone text annotations in the structure diagram, including hints,
+action results, or original/new array headings. Keep these explanations in the
+animation controls. Diagram text is limited to values, indices, and node roles
+and statuses. The algorithm overview remains a separate card.
+
+Compare best, average, and worst cases at the same input size. Explain empty and
+singleton boundary cases separately; do not use an empty input to claim constant
+best-case time for an operation that always traverses a growing nonempty input.
+State average-case assumptions explicitly. Additional memory includes output
+storage required by the underlying operation, but excludes playback copies,
+recorded paths, and scene snapshots. For deletion, distinguish a missing value
+from a successful deletion that allocates a replacement structure.
+Keep summaries and complexity explanations short. Explain each case with its
+concrete trigger, such as a head match versus a full traversal.
 
 Keep structure selection and action selection distinct. Only offer working actions;
 identify structures with previews but no animated actions clearly.
@@ -82,7 +97,7 @@ as a dynamic array with spare capacity or automatic buffer growth.
 
 1. **Locate:** identify the insertion index in the original fixed array.
 2. **Allocate:** show an empty result array of exactly `n + 1` slots in a second
-   labeled row, below the original array of `n` slots.
+   row, below the original array of `n` slots. Explain the rows in the controls.
 3. **Prefix:** read and copy each element before the middle to the same index in
    the result. Use separate reading and copying frames. Preserve the source value.
 4. **Insert:** show the new value above the result's middle slot and lower it in.
@@ -96,8 +111,8 @@ as a dynamic array with spare capacity or automatic buffer growth.
 The default array has exactly 10 occupied slots; the first insertion allocates a
 new array of exactly 11 slots. Subsequent insertions repeat the same operation
 with a new exact-sized result. Time and additional memory are both O(n). Explain
-only `n` and `O(n)` in this action's glossary. Label copied values **COPIED**,
-and explicitly label the original and new rows; do not label copies **SHIFTED**.
+only `n` and `O(n)` in this action's glossary. Label copied values **COPIED**;
+do not label copies **SHIFTED** or add standalone row headings to the diagram.
 
 Both insertion actions reuse the shared class-based playback controls. Plans keep
 the original model unchanged so replay, stepping backward, and reset are safe.

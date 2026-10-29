@@ -8,8 +8,15 @@ export class DeletionAnimation extends AnimationSequence {
   public readonly result: FixedArray
 
   public static describe(size: number) {
-    return AnimationSequence.information('Delete by value', 'Remove the first match by copying survivors into a separate fixed array.', size,
-      ['O(n)', 'O(n)', 'O(n)'], 'Search for the first equal value. On success copy all remaining elements; on a miss scan the entire input.', 'O(n)', 'A successful deletion allocates exactly one fewer slot. A miss needs only constant additional memory; these costs describe successful deletion.')
+    return AnimationSequence.information(
+      'Delete by value',
+      'Copy into a new fixed array, skipping the first match.',
+      size,
+      ['O(n)', 'O(n)', 'O(n)'],
+      'Every case is O(n): a match requires copying the survivors; a miss scans all elements. An empty input is checked in O(1).',
+      ['O(1)', 'O(n)', 'O(n)'],
+      'Best O(1): the value is absent. Worst O(n): n - 1 result slots. Average O(n) assumes a constant success probability.',
+    )
   }
 
   constructor(model: FixedArray, value: number) {
@@ -31,6 +38,6 @@ export class DeletionAnimation extends AnimationSequence {
       }
       this.add(5, 'Result array is ready', 'Both allocations coexist until the result is committed.', '// all survivors copied', layout.create(entries, index, copied))
     }
-    this.add(6, index < 0 ? 'Value not found; array unchanged' : 'Deletion complete', `The array has ${this.result.length} elements. Only the first matching value is removed.`, index < 0 ? 'return original' : 'array = result', AnimationSequence.message(new ArrayLayout().create(this.result.getEntries()), index < 0 ? `Value ${value} was not found` : `Removed ${value} at index ${index}`))
+    this.add(6, index < 0 ? 'Value not found; array unchanged' : 'Deletion complete', index < 0 ? `Value ${value} was not found. The array still has ${model.length} elements.` : `Removed ${value} at index ${index}. The new array has exactly ${this.result.length} occupied slots; later duplicates remain.`, index < 0 ? 'return original' : 'array = result', new ArrayLayout().create(this.result.getEntries()))
   }
 }

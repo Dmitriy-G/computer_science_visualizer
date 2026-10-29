@@ -9,6 +9,8 @@ import { InsertionAnimation as ListEnd } from '../src/components/DataStructures/
 import { InsertionAnimation as ListMiddle } from '../src/components/DataStructures/LinkedList/AddInTheMiddle/InsertionAnimation.ts'
 import { InsertionAnimation as ArrayStart } from '../src/components/DataStructures/Array/AddAtStart/InsertionAnimation.ts'
 import { InsertionAnimation as ArrayEnd } from '../src/components/DataStructures/Array/AddAtEnd/InsertionAnimation.ts'
+import { InsertionAnimation as ArrayMiddle } from '../src/components/DataStructures/Array/AddInTheMiddle/InsertionAnimation.ts'
+import { InsertionAnimation as TreeInsert } from '../src/components/DataStructures/BinaryTree/Insert/InsertionAnimation.ts'
 import { SearchAnimation as ListValue } from '../src/components/DataStructures/LinkedList/SearchByValue/SearchAnimation.ts'
 import { SearchAnimation as ListIndex } from '../src/components/DataStructures/LinkedList/SearchByIndex/SearchAnimation.ts'
 import { SearchAnimation as ArrayValue } from '../src/components/DataStructures/Array/SearchByValue/SearchAnimation.ts'
@@ -113,7 +115,7 @@ test('value searches find the first matching ID, report misses, and never mutate
         assert.deepEqual(animation.result.getEntries(), before)
         assert.deepEqual(model.getEntries(), before)
         ActionAssertions.scenes(animation, model.length)
-        assert.equal(animation.steps.at(-1).scene.annotations?.length ?? 0, 0)
+        assert.equal('annotations' in animation.steps.at(-1).scene, false)
         assert.match(animation.steps.at(-2).description, expected ? /Found/ : /not found/)
       }
       for (const value of [NaN, Infinity, 0.5, Number.MAX_SAFE_INTEGER + 1]) assert.throws(() => new Animation(model, value), TypeError)
@@ -134,11 +136,78 @@ test('index search traverses the list but directly reads one array slot, includi
         if (index < model.length) {
           const visits = animation.steps.filter((step) => step.title.startsWith('Read index') || step.title.startsWith('Visit index'))
           assert.equal(visits.length, model instanceof FixedArray ? 1 : index + 1)
+        } else {
+          assert.equal(animation.steps.filter((step) => step.phase === 2).length, 0)
         }
       }
       for (const index of [-1, 0.5, NaN, Infinity]) assert.throws(() => new Animation(model, index), RangeError)
     }
   }
+})
+
+test('every action keeps all standalone text annotations out of the diagram', () => {
+  const actions = [
+    [LinkedList, [ListStart, ListEnd, ListMiddle, ListValue, ListIndex, ListDelete]],
+    [FixedArray, [ArrayStart, ArrayEnd, ArrayMiddle, ArrayValue, ArrayIndex, ArrayDelete]],
+    [BinaryTree, [TreeInsert, TreeValue, TreeDelete]],
+    [Graph, [GraphValue, GraphDelete]],
+  ]
+  for (const [Model, animations] of actions) {
+    for (const model of [new Model(), Model.createDefault()]) {
+      for (const Animation of animations) {
+        for (const value of [0, 50, 999]) {
+          const animation = new Animation(model, value)
+          for (const step of animation.steps) {
+            assert.equal('annotations' in step.scene, false, `${Model.name}/${Animation.name}: unexpected standalone text annotations`)
+          }
+          assert.ok(animation.steps.at(-1).description.length > 0)
+        }
+      }
+    }
+  }
+})
+
+test('all actions explain the correct best, average, and worst time and additional-memory costs', () => {
+  const constant = ['O(1)', 'O(1)', 'O(1)']
+  const linear = ['O(n)', 'O(n)', 'O(n)']
+  const scan = ['O(1)', 'O(n)', 'O(n)']
+  const tree = ['O(1)', 'O(log n)', 'O(n)']
+  const graph = ['O(n + e)', 'O(n + e)', 'O(n + e)']
+  const graphSearch = ['O(n)', 'O(n + e)', 'O(n + e)']
+  const actions = [
+    [ListStart, constant, constant], [ListEnd, linear, constant], [ListMiddle, linear, constant],
+    [ListValue, scan, constant], [ListIndex, scan, constant], [ListDelete, scan, constant],
+    [ArrayStart, linear, linear], [ArrayEnd, linear, linear], [ArrayMiddle, linear, linear],
+    [ArrayValue, scan, constant], [ArrayIndex, constant, constant], [ArrayDelete, linear, scan],
+    [TreeInsert, tree, constant], [TreeValue, tree, constant], [TreeDelete, tree, constant],
+    [GraphValue, graphSearch, linear], [GraphDelete, graph, graphSearch],
+  ]
+  for (const [Animation, time, memory] of actions) {
+    for (const size of [0, 1, 10, 25]) {
+      const information = Animation.describe(size)
+      const scenarios = ['best', 'average', 'worst']
+      assert.deepEqual(scenarios.map((scenario) => information.time[scenario]), time, information.name)
+      assert.deepEqual(scenarios.map((scenario) => information.memory[scenario]), memory, information.name)
+      assert.match(information.terms[0].meaning, new RegExp(`n = ${size}\\.`))
+      assert.match(information.memory.explanation, /Animation storage excluded/)
+      assert.equal(new Set(information.terms.map((term) => term.symbol)).size, information.terms.length)
+    }
+  }
+  for (const Animation of [ListValue, ListDelete, ListIndex, ArrayValue]) {
+    assert.match(Animation.describe(10).time.explanation, /uniformly distributed/)
+  }
+  for (const Animation of [TreeInsert, TreeValue, TreeDelete]) {
+    assert.match(Animation.describe(10).time.explanation, /distinct keys inserted in random order/)
+    assert.match(Animation.describe(10).time.explanation, /chain/)
+  }
+  assert.match(ListEnd.describe(10).time.explanation, /no cached tail pointer/)
+  assert.match(ListMiddle.describe(10).time.explanation, /boundary cases/)
+  assert.match(ArrayDelete.describe(10).memory.explanation, /value is absent/)
+  assert.match(ArrayDelete.describe(10).memory.explanation, /success probability/)
+  assert.match(GraphDelete.describe(10).memory.explanation, /for a miss/)
+  assert.match(GraphDelete.describe(10).memory.explanation, /successful deletion/)
+  assert.match(GraphValue.describe(10).time.explanation, /lookup before the first comparison/)
+  assert.match(GraphValue.describe(10).time.explanation, /upper bound/)
 })
 
 test('linear deletion removes only the first duplicate, preserves survivors and handles misses and empty results', () => {

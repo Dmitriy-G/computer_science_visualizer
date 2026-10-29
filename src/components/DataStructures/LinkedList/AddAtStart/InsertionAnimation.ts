@@ -4,7 +4,15 @@ import { AnimationSequence } from '../../../../visualization/AnimationSequence.t
 
 export class InsertionAnimation extends BoundaryInsertionAnimation {
   public static describe(size: number) {
-    return AnimationSequence.information('Insert at the start', 'Connect to the old head and update the head pointer without traversal.', size, ['O(1)', 'O(1)', 'O(1)'], 'Connect to the old head and update the head pointer without traversal.', 'O(1)', 'Allocate one new node and a fixed number of pointers.')
+    return AnimationSequence.information(
+      'Insert at the start',
+      'Connect the new node before the head.',
+      size,
+      ['O(1)', 'O(1)', 'O(1)'],
+      'Every case is O(1): update the head and new-node pointers without traversal, including for an empty list.',
+      'O(1)',
+      'One new node and a few pointers in every case.',
+    )
   }
 
   constructor(model: LinkedList, value: number) { super(model, value, false) }

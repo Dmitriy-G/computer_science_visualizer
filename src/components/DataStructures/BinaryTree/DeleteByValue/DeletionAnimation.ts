@@ -7,8 +7,19 @@ export class DeletionAnimation extends AnimationSequence {
   public readonly result: BinaryTree
 
   public static describe(size: number) {
-    return AnimationSequence.information('Delete by value', 'Find the first equal node and reconnect the tree while preserving search ordering.', size,
-      ['O(1)', 'O(log n)', 'O(n)'], 'A root with at most one child takes constant time. Search and successor traversal follow the tree height. Average time assumes distinct keys inserted in random order; an unbalanced tree can be a linear chain.', 'O(1)', 'Iterative search and successor replacement use a fixed number of pointers. Move the successor node itself to preserve stable IDs.')
+    return AnimationSequence.information(
+      'Delete by value',
+      'Remove the first match, preserving search ordering.',
+      size,
+      ['O(1)', 'O(log n)', 'O(n)'],
+      'O(h). Best O(1): the root matches and has at most one child. Average O(log n) assumes distinct keys inserted in random order. Worst O(n): a long search or successor path in an unbalanced chain.',
+      'O(1)',
+      'A few pointers in every case; no replacement nodes or recursion stack.',
+      [
+        { symbol: 'h', meaning: 'The number of nodes on the longest root-to-leaf path; 0 for an empty tree.' },
+        { symbol: 'O(h)', meaning: 'Traversal work is bounded by the tree height.' },
+      ],
+    )
   }
 
   constructor(model: BinaryTree, value: number) {
@@ -44,6 +55,6 @@ export class DeletionAnimation extends AnimationSequence {
       const rewired = layout.create(this.result.getEntries())
       this.add(5, 'Reconnect the replacement', 'Update the parent pointer, or root. Preserve all surviving node IDs and values.', 'parent.child = replacement  // or root = replacement', { ...rewired, count: model.length })
     }
-    this.add(6, target ? 'Deletion complete' : 'Value not found; tree unchanged', `The tree has ${this.result.length} nodes. Duplicates are separate nodes; remove only the first equal node on the search path.`, target ? 'size -= 1' : 'return notFound', AnimationSequence.message(layout.create(this.result.getEntries()), target ? `Removed ${value}` : `Value ${value} was not found`))
+    this.add(6, target ? 'Deletion complete' : 'Value not found; tree unchanged', target ? `Removed the first equal node on the search path for ${value}. The tree now has ${this.result.length} nodes; later duplicates remain.` : `Value ${value} was not found. The tree still has ${model.length} nodes.`, target ? 'size -= 1' : 'return notFound', layout.create(this.result.getEntries()))
   }
 }

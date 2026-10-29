@@ -7,8 +7,16 @@ export class DeletionAnimation extends AnimationSequence {
   public readonly result: Graph
 
   public static describe(size: number) {
-    return AnimationSequence.information('Delete by value', 'Search breadth-first, then remove the matching vertex and every incident edge.', size,
-      ['O(n + e)', 'O(n + e)', 'O(n + e)'], 'On success scan vertices and adjacency lists to rebuild the graph without the target. A miss still searches every component.', 'O(n + e)', 'The rebuilt adjacency lists, traversal queue, vertex lookup, and visited set require linear storage.', [{ symbol: 'e', meaning: 'The number of undirected edges in the original graph.' }])
+    return AnimationSequence.information(
+      'Delete by value',
+      'Remove the first breadth-first match and its edges.',
+      size,
+      ['O(n + e)', 'O(n + e)', 'O(n + e)'],
+      'Every case is O(n + e): a match rebuilds the graph; a miss searches every component. Even finding the first vertex does not avoid rebuilding.',
+      ['O(n)', 'O(n + e)', 'O(n + e)'],
+      'Best O(n) for a miss: lookup, queue, and visited set. Worst O(n + e) for a successful deletion: rebuilt adjacency lists. Average assumes a constant success probability.',
+      [{ symbol: 'e', meaning: 'The number of undirected edges in the original graph.' }],
+    )
   }
 
   constructor(model: Graph, value: number) {
@@ -31,6 +39,6 @@ export class DeletionAnimation extends AnimationSequence {
       this.add(5, 'Remove the vertex', 'All incident edges are gone. Remove the vertex; this may split a connected component.', 'removeVertex(current)', { ...scene, nodes, focusId: null })
       this.result.deleteValue(value)
     }
-    this.add(6, search.foundId ? 'Deletion complete' : 'Value not found; graph unchanged', `The graph has ${this.result.length} vertices. Only the first breadth-first match is removed.`, search.foundId ? 'commit graph' : 'return notFound', AnimationSequence.message(layout.create(this.result.getEntries()), search.foundId ? `Removed vertex with value ${value}` : `Value ${value} was not found`))
+    this.add(6, search.foundId ? 'Deletion complete' : 'Value not found; graph unchanged', search.foundId ? `Removed the first breadth-first match for ${value} and its incident edges. The graph now has ${this.result.length} vertices.` : `Value ${value} was not found. The graph still has ${model.length} vertices.`, search.foundId ? 'commit graph' : 'return notFound', layout.create(this.result.getEntries()))
   }
 }

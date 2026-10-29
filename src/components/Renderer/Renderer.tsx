@@ -5,7 +5,6 @@ import type {
   SceneEdge,
   SceneNode,
   SceneSlot,
-  SceneAnnotation,
 } from '../../visualization/Scene.ts'
 import type { AlgorithmInformation } from '../../visualization/AlgorithmInformation.ts'
 import AlgorithmInfo from './AlgorithmInfo/AlgorithmInfo.tsx'
@@ -159,26 +158,9 @@ export default class Renderer extends Component<
     )
   }
 
-  private renderAnnotation(annotation: SceneAnnotation): ReactNode {
-    return (
-      <text
-        key={annotation.id}
-        className="scene-annotation"
-        style={{
-          transform: `translate(${annotation.x}px, ${annotation.y}px)`,
-          opacity: annotation.opacity,
-        }}
-      >
-        {annotation.text}
-      </text>
-    )
-  }
-
   private renderScene(scene: Scene): ReactNode {
     const nodeMap = new Map<string, SceneNode>()
     const elements: ReactNode[] = []
-    for (const annotation of scene.annotations ?? [])
-      elements.push(this.renderAnnotation(annotation))
     for (const slot of scene.slots ?? []) elements.push(this.renderSlot(slot))
     for (const node of scene.nodes) nodeMap.set(node.id, node)
     for (const edge of scene.edges)

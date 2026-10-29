@@ -119,24 +119,6 @@ export class ArrayLayout {
             ? `source-${entries[focusSource].id}`
             : entries[focusSource].id,
       count: entries.length + (frame.complete ? 1 : 0),
-      annotations: animation
-        ? [
-            {
-              id: 'source-array-label',
-              x: 40,
-              y: frame.allocated ? 55 : 150,
-              text: `Original array · ${entries.length} fixed slots`,
-              opacity: frame.complete ? 0 : 1,
-            },
-            {
-              id: 'result-array-label',
-              x: 40,
-              y: frame.complete ? 170 : 345,
-              text: `New array · ${entries.length + 1} fixed slots`,
-              opacity: frame.allocated ? 1 : 0,
-            },
-          ]
-        : [],
     }
   }
 }
