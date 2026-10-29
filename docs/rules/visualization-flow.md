@@ -4,7 +4,7 @@
 
 1. Start with an empty renderer and a clickable menu icon in the top left.
 2. Open the menu to see categories. The initial category is **Data structures
-   common operations**. Selecting it shows **Linear** (Array and Linked list),
+   common operations**. Selecting it shows **Linear** (Array, Linked list, and Stack),
    **Trees** (Binary tree), and **Graphs** (Graph). Choose a group to see only
    its structures. Provide a path and Back navigation through these levels.
 3. Selecting a structure loads an example containing 10 elements in the shared
@@ -149,3 +149,33 @@ inserted in random order, and worst-case O(n) time. Additional memory is O(1)
 in all cases. Define n, h, O(h), O(log n), O(n), and O(1), and keep n tied to the
 original input size for the current run. Animation snapshots are visualization overhead,
 excluded from the algorithm memory cost.
+
+## Stack
+
+Use a linked, last-in-first-out stack with a top pointer and a cached count.
+The default example pushes 10 through 100, so 100 is initially at the top. Stack
+belongs to **Data structures common operations → Linear**.
+
+Provide animated **Push**, **Pop**, **Peek (top)**, **Clear**, and **Search by value**
+actions. Push and pop modify only the top. Peek and search leave the stack unchanged.
+Keep cached size and emptiness checks in the model, without separate menu actions.
+Empty pop and peek
+return no value and explain that result in the controls. Clear repeatedly removes
+the top until empty. Value search is an optional traversal of the linked nodes;
+stop at the first match from the top without changing the order. Do not offer
+index access, insertion in the middle, or arbitrary-value deletion for Stack.
+This stack is unbounded, so there is no fixed-capacity fullness check.
+
+Show a vertical stack of rectangular nodes, with top/bottom roles next to the
+nodes and node statuses on the other side. No standalone canvas hints or headings.
+Animate a pending push above the stack and lower it into place. Pop lifts the
+removed top before revealing the successor. Existing values stay in position.
+Commit the model and count only on the final frame; rewind restores the original.
+
+Push, pop, and peek use O(1) time and additional memory in every case.
+Clear explicitly releases all n nodes, taking O(n) time
+and O(1) extra memory. Search takes O(1) best-case time for a top match and O(n)
+worst-case time for a bottom match or a miss. Average O(n) assumes uniformly
+distributed matching depths. It uses O(1) extra memory. Explain empty boundary
+cases separately and exclude playback copies and snapshots from algorithm costs.
+Hide the value input and its hint for actions that do not accept a value.

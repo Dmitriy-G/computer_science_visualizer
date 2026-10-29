@@ -89,6 +89,9 @@ export default class Renderer extends Component<
   }
 
   private renderNode(node: SceneNode, circular: boolean): ReactNode {
+    const width = node.width ?? 66
+    const height = node.height ?? 66
+    const sideLabels = node.labelPlacement === 'right'
     const style: CSSProperties = {
       transform: `translate(${node.x}px, ${node.y}px)`,
       opacity: node.opacity,
@@ -102,19 +105,19 @@ export default class Renderer extends Component<
       >
         <rect
           className="node-halo"
-          x="-43"
-          y="-43"
-          width="86"
-          height="86"
-          rx={circular ? 43 : 22}
+          x={-width / 2 - 10}
+          y={-height / 2 - 10}
+          width={width + 20}
+          height={height + 20}
+          rx={circular ? (width + 20) / 2 : 22}
         />
         <rect
           className="node-body"
-          x="-33"
-          y="-33"
-          width="66"
-          height="66"
-          rx={circular ? 33 : 13}
+          x={-width / 2}
+          y={-height / 2}
+          width={width}
+          height={height}
+          rx={circular ? width / 2 : 13}
         />
         <text
           className="node-value"
@@ -123,11 +126,21 @@ export default class Renderer extends Component<
         >
           {node.value}
         </text>
-        <text className="node-label" textAnchor="middle" y="61">
+        <text
+          className="node-label"
+          textAnchor={sideLabels ? 'start' : 'middle'}
+          x={sideLabels ? width / 2 + 16 : 0}
+          y={sideLabels ? 4 : height / 2 + 28}
+        >
           {node.label}
         </text>
         {node.tone !== 'default' && (
-          <text className="node-status" textAnchor="middle" y="-56">
+          <text
+            className="node-status"
+            textAnchor={sideLabels ? 'end' : 'middle'}
+            x={sideLabels ? -width / 2 - 16 : 0}
+            y={sideLabels ? 4 : -height / 2 - 23}
+          >
             {node.status ??
               (node.tone === 'active'
                 ? 'CURRENT'

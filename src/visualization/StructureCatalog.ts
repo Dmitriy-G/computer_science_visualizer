@@ -6,6 +6,8 @@ import { BinaryTree } from '../components/DataStructures/BinaryTree/BinaryTree.t
 import { BinaryTreeLayout } from '../components/DataStructures/BinaryTree/BinaryTreeLayout.ts'
 import { Graph } from '../components/DataStructures/Graph/Graph.ts'
 import { GraphLayout } from '../components/DataStructures/Graph/GraphLayout.ts'
+import { Stack } from '../components/DataStructures/Stack/Stack.ts'
+import { StackLayout } from '../components/DataStructures/Stack/StackLayout.ts'
 import type { Scene, StructureKind } from './Scene.ts'
 
 export type StructureGroupKind = 'linear' | 'trees' | 'graphs'
@@ -27,7 +29,7 @@ export interface StructureDefinition {
 
 export class StructureCatalog {
   public static readonly groups: readonly StructureGroupDefinition[] = [
-    { kind: 'linear', name: 'Linear', description: 'Arrays and linked lists', symbol: '[]' },
+    { kind: 'linear', name: 'Linear', description: 'Arrays, linked lists, and stacks', symbol: '[]' },
     { kind: 'trees', name: 'Trees', description: 'Binary search trees', symbol: '⋔' },
     { kind: 'graphs', name: 'Graphs', description: 'Vertices and edges', symbol: '◇' },
   ]
@@ -46,6 +48,13 @@ export class StructureCatalog {
       name: 'Array',
       description: 'A fixed number of consecutive indexed slots',
       symbol: '[]',
+    },
+    {
+      kind: 'stack',
+      group: 'linear',
+      name: 'Stack',
+      description: 'Last in, first out: push and pop at the top',
+      symbol: '≡',
     },
     {
       kind: 'binary-tree',
@@ -98,10 +107,12 @@ export class StructureCatalog {
     array: FixedArray = FixedArray.createDefault(),
     tree: BinaryTree = BinaryTree.createDefault(),
     graph: Graph = Graph.createDefault(),
+    stack: Stack = Stack.createDefault(),
   ): Scene {
     if (kind === 'linked-list')
       return new LinkedListLayout().create(list.getEntries())
     if (kind === 'array') return new ArrayLayout().create(array.getEntries())
+    if (kind === 'stack') return new StackLayout().create(stack.getEntries())
     if (kind === 'binary-tree')
       return new BinaryTreeLayout().create(tree.getEntries())
 

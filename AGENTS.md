@@ -3,9 +3,9 @@
 ## Purpose and stack
 
 Build an interactive data structures visualizer with TypeScript and React, using Vite.
-The app uses TypeScript and React class components. Linked list and array middle
-insertion and binary search tree insertion are animated actions; a graph preview
-is also available.
+The app uses TypeScript and React class components. Linked list, array, binary
+search tree, graph, and stack operations have animated actions. The menu groups
+structures under Linear, Trees, and Graphs within common operations.
 Use npm for dependency management.
 
 ## Required project rules
@@ -68,6 +68,8 @@ Create directories when needed, rather than adding empty scaffolding.
 - The Array feature models fully occupied fixed-size arrays. Insertion creates
   a separate array of exactly the original length plus one and preserves the
   original. Do not add spare capacity, in-place growth, or capacity doubling.
+- Stack uses linked nodes, a top pointer, and a cached count. Push and pop affect
+  only the top. Clear releases nodes one at a time; value search preserves order.
 - Prefer deterministic operation steps so future visualizations can support stepping,
   pausing, and resetting. Clean up timers, subscriptions, and animations in class
   lifecycle methods, including under StrictMode.

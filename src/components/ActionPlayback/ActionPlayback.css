@@ -73,6 +73,9 @@
   display: flex;
   gap: 12px;
 }
+.action-inputs-no-value {
+  margin-bottom: 22px;
+}
 .action-inputs label {
   flex: 1;
   display: flex;

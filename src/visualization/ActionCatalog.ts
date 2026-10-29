@@ -1,6 +1,6 @@
 import type { StructureKind } from './Scene.ts'
 
-export type ActionKind = 'insert-middle' | 'insert-start' | 'insert-end' | 'insert' | 'search-value' | 'search-index' | 'delete-value'
+export type ActionKind = 'insert-middle' | 'insert-start' | 'insert-end' | 'insert' | 'search-value' | 'search-index' | 'delete-value' | 'push' | 'pop' | 'peek' | 'clear'
 
 export interface ActionChoice {
   readonly kind: ActionKind
@@ -10,6 +10,15 @@ export interface ActionChoice {
 
 export class ActionCatalog {
   public static getActions(structure: StructureKind): readonly ActionChoice[] {
+    if (structure === 'stack') {
+      return [
+        { kind: 'push', title: 'Push', description: 'Place a new value on top of the stack.' },
+        { kind: 'pop', title: 'Pop', description: 'Remove and return the top value.' },
+        { kind: 'peek', title: 'Peek (top)', description: 'Read the top value without removing it.' },
+        { kind: 'clear', title: 'Clear', description: 'Remove every value from top to bottom.' },
+        { kind: 'search-value', title: 'Search by value', description: 'Find the first match from the top without changing the stack.' },
+      ]
+    }
     const actions: ActionChoice[] = []
     if (structure === 'linked-list' || structure === 'array') {
       actions.push(

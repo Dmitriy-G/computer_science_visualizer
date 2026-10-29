@@ -1,3 +1,14 @@
+import { Stack } from '../DataStructures/Stack/Stack.ts'
+import StackPush from '../DataStructures/Stack/Push/Push.tsx'
+import { PushAnimation as StackPushSequence } from '../DataStructures/Stack/Push/PushAnimation.ts'
+import StackPop from '../DataStructures/Stack/Pop/Pop.tsx'
+import { PopAnimation as StackPopSequence } from '../DataStructures/Stack/Pop/PopAnimation.ts'
+import StackPeek from '../DataStructures/Stack/Peek/Peek.tsx'
+import { PeekAnimation as StackPeekSequence } from '../DataStructures/Stack/Peek/PeekAnimation.ts'
+import StackClear from '../DataStructures/Stack/Clear/Clear.tsx'
+import { ClearAnimation as StackClearSequence } from '../DataStructures/Stack/Clear/ClearAnimation.ts'
+import StackSearchByValue from '../DataStructures/Stack/SearchByValue/SearchByValue.tsx'
+import { SearchAnimation as StackSearchByValueSequence } from '../DataStructures/Stack/SearchByValue/SearchAnimation.ts'
 import type { ReactNode } from 'react'
 import { ActionCatalog } from '../../visualization/ActionCatalog.ts'
 import type { ActionKind } from '../../visualization/ActionCatalog.ts'
@@ -66,6 +77,7 @@ export default class App extends Component<Record<string, never>, AppState> {
   private tree = BinaryTree.createDefault()
   private readonly menuButton = createRef<HTMLButtonElement>()
   private graph = Graph.createDefault()
+  private stack = Stack.createDefault()
   private activePanel: { pausePlayback(): void } | null = null
 
   private setActionPanel = (panel: { pausePlayback(): void } | null): void => {
@@ -120,6 +132,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.array = FixedArray.createDefault()
     this.tree = BinaryTree.createDefault()
     this.graph = Graph.createDefault()
+    this.stack = Stack.createDefault()
     this.setState({
       selected: kind,
       scene: StructureCatalog.createPreview(
@@ -128,6 +141,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         this.array,
         this.tree,
         this.graph,
+        this.stack,
       ),
       actionOpen: false,
       selectedAction: null,
@@ -150,6 +164,15 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private describeAction(action: ActionKind): AlgorithmInformation | null {
+    if (this.state.selected === 'stack') {
+      switch (action) {
+        case 'push': return StackPushSequence.describe(this.stack.length)
+        case 'pop': return StackPopSequence.describe(this.stack.length)
+        case 'peek': return StackPeekSequence.describe(this.stack.length)
+        case 'clear': return StackClearSequence.describe(this.stack.length)
+        case 'search-value': return StackSearchByValueSequence.describe(this.stack.length)
+      }
+    }
     if (this.state.selected === 'linked-list') {
       switch (action) {
         case 'insert-middle': return InsertionAnimation.describe(this.list.length)
@@ -188,6 +211,15 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private renderAction(): ReactNode {
     if (!this.state.actionOpen) return null
+    if (this.state.selected === 'stack') {
+      switch (this.state.selectedAction) {
+        case 'push': return <StackPush key={this.state.actionSession} ref={this.setActionPanel} model={this.stack} onSceneChange={this.updateStackScene} />
+        case 'pop': return <StackPop key={this.state.actionSession} ref={this.setActionPanel} model={this.stack} onSceneChange={this.updateStackScene} />
+        case 'peek': return <StackPeek key={this.state.actionSession} ref={this.setActionPanel} model={this.stack} onSceneChange={this.updateStackScene} />
+        case 'clear': return <StackClear key={this.state.actionSession} ref={this.setActionPanel} model={this.stack} onSceneChange={this.updateStackScene} />
+        case 'search-value': return <StackSearchByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.stack} onSceneChange={this.updateStackScene} />
+      }
+    }
     if (this.state.selected === 'linked-list') {
       switch (this.state.selectedAction) {
         case 'insert-middle': return <AddInTheMiddle key={this.state.actionSession} ref={this.setActionPanel} list={this.list} onSceneChange={this.updateScene} />
@@ -230,6 +262,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.array = FixedArray.createDefault()
     this.tree = BinaryTree.createDefault()
     this.graph = Graph.createDefault()
+    this.stack = Stack.createDefault()
     this.setState({
       scene: StructureCatalog.createPreview(
         this.state.selected,
@@ -237,6 +270,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         this.array,
         this.tree,
         this.graph,
+        this.stack,
       ),
       actionOpen: false,
       selectedAction: null,
@@ -262,6 +296,11 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private updateGraphScene = (scene: Scene, graph: Graph): void => {
     this.graph = graph
+    this.setState({ scene })
+  }
+
+  private updateStackScene = (scene: Scene, stack: Stack): void => {
+    this.stack = stack
     this.setState({ scene })
   }
 

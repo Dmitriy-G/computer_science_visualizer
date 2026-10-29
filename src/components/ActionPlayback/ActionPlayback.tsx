@@ -249,22 +249,24 @@ export default class ActionPlayback<TModel extends ActionModel<TModel>>
             <span className="eyebrow">{this.props.definition.context}</span>
             <h2>{this.props.definition.title}</h2>
             <p className="action-summary">{this.props.definition.summary}</p>
-            <div className="action-inputs">
-              <label htmlFor="insert-value">
-                {this.props.definition.inputLabel ?? 'New value'}
-                <input
-                  id="insert-value"
-                  type="number"
-                  min={this.props.definition.inputMinimum ?? -999}
-                  max={this.props.definition.inputMaximum ?? 999}
-                  step="1"
-                  value={this.state.value}
-                  onChange={this.changeValue}
-                  disabled={inputLocked}
-                  aria-invalid={Boolean(this.state.error)}
-                  aria-describedby="value-hint"
-                />
-              </label>
+            <div className={this.props.definition.acceptsValue === false ? 'action-inputs action-inputs-no-value' : 'action-inputs'}>
+              {this.props.definition.acceptsValue !== false && (
+                <label htmlFor="insert-value">
+                  {this.props.definition.inputLabel ?? 'New value'}
+                  <input
+                    id="insert-value"
+                    type="number"
+                    min={this.props.definition.inputMinimum ?? -999}
+                    max={this.props.definition.inputMaximum ?? 999}
+                    step="1"
+                    value={this.state.value}
+                    onChange={this.changeValue}
+                    disabled={inputLocked}
+                    aria-invalid={Boolean(this.state.error)}
+                    aria-describedby="value-hint"
+                  />
+                </label>
+              )}
               <label htmlFor="animation-speed">
                 Speed
                 <select
@@ -279,13 +281,15 @@ export default class ActionPlayback<TModel extends ActionModel<TModel>>
                 </select>
               </label>
             </div>
-            <p
-              id="value-hint"
-              className={`input-hint${this.state.error ? ' input-error' : ''}`}
-            >
-              {this.state.error ||
-                'Reset to the first step to change the input.'}
-            </p>
+            {this.props.definition.acceptsValue !== false && (
+              <p
+                id="value-hint"
+                className={`input-hint${this.state.error ? ' input-error' : ''}`}
+              >
+                {this.state.error ||
+                  'Reset to the first step to change the input.'}
+              </p>
+            )}
             <div className="playback-controls">
               <button
                 className="primary-button play-button"

@@ -6,7 +6,7 @@ object-oriented data structure and animation classes.
 ## Explore
 
 Open the menu in the top left and choose **Data structures common operations**.
-Choose **Linear** for Array and Linked list, **Trees** for Binary tree, or
+Choose **Linear** for Array, Linked list, and Stack, **Trees** for Binary tree, or
 **Graphs** for Graph, then choose the structure and an action. Each structure
 starts with 10 elements. Back navigation follows the same category path.
 
@@ -33,8 +33,16 @@ takes O(h) time, where h is the tree height, and O(1) additional algorithm memor
 The new node remains pending until the final step; rewind and replay preserve
 the original tree. Subsequent insertions use the completed result.
 
-Linked list, array, and binary tree insertion have animated actions. Graph has a
-preview. **Reset** restores the selected 10-element example.
+Choose **Linear → Stack** for a linked, last-in-first-out stack. Animate **Push**,
+**Pop**, **Peek (top)**, **Clear**, or **Search by value**. The example pushes 10
+through 100, so 100 starts at the top. Push, pop, and peek take O(1) time. Clear
+releases every node in O(n); search walks from the top with O(n) worst-case time.
+Empty pop and peek return no value, and search preserves the stack order. Only
+push and search need a value input. Each action supports the shared playback,
+rewind, and replay controls. Mutations commit only on the final frame.
+
+Linked list, array, tree, stack, and graph have animated actions.
+**Reset** restores the selected 10-element example.
 When an action is selected, its overview in the upper-right of the canvas explains
 time complexity, additional memory, and only the terms used by that action.
 

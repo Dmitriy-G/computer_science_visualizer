@@ -19,6 +19,7 @@ export interface ActionDefinition<TModel> {
   readonly initialValue?: number
   readonly inputMinimum?: number
   readonly inputMaximum?: number
+  readonly acceptsValue?: boolean
   create(model: TModel, value: number): ActionPlan<TModel>
 }
 

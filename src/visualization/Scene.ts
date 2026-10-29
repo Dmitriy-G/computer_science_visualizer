@@ -1,4 +1,4 @@
-export type StructureKind = 'linked-list' | 'array' | 'binary-tree' | 'graph'
+export type StructureKind = 'linked-list' | 'array' | 'binary-tree' | 'graph' | 'stack'
 export type NodeTone = 'default' | 'visited' | 'active' | 'new'
 
 export interface SceneNode {
@@ -10,6 +10,9 @@ export interface SceneNode {
   readonly tone: NodeTone
   readonly opacity: number
   readonly status?: string
+  readonly width?: number
+  readonly height?: number
+  readonly labelPlacement?: 'below' | 'right'
 }
 
 export interface SceneSlot {
