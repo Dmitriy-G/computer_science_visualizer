@@ -58,14 +58,14 @@ export class LinkedListLayout {
       nodes.push({
         id: pending.id,
         value: pending.value,
-        x: 88 + (middle - 0.5) * 112 + (frame.gap ? 56 : 0),
+        x: Math.max(88, 88 + (middle - 0.5) * 112 + (frame.gap ? 56 : 0)),
         y: frame.lowered ? 278 : 130,
         label: frame.complete ? `index ${middle}` : 'new node',
         tone: 'new',
         opacity: frame.showPending ? 1 : 0,
       })
 
-      edges.push({
+      if (entries[middle]) edges.push({
         id: `${pending.id}-next`,
         from: pending.id,
         to: entries[middle].id,
@@ -73,7 +73,7 @@ export class LinkedListLayout {
         highlighted: true,
         opacity: frame.connectNext ? 1 : 0,
       })
-      edges.push({
+      if (entries[middle - 1]) edges.push({
         id: `${pending.id}-previous`,
         from: entries[middle - 1].id,
         to: pending.id,

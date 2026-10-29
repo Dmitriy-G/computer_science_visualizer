@@ -59,6 +59,38 @@ export class LinkedList {
     return { id: node.id, value: node.value }
   }
 
+  public getAt(index: number): LinkedListEntry {
+    if (!Number.isInteger(index) || index < 0 || index >= this.size)
+      throw new RangeError('Index is outside the list')
+    let current = this.head!
+    for (let position = 0; position < index; position += 1) current = current.next!
+    return { id: current.id, value: current.value }
+  }
+
+  public findIndex(value: number): number {
+    if (!Number.isSafeInteger(value)) throw new TypeError('Values must be safe integers')
+    let current = this.head
+    let index = 0
+    while (current !== null) {
+      if (current.value === value) return index
+      current = current.next
+      index += 1
+    }
+    return -1
+  }
+
+  public deleteAt(index: number): LinkedListEntry {
+    const removed = this.getAt(index)
+    if (index === 0) this.head = this.head!.next
+    else {
+      let previous = this.head!
+      for (let position = 1; position < index; position += 1) previous = previous.next!
+      previous.next = previous.next!.next
+    }
+    this.size -= 1
+    return removed
+  }
+
   public getEntries(): LinkedListEntry[] {
     const entries: LinkedListEntry[] = []
     let current = this.head

@@ -4,7 +4,9 @@ import { FixedArray } from '../components/DataStructures/Array/FixedArray.ts'
 import { ArrayLayout } from '../components/DataStructures/Array/ArrayLayout.ts'
 import { BinaryTree } from '../components/DataStructures/BinaryTree/BinaryTree.ts'
 import { BinaryTreeLayout } from '../components/DataStructures/BinaryTree/BinaryTreeLayout.ts'
-import type { Scene, SceneEdge, SceneNode, StructureKind } from './Scene.ts'
+import { Graph } from '../components/DataStructures/Graph/Graph.ts'
+import { GraphLayout } from '../components/DataStructures/Graph/GraphLayout.ts'
+import type { Scene, StructureKind } from './Scene.ts'
 
 export interface StructureDefinition {
   readonly kind: StructureKind
@@ -53,6 +55,7 @@ export class StructureCatalog {
     list: LinkedList,
     array: FixedArray = FixedArray.createDefault(),
     tree: BinaryTree = BinaryTree.createDefault(),
+    graph: Graph = Graph.createDefault(),
   ): Scene {
     if (kind === 'linked-list')
       return new LinkedListLayout().create(list.getEntries())
@@ -60,58 +63,6 @@ export class StructureCatalog {
     if (kind === 'binary-tree')
       return new BinaryTreeLayout().create(tree.getEntries())
 
-    const nodes: SceneNode[] = []
-    const edges: SceneEdge[] = []
-    for (let index = 0; index < 10; index += 1) {
-      let x = 82 + index * 92
-      let y = 240
-      if (kind === 'graph') {
-        const angle = (index * Math.PI * 2) / 10 - Math.PI / 2
-        x = 500 + Math.cos(angle) * 340
-        y = 245 + Math.sin(angle) * 170
-      }
-      nodes.push({
-        id: `${kind}-${index}`,
-        value: (index + 1) * 10,
-        x,
-        y,
-        label: `node ${index + 1}`,
-        tone: 'default',
-        opacity: 1,
-      })
-
-      if (kind === 'graph') {
-        edges.push(this.createEdge(kind, index, (index + 1) % 10))
-      }
-    }
-    if (kind === 'graph') {
-      edges.push(this.createEdge(kind, 0, 4))
-      edges.push(this.createEdge(kind, 2, 7))
-      edges.push(this.createEdge(kind, 5, 9))
-    }
-    return {
-      kind,
-      nodes,
-      edges,
-      width: 1000,
-      height: 480,
-      focusId: null,
-      count: 10,
-    }
-  }
-
-  private static createEdge(
-    kind: StructureKind,
-    from: number,
-    to: number,
-  ): SceneEdge {
-    return {
-      id: `${kind}-edge-${from}-${to}`,
-      from: `${kind}-${from}`,
-      to: `${kind}-${to}`,
-      directed: false,
-      highlighted: false,
-      opacity: 1,
-    }
+    return new GraphLayout().create(graph.getEntries())
   }
 }

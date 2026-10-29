@@ -4,7 +4,8 @@
 
 Build an interactive data structures visualizer with TypeScript and React, using Vite.
 The app uses TypeScript and React class components. Linked list and array middle
-insertion are animated actions; binary tree and graph previews are also available.
+insertion and binary search tree insertion are animated actions; a graph preview
+is also available.
 Use npm for dependency management.
 
 ## Required project rules

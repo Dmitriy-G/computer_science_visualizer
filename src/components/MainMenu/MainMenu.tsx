@@ -2,6 +2,8 @@ import { Component, createRef } from 'react'
 import type { MouseEvent, SyntheticEvent, ReactNode } from 'react'
 import { StructureCatalog } from '../../visualization/StructureCatalog.ts'
 import type { StructureKind } from '../../visualization/Scene.ts'
+import { ActionCatalog } from '../../visualization/ActionCatalog.ts'
+import type { ActionKind } from '../../visualization/ActionCatalog.ts'
 import './MainMenu.css'
 
 interface MainMenuProps {
@@ -11,7 +13,7 @@ interface MainMenuProps {
   readonly onClose: () => void
   readonly onStructureSelected: (kind: StructureKind) => void
   readonly onShowStructures: () => void
-  readonly onActionSelected: () => void
+  readonly onActionSelected: (action: ActionKind) => void
 }
 
 export default class MainMenu extends Component<
@@ -88,6 +90,31 @@ export default class MainMenu extends Component<
     return buttons
   }
 
+  private handleAction = (event: MouseEvent<HTMLButtonElement>): void => {
+    if (!this.props.selected) return
+    for (const action of ActionCatalog.getActions(this.props.selected)) {
+      if (action.kind === event.currentTarget.dataset.action) {
+        this.props.onActionSelected(action.kind)
+        return
+      }
+    }
+  }
+
+  private renderActions(): ReactNode[] {
+    const buttons: ReactNode[] = []
+    if (!this.props.selected) return buttons
+    for (const action of ActionCatalog.getActions(this.props.selected)) {
+      buttons.push(
+        <button className="action-choice" key={action.kind} data-action={action.kind} onClick={this.handleAction}>
+          <strong>{action.title}</strong>
+          <span>{action.description}</span>
+          <small>Step-by-step animation <span aria-hidden="true">→</span></small>
+        </button>,
+      )
+    }
+    return buttons
+  }
+
   public render() {
     const actions =
       this.props.screen === 'actions' && this.props.selected !== null
@@ -133,45 +160,7 @@ export default class MainMenu extends Component<
                 <p className="menu-section-label">
                   {StructureCatalog.getName(this.props.selected!)}
                 </p>
-                {this.props.selected === 'linked-list' ||
-                this.props.selected === 'array' ||
-                this.props.selected === 'binary-tree' ? (
-                  <button
-                    className="action-choice"
-                    onClick={this.props.onActionSelected}
-                  >
-                    <span className="action-choice-tag">
-                      {this.props.selected === 'array'
-                        ? 'ALLOCATE · COPY'
-                        : this.props.selected === 'binary-tree'
-                          ? 'COMPARE · INSERTION'
-                          : 'POINTERS · INSERTION'}
-                    </span>
-                    <strong>
-                      {this.props.selected === 'binary-tree'
-                        ? 'Insert a value'
-                        : 'Insert in the middle'}
-                    </strong>
-                    <span>
-                      {this.props.selected === 'array'
-                        ? 'Allocate a new fixed array, copy the values, and insert.'
-                        : this.props.selected === 'binary-tree'
-                          ? 'Compare, follow left or right, and connect a new leaf. Equal values go right.'
-                          : 'Traverse, make space, insert, and reconnect.'}
-                    </span>
-                    <small>
-                      {this.props.selected === 'binary-tree' ? 6 : 7} phases ·
-                      detailed animation{' '}
-                      <span aria-hidden="true">→</span>
-                    </small>
-                  </button>
-                ) : (
-                  <p className="menu-notice">
-                    The 10-element preview is ready. Animated actions for this
-                    structure are not implemented yet. Choose Array, Linked
-                    list, or Binary tree to explore insertion.
-                  </p>
-                )}
+                {this.renderActions()}
               </>
             ) : (
               this.renderStructures()

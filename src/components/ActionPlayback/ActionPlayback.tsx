@@ -30,13 +30,14 @@ export default class ActionPlayback<TModel extends ActionModel<TModel>>
   constructor(props: ActionPlaybackProps<TModel>) {
     super(props)
     this.original = props.model.clone()
-    this.animation = props.definition.create(this.original, 99)
+    const initialValue = props.definition.initialValue ?? 99
+    this.animation = props.definition.create(this.original, initialValue)
     this.controller = new AnimationController(this.animation.steps, this)
     this.state = {
       panelOpen: false,
       index: 0,
       playing: false,
-      value: '99',
+      value: String(initialValue),
       error: '',
       speed: '1',
     }
@@ -111,13 +112,16 @@ export default class ActionPlayback<TModel extends ActionModel<TModel>>
   private changeValue = (event: ChangeEvent<HTMLInputElement>): void => {
     const value = event.currentTarget.value
     const parsed = Number(value)
+    const minimum = this.props.definition.inputMinimum ?? -999
+    const maximum = this.props.definition.inputMaximum ?? 999
     if (
       value.trim() === '' ||
       !Number.isInteger(parsed) ||
-      parsed < -999 ||
-      parsed > 999
+      parsed < minimum ||
+      parsed > maximum
     ) {
-      this.setState({ value, error: 'Enter a whole number from −999 to 999.' })
+      this.controller.pause()
+      this.setState({ value, error: `Enter a whole number from ${minimum} to ${maximum}.` })
       return
     }
     this.controller.dispose()
@@ -247,12 +251,12 @@ export default class ActionPlayback<TModel extends ActionModel<TModel>>
             <p className="action-summary">{this.props.definition.summary}</p>
             <div className="action-inputs">
               <label htmlFor="insert-value">
-                New value
+                {this.props.definition.inputLabel ?? 'New value'}
                 <input
                   id="insert-value"
                   type="number"
-                  min="-999"
-                  max="999"
+                  min={this.props.definition.inputMinimum ?? -999}
+                  max={this.props.definition.inputMaximum ?? 999}
                   step="1"
                   value={this.state.value}
                   onChange={this.changeValue}
@@ -280,7 +284,7 @@ export default class ActionPlayback<TModel extends ActionModel<TModel>>
               className={`input-hint${this.state.error ? ' input-error' : ''}`}
             >
               {this.state.error ||
-                'Reset to the first step to change the new value.'}
+                'Reset to the first step to change the input.'}
             </p>
             <div className="playback-controls">
               <button
@@ -327,7 +331,7 @@ export default class ActionPlayback<TModel extends ActionModel<TModel>>
           </div>
 
           <div className="action-explanation">
-            <ol className="animation-phases" aria-label="Insertion phases">
+            <ol className="animation-phases" aria-label="Action phases">
               {this.renderPhases()}
             </ol>
             <div className="step-heading">

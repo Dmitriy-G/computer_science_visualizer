@@ -15,6 +15,10 @@ export interface ActionDefinition<TModel> {
   readonly summary: string
   readonly phases: readonly string[]
   readonly timelineHint: string
+  readonly inputLabel?: string
+  readonly initialValue?: number
+  readonly inputMinimum?: number
+  readonly inputMaximum?: number
   create(model: TModel, value: number): ActionPlan<TModel>
 }
 

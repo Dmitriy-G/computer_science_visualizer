@@ -1,3 +1,35 @@
+import type { ReactNode } from 'react'
+import { ActionCatalog } from '../../visualization/ActionCatalog.ts'
+import type { ActionKind } from '../../visualization/ActionCatalog.ts'
+import { Graph } from '../DataStructures/Graph/Graph.ts'
+import GraphDeleteByValue from '../DataStructures/Graph/DeleteByValue/DeleteByValue.tsx'
+import { DeletionAnimation as GraphDeleteByValueSequence } from '../DataStructures/Graph/DeleteByValue/DeletionAnimation.ts'
+import GraphSearchByValue from '../DataStructures/Graph/SearchByValue/SearchByValue.tsx'
+import { SearchAnimation as GraphSearchByValueSequence } from '../DataStructures/Graph/SearchByValue/SearchAnimation.ts'
+import BinaryTreeDeleteByValue from '../DataStructures/BinaryTree/DeleteByValue/DeleteByValue.tsx'
+import { DeletionAnimation as BinaryTreeDeleteByValueSequence } from '../DataStructures/BinaryTree/DeleteByValue/DeletionAnimation.ts'
+import BinaryTreeSearchByValue from '../DataStructures/BinaryTree/SearchByValue/SearchByValue.tsx'
+import { SearchAnimation as BinaryTreeSearchByValueSequence } from '../DataStructures/BinaryTree/SearchByValue/SearchAnimation.ts'
+import ArrayDeleteByValue from '../DataStructures/Array/DeleteByValue/DeleteByValue.tsx'
+import { DeletionAnimation as ArrayDeleteByValueSequence } from '../DataStructures/Array/DeleteByValue/DeletionAnimation.ts'
+import ArraySearchByValue from '../DataStructures/Array/SearchByValue/SearchByValue.tsx'
+import { SearchAnimation as ArraySearchByValueSequence } from '../DataStructures/Array/SearchByValue/SearchAnimation.ts'
+import ArraySearchByIndex from '../DataStructures/Array/SearchByIndex/SearchByIndex.tsx'
+import { SearchAnimation as ArraySearchByIndexSequence } from '../DataStructures/Array/SearchByIndex/SearchAnimation.ts'
+import ArrayAddAtEnd from '../DataStructures/Array/AddAtEnd/AddAtEnd.tsx'
+import { InsertionAnimation as ArrayAddAtEndSequence } from '../DataStructures/Array/AddAtEnd/InsertionAnimation.ts'
+import ArrayAddAtStart from '../DataStructures/Array/AddAtStart/AddAtStart.tsx'
+import { InsertionAnimation as ArrayAddAtStartSequence } from '../DataStructures/Array/AddAtStart/InsertionAnimation.ts'
+import LinkedListDeleteByValue from '../DataStructures/LinkedList/DeleteByValue/DeleteByValue.tsx'
+import { DeletionAnimation as LinkedListDeleteByValueSequence } from '../DataStructures/LinkedList/DeleteByValue/DeletionAnimation.ts'
+import LinkedListSearchByValue from '../DataStructures/LinkedList/SearchByValue/SearchByValue.tsx'
+import { SearchAnimation as LinkedListSearchByValueSequence } from '../DataStructures/LinkedList/SearchByValue/SearchAnimation.ts'
+import LinkedListSearchByIndex from '../DataStructures/LinkedList/SearchByIndex/SearchByIndex.tsx'
+import { SearchAnimation as LinkedListSearchByIndexSequence } from '../DataStructures/LinkedList/SearchByIndex/SearchAnimation.ts'
+import LinkedListAddAtEnd from '../DataStructures/LinkedList/AddAtEnd/AddAtEnd.tsx'
+import { InsertionAnimation as LinkedListAddAtEndSequence } from '../DataStructures/LinkedList/AddAtEnd/InsertionAnimation.ts'
+import LinkedListAddAtStart from '../DataStructures/LinkedList/AddAtStart/AddAtStart.tsx'
+import { InsertionAnimation as LinkedListAddAtStartSequence } from '../DataStructures/LinkedList/AddAtStart/InsertionAnimation.ts'
 import { Component, createRef } from 'react'
 import MainMenu from '../MainMenu/MainMenu.tsx'
 import Renderer from '../Renderer/Renderer.tsx'
@@ -21,6 +53,7 @@ interface AppState {
   readonly menuScreen: 'structures' | 'actions'
   readonly scene: Scene | null
   readonly actionOpen: boolean
+  readonly selectedAction: ActionKind | null
   readonly actionSession: number
   readonly algorithmInformation: AlgorithmInformation | null
 }
@@ -30,9 +63,12 @@ export default class App extends Component<Record<string, never>, AppState> {
   private array = FixedArray.createDefault()
   private tree = BinaryTree.createDefault()
   private readonly menuButton = createRef<HTMLButtonElement>()
-  private readonly actionPanel = createRef<AddInTheMiddle>()
-  private readonly arrayActionPanel = createRef<ArrayAddInTheMiddle>()
-  private readonly treeActionPanel = createRef<TreeInsert>()
+  private graph = Graph.createDefault()
+  private activePanel: { pausePlayback(): void } | null = null
+
+  private setActionPanel = (panel: { pausePlayback(): void } | null): void => {
+    this.activePanel = panel
+  }
 
   constructor(props: Record<string, never>) {
     super(props)
@@ -42,15 +78,14 @@ export default class App extends Component<Record<string, never>, AppState> {
       menuScreen: 'structures',
       scene: null,
       actionOpen: false,
+      selectedAction: null,
       actionSession: 0,
       algorithmInformation: null,
     }
   }
 
   private openMenu = (): void => {
-    this.actionPanel.current?.pausePlayback()
-    this.arrayActionPanel.current?.pausePlayback()
-    this.treeActionPanel.current?.pausePlayback()
+    this.activePanel?.pausePlayback()
     this.setState({
       menuOpen: true,
       menuScreen: this.state.selected ? 'actions' : 'structures',
@@ -73,6 +108,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.list = LinkedList.createDefault()
     this.array = FixedArray.createDefault()
     this.tree = BinaryTree.createDefault()
+    this.graph = Graph.createDefault()
     this.setState({
       selected: kind,
       scene: StructureCatalog.createPreview(
@@ -80,32 +116,101 @@ export default class App extends Component<Record<string, never>, AppState> {
         this.list,
         this.array,
         this.tree,
+        this.graph,
       ),
       actionOpen: false,
+      selectedAction: null,
       menuScreen: 'actions',
       algorithmInformation: null,
       actionSession: this.state.actionSession + 1,
     })
   }
 
-  private selectAction = (): void => {
-    if (
-      this.state.selected !== 'array' &&
-      this.state.selected !== 'linked-list' &&
-      this.state.selected !== 'binary-tree'
-    )
-      return
+  private selectAction = (action: ActionKind): void => {
+    if (!this.state.selected) return
+    if (!ActionCatalog.getActions(this.state.selected).some((choice) => choice.kind === action)) return
     this.setState({
       actionOpen: true,
+      selectedAction: action,
       menuOpen: false,
-      algorithmInformation:
-        this.state.selected === 'array'
-          ? ArrayInsertionAnimation.describe(this.array.length)
-          : this.state.selected === 'binary-tree'
-            ? TreeInsertionAnimation.describe(this.tree.length)
-            : InsertionAnimation.describe(this.list.length),
+      algorithmInformation: this.describeAction(action),
       actionSession: this.state.actionSession + 1,
     })
+  }
+
+  private describeAction(action: ActionKind): AlgorithmInformation | null {
+    if (this.state.selected === 'linked-list') {
+      switch (action) {
+        case 'insert-middle': return InsertionAnimation.describe(this.list.length)
+        case 'insert-start': return LinkedListAddAtStartSequence.describe(this.list.length)
+        case 'insert-end': return LinkedListAddAtEndSequence.describe(this.list.length)
+        case 'search-index': return LinkedListSearchByIndexSequence.describe(this.list.length)
+        case 'search-value': return LinkedListSearchByValueSequence.describe(this.list.length)
+        case 'delete-value': return LinkedListDeleteByValueSequence.describe(this.list.length)
+      }
+    }
+    if (this.state.selected === 'array') {
+      switch (action) {
+        case 'insert-middle': return ArrayInsertionAnimation.describe(this.array.length)
+        case 'insert-start': return ArrayAddAtStartSequence.describe(this.array.length)
+        case 'insert-end': return ArrayAddAtEndSequence.describe(this.array.length)
+        case 'search-index': return ArraySearchByIndexSequence.describe(this.array.length)
+        case 'search-value': return ArraySearchByValueSequence.describe(this.array.length)
+        case 'delete-value': return ArrayDeleteByValueSequence.describe(this.array.length)
+      }
+    }
+    if (this.state.selected === 'binary-tree') {
+      switch (action) {
+        case 'insert': return TreeInsertionAnimation.describe(this.tree.length)
+        case 'search-value': return BinaryTreeSearchByValueSequence.describe(this.tree.length)
+        case 'delete-value': return BinaryTreeDeleteByValueSequence.describe(this.tree.length)
+      }
+    }
+    if (this.state.selected === 'graph') {
+      switch (action) {
+        case 'search-value': return GraphSearchByValueSequence.describe(this.graph.length)
+        case 'delete-value': return GraphDeleteByValueSequence.describe(this.graph.length)
+      }
+    }
+    return null
+  }
+
+  private renderAction(): ReactNode {
+    if (!this.state.actionOpen) return null
+    if (this.state.selected === 'linked-list') {
+      switch (this.state.selectedAction) {
+        case 'insert-middle': return <AddInTheMiddle key={this.state.actionSession} ref={this.setActionPanel} list={this.list} onSceneChange={this.updateScene} />
+        case 'insert-start': return <LinkedListAddAtStart key={this.state.actionSession} ref={this.setActionPanel} model={this.list} onSceneChange={this.updateScene} />
+        case 'insert-end': return <LinkedListAddAtEnd key={this.state.actionSession} ref={this.setActionPanel} model={this.list} onSceneChange={this.updateScene} />
+        case 'search-index': return <LinkedListSearchByIndex key={this.state.actionSession} ref={this.setActionPanel} model={this.list} onSceneChange={this.updateScene} />
+        case 'search-value': return <LinkedListSearchByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.list} onSceneChange={this.updateScene} />
+        case 'delete-value': return <LinkedListDeleteByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.list} onSceneChange={this.updateScene} />
+      }
+    }
+    if (this.state.selected === 'array') {
+      switch (this.state.selectedAction) {
+        case 'insert-middle': return <ArrayAddInTheMiddle key={this.state.actionSession} ref={this.setActionPanel} array={this.array} onSceneChange={this.updateArrayScene} />
+        case 'insert-start': return <ArrayAddAtStart key={this.state.actionSession} ref={this.setActionPanel} model={this.array} onSceneChange={this.updateArrayScene} />
+        case 'insert-end': return <ArrayAddAtEnd key={this.state.actionSession} ref={this.setActionPanel} model={this.array} onSceneChange={this.updateArrayScene} />
+        case 'search-index': return <ArraySearchByIndex key={this.state.actionSession} ref={this.setActionPanel} model={this.array} onSceneChange={this.updateArrayScene} />
+        case 'search-value': return <ArraySearchByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.array} onSceneChange={this.updateArrayScene} />
+        case 'delete-value': return <ArrayDeleteByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.array} onSceneChange={this.updateArrayScene} />
+      }
+    }
+    if (this.state.selected === 'binary-tree') {
+      switch (this.state.selectedAction) {
+        case 'insert': return <TreeInsert key={this.state.actionSession} ref={this.setActionPanel} tree={this.tree} onSceneChange={this.updateTreeScene} />
+        case 'search-value': return <BinaryTreeSearchByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.tree} onSceneChange={this.updateTreeScene} />
+        case 'delete-value': return <BinaryTreeDeleteByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.tree} onSceneChange={this.updateTreeScene} />
+      }
+    }
+    if (this.state.selected === 'graph') {
+      switch (this.state.selectedAction) {
+        case 'search-value': return <GraphSearchByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.graph} onSceneChange={this.updateGraphScene} />
+        case 'delete-value': return <GraphDeleteByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.graph} onSceneChange={this.updateGraphScene} />
+      }
+    }
+    return null
   }
 
   private resetStructure = (): void => {
@@ -113,14 +218,17 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.list = LinkedList.createDefault()
     this.array = FixedArray.createDefault()
     this.tree = BinaryTree.createDefault()
+    this.graph = Graph.createDefault()
     this.setState({
       scene: StructureCatalog.createPreview(
         this.state.selected,
         this.list,
         this.array,
         this.tree,
+        this.graph,
       ),
       actionOpen: false,
+      selectedAction: null,
       actionSession: this.state.actionSession + 1,
       algorithmInformation: null,
     })
@@ -138,6 +246,11 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private updateTreeScene = (scene: Scene, tree: BinaryTree): void => {
     this.tree = tree
+    this.setState({ scene })
+  }
+
+  private updateGraphScene = (scene: Scene, graph: Graph): void => {
+    this.graph = graph
     this.setState({ scene })
   }
 
@@ -227,30 +340,7 @@ export default class App extends Component<Record<string, never>, AppState> {
             algorithmInformation={this.state.algorithmInformation}
             onOpenMenu={this.openMenu}
           />
-          {this.state.actionOpen && selected === 'linked-list' && (
-            <AddInTheMiddle
-              key={this.state.actionSession}
-              ref={this.actionPanel}
-              list={this.list}
-              onSceneChange={this.updateScene}
-            />
-          )}
-          {this.state.actionOpen && selected === 'array' && (
-            <ArrayAddInTheMiddle
-              key={this.state.actionSession}
-              ref={this.arrayActionPanel}
-              array={this.array}
-              onSceneChange={this.updateArrayScene}
-            />
-          )}
-          {this.state.actionOpen && selected === 'binary-tree' && (
-            <TreeInsert
-              key={this.state.actionSession}
-              ref={this.treeActionPanel}
-              tree={this.tree}
-              onSceneChange={this.updateTreeScene}
-            />
-          )}
+          {this.renderAction()}
           {selected && !this.state.actionOpen && (
             <section className="workspace-hint" aria-label="Next step">
               <div>
@@ -258,18 +348,10 @@ export default class App extends Component<Record<string, never>, AppState> {
                 <h1>{StructureCatalog.getName(selected)}</h1>
               </div>
               <p>
-                {selected === 'linked-list'
-                  ? 'Choose an action to watch every pointer change, one step at a time.'
-                  : selected === 'array'
-                    ? 'Choose an action to build a new fixed array, one copy at a time.'
-                    : selected === 'binary-tree'
-                      ? 'Compare values from the root and connect a new leaf in the binary search tree.'
-                      : 'Explore the 10-element preview. Animated actions for this structure are coming next.'}
+                Choose an action to explore insertion, search, and deletion step by step.
               </p>
               <button className="primary-button" onClick={this.openMenu}>
-                {selected !== 'graph'
-                  ? 'Choose an action'
-                  : 'Open menu'}{' '}
+                Choose an action{' '}
                 <span aria-hidden="true">↗</span>
               </button>
             </section>

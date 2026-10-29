@@ -1,4 +1,5 @@
 import { LinkedList } from '../LinkedList.ts'
+import { BoundaryInsertionAnimation } from '../BoundaryInsertionAnimation.ts'
 import { LinkedListLayout } from '../LinkedListLayout.ts'
 import type { LinkedListFrame } from '../LinkedListLayout.ts'
 import type { AnimationStep } from '../../../../visualization/Scene.ts'
@@ -48,8 +49,13 @@ export class InsertionAnimation {
   }
 
   constructor(list: LinkedList, value: number) {
-    if (list.length < 2)
-      throw new RangeError('Middle insertion needs at least two existing nodes')
+    if (list.length < 2) {
+      const animation = new BoundaryInsertionAnimation(list, value, false)
+      this.insertionIndex = 0
+      this.result = animation.result
+      this.steps = animation.steps
+      return
+    }
     this.insertionIndex = Math.floor(list.length / 2)
     this.result = list.clone()
     const pending = this.result.insertAt(this.insertionIndex, value)

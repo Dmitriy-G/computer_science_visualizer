@@ -42,8 +42,8 @@ export class InsertionAnimation {
     }
   }
 
-  constructor(array: FixedArray, value: number) {
-    this.insertionIndex = Math.floor(array.length / 2)
+  constructor(array: FixedArray, value: number, index = Math.floor(array.length / 2)) {
+    this.insertionIndex = index
     this.result = array.withInsertedAt(this.insertionIndex, value)
     const pending = this.result.getEntries()[this.insertionIndex]
     const entries = array.getEntries()
@@ -55,11 +55,11 @@ export class InsertionAnimation {
       phase: 1,
       title: 'Locate the insertion index',
       description: `The original array has exactly ${array.length} slots. Insert at index ${this.insertionIndex}. Its fixed length cannot change, so insertion will produce a separate array.`,
-      code: `middle = floor(${array.length} / 2)  // ${this.insertionIndex}`,
+      code: `insertionIndex = ${this.insertionIndex}`,
       duration: 1800,
       scene: layout.create(entries, {
         ...base,
-        activeSource: entries.length > 0 ? this.insertionIndex : undefined,
+        activeSource: this.insertionIndex < entries.length ? this.insertionIndex : undefined,
       }),
     })
     const allocated: ArrayFrame = { ...base, allocated: true }
@@ -106,7 +106,7 @@ export class InsertionAnimation {
     }
     steps.push({
       phase: 4,
-      title: 'Prepare the value above the new middle slot',
+      title: 'Prepare the value above the new slot',
       description: `The prefix has been copied. The new value ${value} appears above index ${this.insertionIndex} of the new array.`,
       code: `valueToInsert = ${value}`,
       duration: 1500,

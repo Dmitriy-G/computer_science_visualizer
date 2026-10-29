@@ -73,6 +73,50 @@ export class BinaryTree {
     return node.toEntry()
   }
 
+  public getSearchPath(value: number): BinaryTreeEntry[] {
+    if (!Number.isSafeInteger(value)) throw new TypeError('Values must be safe integers')
+    const path: BinaryTreeEntry[] = []
+    let current = this.root
+    while (current !== null) {
+      path.push(current.toEntry())
+      if (value === current.value) break
+      current = value < current.value ? current.left : current.right
+    }
+    return path
+  }
+
+  public deleteValue(value: number): BinaryTreeEntry | null {
+    if (!Number.isSafeInteger(value)) throw new TypeError('Values must be safe integers')
+    let parent: BinaryTreeNode | null = null
+    let current = this.root
+    while (current !== null && current.value !== value) {
+      parent = current
+      current = value < current.value ? current.left : current.right
+    }
+    if (current === null) return null
+    const removed = current.toEntry()
+    let replacement = current.left ?? current.right
+    if (current.left !== null && current.right !== null) {
+      let successorParent = current
+      let successor = current.right
+      while (successor.left !== null) {
+        successorParent = successor
+        successor = successor.left
+      }
+      if (successorParent !== current) {
+        successorParent.left = successor.right
+        successor.right = current.right
+      }
+      successor.left = current.left
+      replacement = successor
+    }
+    if (parent === null) this.root = replacement
+    else if (parent.left === current) parent.left = replacement
+    else parent.right = replacement
+    this.size -= 1
+    return removed
+  }
+
   public getEntries(): BinaryTreeEntry[] {
     const entries: BinaryTreeEntry[] = []
     const stack: BinaryTreeNode[] = []

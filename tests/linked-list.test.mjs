@@ -136,13 +136,13 @@ test('visual sequence creates, unlinks, opens space, lowers, and reconnects in o
   }
 })
 
-test('odd-length lists use floor(length / 2), and short-list input is explicit', () => {
+test('odd-length lists use floor(length / 2), and empty lists can receive a middle insertion', () => {
   const list = LinkedList.createDefault()
   list.insertAt(list.length, 110)
   const animation = new InsertionAnimation(list, 0)
   assert.equal(animation.insertionIndex, 5)
   assert.equal(animation.result.getEntries()[5].value, 0)
-  assert.throws(() => new InsertionAnimation(new LinkedList(), 99), RangeError)
+  assert.deepEqual(ListAssertions.values(new InsertionAnimation(new LinkedList(), 99).result), [99])
 })
 
 test('middle insertion metadata accounts for traversal in every case', () => {
