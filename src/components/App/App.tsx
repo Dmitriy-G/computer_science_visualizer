@@ -32,6 +32,8 @@ import LinkedListAddAtStart from '../DataStructures/LinkedList/AddAtStart/AddAtS
 import { InsertionAnimation as LinkedListAddAtStartSequence } from '../DataStructures/LinkedList/AddAtStart/InsertionAnimation.ts'
 import { Component, createRef } from 'react'
 import MainMenu from '../MainMenu/MainMenu.tsx'
+import { MenuNavigation } from '../MainMenu/MenuNavigation.ts'
+import type { StructureGroupKind } from '../../visualization/StructureCatalog.ts'
 import Renderer from '../Renderer/Renderer.tsx'
 import AddInTheMiddle from '../DataStructures/LinkedList/AddInTheMiddle/AddInTheMiddle.tsx'
 import { InsertionAnimation } from '../DataStructures/LinkedList/AddInTheMiddle/InsertionAnimation.ts'
@@ -50,7 +52,7 @@ import './App.css'
 interface AppState {
   readonly selected: StructureKind | null
   readonly menuOpen: boolean
-  readonly menuScreen: 'structures' | 'actions'
+  readonly menu: MenuNavigation
   readonly scene: Scene | null
   readonly actionOpen: boolean
   readonly selectedAction: ActionKind | null
@@ -75,7 +77,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.state = {
       selected: null,
       menuOpen: false,
-      menuScreen: 'structures',
+      menu: new MenuNavigation(),
       scene: null,
       actionOpen: false,
       selectedAction: null,
@@ -88,7 +90,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.activePanel?.pausePlayback()
     this.setState({
       menuOpen: true,
-      menuScreen: this.state.selected ? 'actions' : 'structures',
+      menu: this.state.selected ? MenuNavigation.forStructure(this.state.selected) : new MenuNavigation(),
     })
   }
 
@@ -100,11 +102,20 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.menuButton.current?.focus()
   }
 
-  private showStructures = (): void => {
-    this.setState({ menuScreen: 'structures' })
+  private selectCategory = (): void => {
+    this.setState({ menu: this.state.menu.selectCategory() })
+  }
+
+  private selectGroup = (group: StructureGroupKind): void => {
+    this.setState({ menu: this.state.menu.selectGroup(group) })
+  }
+
+  private backInMenu = (): void => {
+    this.setState({ menu: this.state.menu.back() })
   }
 
   private selectStructure = (kind: StructureKind): void => {
+    const menu = this.state.menu.selectStructure(kind)
     this.list = LinkedList.createDefault()
     this.array = FixedArray.createDefault()
     this.tree = BinaryTree.createDefault()
@@ -120,7 +131,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       ),
       actionOpen: false,
       selectedAction: null,
-      menuScreen: 'actions',
+      menu,
       algorithmInformation: null,
       actionSession: this.state.actionSession + 1,
     })
@@ -326,11 +337,13 @@ export default class App extends Component<Record<string, never>, AppState> {
 
         <MainMenu
           open={this.state.menuOpen}
-          screen={this.state.menuScreen}
+          navigation={this.state.menu}
           selected={selected}
           onClose={this.closeMenu}
           onStructureSelected={this.selectStructure}
-          onShowStructures={this.showStructures}
+          onCategorySelected={this.selectCategory}
+          onGroupSelected={this.selectGroup}
+          onBack={this.backInMenu}
           onActionSelected={this.selectAction}
         />
 

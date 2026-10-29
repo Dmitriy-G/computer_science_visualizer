@@ -5,8 +5,10 @@ object-oriented data structure and animation classes.
 
 ## Explore
 
-Open the menu in the top left and choose a data structure. Linked list, array,
-binary tree, and graph previews each start with 10 elements.
+Open the menu in the top left and choose **Data structures common operations**.
+Choose **Linear** for Array and Linked list, **Trees** for Binary tree, or
+**Graphs** for Graph, then choose the structure and an action. Each structure
+starts with 10 elements. Back navigation follows the same category path.
 
 Choose **Linked list → Insert in the middle** to watch traversal, node creation,
 unlinking, opening space, insertion, and both new pointer connections. Playback

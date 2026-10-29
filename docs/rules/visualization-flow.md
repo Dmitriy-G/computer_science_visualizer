@@ -3,12 +3,19 @@
 ## Main flow
 
 1. Start with an empty renderer and a clickable menu icon in the top left.
-2. Open the menu to see the available data structures.
+2. Open the menu to see categories. The initial category is **Data structures
+   common operations**. Selecting it shows **Linear** (Array and Linked list),
+   **Trees** (Binary tree), and **Graphs** (Graph). Choose a group to see only
+   its structures. Provide a path and Back navigation through these levels.
 3. Selecting a structure loads an example containing 10 elements in the shared
    renderer. Lists, trees, graphs, and other structures can use different layouts.
 4. After selection, show an action menu for that structure.
 5. Selecting an implemented action starts its detailed animation. Honor
    reduced-motion preferences by waiting for the user to press Play instead.
+
+Browsing categories or groups must preserve the current visualization and action
+session. Opening the menu pauses playback. If a structure is already selected,
+reopen its action list and retain the group path for Back navigation.
 
 Open the detailed animation controls and explanation by default when an action
 is selected. The **Animation controls** disclosure button toggles the panel;
