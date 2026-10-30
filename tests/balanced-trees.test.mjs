@@ -9,26 +9,32 @@ import { RedBlackTreeLayout } from '../src/components/DataStructures/Trees/RedBl
 import { BTreeLayout } from '../src/components/DataStructures/Trees/BTree/BTreeLayout.ts'
 import { BPlusTreeLayout } from '../src/components/DataStructures/Trees/BPlusTree/BPlusTreeLayout.ts'
 import { InsertionAnimation as AVLInsert } from '../src/components/DataStructures/Trees/AVLTree/Insert/InsertionAnimation.ts'
-import { SearchAnimation as AVLSearch } from '../src/components/DataStructures/Trees/AVLTree/SearchByValue/SearchAnimation.ts'
-import { DeletionAnimation as AVLDelete } from '../src/components/DataStructures/Trees/AVLTree/DeleteByValue/DeletionAnimation.ts'
+import { SearchAnimation as AVLSearch } from '../src/components/DataStructures/Trees/AVLTree/SearchByKey/SearchAnimation.ts'
+import { DeletionAnimation as AVLDelete } from '../src/components/DataStructures/Trees/AVLTree/DeleteByKey/DeletionAnimation.ts'
 import { ClearAnimation as AVLClear } from '../src/components/DataStructures/Trees/AVLTree/Clear/ClearAnimation.ts'
 import { InsertionAnimation as RBInsert } from '../src/components/DataStructures/Trees/RedBlackTree/Insert/InsertionAnimation.ts'
-import { SearchAnimation as RBSearch } from '../src/components/DataStructures/Trees/RedBlackTree/SearchByValue/SearchAnimation.ts'
-import { DeletionAnimation as RBDelete } from '../src/components/DataStructures/Trees/RedBlackTree/DeleteByValue/DeletionAnimation.ts'
+import { SearchAnimation as RBSearch } from '../src/components/DataStructures/Trees/RedBlackTree/SearchByKey/SearchAnimation.ts'
+import { DeletionAnimation as RBDelete } from '../src/components/DataStructures/Trees/RedBlackTree/DeleteByKey/DeletionAnimation.ts'
 import { ClearAnimation as RBClear } from '../src/components/DataStructures/Trees/RedBlackTree/Clear/ClearAnimation.ts'
 import { InsertionAnimation as BInsert } from '../src/components/DataStructures/Trees/BTree/Insert/InsertionAnimation.ts'
-import { SearchAnimation as BSearch } from '../src/components/DataStructures/Trees/BTree/SearchByValue/SearchAnimation.ts'
-import { DeletionAnimation as BDelete } from '../src/components/DataStructures/Trees/BTree/DeleteByValue/DeletionAnimation.ts'
+import { SearchAnimation as BSearch } from '../src/components/DataStructures/Trees/BTree/SearchByKey/SearchAnimation.ts'
+import { DeletionAnimation as BDelete } from '../src/components/DataStructures/Trees/BTree/DeleteByKey/DeletionAnimation.ts'
 import { ClearAnimation as BClear } from '../src/components/DataStructures/Trees/BTree/Clear/ClearAnimation.ts'
 import { InsertionAnimation as PlusInsert } from '../src/components/DataStructures/Trees/BPlusTree/Insert/InsertionAnimation.ts'
-import { SearchAnimation as PlusSearch } from '../src/components/DataStructures/Trees/BPlusTree/SearchByValue/SearchAnimation.ts'
-import { DeletionAnimation as PlusDelete } from '../src/components/DataStructures/Trees/BPlusTree/DeleteByValue/DeletionAnimation.ts'
+import { SearchAnimation as PlusSearch } from '../src/components/DataStructures/Trees/BPlusTree/SearchByKey/SearchAnimation.ts'
+import { DeletionAnimation as PlusDelete } from '../src/components/DataStructures/Trees/BPlusTree/DeleteByKey/DeletionAnimation.ts'
 import { ClearAnimation as PlusClear } from '../src/components/DataStructures/Trees/BPlusTree/Clear/ClearAnimation.ts'
-import { RangeAnimation } from '../src/components/DataStructures/Trees/BPlusTree/RangeFromValue/RangeAnimation.ts'
+import { RangeAnimation } from '../src/components/DataStructures/Trees/BPlusTree/RangeFromKey/RangeAnimation.ts'
 import { StructureCatalog } from '../src/visualization/StructureCatalog.ts'
 import { ActionCatalog } from '../src/visualization/ActionCatalog.ts'
 import { AnimationController } from '../src/visualization/AnimationController.ts'
 import { LinkedList } from '../src/components/DataStructures/Linear/LinkedList/LinkedList.ts'
+import { BinaryTree } from '../src/components/DataStructures/Trees/BinaryTree/BinaryTree.ts'
+import { InsertionAnimation as BSTInsert } from '../src/components/DataStructures/Trees/BinaryTree/Insert/InsertionAnimation.ts'
+import { SearchAnimation as BSTSearch } from '../src/components/DataStructures/Trees/BinaryTree/SearchByKey/SearchAnimation.ts'
+import { DeletionAnimation as BSTDelete } from '../src/components/DataStructures/Trees/BinaryTree/DeleteByKey/DeletionAnimation.ts'
+import { ClearAnimation as BSTClear } from '../src/components/DataStructures/Trees/BinaryTree/Clear/ClearAnimation.ts'
+import { ActionInputRequest } from '../src/visualization/ActionInputRequest.ts'
 
 const features = [
   [AVLTree, 'avl-tree', AVLTreeLayout, [AVLInsert, AVLSearch, AVLDelete, AVLClear]],
@@ -38,6 +44,25 @@ const features = [
 ]
 
 class TreeAssertions {
+  static applyDialogAction(Animation, source, kind, action, value, expected) {
+    const request = ActionInputRequest.create(kind, action, source.length)
+    assert.ok(request)
+    assert.equal(request.validate(String(value)), null)
+    const before = source.getEntries()
+    const plan = new Animation(source, Number(String(value)))
+    assert.deepEqual(source.getEntries(), before, `${kind}: preparing an action must preserve the committed tree`)
+    TreeAssertions.invariants(source)
+    TreeAssertions.invariants(plan.result)
+    assert.deepEqual(TreeAssertions.keys(plan.result), [...expected].sort((a, b) => a - b), `${kind}/${action}/${value}`)
+    assert.equal(plan.steps.at(-1).scene.count, expected.size)
+    for (const step of plan.steps.slice(0, -1)) assert.equal(step.scene.count, source.length)
+    const present = TreeAssertions.keys(source).includes(value)
+    if (action === 'search-value' || (action === 'insert' && present) || (action === 'delete-value' && !present)) {
+      assert.deepEqual(plan.result.getEntries(), before, `${kind}: search, duplicate insertion, and missing deletion preserve tree shape`)
+    }
+    return plan.result
+  }
+
   static create(Model, values) {
     const tree = new Model()
     for (const value of values) tree.insert(value)
@@ -150,6 +175,53 @@ class TreeAssertions {
   }
 }
 
+test('dialog-driven action chains preserve each tree type after every committed result', () => {
+  const treeActions = [
+    [BinaryTree, 'binary-tree', [BSTInsert, BSTSearch, BSTDelete, BSTClear]],
+    ...features.map(([Model, kind, , actions]) => [Model, kind, actions]),
+  ]
+  const values = [30, 20, 10, 40, 50, 25, 35, 45, 5, 15, 55, 60, 65, 70, -10, 0, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER]
+  const removals = [30, 5, 40, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, 60, 20, 70, 10, 25, 35, 45, 15, 55, 65, 50, -10, 0]
+  for (const [Model, kind, [Insert, Search, Delete, Clear]] of treeActions) {
+    let tree = new Model()
+    const expected = new Set()
+    for (const value of values) {
+      expected.add(value)
+      tree = TreeAssertions.applyDialogAction(Insert, tree, kind, 'insert', value, expected)
+    }
+    for (const value of [25, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER]) {
+      tree = TreeAssertions.applyDialogAction(Insert, tree, kind, 'insert', value, expected)
+    }
+    for (const value of [25, Number.MIN_SAFE_INTEGER, 123456]) {
+      tree = TreeAssertions.applyDialogAction(Search, tree, kind, 'search-value', value, expected)
+    }
+    tree = TreeAssertions.applyDialogAction(Delete, tree, kind, 'delete-value', 123456, expected)
+    for (const value of removals) {
+      expected.delete(value)
+      tree = TreeAssertions.applyDialogAction(Delete, tree, kind, 'delete-value', value, expected)
+    }
+    assert.equal(tree.length, 0)
+    tree = TreeAssertions.applyDialogAction(Delete, tree, kind, 'delete-value', 42, expected)
+    tree = TreeAssertions.applyDialogAction(Search, tree, kind, 'search-value', 42, expected)
+    for (const value of [17, 3, 21, 8, 5, 34, 1]) {
+      expected.add(value)
+      tree = TreeAssertions.applyDialogAction(Insert, tree, kind, 'insert', value, expected)
+    }
+    const beforeClear = tree.getEntries()
+    const clear = new Clear(tree)
+    assert.deepEqual(tree.getEntries(), beforeClear)
+    TreeAssertions.invariants(clear.result)
+    assert.equal(clear.result.length, 0)
+    assert.equal(clear.steps.at(-1).scene.count, 0)
+    for (const step of clear.steps.slice(0, -1)) assert.equal(step.scene.count, tree.length)
+    expected.clear()
+    expected.add(42)
+    tree = TreeAssertions.applyDialogAction(Insert, clear.result, kind, 'insert', 42, expected)
+    const oldIds = new Set(beforeClear.map((entry) => entry.id))
+    for (const entry of tree.getEntries()) assert.ok(!oldIds.has(entry.id), 'Insertion after clear must use fresh IDs')
+  }
+})
+
 test('AVL insertion handles LL, RR, LR, and RL with explicit single/double rotation traces', () => {
   for (const values of [[30, 20, 10], [10, 20, 30], [30, 10, 20], [10, 30, 20]]) {
     const tree = TreeAssertions.create(AVLTree, values.slice(0, 2))
@@ -247,6 +319,30 @@ test('B+ range scans return only leaf records, cross next links, and update sepa
   assert.deepEqual(plan.values, TreeAssertions.keys(tree).filter((value) => value >= 150))
   assert.ok(plan.steps.some((step) => step.title === 'Follow the next leaf link'))
   assert.deepEqual(plan.result.getEntries(), tree.getEntries())
+})
+
+test('B+ range animations apply both inclusive bounds without changing the tree', () => {
+  for (const tree of [new BPlusTree(), TreeAssertions.create(BPlusTree, [50]), BPlusTree.createDefault()]) {
+    const before = tree.getEntries()
+    const keys = TreeAssertions.keys(tree)
+    for (const [minimum, maximum] of [[35, 85], [50, 50], [51, 59], [-100, -1], [101, 200], [Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER]]) {
+      const request = ActionInputRequest.create('b-plus-tree', 'range-from-value', tree.length)
+      assert.equal(request.validate(String(minimum)), null)
+      assert.equal(request.validateUpperBound(String(minimum), String(maximum)), null)
+      const plan = new RangeAnimation(tree, minimum, maximum)
+      assert.deepEqual(plan.values, keys.filter((key) => key >= minimum && key <= maximum))
+      TreeAssertions.scenes(plan, tree, 'b-plus-tree')
+      assert.deepEqual(tree.getEntries(), before)
+      assert.deepEqual(plan.result.getEntries(), before)
+      assert.deepEqual(new RangeAnimation(tree, minimum, maximum).steps, plan.steps)
+    }
+    assert.throws(() => new RangeAnimation(tree, 50, 49), RangeError)
+    for (const invalid of [NaN, Infinity, 1.5, Number.MAX_SAFE_INTEGER + 1]) {
+      assert.throws(() => new RangeAnimation(tree, invalid, 100), TypeError)
+      assert.throws(() => new RangeAnimation(tree, 0, invalid), TypeError)
+    }
+    assert.deepEqual(tree.getEntries(), before)
+  }
 })
 
 test('duplicates, misses, invalid values, snapshots, clones, and clear preserve model isolation and IDs', () => {

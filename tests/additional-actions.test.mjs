@@ -15,11 +15,11 @@ import { SearchAnimation as ListValue } from '../src/components/DataStructures/L
 import { SearchAnimation as ListIndex } from '../src/components/DataStructures/Linear/LinkedList/SearchByIndex/SearchAnimation.ts'
 import { SearchAnimation as ArrayValue } from '../src/components/DataStructures/Linear/Array/SearchByValue/SearchAnimation.ts'
 import { SearchAnimation as ArrayIndex } from '../src/components/DataStructures/Linear/Array/SearchByIndex/SearchAnimation.ts'
-import { SearchAnimation as TreeValue } from '../src/components/DataStructures/Trees/BinaryTree/SearchByValue/SearchAnimation.ts'
+import { SearchAnimation as TreeKey } from '../src/components/DataStructures/Trees/BinaryTree/SearchByKey/SearchAnimation.ts'
 import { SearchAnimation as GraphValue } from '../src/components/DataStructures/Graphs/SimpleGraph/SearchByValue/SearchAnimation.ts'
 import { DeletionAnimation as ListDelete } from '../src/components/DataStructures/Linear/LinkedList/DeleteByValue/DeletionAnimation.ts'
 import { DeletionAnimation as ArrayDelete } from '../src/components/DataStructures/Linear/Array/DeleteByValue/DeletionAnimation.ts'
-import { DeletionAnimation as TreeDelete } from '../src/components/DataStructures/Trees/BinaryTree/DeleteByValue/DeletionAnimation.ts'
+import { DeletionAnimation as TreeDelete } from '../src/components/DataStructures/Trees/BinaryTree/DeleteByKey/DeletionAnimation.ts'
 import { DeletionAnimation as GraphDelete } from '../src/components/DataStructures/Graphs/SimpleGraph/DeleteByValue/DeletionAnimation.ts'
 import { AnimationController } from '../src/visualization/AnimationController.ts'
 import { ActionCatalog } from '../src/visualization/ActionCatalog.ts'
@@ -105,7 +105,7 @@ test('endpoint insertions handle empty, singleton, duplicate, and longer sequenc
 })
 
 test('value searches find the first matching ID, report misses, and never mutate models', () => {
-  for (const [Model, Animation] of [[LinkedList, ListValue], [FixedArray, ArrayValue], [BinaryTree, TreeValue], [Graph, GraphValue]]) {
+  for (const [Model, Animation] of [[LinkedList, ListValue], [FixedArray, ArrayValue], [BinaryTree, TreeKey], [Graph, GraphValue]]) {
     for (const model of [new Model(), Model.createDefault()]) {
       const before = model.getEntries()
       for (const value of [10, 50, 100, -999]) {
@@ -121,7 +121,7 @@ test('value searches find the first matching ID, report misses, and never mutate
       for (const value of [NaN, Infinity, 0.5, Number.MAX_SAFE_INTEGER + 1]) assert.throws(() => new Animation(model, value), TypeError)
     }
   }
-  for (const [model, Animation] of [[ActionAssertions.list([5, 5]), ListValue], [new FixedArray([5, 5]), ArrayValue], [ActionAssertions.tree([5, 5]), TreeValue]]) {
+  for (const [model, Animation] of [[ActionAssertions.list([5, 5]), ListValue], [new FixedArray([5, 5]), ArrayValue], [ActionAssertions.tree([5, 5]), TreeKey]]) {
     assert.equal(new Animation(model, 5).foundId, model.getEntries()[0].id)
   }
 })
@@ -149,7 +149,7 @@ test('every action keeps all standalone text annotations out of the diagram', ()
   const actions = [
     [LinkedList, [ListStart, ListEnd, ListMiddle, ListValue, ListIndex, ListDelete]],
     [FixedArray, [ArrayStart, ArrayEnd, ArrayMiddle, ArrayValue, ArrayIndex, ArrayDelete]],
-    [BinaryTree, [TreeInsert, TreeValue, TreeDelete]],
+    [BinaryTree, [TreeInsert, TreeKey, TreeDelete]],
     [Graph, [GraphValue, GraphDelete]],
   ]
   for (const [Model, animations] of actions) {
@@ -179,7 +179,7 @@ test('all actions explain the correct best, average, and worst time and addition
     [ListValue, scan, constant], [ListIndex, scan, constant], [ListDelete, scan, constant],
     [ArrayStart, linear, linear], [ArrayEnd, linear, linear], [ArrayMiddle, linear, linear],
     [ArrayValue, scan, constant], [ArrayIndex, constant, constant], [ArrayDelete, linear, scan],
-    [TreeInsert, tree, constant], [TreeValue, tree, constant], [TreeDelete, tree, constant],
+    [TreeInsert, tree, constant], [TreeKey, tree, constant], [TreeDelete, tree, constant],
     [GraphValue, graphSearch, linear], [GraphDelete, graph, graphSearch],
   ]
   for (const [Animation, time, memory] of actions) {
@@ -196,7 +196,7 @@ test('all actions explain the correct best, average, and worst time and addition
   for (const Animation of [ListValue, ListDelete, ListIndex, ArrayValue]) {
     assert.match(Animation.describe(10).time.explanation, /uniformly distributed/)
   }
-  for (const Animation of [TreeInsert, TreeValue, TreeDelete]) {
+  for (const Animation of [TreeInsert, TreeKey, TreeDelete]) {
     assert.match(Animation.describe(10).time.explanation, /distinct keys inserted in random order/)
     assert.match(Animation.describe(10).time.explanation, /chain/)
   }
@@ -356,7 +356,7 @@ test('catalog offers only indexed searches for linear structures and metadata ma
     assert.equal(ListEnd.describe(10).time[scenario], 'O(n)')
     assert.equal(ArrayIndex.describe(10).time[scenario], 'O(1)')
   }
-  for (const Animation of [ListStart, ListEnd, ArrayStart, ArrayEnd, ListIndex, ArrayIndex, ListValue, ArrayValue, TreeValue, GraphValue, ListDelete, ArrayDelete, TreeDelete, GraphDelete]) {
+  for (const Animation of [ListStart, ListEnd, ArrayStart, ArrayEnd, ListIndex, ArrayIndex, ListValue, ArrayValue, TreeKey, GraphValue, ListDelete, ArrayDelete, TreeDelete, GraphDelete]) {
     assert.match(Animation.describe(7).terms[0].meaning, /n = 7/)
   }
 })

@@ -6,22 +6,25 @@ import './ActionInput.css'
 
 interface ActionInputProps {
   readonly request: ActionInputRequest
-  readonly onConfirm: (value: number) => void
+  readonly onConfirm: (value: number, upperValue?: number) => void
   readonly onClose: () => void
 }
 
 interface ActionInputState {
   readonly value: string
+  readonly upperValue: string
   readonly error: string
+  readonly upperError: string
 }
 
 export default class ActionInput extends Component<ActionInputProps, ActionInputState> {
   private readonly dialog = createRef<HTMLDialogElement>()
   private readonly input = createRef<HTMLInputElement>()
+  private readonly upperInput = createRef<HTMLInputElement>()
 
   constructor(props: ActionInputProps) {
     super(props)
-    this.state = { value: '', error: '' }
+    this.state = { value: '', upperValue: '', error: '', upperError: '' }
   }
 
   public componentDidMount(): void {
@@ -53,18 +56,29 @@ export default class ActionInput extends Component<ActionInputProps, ActionInput
   private changeValue = (event: ChangeEvent<HTMLInputElement>): void => {
     const value = event.currentTarget.value
     if (!this.props.request.acceptsDraft(value)) return
-    this.setState({ value, error: '' })
+    this.setState({ value, error: '', upperError: '' })
+  }
+
+  private changeUpperValue = (event: ChangeEvent<HTMLInputElement>): void => {
+    const upperValue = event.currentTarget.value
+    if (!this.props.request.acceptsDraft(upperValue)) return
+    this.setState({ upperValue, upperError: '' })
   }
 
   private submit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault()
     const error = this.props.request.validate(this.state.value)
-    if (error) {
-      this.setState({ error })
-      this.input.current?.focus()
+    const upperError = this.props.request.validateUpperBound(this.state.value, this.state.upperValue)
+    if (error || upperError) {
+      this.setState({ error: error ?? '', upperError: upperError ?? '' })
+      if (error) this.input.current?.focus()
+      else this.upperInput.current?.focus()
       return
     }
-    this.props.onConfirm(Number(this.state.value))
+    this.props.onConfirm(
+      Number(this.state.value),
+      this.props.request.rangeInput ? Number(this.state.upperValue) : undefined,
+    )
   }
 
   public render() {
@@ -106,6 +120,26 @@ export default class ActionInput extends Component<ActionInputProps, ActionInput
           />
           <p id="action-input-hint" className="action-input-hint">{request.hint}</p>
           {this.state.error && <p id="action-input-error" className="action-input-error" role="alert">{this.state.error}</p>}
+          {request.rangeInput && (
+            <>
+              <label htmlFor="action-input-upper-value">Maximum key (inclusive)</label>
+              <input
+                id="action-input-upper-value"
+                ref={this.upperInput}
+                type="text"
+                inputMode="numeric"
+                autoComplete="off"
+                value={this.state.upperValue}
+                onChange={this.changeUpperValue}
+                disabled={!request.available}
+                required
+                aria-invalid={Boolean(this.state.upperError)}
+                aria-describedby={this.state.upperError ? 'action-input-upper-hint action-input-upper-error' : 'action-input-upper-hint'}
+              />
+              <p id="action-input-upper-hint" className="action-input-hint">Both boundary keys are included in the range.</p>
+              {this.state.upperError && <p id="action-input-upper-error" className="action-input-error" role="alert">{this.state.upperError}</p>}
+            </>
+          )}
           <div className="action-input-buttons">
             <button type="button" className="text-button" onClick={this.props.onClose}>Cancel</button>
             <button type="submit" className="primary-button" disabled={!request.available}>Start animation</button>

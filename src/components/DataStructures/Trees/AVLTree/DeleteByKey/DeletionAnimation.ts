@@ -1,0 +1,27 @@
+import { AVLTree } from '../AVLTree.ts'
+import { AVLTreeLayout } from '../AVLTreeLayout.ts'
+import { TreeActionAnimation } from '../../../../../visualization/TreeActionAnimation.ts'
+import { AnimationSequence } from '../../../../../visualization/AnimationSequence.ts'
+
+export class DeletionAnimation extends TreeActionAnimation<AVLTree> {
+
+  public static describe(size: number) {
+    return AnimationSequence.information(
+      'Delete a key', 'Remove one key and restore the tree rules; missing keys leave the tree unchanged.', size,
+      ['O(1)', 'O(log n)', 'O(log n)'],
+      'Best O(1): a root match (or root duplicate for insertion). Average and worst O(log n): the tree maintains logarithmic height. Average assumes uniformly distributed matching depths or new keys.',
+      'O(1)', 'Cached parent links let deletion reconnect nodes and repair balance with a fixed number of references.',
+      [
+        { symbol: 'h', meaning: 'Cached subtree height: 1 for a leaf and 0 for a missing child.' },
+        { symbol: 'balance', meaning: 'Left subtree height minus right subtree height; valid values after repair are -1, 0, and 1.' },
+      ],
+    )
+  }
+
+  constructor(model: AVLTree, value: number) {
+    super(model, new AVLTreeLayout())
+    this.begin('Locate the key before removing it. A miss leaves the tree unchanged.', 'current = root')
+    const removed = this.result.deleteValue(value, this)
+    this.finish(removed ? 'Deletion complete' : 'Key not found', removed ? `Removed ${value}. The tree now contains ${this.result.length} keys; all tree rules are restored.` : `Key ${value} was not found. No keys, links, or colors changed.`, removed ? 'commit deletion' : 'return notFound')
+  }
+}

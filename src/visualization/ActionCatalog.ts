@@ -10,14 +10,14 @@ export interface ActionChoice {
 
 export class ActionCatalog {
   public static getActions(structure: StructureKind): readonly ActionChoice[] {
-    if (structure === 'avl-tree' || structure === 'red-black-tree' || structure === 'b-tree' || structure === 'b-plus-tree') {
+    if (structure === 'binary-tree' || structure === 'avl-tree' || structure === 'red-black-tree' || structure === 'b-tree' || structure === 'b-plus-tree') {
       const actions: ActionChoice[] = [
-        { kind: 'insert', title: 'Insert a key', description: 'Insert one unique key and restore balance or page occupancy.' },
-        { kind: 'search-value', title: 'Search by value', description: 'Follow ordered comparisons to a matching key.' },
-        { kind: 'delete-value', title: 'Delete by value', description: 'Remove a key and repair rotations, colors, or page occupancy.' },
+        { kind: 'insert', title: 'Insert a key', description: structure === 'binary-tree' ? 'Compare from the root and connect a new leaf. Duplicate keys are rejected.' : 'Insert one unique key and restore balance or page occupancy.' },
+        { kind: 'search-value', title: 'Search by key', description: 'Follow ordered comparisons to a matching key.' },
+        { kind: 'delete-value', title: 'Delete a key', description: structure === 'binary-tree' ? 'Remove a key and reconnect the tree while preserving search order.' : 'Remove a key and restore balance or page occupancy.' },
         { kind: 'clear', title: 'Clear', description: 'Release every node or page and empty the tree.' },
       ]
-      if (structure === 'b-plus-tree') actions.push({ kind: 'range-from-value', title: 'Range from value', description: 'Report all records at or above an inclusive minimum through linked leaves.' })
+      if (structure === 'b-plus-tree') actions.push({ kind: 'range-from-value', title: 'Range from key', description: 'Report all records between two inclusive keys through linked leaves.' })
       return actions
     }
     if (structure === 'queue') {
@@ -80,7 +80,6 @@ export class ActionCatalog {
         { kind: 'insert-end', title: 'Insert at the end', description: 'Append a value after the last element.' },
       )
     }
-    if (structure === 'binary-tree') actions.push({ kind: 'insert', title: 'Insert a value', description: 'Compare from the root and connect a new leaf. Duplicate keys are rejected.' })
     actions.push({ kind: 'search-value', title: 'Search by value', description: 'Follow the search path to the first matching value.' })
     if (structure === 'linked-list' || structure === 'array') actions.push({ kind: 'search-index', title: 'Search by index', description: 'Find an element using its zero-based index.' })
     actions.push({ kind: 'delete-value', title: 'Delete by value', description: 'Remove the first match and reconnect the remaining structure.' })

@@ -28,7 +28,7 @@ export default class ActionPlayback<TModel extends ActionModel<TModel>>
     super(props)
     this.original = props.model.clone()
     const initialValue = props.value ?? props.definition.initialValue ?? 99
-    this.animation = props.definition.create(this.original, initialValue)
+    this.animation = props.definition.create(this.original, initialValue, props.upperValue)
     this.controller = new AnimationController(this.animation.steps, this)
     this.state = {
       index: 0,

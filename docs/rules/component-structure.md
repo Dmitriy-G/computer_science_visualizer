@@ -21,6 +21,8 @@ files after the action and import the stylesheet from the component.
 Keep action-specific sequence classes, such as `InsertionAnimation.ts`, in the
 same action folder. Import the structure's model and layout from the parent
 folder, using relative imports and matching the exact directory casing.
+Tree action components use key terminology: `SearchByKey`, `DeleteByKey`, and
+the B+ Tree's `RangeFromKey`. Match their class, folder, `.tsx`, and `.css` names.
 
 ```text
 src/components/
@@ -67,7 +69,7 @@ styles. Each action's component supplies its own class-based definition with pha
 labels, explanations, and a factory method that creates its animation plan.
 Keep structure-specific algorithms and model types in their action folders;
 reuse the common animation session and progress display. Accept an optional
-operation value and completion callback so actions can collect input separately
+operation value, an optional upper range bound, and completion callback so actions can collect input separately
 and unlock further operations after the result is committed. Otherwise use each
 action's default value. Keep normal playback speed and do not render a bottom panel.
 The app header provides the `playback-toolbar` host. `ActionPlayback` renders
@@ -100,10 +102,12 @@ information. Keep that separate dialog in `src/components/StructureInfo/`;
 its content area is intentionally empty until structure information is added.
 Shared value/index dialogs belong in `src/components/ActionInput/`, with their
 request configuration and validation in `src/visualization/ActionInputRequest.ts`.
-Reuse them for Array, Linked list, Stack, Queue, Deque, Doubly linked list, and
-Circular buffer. They are separate from the info dialogs and start an action
-only when the user confirms valid input. Keep structure-specific operations in
+Reuse them for Array, Linked list, Stack, Queue, Deque, Doubly linked list,
+Circular buffer, and all five tree types. They are separate from the info dialogs
+and start an action only when the user confirms valid input. Keep structure-specific operations in
 their existing models and action folders.
+The B+ Tree range action uses two numeric fields in this shared dialog and passes
+both inclusive bounds through the action definition and playback to its model.
 
 Create these components and folders as their features are implemented. The tree
 defines the required organization; it does not mean those features already exist.

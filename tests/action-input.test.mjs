@@ -39,13 +39,62 @@ test('each linear structure prompts only for its requested value and index actio
   }
 })
 
-test('tree and graph actions keep their existing flow without input dialogs', () => {
-  for (const structure of ['binary-tree', 'avl-tree', 'red-black-tree', 'b-tree', 'b-plus-tree', 'graph']) {
-    assert.equal(ActionInputRequest.supportsStructure(structure), false)
+test('all tree types prompt for insertion, search, and deletion values', () => {
+  for (const structure of ['binary-tree', 'avl-tree', 'red-black-tree', 'b-tree', 'b-plus-tree']) {
+    assert.equal(ActionInputRequest.supportsStructure(structure), true)
+    const requested = []
     for (const choice of ActionCatalog.getActions(structure)) {
-      assert.equal(ActionInputRequest.requiresInput(structure, choice.kind), false)
-      assert.equal(ActionInputRequest.create(structure, choice.kind, 10), null)
+      const request = ActionInputRequest.create(structure, choice.kind, 0)
+      assert.equal(ActionInputRequest.requiresInput(structure, choice.kind), request !== null)
+      if (!request) continue
+      requested.push(choice.kind)
+      assert.equal(request.structure, structure)
+      assert.equal(request.title, choice.title)
+      assert.equal(request.available, true)
+      assert.ok(request.validate(''))
+      for (const value of [0, -42, 42, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER]) {
+        assert.equal(request.validate(String(value)), null)
+      }
+      assert.ok(request.validate('1.5'))
+      assert.ok(request.validate('9007199254740992'))
     }
+    assert.deepEqual(requested, ['insert', 'search-value', 'delete-value', ...(structure === 'b-plus-tree' ? ['range-from-value'] : [])], structure)
+    assert.equal(ActionInputRequest.create(structure, 'clear', 10), null)
+  }
+})
+
+test('B+ range input requires two inclusive whole-number keys in ascending order', () => {
+  for (const size of [0, 1, 10]) {
+    const request = ActionInputRequest.create('b-plus-tree', 'range-from-value', size)
+    assert.ok(request)
+    assert.equal(request.rangeInput, true)
+    assert.equal(request.label, 'Minimum key (inclusive)')
+    assert.equal(request.available, true)
+    for (const input of ['', '-', 'hello', '1.5', '1e2', '9007199254740992']) {
+      assert.ok(request.validate(input))
+      assert.ok(request.validateUpperBound('0', input))
+    }
+    for (const [minimum, maximum] of [[-10, 10], [50, 50], [Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER]]) {
+      assert.equal(request.validate(String(minimum)), null)
+      assert.equal(request.validateUpperBound(String(minimum), String(maximum)), null)
+    }
+    assert.match(request.validateUpperBound('50', '49'), /greater than or equal/)
+    assert.equal(request.acceptsDraft('-42'), true)
+    assert.equal(request.acceptsDraft('4x'), false)
+  }
+  for (const structure of ['binary-tree', 'avl-tree', 'red-black-tree', 'b-tree', 'linked-list']) {
+    assert.equal(ActionInputRequest.create(structure, 'range-from-value', 10), null)
+    const request = ActionInputRequest.create(structure, 'search-value', 10)
+    assert.equal(request.rangeInput, false)
+    assert.equal(request.validateUpperBound('1', ''), null)
+  }
+})
+
+test('graph actions retain their existing flow and unavailable actions do not prompt', () => {
+  assert.equal(ActionInputRequest.supportsStructure('graph'), false)
+  for (const choice of ActionCatalog.getActions('graph')) {
+    assert.equal(ActionInputRequest.requiresInput('graph', choice.kind), false)
+    assert.equal(ActionInputRequest.create('graph', choice.kind, 10), null)
   }
   assert.equal(ActionInputRequest.requiresInput('stack', 'search-index'), false)
   assert.equal(ActionInputRequest.requiresInput('queue', 'delete-value'), false)

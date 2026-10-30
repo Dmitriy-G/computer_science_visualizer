@@ -20,13 +20,14 @@ export interface ActionDefinition<TModel> {
   readonly inputMinimum?: number
   readonly inputMaximum?: number
   readonly acceptsValue?: boolean
-  create(model: TModel, value: number): ActionPlan<TModel>
+  create(model: TModel, value: number, upperValue?: number): ActionPlan<TModel>
 }
 
 export interface ActionPlaybackProps<TModel> {
   readonly model: TModel
   readonly definition: ActionDefinition<TModel>
   readonly value?: number
+  readonly upperValue?: number
   readonly onSceneChange: (scene: Scene, model: TModel) => void
   readonly onComplete?: () => void
 }

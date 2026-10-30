@@ -8,11 +8,13 @@ import './Insert.css'
 
 interface InsertProps {
   readonly tree: BinaryTree
+  readonly value?: number
   readonly onSceneChange: (scene: Scene, tree: BinaryTree) => void
+  readonly onComplete?: () => void
 }
 
 class BinaryTreeInsertionDefinition implements ActionDefinition<BinaryTree> {
-  public readonly title = 'Insert a value'
+  public readonly title = 'Insert a key'
   public readonly context = 'Binary search tree / insertion'
   public readonly summary =
     'Smaller goes left. Larger goes right. Duplicate keys are rejected.'
@@ -40,7 +42,9 @@ export default class Insert extends Component<InsertProps, Record<string, never>
         <ActionPlayback<BinaryTree>
           model={this.props.tree}
           definition={this.definition}
+          value={this.props.value}
           onSceneChange={this.props.onSceneChange}
+          onComplete={this.props.onComplete}
         />
       </div>
     )

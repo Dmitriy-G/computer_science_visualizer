@@ -15,9 +15,9 @@
    actions in a persistent card at the upper-left of the canvas. Mark the
    selected action with a highlight and `aria-current`, and put a small info
    button to each action's right.
-5. Selecting a value/index action on a linear structure opens its input dialog.
+5. Selecting a supported value/index action on a linear structure or tree opens its input dialog.
    Confirming valid input starts its animation. Actions without an argument run
-   directly. Trees and Graph continue to start with default inputs. Animations
+   directly. Graph retains its existing default-input flow. Animations
    run to completion automatically. Reduced-motion styles still suppress visual
    transitions.
 
@@ -27,10 +27,10 @@ reopen its structure group and retain the group path for Back navigation.
 Actions are selected directly from the canvas card, without reopening the menu.
 On smaller screens, place the action card above the diagram so it does not
 overlap nodes. Move keyboard focus to the first action after choosing
-a structure. Linear-structure actions can be repeated after completion, reopening
+a structure. Linear-structure and tree actions can be repeated after completion, reopening
 their input dialog when applicable and using the latest committed model. Disable their
 operation buttons while an animation runs; keep info buttons and full Reset
-available. Other structures preserve the session when selecting the current action.
+available. Graph preserves its session when selecting the current action.
 Place the Current / Visited / New node legend at the top-left of the renderer's
 center area, beside the actions panel and above the code snippet. Let the legend
 wrap on narrow screens; do not keep it in the canvas footer.
@@ -43,19 +43,25 @@ dialog for these actions:
 - **Stack:** Push and Search by value.
 - **Queue and Circular buffer:** Enqueue and Search by value.
 - **Deque:** Push front, Push back, and Search by value.
+- **BST, AVL tree, Red-Black tree, B-Tree, B+ Tree:** Insert a key,
+  Search by key, and Delete a key. Use **Key** for their input field labels.
+- **B+ Tree range:** collect **Minimum key (inclusive)** and **Maximum key
+  (inclusive)** in the same dialog. Start both empty, require whole safe integers,
+  and require maximum >= minimum. Equal keys are valid; bounds need not exist in
+  the tree. An empty tree can still be queried.
 
 Value actions accept any safely representable whole number. Start the input
 empty, and block nonnumeric
 characters while typing or pasting; value inputs also allow a leading minus.
 Search by index accepts a zero-based index within the current Array or list;
 explain an empty structure and disable submission until an element exists.
-Insertion actions retain their fixed start, middle, or end position and ask only
+Linear insertion actions retain their fixed start, middle, or end position and ask only
 for the new value. Empty, fractional, and out-of-range input displays an error.
 Cancel, close, Escape, or a backdrop click dismisses the dialog without starting
 an action or changing the model. Focus the input on open and return focus on close.
 Clear, Pop, Dequeue, Peek, and end-deletion actions run without an input dialog.
 A full Circular buffer still accepts an enqueue request so its animation can
-explain rejection without overwriting data. Trees and Graph use their
+explain rejection without overwriting data. Graph uses its
 definition's default value (99 when unspecified).
 All actions use normal playback speed.
 
@@ -360,9 +366,18 @@ and playback copies do not contribute to the underlying algorithm memory cost.
 
 Add **AVL tree**, **Red-Black tree**, **B-Tree**, and **B+ Tree** under Trees.
 Each loads ten unique integer keys and provides **Insert a key**, **Search by
-value**, **Delete by value**, and **Clear**. These four models use unique keys:
+key**, **Delete a key**, and **Clear**. Use the same action names for the BST.
+These four models use unique keys:
 duplicate insertion and missing deletion leave the model and ID counter unchanged.
 The original unbalanced BST also rejects duplicates, using strict left < node < right ordering.
+
+Tree input dialogs pass their values through the existing model algorithms.
+Do not attach or remove nodes directly from the dialog or bypass rotations,
+recoloring, page splits, borrowing, merging, or separator/leaf-link repairs.
+Keep the original valid model committed while showing intermediate frames and
+publish the completed result only on the final frame. Enable another tree action
+only after that commit. Repeated operations must use that result, including
+after duplicate rejection, a missing key, an empty tree, and clear/reinsert.
 
 Keep actual algorithms in the structure model and expose synchronous trace
 events, without timers or rendering dependencies. Each action owns its sequence
@@ -395,11 +410,12 @@ infrastructure is shared across the two binary balanced trees and the two multiw
 trees, with structure-specific layout wrappers colocated with their models.
 Keep icons as bounded SVGs in the existing menu style.
 
-B+ Tree also offers **Range from value**, with an inclusive minimum and unbounded
-upper end. Descend once to the first leaf, then scan next links. Report results
+B+ Tree also offers **Range from key**, with inclusive minimum and maximum keys
+collected in its input dialog. Descend once to the first leaf, then scan next links
+until a key exceeds the maximum. Report results
 in the step description; do not add standalone result text to the diagram. Time is
 O(log n + k) and extra memory O(k + 1), including the k returned records. Its model
-also supports an inclusive bounded range for reuse.
+provides the same inclusive bounded range used by the animation.
 
 Balanced searches and mutations have O(log n) worst-case time at fixed page order.
 Explain early matches and duplicate/no-op cases in each action. Binary balanced

@@ -6,6 +6,7 @@ import type { Scene } from '../../visualization/Scene.ts'
 export interface ActionViewProps<TModel> {
   readonly model: TModel
   readonly value?: number
+  readonly upperValue?: number
   readonly onSceneChange: (scene: Scene, model: TModel) => void
   readonly onComplete?: () => void
 }
@@ -14,6 +15,6 @@ export default abstract class ActionView<TModel extends ActionModel<TModel>> ext
   protected abstract readonly definition: ActionDefinition<TModel>
 
   public render() {
-    return <ActionPlayback<TModel> model={this.props.model} definition={this.definition} value={this.props.value} onSceneChange={this.props.onSceneChange} onComplete={this.props.onComplete} />
+    return <ActionPlayback<TModel> model={this.props.model} definition={this.definition} value={this.props.value} upperValue={this.props.upperValue} onSceneChange={this.props.onSceneChange} onComplete={this.props.onComplete} />
   }
 }

@@ -12,7 +12,7 @@ export class InsertionAnimation {
 
   public static describe(size: number): AlgorithmInformation {
     return {
-      name: 'Insert into a binary search tree',
+      name: 'Insert a key',
       summary:
         'Smaller values go left; larger values go right. Duplicate keys are rejected.',
       time: {
