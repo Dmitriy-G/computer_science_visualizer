@@ -14,6 +14,7 @@ interface RendererProps {
   readonly scene: Scene | null
   readonly algorithmInformation: AlgorithmInformation | null
   readonly onOpenMenu: () => void
+  readonly children?: ReactNode
 }
 
 export default class Renderer extends Component<
@@ -266,15 +267,8 @@ export default class Renderer extends Component<
     const scene = this.props.scene
     return (
       <section className="renderer" aria-label="Visualization workspace">
-        {scene && (
-          <div className="renderer-heading">
-            <div className="canvas-label">
-              <span className="canvas-dot" />
-              LIVE CANVAS
-            </div>
-          </div>
-        )}
         <div className="renderer-content">
+          {scene && this.props.children}
           <div
             className="renderer-viewport"
             ref={this.viewport}
@@ -296,7 +290,7 @@ export default class Renderer extends Component<
               </div>
             )}
           </div>
-          {scene && this.props.algorithmInformation && (
+          {scene && (
             <AlgorithmInfo information={this.props.algorithmInformation} />
           )}
         </div>

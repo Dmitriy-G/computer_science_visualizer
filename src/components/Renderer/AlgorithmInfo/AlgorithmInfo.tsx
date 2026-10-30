@@ -7,7 +7,7 @@ import type {
 import './AlgorithmInfo.css'
 
 interface AlgorithmInfoProps {
-  readonly information: AlgorithmInformation
+  readonly information: AlgorithmInformation | null
 }
 
 export default class AlgorithmInfo extends PureComponent<
@@ -39,9 +39,9 @@ export default class AlgorithmInfo extends PureComponent<
     )
   }
 
-  private renderTerms(): ReactNode[] {
+  private renderTerms(information: AlgorithmInformation): ReactNode[] {
     const terms: ReactNode[] = []
-    for (const term of this.props.information.terms) {
+    for (const term of information.terms) {
       terms.push(
         <div key={term.symbol}>
           <dt>
@@ -56,6 +56,17 @@ export default class AlgorithmInfo extends PureComponent<
 
   public render() {
     const information = this.props.information
+    if (!information) {
+      return (
+        <aside className="algorithm-info" aria-labelledby="algorithm-info-title">
+          <span className="eyebrow">Algorithm overview</span>
+          <h2 id="algorithm-info-title">Pick your action</h2>
+          <p className="algorithm-summary">
+            Choose an action from the left. Its description will appear here.
+          </p>
+        </aside>
+      )
+    }
     return (
       <aside className="algorithm-info" aria-labelledby="algorithm-info-title">
         <span className="eyebrow">Algorithm overview</span>
@@ -74,7 +85,7 @@ export default class AlgorithmInfo extends PureComponent<
         {information.terms.length > 0 && (
           <>
             <h3>Terms used in this action</h3>
-            <dl className="algorithm-terms">{this.renderTerms()}</dl>
+            <dl className="algorithm-terms">{this.renderTerms(information)}</dl>
           </>
         )}
       </aside>

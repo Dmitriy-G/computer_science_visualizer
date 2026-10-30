@@ -135,43 +135,6 @@
   margin: 26px 0 12px;
   letter-spacing: 1px;
 }
-.action-choice {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  width: 100%;
-  padding: 16px;
-  gap: 8px;
-  margin-bottom: 12px;
-  border-radius: 14px;
-  background: #f1f6ff;
-  border: 1px solid #cddff8;
-}
-.action-choice:hover {
-  border-color: var(--accent);
-}
-.action-choice-tag {
-  color: var(--accent);
-  font: 9px var(--mono);
-  letter-spacing: 1px;
-}
-.action-choice strong {
-  font-size: 19px;
-}
-.action-choice > span:not(.action-choice-tag) {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.6;
-}
-.action-choice small {
-  color: var(--accent);
-  font-size: 11px;
-  width: 100%;
-}
-.action-choice small span {
-  float: right;
-}
 .menu-notice {
   padding: 20px;
   border-radius: 12px;

@@ -2,7 +2,7 @@ import { StructureCatalog } from '../../visualization/StructureCatalog.ts'
 import type { StructureGroupKind } from '../../visualization/StructureCatalog.ts'
 import type { StructureKind } from '../../visualization/Scene.ts'
 
-export type MenuScreen = 'categories' | 'groups' | 'structures' | 'actions'
+export type MenuScreen = 'categories' | 'groups' | 'structures'
 
 // Browsing the menu never changes the selected structure or its animation.
 export class MenuNavigation {
@@ -11,14 +11,14 @@ export class MenuNavigation {
   public readonly group: StructureGroupKind | null
 
   constructor(screen: MenuScreen = 'categories', group: StructureGroupKind | null = null) {
-    if ((screen === 'structures' || screen === 'actions') && group === null)
-      throw new Error('Structure and action menus require a group')
+    if (screen === 'structures' && group === null)
+      throw new Error('Structure menus require a group')
     this.screen = screen
     this.group = group
   }
 
   public static forStructure(kind: StructureKind): MenuNavigation {
-    return new MenuNavigation('actions', StructureCatalog.getGroupForStructure(kind))
+    return new MenuNavigation('structures', StructureCatalog.getGroupForStructure(kind))
   }
 
   public selectCategory(): MenuNavigation {
@@ -34,11 +34,10 @@ export class MenuNavigation {
     const group = StructureCatalog.getGroupForStructure(kind)
     if (this.screen !== 'structures' || group !== this.group)
       throw new Error('Choose a structure from the current group')
-    return new MenuNavigation('actions', group)
+    return MenuNavigation.forStructure(kind)
   }
 
   public back(): MenuNavigation {
-    if (this.screen === 'actions') return new MenuNavigation('structures', this.group)
     if (this.screen === 'structures') return new MenuNavigation('groups')
     return new MenuNavigation()
   }
@@ -46,21 +45,18 @@ export class MenuNavigation {
   public get title(): string {
     if (this.screen === 'categories') return 'Categories'
     if (this.screen === 'groups') return MenuNavigation.categoryName
-    if (this.screen === 'structures') return StructureCatalog.getGroup(this.group!).name
-    return 'Choose an action'
+    return StructureCatalog.getGroup(this.group!).name
   }
 
   public get backLabel(): string {
-    if (this.screen === 'actions') return StructureCatalog.getGroup(this.group!).name
     if (this.screen === 'structures') return 'Structure groups'
     return 'Categories'
   }
 
-  public getPath(selected: StructureKind | null): readonly string[] {
+  public getPath(): readonly string[] {
     if (this.screen === 'categories') return []
     const path = [MenuNavigation.categoryName]
     if (this.group) path.push(StructureCatalog.getGroup(this.group).name)
-    if (this.screen === 'actions' && selected) path.push(StructureCatalog.getName(selected))
     return path
   }
 }

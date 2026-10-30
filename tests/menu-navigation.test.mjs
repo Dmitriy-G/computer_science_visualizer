@@ -20,12 +20,12 @@ test('the common-operations category contains exactly the requested structure gr
   assert.equal(seen.size, StructureCatalog.structures.length)
 })
 
-test('every structure has a complete category-to-actions path and reversible back navigation', () => {
+test('structure selection retains its group path and reversible back navigation', () => {
   for (const structure of StructureCatalog.structures) {
     const root = new MenuNavigation()
     assert.equal(root.screen, 'categories')
     assert.equal(root.title, 'Categories')
-    assert.deepEqual(root.getPath(null), [])
+    assert.deepEqual(root.getPath(), [])
 
     const groups = root.selectCategory()
     assert.equal(groups.screen, 'groups')
@@ -34,30 +34,29 @@ test('every structure has a complete category-to-actions path and reversible bac
     assert.equal(list.screen, 'structures')
     assert.equal(list.title, StructureCatalog.getGroup(structure.group).name)
 
-    const actions = list.selectStructure(structure.kind)
-    assert.equal(actions.screen, 'actions')
-    assert.deepEqual(actions.getPath(structure.kind), [
+    const selected = list.selectStructure(structure.kind)
+    assert.equal(selected.screen, 'structures')
+    assert.deepEqual(selected, list)
+    assert.deepEqual(selected.getPath(), [
       MenuNavigation.categoryName,
       StructureCatalog.getGroup(structure.group).name,
-      structure.name,
     ])
     assert.ok(ActionCatalog.getActions(structure.kind).length > 0)
-    assert.deepEqual(actions.back(), list)
-    assert.deepEqual(actions.back().back(), groups)
-    assert.deepEqual(actions.back().back().back(), root)
+    assert.deepEqual(selected.back(), groups)
+    assert.deepEqual(selected.back().back(), root)
     assert.deepEqual(root.back(), root)
     assert.equal(root.screen, 'categories', 'Navigation leaves earlier locations unchanged')
   }
 })
 
-test('reopening actions restores the correct group and prevents cross-group structure selection', () => {
+test('reopening the structure picker restores its group and prevents cross-group selection', () => {
   for (const structure of StructureCatalog.structures) {
-    const actions = MenuNavigation.forStructure(structure.kind)
-    assert.equal(actions.screen, 'actions')
-    assert.equal(actions.back().group, structure.group)
-    const available = StructureCatalog.getStructures(actions.back().group)
+    const picker = MenuNavigation.forStructure(structure.kind)
+    assert.equal(picker.screen, 'structures')
+    assert.equal(picker.group, structure.group)
+    const available = StructureCatalog.getStructures(picker.group)
     assert.ok(available.some((entry) => entry.kind === structure.kind))
-    assert.deepEqual(actions.back().selectStructure(structure.kind), actions)
+    assert.deepEqual(picker.selectStructure(structure.kind), picker)
   }
   const linear = new MenuNavigation().selectCategory().selectGroup('linear')
   assert.throws(() => linear.selectStructure('binary-tree'), /current group/)

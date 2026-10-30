@@ -1,0 +1,72 @@
+.action-menu {
+  width: 280px;
+  max-width: 100%;
+  min-width: 0;
+  flex-shrink: 0;
+  padding: 22px;
+  border: 1px solid #dce5f0;
+  border-radius: 14px;
+  background: #ffffffed;
+  box-shadow: 0 4px 18px #25374c08;
+}
+.action-menu h2 {
+  margin: 10px 0 8px;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+.action-menu-summary {
+  margin: 0 0 18px;
+  color: #5c7088;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.action-menu nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.canvas-action {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e0eaf7;
+  border-radius: 8px;
+  background: #f3f7fd;
+  text-align: left;
+}
+.canvas-action:hover {
+  border-color: #9bbde8;
+  background: #ecf3ff;
+}
+.canvas-action[aria-current] {
+  border-color: var(--accent);
+  background: #e9f2ff;
+}
+.canvas-action-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+}
+.canvas-action-heading strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+.canvas-action-selected {
+  color: #2e66b1;
+  font: 9px var(--mono);
+}
+.canvas-action-description {
+  display: block;
+  margin-top: 6px;
+  color: #5c7088;
+  font-size: 11px;
+  line-height: 1.6;
+}
+@media (max-width: 800px) {
+  .action-menu {
+    width: 100%;
+    padding: 18px;
+  }
+}

@@ -147,6 +147,7 @@ import LinkedListAddAtStart from '../DataStructures/Linear/LinkedList/AddAtStart
 import { InsertionAnimation as LinkedListAddAtStartSequence } from '../DataStructures/Linear/LinkedList/AddAtStart/InsertionAnimation.ts'
 import { Component, createRef } from 'react'
 import MainMenu from '../MainMenu/MainMenu.tsx'
+import ActionMenu from '../MainMenu/ActionMenu/ActionMenu.tsx'
 import { MenuNavigation } from '../MainMenu/MenuNavigation.ts'
 import type { StructureGroupKind } from '../../visualization/StructureCatalog.ts'
 import Renderer from '../Renderer/Renderer.tsx'
@@ -184,6 +185,7 @@ export default class App extends Component<Record<string, never>, AppState> {
   private bTree = BTree.createDefault()
   private bPlusTree = BPlusTree.createDefault()
   private readonly menuButton = createRef<HTMLButtonElement>()
+  private readonly actionMenu = createRef<ActionMenu>()
   private graph = Graph.createDefault()
   private stack = Stack.createDefault()
   private queue = Queue.createDefault()
@@ -224,6 +226,10 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private restoreMenuFocus = (): void => {
     this.menuButton.current?.focus()
+  }
+
+  private focusActions = (): void => {
+    this.actionMenu.current?.focusFirstAction()
   }
 
   private selectCategory = (): void => {
@@ -274,13 +280,15 @@ export default class App extends Component<Record<string, never>, AppState> {
       actionOpen: false,
       selectedAction: null,
       menu,
+      menuOpen: false,
       algorithmInformation: null,
       actionSession: this.state.actionSession + 1,
-    })
+    }, this.focusActions)
   }
 
   private selectAction = (action: ActionKind): void => {
     if (!this.state.selected) return
+    if (this.state.actionOpen && this.state.selectedAction === action) return
     if (!ActionCatalog.getActions(this.state.selected).some((choice) => choice.kind === action)) return
     this.setState({
       actionOpen: true,
@@ -727,7 +735,6 @@ export default class App extends Component<Record<string, never>, AppState> {
           onCategorySelected={this.selectCategory}
           onGroupSelected={this.selectGroup}
           onBack={this.backInMenu}
-          onActionSelected={this.selectAction}
         />
 
         <main className="workspace">
@@ -735,23 +742,17 @@ export default class App extends Component<Record<string, never>, AppState> {
             scene={scene}
             algorithmInformation={this.state.algorithmInformation}
             onOpenMenu={this.openMenu}
-          />
+          >
+            {selected && (
+              <ActionMenu
+                ref={this.actionMenu}
+                structure={selected}
+                selectedAction={this.state.selectedAction}
+                onActionSelected={this.selectAction}
+              />
+            )}
+          </Renderer>
           {this.renderAction()}
-          {selected && !this.state.actionOpen && (
-            <section className="workspace-hint" aria-label="Next step">
-              <div>
-                <span className="eyebrow">Structure loaded</span>
-                <h1>{StructureCatalog.getName(selected)}</h1>
-              </div>
-              <p>
-                Choose an action to explore how this structure works step by step.
-              </p>
-              <button className="primary-button" onClick={this.openMenu}>
-                Choose an action{' '}
-                <span aria-hidden="true">↗</span>
-              </button>
-            </section>
-          )}
         </main>
       </div>
     )

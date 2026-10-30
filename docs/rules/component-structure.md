@@ -76,7 +76,10 @@ Structure-specific layouts belong in their structure's folder under
 ## Main menu
 
 Place the `MainMenu` component in `src/components/MainMenu/`. It lets the user
-choose the data structure and action to visualize.
+choose the data structure. Keep its canvas action card in
+`src/components/MainMenu/ActionMenu/`, with a `.tsx` class component and a separate
+`.css` file. The app supplies this card to the shared renderer as a child so
+action selection remains separate from drawing the scene.
 
 Create these components and folders as their features are implemented. The tree
 defines the required organization; it does not mean those features already exist.

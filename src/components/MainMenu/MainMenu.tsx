@@ -4,8 +4,6 @@ import { StructureCatalog } from '../../visualization/StructureCatalog.ts'
 import type { StructureGroupKind } from '../../visualization/StructureCatalog.ts'
 import { MenuNavigation } from './MenuNavigation.ts'
 import type { StructureKind } from '../../visualization/Scene.ts'
-import { ActionCatalog } from '../../visualization/ActionCatalog.ts'
-import type { ActionKind } from '../../visualization/ActionCatalog.ts'
 import './MainMenu.css'
 
 interface MainMenuProps {
@@ -17,7 +15,6 @@ interface MainMenuProps {
   readonly onCategorySelected: () => void
   readonly onGroupSelected: (group: StructureGroupKind) => void
   readonly onBack: () => void
-  readonly onActionSelected: (action: ActionKind) => void
 }
 
 export default class MainMenu extends Component<
@@ -223,33 +220,8 @@ export default class MainMenu extends Component<
     return buttons
   }
 
-  private handleAction = (event: MouseEvent<HTMLButtonElement>): void => {
-    if (!this.props.selected) return
-    for (const action of ActionCatalog.getActions(this.props.selected)) {
-      if (action.kind === event.currentTarget.dataset.action) {
-        this.props.onActionSelected(action.kind)
-        return
-      }
-    }
-  }
-
-  private renderActions(): ReactNode[] {
-    const buttons: ReactNode[] = []
-    if (!this.props.selected) return buttons
-    for (const action of ActionCatalog.getActions(this.props.selected)) {
-      buttons.push(
-        <button className="action-choice" key={action.kind} data-action={action.kind} onClick={this.handleAction}>
-          <strong>{action.title}</strong>
-          <span>{action.description}</span>
-          <small>Step-by-step animation <span aria-hidden="true">→</span></small>
-        </button>,
-      )
-    }
-    return buttons
-  }
-
   private renderPath(): ReactNode {
-    const path = this.props.navigation.getPath(this.props.selected)
+    const path = this.props.navigation.getPath()
     if (path.length < 2) return null
     const segments: ReactNode[] = []
     for (let index = 0; index < path.length; index += 1) {
@@ -267,7 +239,6 @@ export default class MainMenu extends Component<
       case 'categories': return 'Choose a category to explore.'
       case 'groups': return 'Choose a data structure group.'
       case 'structures': return 'Pick a structure. Start with 10 elements.'
-      case 'actions': return `Explore ${this.props.selected ? StructureCatalog.getName(this.props.selected) : 'a structure'} step by step.`
     }
   }
 
@@ -276,7 +247,6 @@ export default class MainMenu extends Component<
       case 'categories': return this.renderCategories()
       case 'groups': return this.renderGroups()
       case 'structures': return this.renderStructures()
-      case 'actions': return this.renderActions()
     }
   }
 
@@ -314,7 +284,7 @@ export default class MainMenu extends Component<
             </button>
           )}
           {this.renderPath()}
-          <nav aria-label={navigation.screen === 'actions' ? 'Data structure actions' : navigation.title}>
+          <nav aria-label={navigation.title}>
             {this.renderChoices()}
           </nav>
           <p className="menu-footer">

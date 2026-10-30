@@ -11,19 +11,27 @@
    its structures. Provide a path and Back navigation through these levels.
 3. Selecting a structure loads an example containing 10 elements in the shared
    renderer. Lists, trees, graphs, and other structures can use different layouts.
-4. After selection, show an action menu for that structure.
+4. After selection, close the structure picker and show the structure's allowed
+   actions in a persistent card at the upper-left of the canvas. Match the
+   algorithm overview card's styling and mark the selected action with text.
 5. Selecting an implemented action starts its detailed animation. Honor
    reduced-motion preferences by waiting for the user to press Play instead.
 
 Browsing categories or groups must preserve the current visualization and action
 session. Opening the menu pauses playback. If a structure is already selected,
-reopen its action list and retain the group path for Back navigation.
+reopen its structure group and retain the group path for Back navigation.
+Actions are selected directly from the canvas card, without reopening the menu.
+On smaller screens, place the action and algorithm cards above the diagram so
+they do not overlap nodes. Move keyboard focus to the first action after choosing
+a structure. Selecting the current action preserves its playback session.
 
 Open the detailed animation controls and explanation by default when an action
 is selected. The **Animation controls** disclosure button toggles the panel;
 the close (X) button hides it. Toggling this panel must preserve the current
 animation, playback state, and entered value.
 
+After a structure is selected, show a default **Algorithm overview** card in the
+upper-right, prompting the user to pick an action to see its description.
 When an action is selected, show its algorithm information in the upper-right
 of the canvas, independently of the collapsed controls. Include time complexity,
 additional memory complexity, with labeled best, average, and worst cases for
@@ -35,7 +43,7 @@ linked list insertion explains `n`, `O(n)`, and `O(1)` without introducing `k`.
 Fixed-array insertion uses only `n` and `O(n)` because both copying and additional
 storage are linear.
 Values such as the original input size must describe the current run, including
-after completion and replay. Clear the card on structure
+after completion and replay. Restore the default prompt on structure
 selection or reset. On smaller screens, let the card wrap above the diagram so
 it does not overlap nodes or controls.
 
