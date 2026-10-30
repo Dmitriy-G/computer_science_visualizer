@@ -117,6 +117,27 @@ export class BinaryTree {
     return removed
   }
 
+  public clear(): void {
+    const stack: { node: BinaryTreeNode; parent: BinaryTreeNode | null; expanded: boolean }[] = []
+    if (this.root) stack.push({ node: this.root, parent: null, expanded: false })
+    while (stack.length > 0) {
+      const { node, parent, expanded } = stack.pop()!
+      if (!expanded) {
+        stack.push({ node, parent, expanded: true })
+        if (node.right) stack.push({ node: node.right, parent: node, expanded: false })
+        if (node.left) stack.push({ node: node.left, parent: node, expanded: false })
+      } else {
+        node.left = null
+        node.right = null
+        if (parent === null) this.root = null
+        else if (parent.left === node) parent.left = null
+        else parent.right = null
+        this.size -= 1
+      }
+    }
+    this.root = null
+  }
+
   public getEntries(): BinaryTreeEntry[] {
     const entries: BinaryTreeEntry[] = []
     const stack: BinaryTreeNode[] = []

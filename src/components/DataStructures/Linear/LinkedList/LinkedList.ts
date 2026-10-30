@@ -91,6 +91,15 @@ export class LinkedList {
     return removed
   }
 
+  public clear(): void {
+    while (this.head !== null) {
+      const removed = this.head
+      this.head = removed.next
+      removed.next = null
+      this.size -= 1
+    }
+  }
+
   public getEntries(): LinkedListEntry[] {
     const entries: LinkedListEntry[] = []
     let current = this.head

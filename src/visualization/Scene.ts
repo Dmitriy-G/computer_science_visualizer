@@ -1,4 +1,4 @@
-export type StructureKind = 'linked-list' | 'array' | 'binary-tree' | 'graph' | 'stack'
+export type StructureKind = 'linked-list' | 'array' | 'binary-tree' | 'graph' | 'stack' | 'queue' | 'deque' | 'doubly-linked-list' | 'circular-buffer' | 'avl-tree' | 'red-black-tree' | 'b-tree' | 'b-plus-tree'
 export type NodeTone = 'default' | 'visited' | 'active' | 'new'
 
 export interface SceneNode {
@@ -13,6 +13,8 @@ export interface SceneNode {
   readonly width?: number
   readonly height?: number
   readonly labelPlacement?: 'below' | 'right'
+  readonly keys?: readonly number[]
+  readonly nodeColor?: 'red' | 'black'
 }
 
 export interface SceneSlot {
@@ -32,6 +34,8 @@ export interface SceneEdge {
   readonly directed: boolean
   readonly highlighted: boolean
   readonly opacity: number
+  readonly label?: string
+  readonly bend?: number
 }
 
 export interface Scene {

@@ -4,8 +4,10 @@
 
 1. Start with an empty renderer and a clickable menu icon in the top left.
 2. Open the menu to see categories. The initial category is **Data structures
-   common operations**. Selecting it shows **Linear** (Array, Linked list, and Stack),
-   **Trees** (Binary tree), and **Graphs** (Graph). Choose a group to see only
+   common operations**. Selecting it shows **Linear** (Array, Linked list, Stack,
+   Queue, Deque, Doubly linked list, and Circular buffer),
+   **Trees** (Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, and
+   B+ Tree), and **Graphs** (Graph). Choose a group to see only
    its structures. Provide a path and Back navigation through these levels.
 3. Selecting a structure loads an example containing 10 elements in the shared
    renderer. Lists, trees, graphs, and other structures can use different layouts.
@@ -130,6 +132,8 @@ Search and other actions can be added through their own action folders and plans
 Use an unbalanced binary search tree. Its default example has 10 nodes and
 satisfies the search ordering. Smaller values go left; larger or equal values
 go right. Duplicates are separate nodes with stable IDs. Do not perform rotations.
+The existing `binary-tree` selection is labeled **Binary search tree (BST)**;
+keep its model, actions, and selection key so existing sessions remain compatible.
 
 1. **Start:** highlight the root, or identify an empty root pointer.
 2. **Compare:** show the comparison at each visited node, then follow the chosen
@@ -179,3 +183,152 @@ worst-case time for a bottom match or a miss. Average O(n) assumes uniformly
 distributed matching depths. It uses O(1) extra memory. Explain empty boundary
 cases separately and exclude playback copies and snapshots from algorithm costs.
 Hide the value input and its hint for actions that do not accept a value.
+
+## Queue and Deque
+
+Queue uses singly linked nodes, cached front/rear pointers, and a cached count.
+Provide **Enqueue**, **Dequeue**, **Peek (front)**, **Clear**, and **Search by value**.
+Enqueue adds at the rear; dequeue removes the front in FIFO order. Removing the
+last node clears both end pointers. Search traverses without changing order.
+
+Deque is a double-ended queue backed by doubly linked nodes. Reuse the doubly
+linked representation through composition, exposing **Push front**, **Push back**,
+**Pop front**, **Pop back**, **Peek front**, **Peek back**, **Clear**, and
+**Search by value**. Both ends are cached; no traversal is needed to remove the
+back. Do not offer arbitrary insertion, indexed access, or value deletion for
+these queue interfaces.
+
+Show horizontal linked nodes with front/rear or front/back roles. Label directed
+links **next** and, for deque, **prev**, routing the two directions separately.
+Create and lower pending insertions; show end-pointer updates before committing.
+Detach removals before closing the visual gap. Empty pop, dequeue, and peek
+return no value. End operations take O(1) time and extra memory; clear releases
+all n nodes in O(n) time and O(1) extra memory. Search has O(1) best and O(n)
+average/worst time, assuming uniformly distributed matching positions.
+
+## DoublyLinkedList
+
+Keep the existing singly linked list as a separate structure. The doubly linked
+list has head/tail pointers, a cached count, and reciprocal prev/next node links.
+Offer insertion at the start, middle, and end; deletion at either end and by
+first matching value; search by value and index; and clear.
+
+Use the nearer cached end for indexed access and middle insertion. Animate
+forward traversal with next and backward traversal with prev. Show the two new
+node pointers and the two neighbor connections in separate frames. Deletion
+separately reconnects predecessor.next and successor.prev, including null at
+the boundaries. Both pointers are null after the final singleton is removed.
+
+End insertion/deletion takes O(1) time; middle insertion takes O(n) time for
+growing nonempty inputs. Indexed search is O(1) at either end and O(n) in the
+middle, with O(n) average time for uniformly distributed valid indices. Value
+search/deletion stops at the first match from head: O(1) best and O(n)
+average/worst time, assuming uniformly distributed matching positions. Clear
+explicitly releases all n nodes in O(n). All these actions use O(1) extra memory.
+
+## CircularBuffer
+
+Use fixed-capacity FIFO storage, read/write indices, and a cached count. The
+default has 12 physical slots and 10 occupied values, starting at read index 8
+to demonstrate wraparound. Capacity never grows. Provide **Enqueue**, **Dequeue**,
+**Peek (oldest)**, **Clear**, and **Search by value**. Reject enqueue when full;
+never overwrite existing values. Equal read/write indices mean empty at count
+zero and full at count equal to capacity.
+
+Show physical slots around a ring with index labels and read/write roles.
+Enqueue moves a pending value into write, then advances write modulo capacity.
+Dequeue reads and releases the oldest slot, then advances read modulo capacity.
+Keep other values fixed in their physical slots. Search visits occupied slots
+in FIFO order with wraparound; clear releases each occupied slot in that order.
+Empty dequeue/peek returns no value. Enqueue/dequeue/peek take O(1) time, search
+takes O(1) best and O(n) average/worst time under uniformly distributed matching
+positions, and clear takes O(n). All use O(1) extra memory, excluding the existing
+fixed allocation. Unused slots are not included in search or clear traversal.
+
+All four structures load 10 elements and use the shared playback session, final
+frame commits, deterministic snapshots, reduced-motion behavior, and lifecycle
+cleanup. Hide value inputs for actions without a value argument.
+
+## Clear for Array, LinkedList, BinaryTree, and Graph
+
+Each structure provides a working **Clear** action with no value input. Use the
+shared playback controls, preserve the original model, and commit an empty result
+only on the final frame. Rewind and replay restore the original. Empty inputs
+complete safely. Keep ID counters across clear so future insertions use fresh IDs.
+
+- **Array:** return a separate fixed array of length zero and fade the old
+  allocation as a whole. Do not overwrite values, leave spare capacity, or resize
+  the original fixed array. This reference replacement takes O(1) time and extra
+  memory; automatic collection of unused storage is outside the operation.
+- **Linked list:** save head.next, disconnect the old head, and release it.
+  Repeat until head is null. Show each release without moving surviving nodes.
+  Time is O(n) and extra memory is O(1).
+- **Binary tree:** use iterative left-right-root postorder and release children
+  before their parent. Show visits, incoming-pointer disconnections, and releases
+  separately. The model clears actual links without rotations or repeated value
+  searches. Time is O(n); traversal stack space is O(h), with O(log n) best and
+  average space for balanced trees and distinct random-order insertions,
+  respectively, and O(n) worst space for a chain. Explain empty inputs separately.
+- **Graph:** empty every adjacency list, then release all vertices. Show each
+  undirected edge once and include self-loops, isolated vertices, duplicate values,
+  and disconnected components. Time is O(n + e), where e counts undirected edges;
+  extra memory is O(1). The model releases adjacency records in place without
+  rebuilding the graph or searching for each vertex.
+
+Keep the original element count until commit. Scene snapshots, recorded paths,
+and playback copies do not contribute to the underlying algorithm memory cost.
+
+## Balanced search trees and multiway trees
+
+Add **AVL tree**, **Red-Black tree**, **B-Tree**, and **B+ Tree** under Trees.
+Each loads ten unique integer keys and provides **Insert a key**, **Search by
+value**, **Delete by value**, and **Clear**. These four models use unique keys:
+duplicate insertion and missing deletion leave the model and ID counter unchanged.
+The original BST continues to support duplicate nodes.
+
+Keep actual algorithms in the structure model and expose synchronous trace
+events, without timers or rendering dependencies. Each action owns its sequence
+class, descriptions, pseudocode, and complexity information. Shared trace playback
+records independent scenes from a cloned result. Intermediate steps retain the
+original committed key count; commit only the final result, restoring the source
+on rewind. Continue to use the shared Renderer and ActionPlayback controls.
+
+- **AVL:** cache parent pointers and subtree heights. Show height/balance checks
+  and separate single rotations for LL/RR and double rotations for LR/RL. Deletion
+  transplants surviving nodes and repairs ancestors rather than rebuilding.
+- **Red-Black:** use black NIL sentinels internally. Show red/black fills and
+  explicit RED/BLACK text, so color alone does not carry meaning. Trace recoloring
+  and rotations separately for insertion and deletion, including black-height
+  deficit repair. Never expose NIL as a stored key. Preserve surviving node IDs.
+- **B-Tree:** use minimum degree 2 (order 4), with at most three keys and four
+  children per page. Non-root pages have at least one key. Split full children
+  before descending; move the median into the parent. Deletion borrows through
+  parent separators or merges siblings, and collapses an empty root.
+- **B+ Tree:** use order 4: internal pages have two to four children and non-root
+  leaves two to three records. Internal separators copy the minimum of each child
+  after the first. Store records only in leaves; count records, not separators or
+  pages. Leaf splits copy separators upward and repair next-leaf links. Deletion
+  refreshes cached minima, borrows or merges, repairs leaf links, and collapses a
+  one-child root. Local repairs must not recompute the whole tree.
+
+Draw multi-key pages as rectangular nodes with separate key cells, child edges
+clipped to page boundaries, and directed next-leaf links for B+ Tree. Layout
+infrastructure is shared across the two binary balanced trees and the two multiway
+trees, with structure-specific layout wrappers colocated with their models.
+Keep icons as bounded SVGs in the existing menu style.
+
+B+ Tree also offers **Range from value**, with an inclusive minimum and unbounded
+upper end. Descend once to the first leaf, then scan next links. Report results
+in the controls; do not add standalone result text to the diagram. Time is
+O(log n + k) and extra memory O(k + 1), including the k returned records. Its model
+also supports an inclusive bounded range for reuse.
+
+Balanced searches and mutations have O(log n) worst-case time at fixed page order.
+Explain early matches and duplicate/no-op cases in each action. Binary balanced
+models and B+ deletion use cached parent references and O(1) auxiliary space.
+B-Tree deletion uses a logarithmic recursion stack on success and constant space
+for a miss. Page insertion can allocate O(log n) split pages in the worst case;
+its O(1) average allocation is amortized over insertion-only unique-key sequences.
+Clear releases nodes/pages in postorder in O(n) time with O(log n) stack space;
+it does not repeatedly rebalance a discarded tree. Exclude tracing and snapshot
+storage from algorithm costs, and explain empty inputs separately.

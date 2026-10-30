@@ -113,6 +113,89 @@ export default class MainMenu extends Component<
     return buttons
   }
 
+  private renderStructureIcon(kind: StructureKind, fallback: string): ReactNode {
+    let drawing: ReactNode
+    switch (kind) {
+      case 'binary-tree':
+      case 'avl-tree':
+      case 'red-black-tree':
+        drawing = (
+          <>
+            <path d="M16 10 7 21m9-11 9 11" />
+            <circle cx="16" cy="7" r="4" />
+            <circle cx="6" cy="25" r="4" fill={kind === 'red-black-tree' ? '#a93c45' : 'none'} />
+            <circle cx="26" cy="25" r="4" fill={kind === 'red-black-tree' ? 'currentColor' : 'none'} />
+            {kind === 'avl-tree' && <path d="M10 15h12" />}
+          </>
+        )
+        break
+      case 'b-tree':
+      case 'b-plus-tree':
+        drawing = (
+          <>
+            <rect x="9" y="3" width="14" height="7" rx="2" />
+            <path d="M16 3v7m-3 0-6 9m12-9 6 9" />
+            <rect x="2" y="19" width="10" height="8" rx="2" />
+            <rect x="20" y="19" width="10" height="8" rx="2" />
+            {kind === 'b-plus-tree' && <path d="M13 23h6m-2-2 2 2-2 2" />}
+          </>
+        )
+        break
+      case 'queue':
+        drawing = (
+          <>
+            <rect x="6" y="14" width="8" height="11" rx="2" />
+            <rect x="18" y="14" width="8" height="11" rx="2" />
+            <path d="M4 7h24m-4-4 4 4-4 4" />
+          </>
+        )
+        break
+      case 'deque':
+        drawing = (
+          <>
+            <rect x="6" y="14" width="8" height="11" rx="2" />
+            <rect x="18" y="14" width="8" height="11" rx="2" />
+            <path d="M4 7h24M8 3 4 7l4 4m16-8 4 4-4 4" />
+          </>
+        )
+        break
+      case 'doubly-linked-list':
+        drawing = (
+          <>
+            <rect x="3" y="10" width="7" height="14" rx="2" />
+            <rect x="22" y="10" width="7" height="14" rx="2" />
+            <path d="M11 13h10m-3-3 3 3-3 3M21 21H11m3-3-3 3 3 3" />
+          </>
+        )
+        break
+      case 'circular-buffer':
+        drawing = (
+          <>
+            <path d="M27 12a11 11 0 1 0 0 8M27 5v7h-7" />
+            <rect x="12" y="12" width="8" height="8" rx="2" />
+          </>
+        )
+        break
+      default:
+        return fallback
+    }
+    return (
+      <svg
+        className="structure-icon"
+        viewBox="0 0 32 32"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+        focusable="false"
+      >
+        {drawing}
+      </svg>
+    )
+  }
+
   private renderStructures(): ReactNode[] {
     const buttons: ReactNode[] = []
     if (!this.props.navigation.group) return buttons
@@ -125,7 +208,7 @@ export default class MainMenu extends Component<
           onClick={this.handleSelection}
         >
           <span className="structure-symbol" aria-hidden="true">
-            {structure.symbol}
+            {this.renderStructureIcon(structure.kind, structure.symbol)}
           </span>
           <span className="choice-copy">
             <strong>{structure.name}</strong>

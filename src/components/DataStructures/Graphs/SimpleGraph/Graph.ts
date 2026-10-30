@@ -4,8 +4,14 @@ export interface GraphEntry {
   readonly neighborIds: readonly string[]
 }
 
+interface GraphVertex {
+  readonly id: string
+  readonly value: number
+  readonly neighborIds: string[]
+}
+
 export class Graph {
-  private entries: GraphEntry[] = []
+  private entries: GraphVertex[] = []
   private nextId = 0
 
   public get length(): number { return this.entries.length }
@@ -21,7 +27,7 @@ export class Graph {
 
   public addVertex(value: number): GraphEntry {
     if (!Number.isSafeInteger(value)) throw new TypeError('Values must be safe integers')
-    const entry: GraphEntry = { id: `graph-${this.nextId}`, value, neighborIds: [] }
+    const entry: GraphVertex = { id: `graph-${this.nextId}`, value, neighborIds: [] }
     this.nextId += 1
     this.entries.push(entry)
     return { ...entry, neighborIds: [] }
@@ -41,7 +47,7 @@ export class Graph {
   // Breadth-first traversal restarts at each unvisited connected component.
   public getSearchPath(value: number): GraphEntry[] {
     if (!Number.isSafeInteger(value)) throw new TypeError('Values must be safe integers')
-    const byId = new Map<string, GraphEntry>()
+    const byId = new Map<string, GraphVertex>()
     for (const entry of this.entries) byId.set(entry.id, entry)
     const seen = new Set<string>()
     const path: GraphEntry[] = []
@@ -67,7 +73,7 @@ export class Graph {
     const path = this.getSearchPath(value)
     const target = path[path.length - 1]
     if (!target || target.value !== value) return null
-    const remaining: GraphEntry[] = []
+    const remaining: GraphVertex[] = []
     for (const entry of this.entries) {
       if (entry.id === target.id) continue
       const neighborIds: string[] = []
@@ -78,6 +84,13 @@ export class Graph {
     return target
   }
 
+  public clear(): void {
+    for (const entry of this.entries) {
+      while (entry.neighborIds.length > 0) entry.neighborIds.pop()
+    }
+    while (this.entries.length > 0) this.entries.pop()
+  }
+
   public getEntries(): GraphEntry[] {
     const entries: GraphEntry[] = []
     for (const entry of this.entries) entries.push({ ...entry, neighborIds: [...entry.neighborIds] })
@@ -86,7 +99,9 @@ export class Graph {
 
   public clone(): Graph {
     const copy = new Graph()
-    copy.entries = this.getEntries()
+    for (const entry of this.entries) {
+      copy.entries.push({ ...entry, neighborIds: [...entry.neighborIds] })
+    }
     copy.nextId = this.nextId
     return copy
   }

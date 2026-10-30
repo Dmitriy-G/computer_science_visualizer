@@ -142,6 +142,28 @@
 .tone-new .node-value {
   fill: #946713;
 }
+.tree-color-red .node-body {
+  fill: #a93c45;
+  stroke: #8c2935;
+}
+.tree-color-black .node-body {
+  fill: #334155;
+  stroke: #1e293b;
+}
+.tree-color-red .node-value,
+.tree-color-black .node-value {
+  fill: #fff;
+}
+.page-key {
+  font-size: 18px;
+}
+.page-divider {
+  stroke: #bacbdc;
+  stroke-width: 1;
+}
+.scene-edge-group {
+  transition: opacity 450ms ease;
+}
 .scene-edge {
   fill: none;
   stroke: #a6b7c9;
@@ -265,6 +287,7 @@
   .scene-slot,
   .node-body,
   .node-halo,
+  .scene-edge-group,
   .scene-edge {
     transition: none;
   }

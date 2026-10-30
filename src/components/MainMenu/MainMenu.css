@@ -69,6 +69,14 @@
   background: #eef4fc;
   color: var(--accent);
   font: 24px var(--mono);
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.structure-icon {
+  display: block;
+  width: 28px;
+  height: 28px;
 }
 .structure-choice strong {
   display: block;

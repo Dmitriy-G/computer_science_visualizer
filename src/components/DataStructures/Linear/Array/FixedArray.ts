@@ -73,6 +73,12 @@ export class FixedArray {
     return result
   }
 
+  public withoutAll(): FixedArray {
+    const result = new FixedArray()
+    result.nextId = this.nextId
+    return result
+  }
+
   public getEntries(): ArrayEntry[] {
     const entries = new Array<ArrayEntry>(this.length)
     for (let index = 0; index < this.length; index += 1) {
