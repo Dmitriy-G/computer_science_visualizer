@@ -16,7 +16,12 @@ export class BoundaryInsertionAnimation extends AnimationSequence {
     this.add(1, 'Start at the head', 'Read the head pointer. An empty list has a null head.', 'current = head', layout.create(entries, { activeIndex: 0 }))
     if (end) {
       for (let index = 0; index < entries.length; index += 1) {
-        this.add(2, `Visit index ${index}`, 'Follow next pointers until the last node. This list has no cached tail pointer.', 'if current.next != null: current = current.next', layout.create(entries, { activeIndex: index, visitedThrough: index - 1 }))
+        const entry = entries[index]
+        const next = entries[index + 1]
+        const description = next
+          ? `Visit ${entry.value} at index ${index}. Its next pointer leads to ${next.value} at index ${index + 1}; continue toward the last node.`
+          : `Visit ${entry.value} at index ${index}. Its next pointer is null, so this is the last node. Insert ${value} after it.`
+        this.add(2, `Visit index ${index}`, description, 'if current.next != null: current = current.next', layout.create(entries, { activeIndex: index, visitedThrough: index - 1 }))
       }
     }
     const base = { pendingNode, insertionIndex: this.insertionIndex, showPending: true }

@@ -25,15 +25,38 @@ On smaller screens, place the action and algorithm cards above the diagram so
 they do not overlap nodes. Move keyboard focus to the first action after choosing
 a structure. Selecting the current action preserves its playback session.
 
-Open the detailed animation controls and explanation by default when an action
-is selected. The **Animation controls** disclosure button toggles the panel;
-the close (X) button hides it. Toggling this panel must preserve the current
-animation, playback state, and entered value.
+Do not render a bottom animation panel, its disclosure/close buttons, a value
+input, or a speed selector. Actions use their definition's default value (99
+when unspecified) and normal playback speed.
+
+Place the animation timeline in the app header, replacing the structure name
+and element count. Put a compact Play/Pause button before the timeline; switch to
+a replay icon when the animation finishes. Keep the header's structure Reset
+button before the playback button and timeline, including on narrow screens.
+Show Reset only when an action is selected; hide it in the initial structure view
+and after resetting or selecting another structure.
+Use matching icon-only styles for playback and Reset, with accessible
+labels describing each button's current action.
+Center the current step's description above the timeline, replacing the visible
+"Animation timeline" label and generic hint. Let the description wrap on narrow
+screens, and retain an accessible name for the slider. Match the description's
+width and horizontal center to the code snippet below, accounting for the
+different side-card widths on desktop. Keep the description and code in their
+separate rows.
+Show the current step's pseudocode in a separate bar above the diagram in the
+renderer center column, between the actions and algorithm overview cards.
+On narrow screens, place it above the diagram after the cards and allow long
+snippets to scroll.
+Reserve a fixed-height snippet area even before an action is selected. Changing
+code line counts must not resize or reposition the diagram. Center short code
+within the bar and scroll longer snippets inside it.
+Omit the step heading, action introduction, phase progress bar, step counter,
+playback status badges, and previous/next/reset buttons.
 
 After a structure is selected, show a default **Algorithm overview** card in the
 upper-right, prompting the user to pick an action to see its description.
 When an action is selected, show its algorithm information in the upper-right
-of the canvas, independently of the collapsed controls. Include time complexity,
+of the canvas. Include time complexity,
 additional memory complexity, with labeled best, average, and worst cases for
 both costs, and definitions of only the terms and letters used
 by that action. Each action owns its summary, complexity explanations, and glossary
@@ -49,7 +72,7 @@ it does not overlap nodes or controls.
 
 Do not put standalone text annotations in the structure diagram, including hints,
 action results, or original/new array headings. Keep these explanations in the
-animation controls. Diagram text is limited to values, indices, and node roles
+step description above the timeline. Diagram text is limited to values, indices, and node roles
 and statuses. The algorithm overview remains a separate card.
 
 Compare best, average, and worst cases at the same input size. Explain empty and
@@ -72,14 +95,15 @@ a TypeScript class next to its `.tsx` component and `.css` file in the action fo
 Each step includes a phase, title, explanation, relevant pseudocode, duration, and
 scene snapshot. Keep scene snapshots independent so stepping backward and replaying
 are deterministic.
-The controls show only phases present in the current animation plan, numbered
-consecutively. A duplicate rejection must not mark skipped creation stages complete.
+Retain phase metadata in the animation plan without displaying a phase progress
+bar in the controls. A duplicate rejection skips creation stages entirely.
 
 The shared Renderer draws the supplied nodes, edges, and highlights and animates
 their transitions. It must not decide the algorithm or hard-code action phases.
 Playback timing belongs to a separate controller class. Cancel scheduled playback
 when the action unmounts or the selected structure changes, and pause when opening
-the menu. Support pause/resume, previous/next step, replay, timeline seeking, and speed.
+the menu. Support pause/resume, replay, and timeline seeking. The range
+input supports keyboard stepping instead of separate previous/next buttons.
 
 Keep intermediate visual states separate from the data model. Publish a completed
 insertion only on its final step; rewinding restores the original model. Replay
@@ -116,7 +140,7 @@ as a dynamic array with spare capacity or automatic buffer growth.
 
 1. **Locate:** identify the insertion index in the original fixed array.
 2. **Allocate:** show an empty result array of exactly `n + 1` slots in a second
-   row, below the original array of `n` slots. Explain the rows in the controls.
+   row, below the original array of `n` slots. Explain the rows in the step description.
 3. **Prefix:** read and copy each element before the middle to the same index in
    the result. Use separate reading and copying frames. Preserve the source value.
 4. **Insert:** show the new value above the result's middle slot and lower it in.
@@ -180,7 +204,7 @@ Provide animated **Push**, **Pop**, **Peek (top)**, **Clear**, and **Search by v
 actions. Push and pop modify only the top. Peek and search leave the stack unchanged.
 Keep cached size and emptiness checks in the model, without separate menu actions.
 Empty pop and peek
-return no value and explain that result in the controls. Clear repeatedly removes
+return no value and explain that result in the step description. Clear repeatedly removes
 the top until empty. Value search is an optional traversal of the linked nodes;
 stop at the first match from the top without changing the order. Do not offer
 index access, insertion in the middle, or arbitrary-value deletion for Stack.
@@ -198,7 +222,6 @@ and O(1) extra memory. Search takes O(1) best-case time for a top match and O(n)
 worst-case time for a bottom match or a miss. Average O(n) assumes uniformly
 distributed matching depths. It uses O(1) extra memory. Explain empty boundary
 cases separately and exclude playback copies and snapshots from algorithm costs.
-Hide the value input and its hint for actions that do not accept a value.
 
 ## Queue and Deque
 
@@ -263,7 +286,7 @@ fixed allocation. Unused slots are not included in search or clear traversal.
 
 All four structures load 10 elements and use the shared playback session, final
 frame commits, deterministic snapshots, reduced-motion behavior, and lifecycle
-cleanup. Hide value inputs for actions without a value argument.
+cleanup.
 
 ## Clear for Array, LinkedList, BinaryTree, and Graph
 
@@ -335,7 +358,7 @@ Keep icons as bounded SVGs in the existing menu style.
 
 B+ Tree also offers **Range from value**, with an inclusive minimum and unbounded
 upper end. Descend once to the first leaf, then scan next links. Report results
-in the controls; do not add standalone result text to the diagram. Time is
+in the step description; do not add standalone result text to the diagram. Time is
 O(log n + k) and extra memory O(k + 1), including the k returned records. Its model
 also supports an inclusive bounded range for reuse.
 

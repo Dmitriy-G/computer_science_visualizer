@@ -693,36 +693,32 @@ export default class App extends Component<Record<string, never>, AppState> {
             </span>
           </div>
           {selected && (
-            <>
-              <span className="header-divider" />
-              <span className="selected-name">
-                {StructureCatalog.getName(selected)}
-              </span>
-            </>
-          )}
-          {scene && <span className="count-badge">{scene.count} elements</span>}
-          {selected && (
-            <button
-              className="primary-button reset-structure"
-              onClick={this.resetStructure}
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                aria-hidden="true"
-              >
-                <path
-                  d="M4 10a8 8 0 1 1 1.8 7M4 4v6h6"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              Reset
-            </button>
+            <div className="header-playback">
+              {this.state.selectedAction !== null && (
+                <button
+                  className="primary-button header-action-button"
+                  onClick={this.resetStructure}
+                  aria-label="Reset structure"
+                >
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M4 10a8 8 0 1 1 1.8 7M4 4v6h6"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              )}
+              <div id="playback-toolbar" className="playback-toolbar-host" />
+            </div>
           )}
         </header>
 

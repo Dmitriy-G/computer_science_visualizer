@@ -269,26 +269,29 @@ export default class Renderer extends Component<
       <section className="renderer" aria-label="Visualization workspace">
         <div className="renderer-content">
           {scene && this.props.children}
-          <div
-            className="renderer-viewport"
-            ref={this.viewport}
-            tabIndex={scene ? 0 : -1}
-            aria-label={scene ? 'Scrollable data structure canvas' : undefined}
-          >
-            {scene ? (
-              this.renderScene(scene)
-            ) : (
-              <div className="empty-canvas">
-                <span className="empty-diagram" aria-hidden="true">
-                  □<span>—</span>□<span>—</span>□
-                </span>
-                <h1>Make the invisible visible.</h1>
-                <p>Choose a data structure to bring it to life.</p>
-                <button className="text-button" onClick={this.props.onOpenMenu}>
-                  Open the menu <span aria-hidden="true">↗</span>
-                </button>
-              </div>
-            )}
+          <div className="renderer-stage">
+            <div id="renderer-code" className="renderer-code-host" />
+            <div
+              className="renderer-viewport"
+              ref={this.viewport}
+              tabIndex={scene ? 0 : -1}
+              aria-label={scene ? 'Scrollable data structure canvas' : undefined}
+            >
+              {scene ? (
+                this.renderScene(scene)
+              ) : (
+                <div className="empty-canvas">
+                  <span className="empty-diagram" aria-hidden="true">
+                    □<span>—</span>□<span>—</span>□
+                  </span>
+                  <h1>Make the invisible visible.</h1>
+                  <p>Choose a data structure to bring it to life.</p>
+                  <button className="text-button" onClick={this.props.onOpenMenu}>
+                    Open the menu <span aria-hidden="true">↗</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
           {scene && (
             <AlgorithmInfo information={this.props.algorithmInformation} />

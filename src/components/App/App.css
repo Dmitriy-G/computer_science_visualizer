@@ -1,4 +1,10 @@
 .application {
+  --action-menu-width: 280px;
+  --algorithm-info-width: 420px;
+  --snippet-width: 560px;
+  --renderer-inset: 32px;
+  --header-inset: 28px;
+  --renderer-center-offset: calc((var(--action-menu-width) - var(--algorithm-info-width)) / 2);
   min-height: 100svh;
   display: flex;
   flex-direction: column;
@@ -8,7 +14,7 @@
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 16px 28px;
+  padding: 16px var(--header-inset);
   background: #fff;
   border-bottom: 1px solid var(--border);
 }
@@ -41,32 +47,28 @@
   font-weight: 400;
   color: var(--muted);
 }
-.header-divider {
-  height: 28px;
-  width: 1px;
-  background: var(--border);
-  margin: 0 4px;
+.header-playback {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
 }
-.selected-name {
-  font-size: 13px;
-  color: var(--muted);
+.playback-toolbar-host {
+  flex: 1;
+  min-width: 0;
 }
-.count-badge {
-  color: #3e617b;
-  background: #edf3f7;
-  border-radius: 20px;
-  padding: 6px 10px;
-  font: 11px var(--mono);
-  white-space: nowrap;
+.playback-toolbar-host:empty {
+  display: none;
 }
-.reset-structure {
-  margin-left: auto;
-  min-height: 42px;
-  font-size: 13px;
-  font-weight: 600;
-  box-shadow: 0 2px 5px #254e8420;
+.app-header .header-action-button {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  padding: 0;
+  justify-content: center;
 }
-.reset-structure svg {
+.header-action-button svg {
   flex-shrink: 0;
 }
 .workspace {
@@ -74,14 +76,19 @@
   flex: 1;
   flex-direction: column;
 }
+@media (max-width: 1400px) {
+  .application {
+    --renderer-center-offset: 0px;
+  }
+}
 @media (max-width: 700px) {
+  .application {
+    --header-inset: 16px;
+  }
   .app-header {
     gap: 12px;
-    padding: 14px 16px;
+    padding: 14px var(--header-inset);
     flex-wrap: wrap;
-  }
-  .header-divider {
-    display: none;
   }
   .brand {
     margin-right: auto;
@@ -89,10 +96,13 @@
   .brand-caption {
     display: none;
   }
-  .selected-name {
-    flex-basis: auto;
+  .header-playback {
+    order: 1;
+    flex-basis: 100%;
   }
-  .reset-structure {
-    margin-left: 0;
+}
+@media (max-width: 650px) {
+  .application {
+    --renderer-inset: 20px;
   }
 }

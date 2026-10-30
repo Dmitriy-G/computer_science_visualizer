@@ -1,5 +1,5 @@
 .action-menu {
-  width: 280px;
+  width: var(--action-menu-width);
   max-width: 100%;
   min-width: 0;
   flex-shrink: 0;

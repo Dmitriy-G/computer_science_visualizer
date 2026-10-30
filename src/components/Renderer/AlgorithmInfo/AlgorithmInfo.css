@@ -1,5 +1,5 @@
 .algorithm-info {
-  width: 420px;
+  width: var(--algorithm-info-width);
   max-width: 100%;
   flex-shrink: 0;
   padding: 22px;

@@ -64,7 +64,14 @@ Use `src/components/ActionPlayback/` for the shared playback component and its
 styles. Each action's component supplies its own class-based definition with phase
 labels, explanations, and a factory method that creates its animation plan.
 Keep structure-specific algorithms and model types in their action folders;
-reuse the common controls for playback, value input, seeking, and panel visibility.
+reuse the common controls for playback and seeking. Use each action's default
+value and normal playback speed; do not render a bottom panel or input controls.
+The app header provides the `playback-toolbar` host. `ActionPlayback` renders
+its Play/Pause button and timeline there through a React portal, keeping them
+connected to the same controller without adding a bottom-panel wrapper.
+The renderer provides the `renderer-code` host above the diagram in its center
+column. `ActionPlayback` renders the current step's pseudocode there through a
+second portal, using the same playback index as the scene and timeline.
 
 ## Shared visualization infrastructure
 
