@@ -19,7 +19,16 @@ Read and follow these documents before implementing or changing application code
 
 These documents are part of this project's agent instructions.
 
-## Commands
+## Agent restrictions
+
+- Never run npm commands, including installs, development servers, builds,
+  type checks, and tests. The user runs them manually.
+- Never open or use a browser to check the application. The user performs all
+  browser verification manually.
+- Do not bypass these restrictions by invoking equivalent commands through
+  other package managers, direct executables, scripts, or browser automation.
+
+## Commands (for the user to run manually)
 
 - `npm install`: install dependencies and generate or update `package-lock.json`.
 - `npm run dev`: start the Vite development server.
@@ -77,13 +86,3 @@ Create directories when needed, rather than adding empty scaffolding.
   color to communicate state. Respect reduced-motion preferences when adding animation.
 - Keep layouts usable on narrow screens.
 - Add dependencies only when they provide a clear benefit for the requested feature.
-
-## Verification
-
-Run `npm run build` after code or configuration changes when dependencies are installed.
-Run `npm test` for data structure and animation changes.
-For UI changes, check the affected behavior in a browser when available.
-When implementing data structure operations, verify normal cases, empty structures,
-duplicates where relevant, and invalid input; add focused automated tests as needed.
-Report checks that could not run and the reason. Keep this file aligned with actual
-scripts and architecture as the project evolves.
