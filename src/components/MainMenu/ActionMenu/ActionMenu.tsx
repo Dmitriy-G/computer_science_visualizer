@@ -10,6 +10,8 @@ interface ActionMenuProps {
   readonly structure: StructureKind
   readonly selectedAction: ActionKind | null
   readonly onActionSelected: (action: ActionKind) => void
+  readonly onActionInformationRequested: (action: ActionKind) => void
+  readonly onStructureInformationRequested: () => void
 }
 
 export default class ActionMenu extends PureComponent<
@@ -36,29 +38,67 @@ export default class ActionMenu extends PureComponent<
     for (const action of ActionCatalog.getActions(this.props.structure)) {
       const selected = action.kind === this.props.selectedAction
       buttons.push(
-        <button
-          className="canvas-action"
-          key={action.kind}
-          ref={buttons.length === 0 ? this.firstAction : undefined}
-          data-action={action.kind}
-          onClick={this.selectAction}
-          aria-current={selected ? 'true' : undefined}
-        >
-          <span className="canvas-action-heading">
-            <strong>{action.title}</strong>
-            {selected && <span className="canvas-action-selected">Selected</span>}
-          </span>
-          <span className="canvas-action-description">{action.description}</span>
-        </button>,
+        <div className="canvas-action-row" key={action.kind}>
+          <button
+            className="canvas-action"
+            ref={buttons.length === 0 ? this.firstAction : undefined}
+            data-action={action.kind}
+            onClick={this.selectAction}
+            aria-current={selected ? 'true' : undefined}
+          >
+            <span className="canvas-action-heading">
+              <strong>{action.title}</strong>
+            </span>
+            <span className="canvas-action-description">{action.description}</span>
+          </button>
+          <button
+            className="action-info-button"
+            data-action={action.kind}
+            onClick={this.showInformation}
+            aria-label={`About ${action.title}`}
+            aria-haspopup="dialog"
+            aria-controls="algorithm-overview"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 11v6" strokeLinecap="round" />
+              <circle cx="12" cy="7.5" r="0.8" fill="currentColor" />
+            </svg>
+          </button>
+        </div>,
       )
     }
     return buttons
   }
 
+  private showInformation = (event: MouseEvent<HTMLButtonElement>): void => {
+    for (const action of ActionCatalog.getActions(this.props.structure)) {
+      if (action.kind === event.currentTarget.dataset.action) {
+        this.props.onActionInformationRequested(action.kind)
+        return
+      }
+    }
+  }
+
   public render() {
     return (
       <aside className="action-menu" aria-labelledby="action-menu-title">
-        <span className="eyebrow">Available actions</span>
+        <div className="action-menu-topline">
+          <span className="eyebrow">Available actions</span>
+          <button
+            className="action-info-button structure-info-button"
+            onClick={this.props.onStructureInformationRequested}
+            aria-label={`About ${StructureCatalog.getName(this.props.structure)}`}
+            aria-haspopup="dialog"
+            aria-controls="structure-overview"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 11v6" strokeLinecap="round" />
+              <circle cx="12" cy="7.5" r="0.8" fill="currentColor" />
+            </svg>
+          </button>
+        </div>
         <h2 id="action-menu-title">{StructureCatalog.getName(this.props.structure)}</h2>
         <p className="action-menu-summary">Choose an action to explore step by step.</p>
         <nav aria-label="Data structure actions">{this.renderActions()}</nav>

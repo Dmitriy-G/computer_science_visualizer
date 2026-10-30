@@ -1,5 +1,5 @@
 import { Component } from 'react'
-import type { ChangeEvent, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimationController } from '../../visualization/AnimationController.ts'
 import type { TimelineObserver } from '../../visualization/AnimationController.ts'
@@ -12,7 +12,6 @@ import './ActionPlayback.css'
 
 interface ActionPlaybackState {
   readonly index: number
-  readonly playing: boolean
   readonly toolbarHost: HTMLElement | null
   readonly codeHost: HTMLElement | null
 }
@@ -33,7 +32,6 @@ export default class ActionPlayback<TModel extends ActionModel<TModel>>
     this.controller = new AnimationController(this.animation.steps, this)
     this.state = {
       index: 0,
-      playing: false,
       toolbarHost: null,
       codeHost: null,
     }
@@ -44,23 +42,15 @@ export default class ActionPlayback<TModel extends ActionModel<TModel>>
       toolbarHost: document.getElementById('playback-toolbar'),
       codeHost: document.getElementById('renderer-code'),
     })
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      this.controller.seek(0)
-    } else {
-      this.controller.play()
-    }
+    this.controller.play()
   }
 
   public componentWillUnmount(): void {
     this.controller.dispose()
   }
 
-  public pausePlayback(): void {
-    this.controller.pause()
-  }
-
-  public onTimelineChange(index: number, playing: boolean): void {
-    this.setState({ index, playing })
+  public onTimelineChange(index: number): void {
+    this.setState({ index })
     const list =
       index === this.animation.steps.length - 1
         ? this.animation.result
@@ -68,57 +58,25 @@ export default class ActionPlayback<TModel extends ActionModel<TModel>>
     this.props.onSceneChange(this.animation.steps[index].scene, list)
   }
 
-  private togglePlayback = (): void => {
-    if (this.state.playing) this.controller.pause()
-    else this.controller.play()
-  }
-
-  private seek = (event: ChangeEvent<HTMLInputElement>): void => {
-    this.controller.seek(Number(event.currentTarget.value))
-  }
-
   private renderToolbar(): ReactNode {
     const step = this.animation.steps[this.state.index]
-    const last = this.state.index === this.animation.steps.length - 1
     return (
-      <div className="playback-toolbar" role="group" aria-label="Animation playback">
-        <button
-          className="primary-button header-action-button"
-          onClick={this.togglePlayback}
-          aria-label={this.state.playing ? 'Pause animation' : last ? 'Replay animation' : 'Play animation'}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path
-              d={this.state.playing
-                ? 'M9 5v14M15 5v14'
-                : last
-                  ? 'M4 10a8 8 0 1 1 1.8 7M4 4v6h6'
-                  : 'm8 5 11 7-11 7Z'}
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
+      <div className="playback-toolbar" role="group" aria-label="Animation progress">
         <div className="playback-timeline">
           <p
             id="timeline-description"
             className="timeline-description"
+            title={step.description}
             aria-live="polite"
             aria-atomic="true"
           >
             {step.description}
           </p>
-          <input
-            id="insertion-timeline"
-            className="timeline-slider"
-            type="range"
-            min="0"
-            max={this.animation.steps.length - 1}
-            value={this.state.index}
-            onChange={this.seek}
-            aria-label="Animation timeline"
+          <progress
+            className="timeline-progress"
+            max={Math.max(1, this.animation.steps.length - 1)}
+            value={this.animation.steps.length === 1 ? 1 : this.state.index}
+            aria-label="Animation progress"
             aria-describedby="timeline-description"
             aria-valuetext={`Step ${this.state.index + 1}: ${step.title}`}
           />

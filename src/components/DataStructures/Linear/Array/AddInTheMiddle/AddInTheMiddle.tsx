@@ -1,4 +1,4 @@
-import { Component, createRef } from 'react'
+import { Component } from 'react'
 import ActionPlayback from '../../../../ActionPlayback/ActionPlayback.tsx'
 import type { ActionDefinition } from '../../../../../visualization/ActionDefinition.ts'
 import type { Scene } from '../../../../../visualization/Scene.ts'
@@ -36,17 +36,11 @@ export default class AddInTheMiddle extends Component<
   Record<string, never>
 > {
   private readonly definition = new ArrayInsertionDefinition()
-  private readonly player = createRef<ActionPlayback<FixedArray>>()
-
-  public pausePlayback(): void {
-    this.player.current?.pausePlayback()
-  }
 
   public render() {
     return (
       <div className="array-middle-insertion">
         <ActionPlayback<FixedArray>
-          ref={this.player}
           model={this.props.array}
           definition={this.definition}
           onSceneChange={this.props.onSceneChange}

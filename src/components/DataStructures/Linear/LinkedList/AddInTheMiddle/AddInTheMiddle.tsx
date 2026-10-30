@@ -1,4 +1,4 @@
-import { Component, createRef } from 'react'
+import { Component } from 'react'
 import ActionPlayback from '../../../../ActionPlayback/ActionPlayback.tsx'
 import type { ActionDefinition } from '../../../../../visualization/ActionDefinition.ts'
 import type { Scene } from '../../../../../visualization/Scene.ts'
@@ -36,17 +36,11 @@ export default class AddInTheMiddle extends Component<
   Record<string, never>
 > {
   private readonly definition = new LinkedListInsertionDefinition()
-  private readonly player = createRef<ActionPlayback<LinkedList>>()
-
-  public pausePlayback(): void {
-    this.player.current?.pausePlayback()
-  }
 
   public render() {
     return (
       <div className="linked-list-middle-insertion">
         <ActionPlayback<LinkedList>
-          ref={this.player}
           model={this.props.list}
           definition={this.definition}
           onSceneChange={this.props.onSceneChange}

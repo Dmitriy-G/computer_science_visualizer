@@ -8,21 +8,38 @@
   min-width: 0;
 }
 .timeline-description {
-  position: relative;
-  width: min(var(--snippet-width), calc(100vw - 2 * var(--renderer-inset)));
-  /* The timeline ends at the header inset; align its caption with the diagram. */
-  left: calc(100% + var(--header-inset) - 50vw + var(--renderer-center-offset) - min(var(--snippet-width) / 2, 50vw - var(--renderer-inset)));
+  width: 100%;
   margin: 0;
   color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
   text-align: center;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.timeline-slider {
+.timeline-progress {
+  display: block;
   width: 100%;
-  margin: 6px 0 0;
+  height: 8px;
+  margin: 10px 0 0;
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #e2e8f0;
+  color: var(--accent);
   accent-color: var(--accent);
-  cursor: pointer;
-  height: 16px;
+}
+.timeline-progress::-webkit-progress-bar {
+  border-radius: inherit;
+  background: #e2e8f0;
+}
+.timeline-progress::-webkit-progress-value {
+  border-radius: inherit;
+  background: var(--accent);
+}
+.timeline-progress::-moz-progress-bar {
+  border-radius: inherit;
+  background: var(--accent);
 }

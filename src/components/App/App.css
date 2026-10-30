@@ -1,10 +1,9 @@
 .application {
   --action-menu-width: 280px;
-  --algorithm-info-width: 420px;
   --snippet-width: 560px;
   --renderer-inset: 32px;
+  --renderer-column-gap: 24px;
   --header-inset: 28px;
-  --renderer-center-offset: calc((var(--action-menu-width) - var(--algorithm-info-width)) / 2);
   min-height: 100svh;
   display: flex;
   flex-direction: column;
@@ -75,11 +74,6 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-}
-@media (max-width: 1400px) {
-  .application {
-    --renderer-center-offset: 0px;
-  }
 }
 @media (max-width: 700px) {
   .application {

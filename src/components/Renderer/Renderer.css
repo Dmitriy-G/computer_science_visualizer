@@ -13,11 +13,10 @@
   display: flex;
   flex: 1;
   min-width: 0;
-  gap: 24px;
+  gap: var(--renderer-column-gap);
   padding: 24px var(--renderer-inset);
 }
-.renderer-content > .action-menu,
-.renderer-content > .algorithm-info {
+.renderer-content > .action-menu {
   align-self: flex-start;
 }
 .renderer-stage {
@@ -215,12 +214,17 @@
 }
 .scene-legend {
   display: flex;
-  gap: 22px;
+  flex-wrap: wrap;
+  align-self: flex-start;
+  gap: 12px 22px;
+  color: #7b8c9e;
+  font: 10px var(--mono);
 }
 .scene-legend > span {
   display: inline-flex;
   align-items: center;
   gap: 7px;
+  white-space: nowrap;
 }
 .legend-dot {
   width: 7px;
@@ -269,7 +273,7 @@
   color: var(--accent);
   font-size: 13px;
 }
-@media (max-width: 1400px) {
+@media (max-width: 1100px) {
   .renderer-content {
     flex-wrap: wrap;
     align-content: flex-start;
@@ -278,9 +282,6 @@
   .renderer-content > .action-menu {
     order: -2;
   }
-  .renderer-content > .algorithm-info {
-    order: -1;
-  }
   .renderer-stage {
     flex-basis: 100%;
   }
@@ -288,9 +289,6 @@
 @media (max-width: 800px) {
   .renderer-content {
     flex-direction: column;
-  }
-  .renderer-content > .algorithm-info {
-    width: 100%;
   }
   .renderer-stage {
     flex-basis: auto;

@@ -148,6 +148,8 @@ import { InsertionAnimation as LinkedListAddAtStartSequence } from '../DataStruc
 import { Component, createRef } from 'react'
 import MainMenu from '../MainMenu/MainMenu.tsx'
 import ActionMenu from '../MainMenu/ActionMenu/ActionMenu.tsx'
+import AlgorithmInfo from '../AlgorithmInfo/AlgorithmInfo.tsx'
+import StructureInfo from '../StructureInfo/StructureInfo.tsx'
 import { MenuNavigation } from '../MainMenu/MenuNavigation.ts'
 import type { StructureGroupKind } from '../../visualization/StructureCatalog.ts'
 import Renderer from '../Renderer/Renderer.tsx'
@@ -174,6 +176,8 @@ interface AppState {
   readonly selectedAction: ActionKind | null
   readonly actionSession: number
   readonly algorithmInformation: AlgorithmInformation | null
+  readonly overviewInformation: AlgorithmInformation | null
+  readonly structureInformation: StructureKind | null
 }
 
 export default class App extends Component<Record<string, never>, AppState> {
@@ -192,11 +196,6 @@ export default class App extends Component<Record<string, never>, AppState> {
   private deque = Deque.createDefault()
   private doublyList = DoublyLinkedList.createDefault()
   private buffer = CircularBuffer.createDefault()
-  private activePanel: { pausePlayback(): void } | null = null
-
-  private setActionPanel = (panel: { pausePlayback(): void } | null): void => {
-    this.activePanel = panel
-  }
 
   constructor(props: Record<string, never>) {
     super(props)
@@ -209,11 +208,12 @@ export default class App extends Component<Record<string, never>, AppState> {
       selectedAction: null,
       actionSession: 0,
       algorithmInformation: null,
+      overviewInformation: null,
+      structureInformation: null,
     }
   }
 
   private openMenu = (): void => {
-    this.activePanel?.pausePlayback()
     this.setState({
       menuOpen: true,
       menu: this.state.selected ? MenuNavigation.forStructure(this.state.selected) : new MenuNavigation(),
@@ -282,6 +282,8 @@ export default class App extends Component<Record<string, never>, AppState> {
       menu,
       menuOpen: false,
       algorithmInformation: null,
+      overviewInformation: null,
+      structureInformation: null,
       actionSession: this.state.actionSession + 1,
     }, this.focusActions)
   }
@@ -295,8 +297,34 @@ export default class App extends Component<Record<string, never>, AppState> {
       selectedAction: action,
       menuOpen: false,
       algorithmInformation: this.describeAction(action),
+      overviewInformation: null,
+      structureInformation: null,
       actionSession: this.state.actionSession + 1,
     })
+  }
+
+  private showActionInformation = (action: ActionKind): void => {
+    if (!this.state.selected) return
+    if (!ActionCatalog.getActions(this.state.selected).some((choice) => choice.kind === action)) return
+    this.setState({
+      overviewInformation: this.state.selectedAction === action
+        ? this.state.algorithmInformation
+        : this.describeAction(action),
+      structureInformation: null,
+    })
+  }
+
+  private closeActionInformation = (): void => {
+    this.setState({ overviewInformation: null })
+  }
+
+  private showStructureInformation = (): void => {
+    if (!this.state.selected) return
+    this.setState({ structureInformation: this.state.selected, overviewInformation: null })
+  }
+
+  private closeStructureInformation = (): void => {
+    this.setState({ structureInformation: null })
   }
 
   private describeAction(action: ActionKind): AlgorithmInformation | null {
@@ -429,124 +457,124 @@ export default class App extends Component<Record<string, never>, AppState> {
     if (!this.state.actionOpen) return null
     if (this.state.selected === 'avl-tree') {
       switch (this.state.selectedAction) {
-        case 'insert': return <AVLTreeInsert key={this.state.actionSession} ref={this.setActionPanel} model={this.avlTree} onSceneChange={this.updateAVLTreeScene} />
-        case 'search-value': return <AVLTreeSearchByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.avlTree} onSceneChange={this.updateAVLTreeScene} />
-        case 'delete-value': return <AVLTreeDeleteByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.avlTree} onSceneChange={this.updateAVLTreeScene} />
-        case 'clear': return <AVLTreeClear key={this.state.actionSession} ref={this.setActionPanel} model={this.avlTree} onSceneChange={this.updateAVLTreeScene} />
+        case 'insert': return <AVLTreeInsert key={this.state.actionSession} model={this.avlTree} onSceneChange={this.updateAVLTreeScene} />
+        case 'search-value': return <AVLTreeSearchByValue key={this.state.actionSession} model={this.avlTree} onSceneChange={this.updateAVLTreeScene} />
+        case 'delete-value': return <AVLTreeDeleteByValue key={this.state.actionSession} model={this.avlTree} onSceneChange={this.updateAVLTreeScene} />
+        case 'clear': return <AVLTreeClear key={this.state.actionSession} model={this.avlTree} onSceneChange={this.updateAVLTreeScene} />
       }
     }
     if (this.state.selected === 'red-black-tree') {
       switch (this.state.selectedAction) {
-        case 'insert': return <RedBlackTreeInsert key={this.state.actionSession} ref={this.setActionPanel} model={this.redBlackTree} onSceneChange={this.updateRedBlackTreeScene} />
-        case 'search-value': return <RedBlackTreeSearchByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.redBlackTree} onSceneChange={this.updateRedBlackTreeScene} />
-        case 'delete-value': return <RedBlackTreeDeleteByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.redBlackTree} onSceneChange={this.updateRedBlackTreeScene} />
-        case 'clear': return <RedBlackTreeClear key={this.state.actionSession} ref={this.setActionPanel} model={this.redBlackTree} onSceneChange={this.updateRedBlackTreeScene} />
+        case 'insert': return <RedBlackTreeInsert key={this.state.actionSession} model={this.redBlackTree} onSceneChange={this.updateRedBlackTreeScene} />
+        case 'search-value': return <RedBlackTreeSearchByValue key={this.state.actionSession} model={this.redBlackTree} onSceneChange={this.updateRedBlackTreeScene} />
+        case 'delete-value': return <RedBlackTreeDeleteByValue key={this.state.actionSession} model={this.redBlackTree} onSceneChange={this.updateRedBlackTreeScene} />
+        case 'clear': return <RedBlackTreeClear key={this.state.actionSession} model={this.redBlackTree} onSceneChange={this.updateRedBlackTreeScene} />
       }
     }
     if (this.state.selected === 'b-tree') {
       switch (this.state.selectedAction) {
-        case 'insert': return <BTreeInsert key={this.state.actionSession} ref={this.setActionPanel} model={this.bTree} onSceneChange={this.updateBTreeScene} />
-        case 'search-value': return <BTreeSearchByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.bTree} onSceneChange={this.updateBTreeScene} />
-        case 'delete-value': return <BTreeDeleteByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.bTree} onSceneChange={this.updateBTreeScene} />
-        case 'clear': return <BTreeClear key={this.state.actionSession} ref={this.setActionPanel} model={this.bTree} onSceneChange={this.updateBTreeScene} />
+        case 'insert': return <BTreeInsert key={this.state.actionSession} model={this.bTree} onSceneChange={this.updateBTreeScene} />
+        case 'search-value': return <BTreeSearchByValue key={this.state.actionSession} model={this.bTree} onSceneChange={this.updateBTreeScene} />
+        case 'delete-value': return <BTreeDeleteByValue key={this.state.actionSession} model={this.bTree} onSceneChange={this.updateBTreeScene} />
+        case 'clear': return <BTreeClear key={this.state.actionSession} model={this.bTree} onSceneChange={this.updateBTreeScene} />
       }
     }
     if (this.state.selected === 'b-plus-tree') {
       switch (this.state.selectedAction) {
-        case 'insert': return <BPlusTreeInsert key={this.state.actionSession} ref={this.setActionPanel} model={this.bPlusTree} onSceneChange={this.updateBPlusTreeScene} />
-        case 'search-value': return <BPlusTreeSearchByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.bPlusTree} onSceneChange={this.updateBPlusTreeScene} />
-        case 'delete-value': return <BPlusTreeDeleteByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.bPlusTree} onSceneChange={this.updateBPlusTreeScene} />
-        case 'clear': return <BPlusTreeClear key={this.state.actionSession} ref={this.setActionPanel} model={this.bPlusTree} onSceneChange={this.updateBPlusTreeScene} />
-        case 'range-from-value': return <BPlusTreeRangeFromValue key={this.state.actionSession} ref={this.setActionPanel} model={this.bPlusTree} onSceneChange={this.updateBPlusTreeScene} />
+        case 'insert': return <BPlusTreeInsert key={this.state.actionSession} model={this.bPlusTree} onSceneChange={this.updateBPlusTreeScene} />
+        case 'search-value': return <BPlusTreeSearchByValue key={this.state.actionSession} model={this.bPlusTree} onSceneChange={this.updateBPlusTreeScene} />
+        case 'delete-value': return <BPlusTreeDeleteByValue key={this.state.actionSession} model={this.bPlusTree} onSceneChange={this.updateBPlusTreeScene} />
+        case 'clear': return <BPlusTreeClear key={this.state.actionSession} model={this.bPlusTree} onSceneChange={this.updateBPlusTreeScene} />
+        case 'range-from-value': return <BPlusTreeRangeFromValue key={this.state.actionSession} model={this.bPlusTree} onSceneChange={this.updateBPlusTreeScene} />
       }
     }
     if (this.state.selected === 'queue') {
       switch (this.state.selectedAction) {
-        case 'enqueue': return <QueueEnqueue key={this.state.actionSession} ref={this.setActionPanel} model={this.queue} onSceneChange={this.updateQueueScene} />
-        case 'dequeue': return <QueueDequeue key={this.state.actionSession} ref={this.setActionPanel} model={this.queue} onSceneChange={this.updateQueueScene} />
-        case 'peek': return <QueuePeek key={this.state.actionSession} ref={this.setActionPanel} model={this.queue} onSceneChange={this.updateQueueScene} />
-        case 'clear': return <QueueClear key={this.state.actionSession} ref={this.setActionPanel} model={this.queue} onSceneChange={this.updateQueueScene} />
-        case 'search-value': return <QueueSearchByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.queue} onSceneChange={this.updateQueueScene} />
+        case 'enqueue': return <QueueEnqueue key={this.state.actionSession} model={this.queue} onSceneChange={this.updateQueueScene} />
+        case 'dequeue': return <QueueDequeue key={this.state.actionSession} model={this.queue} onSceneChange={this.updateQueueScene} />
+        case 'peek': return <QueuePeek key={this.state.actionSession} model={this.queue} onSceneChange={this.updateQueueScene} />
+        case 'clear': return <QueueClear key={this.state.actionSession} model={this.queue} onSceneChange={this.updateQueueScene} />
+        case 'search-value': return <QueueSearchByValue key={this.state.actionSession} model={this.queue} onSceneChange={this.updateQueueScene} />
       }
     }
     if (this.state.selected === 'deque') {
       switch (this.state.selectedAction) {
-        case 'push-front': return <DequePushFront key={this.state.actionSession} ref={this.setActionPanel} model={this.deque} onSceneChange={this.updateDequeScene} />
-        case 'push-back': return <DequePushBack key={this.state.actionSession} ref={this.setActionPanel} model={this.deque} onSceneChange={this.updateDequeScene} />
-        case 'pop-front': return <DequePopFront key={this.state.actionSession} ref={this.setActionPanel} model={this.deque} onSceneChange={this.updateDequeScene} />
-        case 'pop-back': return <DequePopBack key={this.state.actionSession} ref={this.setActionPanel} model={this.deque} onSceneChange={this.updateDequeScene} />
-        case 'peek-front': return <DequePeekFront key={this.state.actionSession} ref={this.setActionPanel} model={this.deque} onSceneChange={this.updateDequeScene} />
-        case 'peek-back': return <DequePeekBack key={this.state.actionSession} ref={this.setActionPanel} model={this.deque} onSceneChange={this.updateDequeScene} />
-        case 'clear': return <DequeClear key={this.state.actionSession} ref={this.setActionPanel} model={this.deque} onSceneChange={this.updateDequeScene} />
-        case 'search-value': return <DequeSearchByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.deque} onSceneChange={this.updateDequeScene} />
+        case 'push-front': return <DequePushFront key={this.state.actionSession} model={this.deque} onSceneChange={this.updateDequeScene} />
+        case 'push-back': return <DequePushBack key={this.state.actionSession} model={this.deque} onSceneChange={this.updateDequeScene} />
+        case 'pop-front': return <DequePopFront key={this.state.actionSession} model={this.deque} onSceneChange={this.updateDequeScene} />
+        case 'pop-back': return <DequePopBack key={this.state.actionSession} model={this.deque} onSceneChange={this.updateDequeScene} />
+        case 'peek-front': return <DequePeekFront key={this.state.actionSession} model={this.deque} onSceneChange={this.updateDequeScene} />
+        case 'peek-back': return <DequePeekBack key={this.state.actionSession} model={this.deque} onSceneChange={this.updateDequeScene} />
+        case 'clear': return <DequeClear key={this.state.actionSession} model={this.deque} onSceneChange={this.updateDequeScene} />
+        case 'search-value': return <DequeSearchByValue key={this.state.actionSession} model={this.deque} onSceneChange={this.updateDequeScene} />
       }
     }
     if (this.state.selected === 'doubly-linked-list') {
       switch (this.state.selectedAction) {
-        case 'insert-middle': return <DoublyLinkedListAddInTheMiddle key={this.state.actionSession} ref={this.setActionPanel} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
-        case 'insert-start': return <DoublyLinkedListAddAtStart key={this.state.actionSession} ref={this.setActionPanel} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
-        case 'insert-end': return <DoublyLinkedListAddAtEnd key={this.state.actionSession} ref={this.setActionPanel} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
-        case 'delete-start': return <DoublyLinkedListDeleteAtStart key={this.state.actionSession} ref={this.setActionPanel} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
-        case 'delete-end': return <DoublyLinkedListDeleteAtEnd key={this.state.actionSession} ref={this.setActionPanel} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
-        case 'delete-value': return <DoublyLinkedListDeleteByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
-        case 'search-value': return <DoublyLinkedListSearchByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
-        case 'search-index': return <DoublyLinkedListSearchByIndex key={this.state.actionSession} ref={this.setActionPanel} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
-        case 'clear': return <DoublyLinkedListClear key={this.state.actionSession} ref={this.setActionPanel} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
+        case 'insert-middle': return <DoublyLinkedListAddInTheMiddle key={this.state.actionSession} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
+        case 'insert-start': return <DoublyLinkedListAddAtStart key={this.state.actionSession} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
+        case 'insert-end': return <DoublyLinkedListAddAtEnd key={this.state.actionSession} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
+        case 'delete-start': return <DoublyLinkedListDeleteAtStart key={this.state.actionSession} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
+        case 'delete-end': return <DoublyLinkedListDeleteAtEnd key={this.state.actionSession} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
+        case 'delete-value': return <DoublyLinkedListDeleteByValue key={this.state.actionSession} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
+        case 'search-value': return <DoublyLinkedListSearchByValue key={this.state.actionSession} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
+        case 'search-index': return <DoublyLinkedListSearchByIndex key={this.state.actionSession} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
+        case 'clear': return <DoublyLinkedListClear key={this.state.actionSession} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
       }
     }
     if (this.state.selected === 'circular-buffer') {
       switch (this.state.selectedAction) {
-        case 'enqueue': return <CircularBufferEnqueue key={this.state.actionSession} ref={this.setActionPanel} model={this.buffer} onSceneChange={this.updateCircularBufferScene} />
-        case 'dequeue': return <CircularBufferDequeue key={this.state.actionSession} ref={this.setActionPanel} model={this.buffer} onSceneChange={this.updateCircularBufferScene} />
-        case 'peek': return <CircularBufferPeek key={this.state.actionSession} ref={this.setActionPanel} model={this.buffer} onSceneChange={this.updateCircularBufferScene} />
-        case 'clear': return <CircularBufferClear key={this.state.actionSession} ref={this.setActionPanel} model={this.buffer} onSceneChange={this.updateCircularBufferScene} />
-        case 'search-value': return <CircularBufferSearchByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.buffer} onSceneChange={this.updateCircularBufferScene} />
+        case 'enqueue': return <CircularBufferEnqueue key={this.state.actionSession} model={this.buffer} onSceneChange={this.updateCircularBufferScene} />
+        case 'dequeue': return <CircularBufferDequeue key={this.state.actionSession} model={this.buffer} onSceneChange={this.updateCircularBufferScene} />
+        case 'peek': return <CircularBufferPeek key={this.state.actionSession} model={this.buffer} onSceneChange={this.updateCircularBufferScene} />
+        case 'clear': return <CircularBufferClear key={this.state.actionSession} model={this.buffer} onSceneChange={this.updateCircularBufferScene} />
+        case 'search-value': return <CircularBufferSearchByValue key={this.state.actionSession} model={this.buffer} onSceneChange={this.updateCircularBufferScene} />
       }
     }
     if (this.state.selected === 'stack') {
       switch (this.state.selectedAction) {
-        case 'push': return <StackPush key={this.state.actionSession} ref={this.setActionPanel} model={this.stack} onSceneChange={this.updateStackScene} />
-        case 'pop': return <StackPop key={this.state.actionSession} ref={this.setActionPanel} model={this.stack} onSceneChange={this.updateStackScene} />
-        case 'peek': return <StackPeek key={this.state.actionSession} ref={this.setActionPanel} model={this.stack} onSceneChange={this.updateStackScene} />
-        case 'clear': return <StackClear key={this.state.actionSession} ref={this.setActionPanel} model={this.stack} onSceneChange={this.updateStackScene} />
-        case 'search-value': return <StackSearchByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.stack} onSceneChange={this.updateStackScene} />
+        case 'push': return <StackPush key={this.state.actionSession} model={this.stack} onSceneChange={this.updateStackScene} />
+        case 'pop': return <StackPop key={this.state.actionSession} model={this.stack} onSceneChange={this.updateStackScene} />
+        case 'peek': return <StackPeek key={this.state.actionSession} model={this.stack} onSceneChange={this.updateStackScene} />
+        case 'clear': return <StackClear key={this.state.actionSession} model={this.stack} onSceneChange={this.updateStackScene} />
+        case 'search-value': return <StackSearchByValue key={this.state.actionSession} model={this.stack} onSceneChange={this.updateStackScene} />
       }
     }
     if (this.state.selected === 'linked-list') {
       switch (this.state.selectedAction) {
-        case 'clear': return <LinkedListClear key={this.state.actionSession} ref={this.setActionPanel} model={this.list} onSceneChange={this.updateScene} />
-        case 'insert-middle': return <AddInTheMiddle key={this.state.actionSession} ref={this.setActionPanel} list={this.list} onSceneChange={this.updateScene} />
-        case 'insert-start': return <LinkedListAddAtStart key={this.state.actionSession} ref={this.setActionPanel} model={this.list} onSceneChange={this.updateScene} />
-        case 'insert-end': return <LinkedListAddAtEnd key={this.state.actionSession} ref={this.setActionPanel} model={this.list} onSceneChange={this.updateScene} />
-        case 'search-index': return <LinkedListSearchByIndex key={this.state.actionSession} ref={this.setActionPanel} model={this.list} onSceneChange={this.updateScene} />
-        case 'search-value': return <LinkedListSearchByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.list} onSceneChange={this.updateScene} />
-        case 'delete-value': return <LinkedListDeleteByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.list} onSceneChange={this.updateScene} />
+        case 'clear': return <LinkedListClear key={this.state.actionSession} model={this.list} onSceneChange={this.updateScene} />
+        case 'insert-middle': return <AddInTheMiddle key={this.state.actionSession} list={this.list} onSceneChange={this.updateScene} />
+        case 'insert-start': return <LinkedListAddAtStart key={this.state.actionSession} model={this.list} onSceneChange={this.updateScene} />
+        case 'insert-end': return <LinkedListAddAtEnd key={this.state.actionSession} model={this.list} onSceneChange={this.updateScene} />
+        case 'search-index': return <LinkedListSearchByIndex key={this.state.actionSession} model={this.list} onSceneChange={this.updateScene} />
+        case 'search-value': return <LinkedListSearchByValue key={this.state.actionSession} model={this.list} onSceneChange={this.updateScene} />
+        case 'delete-value': return <LinkedListDeleteByValue key={this.state.actionSession} model={this.list} onSceneChange={this.updateScene} />
       }
     }
     if (this.state.selected === 'array') {
       switch (this.state.selectedAction) {
-        case 'clear': return <ArrayClear key={this.state.actionSession} ref={this.setActionPanel} model={this.array} onSceneChange={this.updateArrayScene} />
-        case 'insert-middle': return <ArrayAddInTheMiddle key={this.state.actionSession} ref={this.setActionPanel} array={this.array} onSceneChange={this.updateArrayScene} />
-        case 'insert-start': return <ArrayAddAtStart key={this.state.actionSession} ref={this.setActionPanel} model={this.array} onSceneChange={this.updateArrayScene} />
-        case 'insert-end': return <ArrayAddAtEnd key={this.state.actionSession} ref={this.setActionPanel} model={this.array} onSceneChange={this.updateArrayScene} />
-        case 'search-index': return <ArraySearchByIndex key={this.state.actionSession} ref={this.setActionPanel} model={this.array} onSceneChange={this.updateArrayScene} />
-        case 'search-value': return <ArraySearchByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.array} onSceneChange={this.updateArrayScene} />
-        case 'delete-value': return <ArrayDeleteByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.array} onSceneChange={this.updateArrayScene} />
+        case 'clear': return <ArrayClear key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} />
+        case 'insert-middle': return <ArrayAddInTheMiddle key={this.state.actionSession} array={this.array} onSceneChange={this.updateArrayScene} />
+        case 'insert-start': return <ArrayAddAtStart key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} />
+        case 'insert-end': return <ArrayAddAtEnd key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} />
+        case 'search-index': return <ArraySearchByIndex key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} />
+        case 'search-value': return <ArraySearchByValue key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} />
+        case 'delete-value': return <ArrayDeleteByValue key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} />
       }
     }
     if (this.state.selected === 'binary-tree') {
       switch (this.state.selectedAction) {
-        case 'clear': return <BinaryTreeClear key={this.state.actionSession} ref={this.setActionPanel} model={this.tree} onSceneChange={this.updateTreeScene} />
-        case 'insert': return <TreeInsert key={this.state.actionSession} ref={this.setActionPanel} tree={this.tree} onSceneChange={this.updateTreeScene} />
-        case 'search-value': return <BinaryTreeSearchByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.tree} onSceneChange={this.updateTreeScene} />
-        case 'delete-value': return <BinaryTreeDeleteByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.tree} onSceneChange={this.updateTreeScene} />
+        case 'clear': return <BinaryTreeClear key={this.state.actionSession} model={this.tree} onSceneChange={this.updateTreeScene} />
+        case 'insert': return <TreeInsert key={this.state.actionSession} tree={this.tree} onSceneChange={this.updateTreeScene} />
+        case 'search-value': return <BinaryTreeSearchByValue key={this.state.actionSession} model={this.tree} onSceneChange={this.updateTreeScene} />
+        case 'delete-value': return <BinaryTreeDeleteByValue key={this.state.actionSession} model={this.tree} onSceneChange={this.updateTreeScene} />
       }
     }
     if (this.state.selected === 'graph') {
       switch (this.state.selectedAction) {
-        case 'clear': return <GraphClear key={this.state.actionSession} ref={this.setActionPanel} model={this.graph} onSceneChange={this.updateGraphScene} />
-        case 'search-value': return <GraphSearchByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.graph} onSceneChange={this.updateGraphScene} />
-        case 'delete-value': return <GraphDeleteByValue key={this.state.actionSession} ref={this.setActionPanel} model={this.graph} onSceneChange={this.updateGraphScene} />
+        case 'clear': return <GraphClear key={this.state.actionSession} model={this.graph} onSceneChange={this.updateGraphScene} />
+        case 'search-value': return <GraphSearchByValue key={this.state.actionSession} model={this.graph} onSceneChange={this.updateGraphScene} />
+        case 'delete-value': return <GraphDeleteByValue key={this.state.actionSession} model={this.graph} onSceneChange={this.updateGraphScene} />
       }
     }
     return null
@@ -588,6 +616,8 @@ export default class App extends Component<Record<string, never>, AppState> {
       selectedAction: null,
       actionSession: this.state.actionSession + 1,
       algorithmInformation: null,
+      overviewInformation: null,
+      structureInformation: null,
     })
   }
 
@@ -733,10 +763,19 @@ export default class App extends Component<Record<string, never>, AppState> {
           onBack={this.backInMenu}
         />
 
+        <AlgorithmInfo
+          information={this.state.overviewInformation}
+          onClose={this.closeActionInformation}
+        />
+
+        <StructureInfo
+          structure={this.state.structureInformation}
+          onClose={this.closeStructureInformation}
+        />
+
         <main className="workspace">
           <Renderer
             scene={scene}
-            algorithmInformation={this.state.algorithmInformation}
             onOpenMenu={this.openMenu}
           >
             {selected && (
@@ -745,6 +784,8 @@ export default class App extends Component<Record<string, never>, AppState> {
                 structure={selected}
                 selectedAction={this.state.selectedAction}
                 onActionSelected={this.selectAction}
+                onActionInformationRequested={this.showActionInformation}
+                onStructureInformationRequested={this.showStructureInformation}
               />
             )}
           </Renderer>

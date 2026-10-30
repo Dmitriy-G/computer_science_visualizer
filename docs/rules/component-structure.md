@@ -57,6 +57,8 @@ dynamic changes. Reuse it across data structure actions instead of creating a
 separate rendering system for every action.
 
 Keep data structure operations separate from rendering and animation timing.
+Keep the algorithm overview dialog in `src/components/AlgorithmInfo/`, outside
+the renderer. The app supplies its action information and open/close state.
 
 ## Shared action playback
 
@@ -64,11 +66,13 @@ Use `src/components/ActionPlayback/` for the shared playback component and its
 styles. Each action's component supplies its own class-based definition with phase
 labels, explanations, and a factory method that creates its animation plan.
 Keep structure-specific algorithms and model types in their action folders;
-reuse the common controls for playback and seeking. Use each action's default
+reuse the common animation session and progress display. Use each action's default
 value and normal playback speed; do not render a bottom panel or input controls.
 The app header provides the `playback-toolbar` host. `ActionPlayback` renders
-its Play/Pause button and timeline there through a React portal, keeping them
+its step description and noninteractive progress bar there through a React portal, keeping them
 connected to the same controller without adding a bottom-panel wrapper.
+Actions start automatically and run to completion. The header's full structure
+Reset is the only playback control; do not add pause, play, or seeking controls.
 The renderer provides the `renderer-code` host above the diagram in its center
 column. `ActionPlayback` renders the current step's pseudocode there through a
 second portal, using the same playback index as the scene and timeline.
@@ -87,6 +91,11 @@ choose the data structure. Keep its canvas action card in
 `src/components/MainMenu/ActionMenu/`, with a `.tsx` class component and a separate
 `.css` file. The app supplies this card to the shared renderer as a child so
 action selection remains separate from drawing the scene.
+Each action row has a separate info button on its right. It opens that action's
+overview dialog without selecting or restarting the action.
+The card's top-right corner has a larger info button for general structure
+information. Keep that separate dialog in `src/components/StructureInfo/`;
+its content area is intentionally empty until structure information is added.
 
 Create these components and folders as their features are implemented. The tree
 defines the required organization; it does not mean those features already exist.

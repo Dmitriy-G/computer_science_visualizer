@@ -1,4 +1,4 @@
-import { Component, createRef } from 'react'
+import { Component } from 'react'
 import ActionPlayback from '../../../../ActionPlayback/ActionPlayback.tsx'
 import type { ActionDefinition } from '../../../../../visualization/ActionDefinition.ts'
 import type { Scene } from '../../../../../visualization/Scene.ts'
@@ -33,17 +33,11 @@ class BinaryTreeInsertionDefinition implements ActionDefinition<BinaryTree> {
 
 export default class Insert extends Component<InsertProps, Record<string, never>> {
   private readonly definition = new BinaryTreeInsertionDefinition()
-  private readonly player = createRef<ActionPlayback<BinaryTree>>()
-
-  public pausePlayback(): void {
-    this.player.current?.pausePlayback()
-  }
 
   public render() {
     return (
       <div className="binary-tree-insertion">
         <ActionPlayback<BinaryTree>
-          ref={this.player}
           model={this.props.tree}
           definition={this.definition}
           onSceneChange={this.props.onSceneChange}

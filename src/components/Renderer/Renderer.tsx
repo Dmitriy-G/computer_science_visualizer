@@ -6,13 +6,10 @@ import type {
   SceneNode,
   SceneSlot,
 } from '../../visualization/Scene.ts'
-import type { AlgorithmInformation } from '../../visualization/AlgorithmInformation.ts'
-import AlgorithmInfo from './AlgorithmInfo/AlgorithmInfo.tsx'
 import './Renderer.css'
 
 interface RendererProps {
   readonly scene: Scene | null
-  readonly algorithmInformation: AlgorithmInformation | null
   readonly onOpenMenu: () => void
   readonly children?: ReactNode
 }
@@ -270,6 +267,22 @@ export default class Renderer extends Component<
         <div className="renderer-content">
           {scene && this.props.children}
           <div className="renderer-stage">
+            {scene && (
+              <div className="scene-legend" role="group" aria-label="Node states">
+                <span>
+                  <i className="legend-dot current" />
+                  Current
+                </span>
+                <span>
+                  <i className="legend-dot visited" />
+                  Visited
+                </span>
+                <span>
+                  <i className="legend-dot added" />
+                  New node
+                </span>
+              </div>
+            )}
             <div id="renderer-code" className="renderer-code-host" />
             <div
               className="renderer-viewport"
@@ -293,30 +306,12 @@ export default class Renderer extends Component<
               )}
             </div>
           </div>
-          {scene && (
-            <AlgorithmInfo information={this.props.algorithmInformation} />
-          )}
         </div>
-        <div className="canvas-footer">
-          {scene ? (
-            <div className="scene-legend">
-              <span>
-                <i className="legend-dot current" />
-                Current
-              </span>
-              <span>
-                <i className="legend-dot visited" />
-                Visited
-              </span>
-              <span>
-                <i className="legend-dot added" />
-                New node
-              </span>
-            </div>
-          ) : (
+        {!scene && (
+          <div className="canvas-footer">
             <span>No structure selected</span>
-          )}
-        </div>
+          </div>
+        )}
       </section>
     )
   }

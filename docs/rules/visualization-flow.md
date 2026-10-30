@@ -12,39 +12,44 @@
 3. Selecting a structure loads an example containing 10 elements in the shared
    renderer. Lists, trees, graphs, and other structures can use different layouts.
 4. After selection, close the structure picker and show the structure's allowed
-   actions in a persistent card at the upper-left of the canvas. Match the
-   algorithm overview card's styling and mark the selected action with text.
-5. Selecting an implemented action starts its detailed animation. Honor
-   reduced-motion preferences by waiting for the user to press Play instead.
+   actions in a persistent card at the upper-left of the canvas. Mark the
+   selected action with a highlight and `aria-current`, and put a small info
+   button to each action's right.
+5. Selecting an implemented action automatically starts its detailed animation
+   and runs it to completion. Reduced-motion styles still suppress visual
+   transitions, but playback does not wait for a Play button.
 
 Browsing categories or groups must preserve the current visualization and action
-session. Opening the menu pauses playback. If a structure is already selected,
+session. Opening menus or info dialogs does not pause playback. If a structure is already selected,
 reopen its structure group and retain the group path for Back navigation.
 Actions are selected directly from the canvas card, without reopening the menu.
-On smaller screens, place the action and algorithm cards above the diagram so
-they do not overlap nodes. Move keyboard focus to the first action after choosing
+On smaller screens, place the action card above the diagram so it does not
+overlap nodes. Move keyboard focus to the first action after choosing
 a structure. Selecting the current action preserves its playback session.
+Place the Current / Visited / New node legend at the top-left of the renderer's
+center area, beside the actions panel and above the code snippet. Let the legend
+wrap on narrow screens; do not keep it in the canvas footer.
 
 Do not render a bottom animation panel, its disclosure/close buttons, a value
 input, or a speed selector. Actions use their definition's default value (99
 when unspecified) and normal playback speed.
 
-Place the animation timeline in the app header, replacing the structure name
-and element count. Put a compact Play/Pause button before the timeline; switch to
-a replay icon when the animation finishes. Keep the header's structure Reset
-button before the playback button and timeline, including on narrow screens.
+Place a noninteractive animation progress bar in the app header, replacing the
+structure name and element count. Do not provide Play, Pause, replay, or seeking
+controls. Use a native progress indicator without a draggable handle or keyboard
+input. Keep the full structure Reset button before the progress bar, including
+on narrow screens; resetting cancels playback and restores the default structure.
 Show Reset only when an action is selected; hide it in the initial structure view
 and after resetting or selecting another structure.
-Use matching icon-only styles for playback and Reset, with accessible
-labels describing each button's current action.
+Use an icon-only Reset button with an accessible label.
 Center the current step's description above the timeline, replacing the visible
-"Animation timeline" label and generic hint. Let the description wrap on narrow
-screens, and retain an accessible name for the slider. Match the description's
-width and horizontal center to the code snippet below, accounting for the
-different side-card widths on desktop. Keep the description and code in their
-separate rows.
+"Animation timeline" label and generic hint. Use the full available timeline
+width and keep the text on a single line so it never changes header height or
+shifts the diagram. On narrow screens, truncate overflow with an ellipsis and
+provide the full description as a tooltip and accessible text. Retain an
+accessible name for the progress indicator. Keep the description and code in separate rows.
 Show the current step's pseudocode in a separate bar above the diagram in the
-renderer center column, between the actions and algorithm overview cards.
+renderer center column beside the action card.
 On narrow screens, place it above the diagram after the cards and allow long
 snippets to scroll.
 Reserve a fixed-height snippet area even before an action is selected. Changing
@@ -53,27 +58,33 @@ within the bar and scroll longer snippets inside it.
 Omit the step heading, action introduction, phase progress bar, step counter,
 playback status badges, and previous/next/reset buttons.
 
-After a structure is selected, show a default **Algorithm overview** card in the
-upper-right, prompting the user to pick an action to see its description.
-When an action is selected, show its algorithm information in the upper-right
-of the canvas. Include time complexity,
+Do not render an algorithm overview card or a default prompt on the canvas.
+An action's info button opens its **Algorithm overview** in a centered modal
+dialog, independently of action selection. Preserve the current action and let
+its animation continue while the dialog is open. Close it using its close
+button, Escape, or a backdrop click; return focus to the invoking info button.
+The dialog scrolls within the viewport on smaller screens. Include time complexity,
 additional memory complexity, with labeled best, average, and worst cases for
 both costs, and definitions of only the terms and letters used
 by that action. Each action owns its summary, complexity explanations, and glossary
-in its sequence class; the shared renderer only displays the supplied information.
+in its sequence class; the shared dialog only displays the supplied information.
+Provide a larger info button at the action card's top-right corner for general
+structure information. It opens a separate centered dialog with an empty content
+area for future text. Support close, Escape, backdrop dismissal, focus return,
+and uninterrupted playback in the same way as the action overview dialog.
 Do not add generic definitions or unused variables to every action. For example,
 linked list insertion explains `n`, `O(n)`, and `O(1)` without introducing `k`.
 Fixed-array insertion uses only `n` and `O(n)` because both copying and additional
 storage are linear.
 Values such as the original input size must describe the current run, including
-after completion and replay. Restore the default prompt on structure
-selection or reset. On smaller screens, let the card wrap above the diagram so
-it does not overlap nodes or controls.
+after completion and replay. For the active action, keep the run's original size
+in its description; for another action, use the current committed model size.
+Close the dialog on structure selection or reset.
 
 Do not put standalone text annotations in the structure diagram, including hints,
 action results, or original/new array headings. Keep these explanations in the
 step description above the timeline. Diagram text is limited to values, indices, and node roles
-and statuses. The algorithm overview remains a separate card.
+and statuses. The algorithm overview remains a separate dialog.
 
 Compare best, average, and worst cases at the same input size. Explain empty and
 singleton boundary cases separately; do not use an empty input to claim constant
@@ -101,9 +112,10 @@ bar in the controls. A duplicate rejection skips creation stages entirely.
 The shared Renderer draws the supplied nodes, edges, and highlights and animates
 their transitions. It must not decide the algorithm or hard-code action phases.
 Playback timing belongs to a separate controller class. Cancel scheduled playback
-when the action unmounts or the selected structure changes, and pause when opening
-the menu. Support pause/resume, replay, and timeline seeking. The range
-input supports keyboard stepping instead of separate previous/next buttons.
+when the action unmounts, the selected structure changes, or the user performs
+a full reset. Run steps automatically in order and stop on the final frame.
+Menus and dialogs must not interrupt playback, and the progress bar must not
+change its timing or position in the sequence.
 
 Keep intermediate visual states separate from the data model. Publish a completed
 insertion only on its final step; rewinding restores the original model. Replay
