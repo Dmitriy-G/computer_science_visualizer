@@ -8,7 +8,9 @@ import './AddInTheMiddle.css'
 
 interface AddInTheMiddleProps {
   readonly list: LinkedList
+  readonly value?: number
   readonly onSceneChange: (scene: Scene, list: LinkedList) => void
+  readonly onComplete?: () => void
 }
 
 class LinkedListInsertionDefinition implements ActionDefinition<LinkedList> {
@@ -43,7 +45,9 @@ export default class AddInTheMiddle extends Component<
         <ActionPlayback<LinkedList>
           model={this.props.list}
           definition={this.definition}
+          value={this.props.value}
           onSceneChange={this.props.onSceneChange}
+          onComplete={this.props.onComplete}
         />
       </div>
     )

@@ -150,6 +150,8 @@ import MainMenu from '../MainMenu/MainMenu.tsx'
 import ActionMenu from '../MainMenu/ActionMenu/ActionMenu.tsx'
 import AlgorithmInfo from '../AlgorithmInfo/AlgorithmInfo.tsx'
 import StructureInfo from '../StructureInfo/StructureInfo.tsx'
+import ActionInput from '../ActionInput/ActionInput.tsx'
+import { ActionInputRequest } from '../../visualization/ActionInputRequest.ts'
 import { MenuNavigation } from '../MainMenu/MenuNavigation.ts'
 import type { StructureGroupKind } from '../../visualization/StructureCatalog.ts'
 import Renderer from '../Renderer/Renderer.tsx'
@@ -174,6 +176,9 @@ interface AppState {
   readonly scene: Scene | null
   readonly actionOpen: boolean
   readonly selectedAction: ActionKind | null
+  readonly actionValue: number | undefined
+  readonly actionRunning: boolean
+  readonly inputRequest: ActionInputRequest | null
   readonly actionSession: number
   readonly algorithmInformation: AlgorithmInformation | null
   readonly overviewInformation: AlgorithmInformation | null
@@ -206,6 +211,9 @@ export default class App extends Component<Record<string, never>, AppState> {
       scene: null,
       actionOpen: false,
       selectedAction: null,
+      actionValue: undefined,
+      actionRunning: false,
+      inputRequest: null,
       actionSession: 0,
       algorithmInformation: null,
       overviewInformation: null,
@@ -279,6 +287,9 @@ export default class App extends Component<Record<string, never>, AppState> {
       ),
       actionOpen: false,
       selectedAction: null,
+      actionValue: undefined,
+      actionRunning: false,
+      inputRequest: null,
       menu,
       menuOpen: false,
       algorithmInformation: null,
@@ -290,17 +301,60 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private selectAction = (action: ActionKind): void => {
     if (!this.state.selected) return
-    if (this.state.actionOpen && this.state.selectedAction === action) return
+    if (ActionInputRequest.supportsStructure(this.state.selected) && this.state.actionRunning) return
     if (!ActionCatalog.getActions(this.state.selected).some((choice) => choice.kind === action)) return
+    if (ActionInputRequest.supportsStructure(this.state.selected)) {
+      const request = ActionInputRequest.create(this.state.selected, action, this.getInputSize(this.state.selected))
+      if (request) {
+        this.setState({ inputRequest: request, overviewInformation: null, structureInformation: null })
+        return
+      }
+    } else if (this.state.actionOpen && this.state.selectedAction === action) return
+    this.startAction(action)
+  }
+
+  private startAction(action: ActionKind, value?: number): void {
+    if (!this.state.selected) return
     this.setState({
       actionOpen: true,
       selectedAction: action,
+      actionValue: value,
+      actionRunning: ActionInputRequest.supportsStructure(this.state.selected),
+      inputRequest: null,
       menuOpen: false,
       algorithmInformation: this.describeAction(action),
       overviewInformation: null,
       structureInformation: null,
       actionSession: this.state.actionSession + 1,
     })
+  }
+
+  private confirmActionInput = (value: number): void => {
+    const request = this.state.inputRequest
+    if (!request || this.state.selected !== request.structure || this.state.actionRunning) return
+    if (request.validate(String(value))) return
+    this.startAction(request.action, value)
+  }
+
+  private closeActionInput = (): void => {
+    this.setState({ inputRequest: null })
+  }
+
+  private completeAction = (): void => {
+    this.setState({ actionRunning: false })
+  }
+
+  private getInputSize(structure: StructureKind): number {
+    switch (structure) {
+      case 'linked-list': return this.list.length
+      case 'array': return this.array.length
+      case 'stack': return this.stack.length
+      case 'queue': return this.queue.length
+      case 'deque': return this.deque.length
+      case 'doubly-linked-list': return this.doublyList.length
+      case 'circular-buffer': return this.buffer.length
+      default: throw new Error('This structure does not support action input dialogs')
+    }
   }
 
   private showActionInformation = (action: ActionKind): void => {
@@ -311,6 +365,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         ? this.state.algorithmInformation
         : this.describeAction(action),
       structureInformation: null,
+      inputRequest: null,
     })
   }
 
@@ -320,7 +375,7 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private showStructureInformation = (): void => {
     if (!this.state.selected) return
-    this.setState({ structureInformation: this.state.selected, overviewInformation: null })
+    this.setState({ structureInformation: this.state.selected, overviewInformation: null, inputRequest: null })
   }
 
   private closeStructureInformation = (): void => {
@@ -490,76 +545,76 @@ export default class App extends Component<Record<string, never>, AppState> {
     }
     if (this.state.selected === 'queue') {
       switch (this.state.selectedAction) {
-        case 'enqueue': return <QueueEnqueue key={this.state.actionSession} model={this.queue} onSceneChange={this.updateQueueScene} />
-        case 'dequeue': return <QueueDequeue key={this.state.actionSession} model={this.queue} onSceneChange={this.updateQueueScene} />
-        case 'peek': return <QueuePeek key={this.state.actionSession} model={this.queue} onSceneChange={this.updateQueueScene} />
-        case 'clear': return <QueueClear key={this.state.actionSession} model={this.queue} onSceneChange={this.updateQueueScene} />
-        case 'search-value': return <QueueSearchByValue key={this.state.actionSession} model={this.queue} onSceneChange={this.updateQueueScene} />
+        case 'enqueue': return <QueueEnqueue key={this.state.actionSession} model={this.queue} value={this.state.actionValue} onSceneChange={this.updateQueueScene} onComplete={this.completeAction} />
+        case 'dequeue': return <QueueDequeue key={this.state.actionSession} model={this.queue} value={this.state.actionValue} onSceneChange={this.updateQueueScene} onComplete={this.completeAction} />
+        case 'peek': return <QueuePeek key={this.state.actionSession} model={this.queue} value={this.state.actionValue} onSceneChange={this.updateQueueScene} onComplete={this.completeAction} />
+        case 'clear': return <QueueClear key={this.state.actionSession} model={this.queue} value={this.state.actionValue} onSceneChange={this.updateQueueScene} onComplete={this.completeAction} />
+        case 'search-value': return <QueueSearchByValue key={this.state.actionSession} model={this.queue} value={this.state.actionValue} onSceneChange={this.updateQueueScene} onComplete={this.completeAction} />
       }
     }
     if (this.state.selected === 'deque') {
       switch (this.state.selectedAction) {
-        case 'push-front': return <DequePushFront key={this.state.actionSession} model={this.deque} onSceneChange={this.updateDequeScene} />
-        case 'push-back': return <DequePushBack key={this.state.actionSession} model={this.deque} onSceneChange={this.updateDequeScene} />
-        case 'pop-front': return <DequePopFront key={this.state.actionSession} model={this.deque} onSceneChange={this.updateDequeScene} />
-        case 'pop-back': return <DequePopBack key={this.state.actionSession} model={this.deque} onSceneChange={this.updateDequeScene} />
-        case 'peek-front': return <DequePeekFront key={this.state.actionSession} model={this.deque} onSceneChange={this.updateDequeScene} />
-        case 'peek-back': return <DequePeekBack key={this.state.actionSession} model={this.deque} onSceneChange={this.updateDequeScene} />
-        case 'clear': return <DequeClear key={this.state.actionSession} model={this.deque} onSceneChange={this.updateDequeScene} />
-        case 'search-value': return <DequeSearchByValue key={this.state.actionSession} model={this.deque} onSceneChange={this.updateDequeScene} />
+        case 'push-front': return <DequePushFront key={this.state.actionSession} model={this.deque} value={this.state.actionValue} onSceneChange={this.updateDequeScene} onComplete={this.completeAction} />
+        case 'push-back': return <DequePushBack key={this.state.actionSession} model={this.deque} value={this.state.actionValue} onSceneChange={this.updateDequeScene} onComplete={this.completeAction} />
+        case 'pop-front': return <DequePopFront key={this.state.actionSession} model={this.deque} value={this.state.actionValue} onSceneChange={this.updateDequeScene} onComplete={this.completeAction} />
+        case 'pop-back': return <DequePopBack key={this.state.actionSession} model={this.deque} value={this.state.actionValue} onSceneChange={this.updateDequeScene} onComplete={this.completeAction} />
+        case 'peek-front': return <DequePeekFront key={this.state.actionSession} model={this.deque} value={this.state.actionValue} onSceneChange={this.updateDequeScene} onComplete={this.completeAction} />
+        case 'peek-back': return <DequePeekBack key={this.state.actionSession} model={this.deque} value={this.state.actionValue} onSceneChange={this.updateDequeScene} onComplete={this.completeAction} />
+        case 'clear': return <DequeClear key={this.state.actionSession} model={this.deque} value={this.state.actionValue} onSceneChange={this.updateDequeScene} onComplete={this.completeAction} />
+        case 'search-value': return <DequeSearchByValue key={this.state.actionSession} model={this.deque} value={this.state.actionValue} onSceneChange={this.updateDequeScene} onComplete={this.completeAction} />
       }
     }
     if (this.state.selected === 'doubly-linked-list') {
       switch (this.state.selectedAction) {
-        case 'insert-middle': return <DoublyLinkedListAddInTheMiddle key={this.state.actionSession} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
-        case 'insert-start': return <DoublyLinkedListAddAtStart key={this.state.actionSession} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
-        case 'insert-end': return <DoublyLinkedListAddAtEnd key={this.state.actionSession} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
-        case 'delete-start': return <DoublyLinkedListDeleteAtStart key={this.state.actionSession} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
-        case 'delete-end': return <DoublyLinkedListDeleteAtEnd key={this.state.actionSession} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
-        case 'delete-value': return <DoublyLinkedListDeleteByValue key={this.state.actionSession} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
-        case 'search-value': return <DoublyLinkedListSearchByValue key={this.state.actionSession} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
-        case 'search-index': return <DoublyLinkedListSearchByIndex key={this.state.actionSession} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
-        case 'clear': return <DoublyLinkedListClear key={this.state.actionSession} model={this.doublyList} onSceneChange={this.updateDoublyLinkedListScene} />
+        case 'insert-middle': return <DoublyLinkedListAddInTheMiddle key={this.state.actionSession} model={this.doublyList} value={this.state.actionValue} onSceneChange={this.updateDoublyLinkedListScene} onComplete={this.completeAction} />
+        case 'insert-start': return <DoublyLinkedListAddAtStart key={this.state.actionSession} model={this.doublyList} value={this.state.actionValue} onSceneChange={this.updateDoublyLinkedListScene} onComplete={this.completeAction} />
+        case 'insert-end': return <DoublyLinkedListAddAtEnd key={this.state.actionSession} model={this.doublyList} value={this.state.actionValue} onSceneChange={this.updateDoublyLinkedListScene} onComplete={this.completeAction} />
+        case 'delete-start': return <DoublyLinkedListDeleteAtStart key={this.state.actionSession} model={this.doublyList} value={this.state.actionValue} onSceneChange={this.updateDoublyLinkedListScene} onComplete={this.completeAction} />
+        case 'delete-end': return <DoublyLinkedListDeleteAtEnd key={this.state.actionSession} model={this.doublyList} value={this.state.actionValue} onSceneChange={this.updateDoublyLinkedListScene} onComplete={this.completeAction} />
+        case 'delete-value': return <DoublyLinkedListDeleteByValue key={this.state.actionSession} model={this.doublyList} value={this.state.actionValue} onSceneChange={this.updateDoublyLinkedListScene} onComplete={this.completeAction} />
+        case 'search-value': return <DoublyLinkedListSearchByValue key={this.state.actionSession} model={this.doublyList} value={this.state.actionValue} onSceneChange={this.updateDoublyLinkedListScene} onComplete={this.completeAction} />
+        case 'search-index': return <DoublyLinkedListSearchByIndex key={this.state.actionSession} model={this.doublyList} value={this.state.actionValue} onSceneChange={this.updateDoublyLinkedListScene} onComplete={this.completeAction} />
+        case 'clear': return <DoublyLinkedListClear key={this.state.actionSession} model={this.doublyList} value={this.state.actionValue} onSceneChange={this.updateDoublyLinkedListScene} onComplete={this.completeAction} />
       }
     }
     if (this.state.selected === 'circular-buffer') {
       switch (this.state.selectedAction) {
-        case 'enqueue': return <CircularBufferEnqueue key={this.state.actionSession} model={this.buffer} onSceneChange={this.updateCircularBufferScene} />
-        case 'dequeue': return <CircularBufferDequeue key={this.state.actionSession} model={this.buffer} onSceneChange={this.updateCircularBufferScene} />
-        case 'peek': return <CircularBufferPeek key={this.state.actionSession} model={this.buffer} onSceneChange={this.updateCircularBufferScene} />
-        case 'clear': return <CircularBufferClear key={this.state.actionSession} model={this.buffer} onSceneChange={this.updateCircularBufferScene} />
-        case 'search-value': return <CircularBufferSearchByValue key={this.state.actionSession} model={this.buffer} onSceneChange={this.updateCircularBufferScene} />
+        case 'enqueue': return <CircularBufferEnqueue key={this.state.actionSession} model={this.buffer} value={this.state.actionValue} onSceneChange={this.updateCircularBufferScene} onComplete={this.completeAction} />
+        case 'dequeue': return <CircularBufferDequeue key={this.state.actionSession} model={this.buffer} value={this.state.actionValue} onSceneChange={this.updateCircularBufferScene} onComplete={this.completeAction} />
+        case 'peek': return <CircularBufferPeek key={this.state.actionSession} model={this.buffer} value={this.state.actionValue} onSceneChange={this.updateCircularBufferScene} onComplete={this.completeAction} />
+        case 'clear': return <CircularBufferClear key={this.state.actionSession} model={this.buffer} value={this.state.actionValue} onSceneChange={this.updateCircularBufferScene} onComplete={this.completeAction} />
+        case 'search-value': return <CircularBufferSearchByValue key={this.state.actionSession} model={this.buffer} value={this.state.actionValue} onSceneChange={this.updateCircularBufferScene} onComplete={this.completeAction} />
       }
     }
     if (this.state.selected === 'stack') {
       switch (this.state.selectedAction) {
-        case 'push': return <StackPush key={this.state.actionSession} model={this.stack} onSceneChange={this.updateStackScene} />
-        case 'pop': return <StackPop key={this.state.actionSession} model={this.stack} onSceneChange={this.updateStackScene} />
-        case 'peek': return <StackPeek key={this.state.actionSession} model={this.stack} onSceneChange={this.updateStackScene} />
-        case 'clear': return <StackClear key={this.state.actionSession} model={this.stack} onSceneChange={this.updateStackScene} />
-        case 'search-value': return <StackSearchByValue key={this.state.actionSession} model={this.stack} onSceneChange={this.updateStackScene} />
+        case 'push': return <StackPush key={this.state.actionSession} model={this.stack} value={this.state.actionValue} onSceneChange={this.updateStackScene} onComplete={this.completeAction} />
+        case 'pop': return <StackPop key={this.state.actionSession} model={this.stack} value={this.state.actionValue} onSceneChange={this.updateStackScene} onComplete={this.completeAction} />
+        case 'peek': return <StackPeek key={this.state.actionSession} model={this.stack} value={this.state.actionValue} onSceneChange={this.updateStackScene} onComplete={this.completeAction} />
+        case 'clear': return <StackClear key={this.state.actionSession} model={this.stack} value={this.state.actionValue} onSceneChange={this.updateStackScene} onComplete={this.completeAction} />
+        case 'search-value': return <StackSearchByValue key={this.state.actionSession} model={this.stack} value={this.state.actionValue} onSceneChange={this.updateStackScene} onComplete={this.completeAction} />
       }
     }
     if (this.state.selected === 'linked-list') {
       switch (this.state.selectedAction) {
-        case 'clear': return <LinkedListClear key={this.state.actionSession} model={this.list} onSceneChange={this.updateScene} />
-        case 'insert-middle': return <AddInTheMiddle key={this.state.actionSession} list={this.list} onSceneChange={this.updateScene} />
-        case 'insert-start': return <LinkedListAddAtStart key={this.state.actionSession} model={this.list} onSceneChange={this.updateScene} />
-        case 'insert-end': return <LinkedListAddAtEnd key={this.state.actionSession} model={this.list} onSceneChange={this.updateScene} />
-        case 'search-index': return <LinkedListSearchByIndex key={this.state.actionSession} model={this.list} onSceneChange={this.updateScene} />
-        case 'search-value': return <LinkedListSearchByValue key={this.state.actionSession} model={this.list} onSceneChange={this.updateScene} />
-        case 'delete-value': return <LinkedListDeleteByValue key={this.state.actionSession} model={this.list} onSceneChange={this.updateScene} />
+        case 'clear': return <LinkedListClear key={this.state.actionSession} model={this.list} onSceneChange={this.updateScene} onComplete={this.completeAction} />
+        case 'insert-middle': return <AddInTheMiddle key={this.state.actionSession} list={this.list} value={this.state.actionValue} onSceneChange={this.updateScene} onComplete={this.completeAction} />
+        case 'insert-start': return <LinkedListAddAtStart key={this.state.actionSession} model={this.list} value={this.state.actionValue} onSceneChange={this.updateScene} onComplete={this.completeAction} />
+        case 'insert-end': return <LinkedListAddAtEnd key={this.state.actionSession} model={this.list} value={this.state.actionValue} onSceneChange={this.updateScene} onComplete={this.completeAction} />
+        case 'search-index': return <LinkedListSearchByIndex key={this.state.actionSession} model={this.list} value={this.state.actionValue} onSceneChange={this.updateScene} onComplete={this.completeAction} />
+        case 'search-value': return <LinkedListSearchByValue key={this.state.actionSession} model={this.list} value={this.state.actionValue} onSceneChange={this.updateScene} onComplete={this.completeAction} />
+        case 'delete-value': return <LinkedListDeleteByValue key={this.state.actionSession} model={this.list} value={this.state.actionValue} onSceneChange={this.updateScene} onComplete={this.completeAction} />
       }
     }
     if (this.state.selected === 'array') {
       switch (this.state.selectedAction) {
-        case 'clear': return <ArrayClear key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} />
-        case 'insert-middle': return <ArrayAddInTheMiddle key={this.state.actionSession} array={this.array} onSceneChange={this.updateArrayScene} />
-        case 'insert-start': return <ArrayAddAtStart key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} />
-        case 'insert-end': return <ArrayAddAtEnd key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} />
-        case 'search-index': return <ArraySearchByIndex key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} />
-        case 'search-value': return <ArraySearchByValue key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} />
-        case 'delete-value': return <ArrayDeleteByValue key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} />
+        case 'clear': return <ArrayClear key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'insert-middle': return <ArrayAddInTheMiddle key={this.state.actionSession} array={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'insert-start': return <ArrayAddAtStart key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'insert-end': return <ArrayAddAtEnd key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'search-index': return <ArraySearchByIndex key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'search-value': return <ArraySearchByValue key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'delete-value': return <ArrayDeleteByValue key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
       }
     }
     if (this.state.selected === 'binary-tree') {
@@ -614,6 +669,9 @@ export default class App extends Component<Record<string, never>, AppState> {
       ),
       actionOpen: false,
       selectedAction: null,
+      actionValue: undefined,
+      actionRunning: false,
+      inputRequest: null,
       actionSession: this.state.actionSession + 1,
       algorithmInformation: null,
       overviewInformation: null,
@@ -773,6 +831,14 @@ export default class App extends Component<Record<string, never>, AppState> {
           onClose={this.closeStructureInformation}
         />
 
+        {this.state.inputRequest && (
+          <ActionInput
+            request={this.state.inputRequest}
+            onConfirm={this.confirmActionInput}
+            onClose={this.closeActionInput}
+          />
+        )}
+
         <main className="workspace">
           <Renderer
             scene={scene}
@@ -783,6 +849,7 @@ export default class App extends Component<Record<string, never>, AppState> {
                 ref={this.actionMenu}
                 structure={selected}
                 selectedAction={this.state.selectedAction}
+                actionsDisabled={ActionInputRequest.supportsStructure(selected) && this.state.actionRunning}
                 onActionSelected={this.selectAction}
                 onActionInformationRequested={this.showActionInformation}
                 onStructureInformationRequested={this.showStructureInformation}

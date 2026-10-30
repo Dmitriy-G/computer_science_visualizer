@@ -15,9 +15,11 @@
    actions in a persistent card at the upper-left of the canvas. Mark the
    selected action with a highlight and `aria-current`, and put a small info
    button to each action's right.
-5. Selecting an implemented action automatically starts its detailed animation
-   and runs it to completion. Reduced-motion styles still suppress visual
-   transitions, but playback does not wait for a Play button.
+5. Selecting a value/index action on a linear structure opens its input dialog.
+   Confirming valid input starts its animation. Actions without an argument run
+   directly. Trees and Graph continue to start with default inputs. Animations
+   run to completion automatically. Reduced-motion styles still suppress visual
+   transitions.
 
 Browsing categories or groups must preserve the current visualization and action
 session. Opening menus or info dialogs does not pause playback. If a structure is already selected,
@@ -25,14 +27,37 @@ reopen its structure group and retain the group path for Back navigation.
 Actions are selected directly from the canvas card, without reopening the menu.
 On smaller screens, place the action card above the diagram so it does not
 overlap nodes. Move keyboard focus to the first action after choosing
-a structure. Selecting the current action preserves its playback session.
+a structure. Linear-structure actions can be repeated after completion, reopening
+their input dialog when applicable and using the latest committed model. Disable their
+operation buttons while an animation runs; keep info buttons and full Reset
+available. Other structures preserve the session when selecting the current action.
 Place the Current / Visited / New node legend at the top-left of the renderer's
 center area, beside the actions panel and above the code snippet. Let the legend
 wrap on narrow screens; do not keep it in the canvas footer.
 
-Do not render a bottom animation panel, its disclosure/close buttons, a value
-input, or a speed selector. Actions use their definition's default value (99
-when unspecified) and normal playback speed.
+Do not render a bottom animation panel or speed selector. Use the shared input
+dialog for these actions:
+
+- **Array, Linked list, Doubly linked list:** Insert at the start, middle, or end;
+  Search by value; Search by index; Delete by value.
+- **Stack:** Push and Search by value.
+- **Queue and Circular buffer:** Enqueue and Search by value.
+- **Deque:** Push front, Push back, and Search by value.
+
+Value actions accept any safely representable whole number. Start the input
+empty, and block nonnumeric
+characters while typing or pasting; value inputs also allow a leading minus.
+Search by index accepts a zero-based index within the current Array or list;
+explain an empty structure and disable submission until an element exists.
+Insertion actions retain their fixed start, middle, or end position and ask only
+for the new value. Empty, fractional, and out-of-range input displays an error.
+Cancel, close, Escape, or a backdrop click dismisses the dialog without starting
+an action or changing the model. Focus the input on open and return focus on close.
+Clear, Pop, Dequeue, Peek, and end-deletion actions run without an input dialog.
+A full Circular buffer still accepts an enqueue request so its animation can
+explain rejection without overwriting data. Trees and Graph use their
+definition's default value (99 when unspecified).
+All actions use normal playback speed.
 
 Place a noninteractive animation progress bar in the app header, replacing the
 structure name and element count. Do not provide Play, Pause, replay, or seeking

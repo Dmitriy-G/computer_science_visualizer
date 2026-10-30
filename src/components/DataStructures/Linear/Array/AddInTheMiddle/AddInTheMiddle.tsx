@@ -8,7 +8,9 @@ import './AddInTheMiddle.css'
 
 interface AddInTheMiddleProps {
   readonly array: FixedArray
+  readonly value?: number
   readonly onSceneChange: (scene: Scene, array: FixedArray) => void
+  readonly onComplete?: () => void
 }
 
 class ArrayInsertionDefinition implements ActionDefinition<FixedArray> {
@@ -43,7 +45,9 @@ export default class AddInTheMiddle extends Component<
         <ActionPlayback<FixedArray>
           model={this.props.array}
           definition={this.definition}
+          value={this.props.value}
           onSceneChange={this.props.onSceneChange}
+          onComplete={this.props.onComplete}
         />
       </div>
     )

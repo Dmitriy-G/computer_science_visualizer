@@ -66,8 +66,10 @@ Use `src/components/ActionPlayback/` for the shared playback component and its
 styles. Each action's component supplies its own class-based definition with phase
 labels, explanations, and a factory method that creates its animation plan.
 Keep structure-specific algorithms and model types in their action folders;
-reuse the common animation session and progress display. Use each action's default
-value and normal playback speed; do not render a bottom panel or input controls.
+reuse the common animation session and progress display. Accept an optional
+operation value and completion callback so actions can collect input separately
+and unlock further operations after the result is committed. Otherwise use each
+action's default value. Keep normal playback speed and do not render a bottom panel.
 The app header provides the `playback-toolbar` host. `ActionPlayback` renders
 its step description and noninteractive progress bar there through a React portal, keeping them
 connected to the same controller without adding a bottom-panel wrapper.
@@ -96,6 +98,12 @@ overview dialog without selecting or restarting the action.
 The card's top-right corner has a larger info button for general structure
 information. Keep that separate dialog in `src/components/StructureInfo/`;
 its content area is intentionally empty until structure information is added.
+Shared value/index dialogs belong in `src/components/ActionInput/`, with their
+request configuration and validation in `src/visualization/ActionInputRequest.ts`.
+Reuse them for Array, Linked list, Stack, Queue, Deque, Doubly linked list, and
+Circular buffer. They are separate from the info dialogs and start an action
+only when the user confirms valid input. Keep structure-specific operations in
+their existing models and action folders.
 
 Create these components and folders as their features are implemented. The tree
 defines the required organization; it does not mean those features already exist.

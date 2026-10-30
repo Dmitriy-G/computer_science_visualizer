@@ -1,6 +1,7 @@
 import { PureComponent, createRef } from 'react'
 import type { MouseEvent, ReactNode } from 'react'
 import { ActionCatalog } from '../../../visualization/ActionCatalog.ts'
+import { ActionInputRequest } from '../../../visualization/ActionInputRequest.ts'
 import type { ActionKind } from '../../../visualization/ActionCatalog.ts'
 import { StructureCatalog } from '../../../visualization/StructureCatalog.ts'
 import type { StructureKind } from '../../../visualization/Scene.ts'
@@ -9,6 +10,7 @@ import './ActionMenu.css'
 interface ActionMenuProps {
   readonly structure: StructureKind
   readonly selectedAction: ActionKind | null
+  readonly actionsDisabled?: boolean
   readonly onActionSelected: (action: ActionKind) => void
   readonly onActionInformationRequested: (action: ActionKind) => void
   readonly onStructureInformationRequested: () => void
@@ -37,6 +39,7 @@ export default class ActionMenu extends PureComponent<
     const buttons: ReactNode[] = []
     for (const action of ActionCatalog.getActions(this.props.structure)) {
       const selected = action.kind === this.props.selectedAction
+      const requiresInput = ActionInputRequest.requiresInput(this.props.structure, action.kind)
       buttons.push(
         <div className="canvas-action-row" key={action.kind}>
           <button
@@ -44,6 +47,9 @@ export default class ActionMenu extends PureComponent<
             ref={buttons.length === 0 ? this.firstAction : undefined}
             data-action={action.kind}
             onClick={this.selectAction}
+            disabled={this.props.actionsDisabled}
+            aria-haspopup={requiresInput ? 'dialog' : undefined}
+            aria-controls={requiresInput ? 'action-input-dialog' : undefined}
             aria-current={selected ? 'true' : undefined}
           >
             <span className="canvas-action-heading">
@@ -101,7 +107,7 @@ export default class ActionMenu extends PureComponent<
         </div>
         <h2 id="action-menu-title">{StructureCatalog.getName(this.props.structure)}</h2>
         <p className="action-menu-summary">Choose an action to explore step by step.</p>
-        <nav aria-label="Data structure actions">{this.renderActions()}</nav>
+        <nav aria-label="Data structure actions" aria-busy={Boolean(this.props.actionsDisabled)}>{this.renderActions()}</nav>
       </aside>
     )
   }

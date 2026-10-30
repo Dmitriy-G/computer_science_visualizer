@@ -26,5 +26,7 @@ export interface ActionDefinition<TModel> {
 export interface ActionPlaybackProps<TModel> {
   readonly model: TModel
   readonly definition: ActionDefinition<TModel>
+  readonly value?: number
   readonly onSceneChange: (scene: Scene, model: TModel) => void
+  readonly onComplete?: () => void
 }

@@ -27,7 +27,7 @@ export default class ActionPlayback<TModel extends ActionModel<TModel>>
   constructor(props: ActionPlaybackProps<TModel>) {
     super(props)
     this.original = props.model.clone()
-    const initialValue = props.definition.initialValue ?? 99
+    const initialValue = props.value ?? props.definition.initialValue ?? 99
     this.animation = props.definition.create(this.original, initialValue)
     this.controller = new AnimationController(this.animation.steps, this)
     this.state = {
@@ -56,6 +56,7 @@ export default class ActionPlayback<TModel extends ActionModel<TModel>>
         ? this.animation.result
         : this.original
     this.props.onSceneChange(this.animation.steps[index].scene, list)
+    if (index === this.animation.steps.length - 1) this.props.onComplete?.()
   }
 
   private renderToolbar(): ReactNode {
