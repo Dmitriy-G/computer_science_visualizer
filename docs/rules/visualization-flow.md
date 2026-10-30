@@ -52,8 +52,10 @@ Show the current step's pseudocode in a separate bar above the diagram in the
 renderer center column beside the action card.
 On narrow screens, place it above the diagram after the cards and allow long
 snippets to scroll.
-Reserve a fixed-height snippet area even before an action is selected. Changing
-code line counts must not resize or reposition the diagram. Center short code
+Hide the empty snippet area before an action is selected. During playback,
+reserve a fixed-height snippet area so changing code line counts does not resize
+or reposition the diagram. Align diagrams to the top of their viewport instead
+of vertically centering them in unused canvas space. Center short code
 within the bar and scroll longer snippets inside it.
 Omit the step heading, action introduction, phase progress bar, step counter,
 playback status badges, and previous/next/reset buttons.

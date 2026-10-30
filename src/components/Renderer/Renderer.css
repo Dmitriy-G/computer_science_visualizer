@@ -32,7 +32,7 @@
   flex-shrink: 0;
 }
 .renderer-code-host:empty {
-  visibility: hidden;
+  display: none;
 }
 .step-code {
   display: flex;
@@ -61,7 +61,7 @@
   overflow-y: hidden;
   flex: 1;
   display: grid;
-  align-items: center;
+  align-items: start;
   min-height: 340px;
   scrollbar-width: thin;
   scrollbar-color: #b8c9db transparent;
