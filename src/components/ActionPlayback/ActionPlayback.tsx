@@ -135,12 +135,17 @@ export default class ActionPlayback<TModel extends ActionModel<TModel>>
   private renderPhases(): ReactNode[] {
     const phases: ReactNode[] = []
     const current = this.animation.steps[this.state.index].phase
+    const usedPhases = new Set<number>()
+    for (const step of this.animation.steps) usedPhases.add(step.phase)
+    let visiblePhase = 0
     for (
       let index = 0;
       index < this.props.definition.phases.length;
       index += 1
     ) {
       const phase = index + 1
+      if (!usedPhases.has(phase)) continue
+      visiblePhase += 1
       phases.push(
         <li
           key={phase}
@@ -153,7 +158,7 @@ export default class ActionPlayback<TModel extends ActionModel<TModel>>
           }
           aria-current={phase === current ? 'step' : undefined}
         >
-          <span className="phase-number">{phase < current ? '✓' : phase}</span>
+          <span className="phase-number">{phase < current ? '✓' : visiblePhase}</span>
           <span>{this.props.definition.phases[index]}</span>
         </li>,
       )

@@ -64,6 +64,8 @@ a TypeScript class next to its `.tsx` component and `.css` file in the action fo
 Each step includes a phase, title, explanation, relevant pseudocode, duration, and
 scene snapshot. Keep scene snapshots independent so stepping backward and replaying
 are deterministic.
+The controls show only phases present in the current animation plan, numbered
+consecutively. A duplicate rejection must not mark skipped creation stages complete.
 
 The shared Renderer draws the supplied nodes, edges, and highlights and animates
 their transitions. It must not decide the algorithm or hard-code action phases.
@@ -129,28 +131,34 @@ Search and other actions can be added through their own action folders and plans
 
 ## BinaryTree / Insert
 
-Use an unbalanced binary search tree. Its default example has 10 nodes and
-satisfies the search ordering. Smaller values go left; larger or equal values
-go right. Duplicates are separate nodes with stable IDs. Do not perform rotations.
+Use an unbalanced binary search tree with unique keys. Its default example has
+10 nodes and satisfies strict ordering: every left-subtree key is smaller than
+its ancestor and every right-subtree key is larger. Reject equal keys without
+changing links, count, or the next node ID. Do not perform rotations.
 The existing `binary-tree` selection is labeled **Binary search tree (BST)**;
 keep its model, actions, and selection key so existing sessions remain compatible.
 
 1. **Start:** highlight the root, or identify an empty root pointer.
 2. **Compare:** show the comparison at each visited node, then follow the chosen
    child in a separate frame. Mark the visited path and current node with text.
+   Stop at an equal key and finish with **Duplicate rejected**, highlighting the
+   existing node. Do not create a pending node, empty slot, or connection for a
+   rejected insertion. The remaining steps apply only to new keys.
 3. **Locate:** identify the empty child position (or empty root).
 4. **Create:** show the new leaf with empty child pointers, labeled as pending.
 5. **Connect:** draw the parent-to-leaf pointer, or set the root pointer.
 6. **Finish:** commit the result and update the element count.
 
 Keep the original model unchanged, committing only on the final step. Rewinding
-restores the original; replay never adds duplicates beyond the requested node.
+restores the original; replay never adds a second node for an existing key.
 Use the shared playback controls and renderer. Layout uses scene dimensions
 to accommodate additional levels and horizontal scrolling on narrow screens.
 The action's information explains O(h) time and O(1) extra memory for iterative
-insertion. Show best-case O(1), average-case O(log n) assuming distinct keys
-inserted in random order, and worst-case O(n) time. Additional memory is O(1)
-in all cases. Define n, h, O(h), O(log n), O(n), and O(1), and keep n tied to the
+insertion. Show best-case O(1) for a root match or empty root child, average-case
+O(log n) assuming distinct keys inserted in random order, and worst-case O(n)
+for a chain of sorted distinct keys. Explain the empty-tree boundary separately.
+Additional memory is O(1): a few pointers and at most one new leaf, with no node
+allocated for a duplicate. Define n, h, O(h), O(log n), O(n), and O(1), and keep n tied to the
 original input size for the current run. Animation snapshots are visualization overhead,
 excluded from the algorithm memory cost.
 
@@ -284,7 +292,7 @@ Add **AVL tree**, **Red-Black tree**, **B-Tree**, and **B+ Tree** under Trees.
 Each loads ten unique integer keys and provides **Insert a key**, **Search by
 value**, **Delete by value**, and **Clear**. These four models use unique keys:
 duplicate insertion and missing deletion leave the model and ID counter unchanged.
-The original BST continues to support duplicate nodes.
+The original unbalanced BST also rejects duplicates, using strict left < node < right ordering.
 
 Keep actual algorithms in the structure model and expose synchronous trace
 events, without timers or rendering dependencies. Each action owns its sequence

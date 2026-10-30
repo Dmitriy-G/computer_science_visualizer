@@ -72,7 +72,7 @@ class ActionAssertions {
       assert.ok(!seen.has(id))
       seen.add(id)
       const node = byId.get(id)
-      assert.ok(node.value >= min && node.value < max)
+      assert.ok(node.value > min && node.value < max)
       if (node.leftId) stack.push({ id: node.leftId, min, max: node.value })
       if (node.rightId) stack.push({ id: node.rightId, min: node.value, max })
     }
@@ -251,7 +251,7 @@ test('index model operations reject invalid indices and detached snapshots canno
   }
 })
 
-test('tree deletion covers leaves, either single child, root, both successor positions and duplicates', () => {
+test('tree deletion covers leaves, either single child, root, both successor positions and rejected duplicate inserts', () => {
   for (const values of [[], [50], [50, 30], [50, 80], [50, 30, 80, 90], [50, 30, 80, 60, 70], [50, 30, 80, 60, 65, 90, 50, 50]]) {
     for (const value of [50, 30, 80, 60, 90, 999]) {
       const model = ActionAssertions.tree(values)

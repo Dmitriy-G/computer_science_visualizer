@@ -151,7 +151,7 @@ test('binary tree clear releases children before their parent in deterministic l
       released.add(id)
       previous = remaining
     }
-    assert.equal(order.length, values.length)
+    assert.equal(order.length, tree.length)
     assert.equal(order.at(-1), values[0])
     if (values.length === 7) assert.deepEqual(order, [20, 40, 30, 60, 80, 70, 50])
     assert.equal(plan.steps.at(-1).scene.slots[0].label, 'root = null')

@@ -43,31 +43,21 @@ export class BinaryTree {
     return tree
   }
 
-  public insert(value: number): BinaryTreeEntry {
+  public insert(value: number): BinaryTreeEntry | null {
     if (!Number.isSafeInteger(value)) {
       throw new TypeError('Node values must be safe integers')
     }
-    const node = new BinaryTreeNode(`tree-node-${this.nextId}`, value)
-    if (this.root === null) {
-      this.root = node
-    } else {
-      let current = this.root
-      while (true) {
-        if (value < current.value) {
-          if (current.left === null) {
-            current.left = node
-            break
-          }
-          current = current.left
-        } else {
-          if (current.right === null) {
-            current.right = node
-            break
-          }
-          current = current.right
-        }
-      }
+    let parent: BinaryTreeNode | null = null
+    let current: BinaryTreeNode | null = this.root
+    while (current !== null) {
+      if (value === current.value) return null
+      parent = current
+      current = value < current.value ? current.left : current.right
     }
+    const node = new BinaryTreeNode(`tree-node-${this.nextId}`, value)
+    if (parent === null) this.root = node
+    else if (value < parent.value) parent.left = node
+    else parent.right = node
     this.nextId += 1
     this.size += 1
     return node.toEntry()

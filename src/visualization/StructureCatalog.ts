@@ -80,7 +80,7 @@ export class StructureCatalog {
       kind: 'binary-tree',
       group: 'trees',
       name: 'Binary search tree (BST)',
-      description: 'A binary search tree: smaller left, larger or equal right',
+      description: 'Unique keys: strictly smaller left, strictly larger right',
       symbol: '⋔',
     },
     { kind: 'avl-tree', group: 'trees', name: 'AVL tree', description: 'Height-balanced search with single and double rotations', symbol: '+' },

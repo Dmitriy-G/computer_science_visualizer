@@ -4,6 +4,7 @@ import { BinaryTreeLayout } from '../BinaryTreeLayout.ts'
 import type { BinaryTreeFrame } from '../BinaryTreeLayout.ts'
 import type { AnimationStep } from '../../../../../visualization/Scene.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
+import { AnimationSequence } from '../../../../../visualization/AnimationSequence.ts'
 
 export class InsertionAnimation {
   public readonly steps: readonly AnimationStep[]
@@ -13,20 +14,20 @@ export class InsertionAnimation {
     return {
       name: 'Insert into a binary search tree',
       summary:
-        'Smaller values go left; larger or equal values go right.',
+        'Smaller values go left; larger values go right. Duplicate keys are rejected.',
       time: {
         best: 'O(1)',
         average: 'O(log n)',
         worst: 'O(n)',
         explanation:
-          'O(h), bounded by tree height. Best O(1): an empty root or root child. Average O(log n) assumes distinct keys inserted in random order. Worst O(n): a chain from sorted or all-equal inputs.',
+          'O(h), bounded by tree height. Best O(1): a root duplicate or an empty root child. Average O(log n) assumes distinct keys inserted in random order. Worst O(n): a chain from sorted distinct keys. An empty tree needs no comparisons.',
       },
       memory: {
         best: 'O(1)',
         average: 'O(1)',
         worst: 'O(1)',
         explanation:
-          'One new leaf and a few pointers in every case; no recursion stack. Animation storage excluded.',
+          'A few pointers and at most one new leaf; no recursion stack. Rejected duplicates allocate no node. Animation storage excluded.',
       },
       terms: [
         {
@@ -61,8 +62,8 @@ export class InsertionAnimation {
   }
 
   constructor(tree: BinaryTree, value: number) {
+    if (!Number.isSafeInteger(value)) throw new TypeError('Node values must be safe integers')
     this.result = tree.clone()
-    const pending = this.result.insert(value)
     const entries = tree.getEntries()
     const byId = new Map<string, BinaryTreeEntry>()
     for (const entry of entries) byId.set(entry.id, entry)
@@ -76,13 +77,34 @@ export class InsertionAnimation {
       phase: 1,
       title: current ? 'Start at the root' : 'Start with an empty tree',
       description: current
-        ? `The binary search tree has ${tree.length} nodes. Start at ${current.value} to find a position for ${value}. Smaller values go left; larger or equal values go right.`
+        ? `The binary search tree has ${tree.length} nodes. Start at ${current.value} to find a position for ${value}. Smaller values go left; larger values go right. Reject an equal key.`
         : `There is no root yet. The new value ${value} will become the root.`,
       code: 'current = root',
       duration: 1400,
       scene: layout.create(entries, { activeId: current?.id }),
     })
     while (current !== null) {
+      if (value === current.value) {
+        const scene = layout.create(entries, { activeId: current.id, visitedIds: [...visited] })
+        steps.push({
+          phase: 2,
+          title: `Key ${value} already exists`,
+          description: `${value} equals the current key. This BST requires unique keys, so stop without creating or connecting a node.`,
+          code: 'if (value === current.value)\n  return duplicate',
+          duration: 1600,
+          scene,
+        })
+        steps.push({
+          phase: 6,
+          title: 'Duplicate rejected',
+          description: `Key ${value} already exists. The tree, its links, and its ${tree.length} nodes are unchanged. No new node was allocated.`,
+          code: 'return duplicate  // tree unchanged',
+          duration: 1400,
+          scene: AnimationSequence.mark(scene, current.id, visited, 'DUPLICATE'),
+        })
+        this.steps = steps
+        return
+      }
       parent = current
       const goLeft: boolean = value < current.value
       side = goLeft ? 'left' : 'right'
@@ -90,8 +112,8 @@ export class InsertionAnimation {
       steps.push({
         phase: 2,
         title: `Compare with ${current.value}: go ${side}`,
-        description: `${value} ${goLeft ? '<' : '>='} ${current.value}, so follow the ${side} child.${value === current.value ? ' Equal values follow the right branch, keeping duplicates as separate nodes.' : ''}`,
-        code: `if (value ${goLeft ? '<' : '>='} current.value)\n  current = current.${side}`,
+        description: `${value} ${goLeft ? '<' : '>'} ${current.value}, so follow the ${side} child.`,
+        code: `if (value ${goLeft ? '<' : '>'} current.value)\n  current = current.${side}`,
         duration: 1600,
         scene: layout.create(entries, {
           activeId: current.id,
@@ -114,6 +136,8 @@ export class InsertionAnimation {
         })
       }
     }
+    // Reaching an empty child after checking equality proves the key is new.
+    const pending = this.result.insert(value)!
     const frame: BinaryTreeFrame = {
       pendingId: pending.id,
       visitedIds: [...visited],
@@ -157,7 +181,7 @@ export class InsertionAnimation {
     steps.push({
       phase: 6,
       title: 'Insertion complete',
-      description: `The tree now has ${this.result.length} nodes. The new value ${value} is ${parent ? `the ${side} child of ${parent.value}` : 'the root'}. All smaller values remain in left subtrees; larger or equal values remain in right subtrees.`,
+      description: `The tree now has ${this.result.length} nodes. The new value ${value} is ${parent ? `the ${side} child of ${parent.value}` : 'the root'}. Every left subtree contains strictly smaller keys, and every right subtree strictly larger keys.`,
       code: 'size += 1  // insertion complete',
       duration: 1400,
       scene: layout.create(resultEntries, {

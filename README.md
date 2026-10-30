@@ -27,9 +27,10 @@ unused. The default array has exactly 10 slots, and the first result has 11.
 Both time and additional memory are O(n).
 
 Choose **Binary search tree (BST) → Insert a value** to insert into an unbalanced binary search tree.
-Compare from the root, follow left for smaller values or right for larger or
-equal values, find an empty child pointer, and create and connect a new leaf.
-Duplicates remain separate nodes. The tree does not rebalance itself. Insertion
+Compare from the root, follow left for smaller values or right for larger values,
+find an empty child pointer, and create and connect a new leaf. Duplicate keys
+are rejected: the animation highlights the existing node and leaves links, count,
+and node IDs unchanged. The tree does not rebalance itself. Insertion
 takes O(h) time, where h is the tree height, and O(1) additional algorithm memory.
 The new node remains pending until the final step; rewind and replay preserve
 the original tree. Subsequent insertions use the completed result.
@@ -47,8 +48,8 @@ do not increase the count. Their default insertion of 99 demonstrates splits.
 
 All four new trees provide **Insert a key**, **Search by value**, **Delete by
 value**, and **Clear**. They use unique keys: duplicate insertion and missing
-deletion leave the tree unchanged. The original BST keeps its duplicate-node
-behavior and existing selection key. **B+ Tree / Range from value** reports all
+deletion leave the tree unchanged. The original unbalanced BST also rejects
+duplicates and keeps its existing selection key. **B+ Tree / Range from value** reports all
 records at or above an inclusive minimum, using the next-leaf chain after one
 descent. Results appear in the animation controls.
 
@@ -112,7 +113,7 @@ npm test
 ```
 
 Tests cover linked list, array, and binary search tree edge cases, insertion sequences,
-final pointer connections, tree ordering and duplicate placement, fixed-array allocation,
+final pointer connections, strict tree ordering and duplicate rejection, fixed-array allocation,
 preserved originals, prefix/suffix copies, structure previews, FIFO ordering,
 reciprocal prev/next pointers, deque end operations, circular-buffer wraparound
 and full/empty boundaries,

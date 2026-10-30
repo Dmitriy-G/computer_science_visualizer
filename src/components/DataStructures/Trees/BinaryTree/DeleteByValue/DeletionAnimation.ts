@@ -9,7 +9,7 @@ export class DeletionAnimation extends AnimationSequence {
   public static describe(size: number) {
     return AnimationSequence.information(
       'Delete by value',
-      'Remove the first match, preserving search ordering.',
+      'Remove the matching key, preserving strict search ordering.',
       size,
       ['O(1)', 'O(log n)', 'O(n)'],
       'O(h). Best O(1): the root matches and has at most one child. Average O(log n) assumes distinct keys inserted in random order. Worst O(n): a long search or successor path in an unbalanced chain.',
@@ -55,6 +55,6 @@ export class DeletionAnimation extends AnimationSequence {
       const rewired = layout.create(this.result.getEntries())
       this.add(5, 'Reconnect the replacement', 'Update the parent pointer, or root. Preserve all surviving node IDs and values.', 'parent.child = replacement  // or root = replacement', { ...rewired, count: model.length })
     }
-    this.add(6, target ? 'Deletion complete' : 'Value not found; tree unchanged', target ? `Removed the first equal node on the search path for ${value}. The tree now has ${this.result.length} nodes; later duplicates remain.` : `Value ${value} was not found. The tree still has ${model.length} nodes.`, target ? 'size -= 1' : 'return notFound', layout.create(this.result.getEntries()))
+    this.add(6, target ? 'Deletion complete' : 'Value not found; tree unchanged', target ? `Removed ${value}. The tree now has ${this.result.length} nodes and retains strict left < node < right ordering.` : `Value ${value} was not found. The tree still has ${model.length} nodes.`, target ? 'size -= 1' : 'return notFound', layout.create(this.result.getEntries()))
   }
 }

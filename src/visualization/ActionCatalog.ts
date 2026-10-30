@@ -80,7 +80,7 @@ export class ActionCatalog {
         { kind: 'insert-end', title: 'Insert at the end', description: 'Append a value after the last element.' },
       )
     }
-    if (structure === 'binary-tree') actions.push({ kind: 'insert', title: 'Insert a value', description: 'Compare from the root and connect a new leaf. Equal values go right.' })
+    if (structure === 'binary-tree') actions.push({ kind: 'insert', title: 'Insert a value', description: 'Compare from the root and connect a new leaf. Duplicate keys are rejected.' })
     actions.push({ kind: 'search-value', title: 'Search by value', description: 'Follow the search path to the first matching value.' })
     if (structure === 'linked-list' || structure === 'array') actions.push({ kind: 'search-index', title: 'Search by index', description: 'Find an element using its zero-based index.' })
     actions.push({ kind: 'delete-value', title: 'Delete by value', description: 'Remove the first match and reconnect the remaining structure.' })

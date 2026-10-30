@@ -7,7 +7,7 @@ import './DeleteByValue.css'
 class DeletionDefinition implements ActionDefinition<BinaryTree> {
   public readonly title = 'Delete by value'
   public readonly context = 'Binary search tree / deletion'
-  public readonly summary = 'Find and delete the first matching value. A missing value leaves the structure unchanged.'
+  public readonly summary = 'Find and delete the matching key. A missing key leaves the tree unchanged.'
   public readonly phases = ['Start', 'Search', 'Locate', 'Disconnect', 'Reconnect / remove', 'Finish']
   public readonly timelineHint = 'Commit only at the final step'
   public readonly inputLabel = 'Value to delete'

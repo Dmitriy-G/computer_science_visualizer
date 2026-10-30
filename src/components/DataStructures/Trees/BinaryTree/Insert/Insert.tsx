@@ -15,7 +15,7 @@ class BinaryTreeInsertionDefinition implements ActionDefinition<BinaryTree> {
   public readonly title = 'Insert a value'
   public readonly context = 'Binary search tree / insertion'
   public readonly summary =
-    'Smaller goes left. Larger or equal goes right. Connect a new leaf.'
+    'Smaller goes left. Larger goes right. Duplicate keys are rejected.'
   public readonly phases = [
     'Start',
     'Compare',
