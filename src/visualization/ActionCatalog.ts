@@ -10,6 +10,29 @@ export interface ActionChoice {
 
 export class ActionCatalog {
   public static getActions(structure: StructureKind): readonly ActionChoice[] {
+    if (structure === 'hash-map') {
+      return [
+        { kind: 'insert', title: 'Insert / update', description: 'Store a key-value pair or update an existing key; rehash when needed.' },
+        { kind: 'search-value', title: 'Look up a key', description: 'Hash the key and inspect its collision chain.' },
+        { kind: 'delete-value', title: 'Delete a key', description: 'Remove the matching entry while preserving other collisions.' },
+        { kind: 'clear', title: 'Clear', description: 'Release all entries and keep the buckets available for reuse.' },
+      ]
+    }
+    if (structure === 'hash-set') {
+      return [
+        { kind: 'insert', title: 'Add a value', description: 'Add a unique value; leave duplicates unchanged.' },
+        { kind: 'search-value', title: 'Contains value', description: 'Hash the value and check its collision chain.' },
+        { kind: 'delete-value', title: 'Remove a value', description: 'Remove the value if it is present.' },
+        { kind: 'clear', title: 'Clear', description: 'Release every entry and empty the set.' },
+      ]
+    }
+    if (structure === 'bloom-filter') {
+      return [
+        { kind: 'insert', title: 'Add a value', description: 'Compute three hashes and set their bits.' },
+        { kind: 'search-value', title: 'Check membership', description: 'Report definitely absent or possibly present; false positives are possible.' },
+        { kind: 'clear', title: 'Clear', description: 'Reset every bit; individual item deletion is not supported.' },
+      ]
+    }
     if (structure === 'binary-tree' || structure === 'avl-tree' || structure === 'red-black-tree' || structure === 'b-tree' || structure === 'b-plus-tree') {
       const actions: ActionChoice[] = [
         { kind: 'insert', title: 'Insert a key', description: structure === 'binary-tree' ? 'Compare from the root and connect a new leaf. Duplicate keys are rejected.' : 'Insert one unique key and restore balance or page occupancy.' },

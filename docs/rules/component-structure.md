@@ -108,11 +108,22 @@ links, identifying implementation variants where relevant.
 Shared value/index dialogs belong in `src/components/ActionInput/`, with their
 request configuration and validation in `src/visualization/ActionInputRequest.ts`.
 Reuse them for Array, Linked list, Stack, Queue, Deque, Doubly linked list,
-Circular buffer, and all five tree types. They are separate from the info dialogs
-and start an action only when the user confirms valid input. Keep structure-specific operations in
+Circular buffer, all five tree types, Hash Map, Hash Set, and Bloom Filter.
+Hash Map insertion collects
+separate whole-number key and value fields; the second value is not a range bound.
+These dialogs are separate from the info dialogs and start an action only when
+the user confirms valid input. Keep structure-specific operations in
 their existing models and action folders.
 The B+ Tree range action uses two numeric fields in this shared dialog and passes
 both inclusive bounds through the action definition and playback to its model.
 
 Create these components and folders as their features are implemented. The tree
 defines the required organization; it does not mean those features already exist.
+
+## Hash-based structures
+
+Keep Hash Map, Hash Set, and Bloom Filter under
+`src/components/DataStructures/HashBased/`, each with its model, layout, and action
+folders. Hash Set composes the chained Hash Map storage. Reuse shared hashing,
+bucket layout, and trace playback from `src/visualization/` where they serve more
+than one structure. Each action has its own sequence, class component, and CSS file.

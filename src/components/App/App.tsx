@@ -1,3 +1,28 @@
+import { HashMap } from '../DataStructures/HashBased/HashMap/HashMap.ts'
+import HashMapInsert from '../DataStructures/HashBased/HashMap/Insert/Insert.tsx'
+import { InsertAnimation as HashMapInsertSequence } from '../DataStructures/HashBased/HashMap/Insert/InsertAnimation.ts'
+import HashMapSearchByKey from '../DataStructures/HashBased/HashMap/SearchByKey/SearchByKey.tsx'
+import { SearchByKeyAnimation as HashMapSearchByKeySequence } from '../DataStructures/HashBased/HashMap/SearchByKey/SearchByKeyAnimation.ts'
+import HashMapDeleteByKey from '../DataStructures/HashBased/HashMap/DeleteByKey/DeleteByKey.tsx'
+import { DeleteByKeyAnimation as HashMapDeleteByKeySequence } from '../DataStructures/HashBased/HashMap/DeleteByKey/DeleteByKeyAnimation.ts'
+import HashMapClear from '../DataStructures/HashBased/HashMap/Clear/Clear.tsx'
+import { ClearAnimation as HashMapClearSequence } from '../DataStructures/HashBased/HashMap/Clear/ClearAnimation.ts'
+import { HashSet } from '../DataStructures/HashBased/HashSet/HashSet.ts'
+import HashSetAdd from '../DataStructures/HashBased/HashSet/Add/Add.tsx'
+import { AddAnimation as HashSetAddSequence } from '../DataStructures/HashBased/HashSet/Add/AddAnimation.ts'
+import HashSetContains from '../DataStructures/HashBased/HashSet/Contains/Contains.tsx'
+import { ContainsAnimation as HashSetContainsSequence } from '../DataStructures/HashBased/HashSet/Contains/ContainsAnimation.ts'
+import HashSetRemove from '../DataStructures/HashBased/HashSet/Remove/Remove.tsx'
+import { RemoveAnimation as HashSetRemoveSequence } from '../DataStructures/HashBased/HashSet/Remove/RemoveAnimation.ts'
+import HashSetClear from '../DataStructures/HashBased/HashSet/Clear/Clear.tsx'
+import { ClearAnimation as HashSetClearSequence } from '../DataStructures/HashBased/HashSet/Clear/ClearAnimation.ts'
+import { BloomFilter } from '../DataStructures/HashBased/BloomFilter/BloomFilter.ts'
+import BloomFilterAdd from '../DataStructures/HashBased/BloomFilter/Add/Add.tsx'
+import { AddAnimation as BloomFilterAddSequence } from '../DataStructures/HashBased/BloomFilter/Add/AddAnimation.ts'
+import BloomFilterCheckMembership from '../DataStructures/HashBased/BloomFilter/CheckMembership/CheckMembership.tsx'
+import { CheckMembershipAnimation as BloomFilterCheckMembershipSequence } from '../DataStructures/HashBased/BloomFilter/CheckMembership/CheckMembershipAnimation.ts'
+import BloomFilterClear from '../DataStructures/HashBased/BloomFilter/Clear/Clear.tsx'
+import { ClearAnimation as BloomFilterClearSequence } from '../DataStructures/HashBased/BloomFilter/Clear/ClearAnimation.ts'
 import { AVLTree } from '../DataStructures/Trees/AVLTree/AVLTree.ts'
 import AVLTreeInsert from '../DataStructures/Trees/AVLTree/Insert/Insert.tsx'
 import { InsertionAnimation as AVLTreeInsertSequence } from '../DataStructures/Trees/AVLTree/Insert/InsertionAnimation.ts'
@@ -202,6 +227,9 @@ export default class App extends Component<Record<string, never>, AppState> {
   private deque = Deque.createDefault()
   private doublyList = DoublyLinkedList.createDefault()
   private buffer = CircularBuffer.createDefault()
+  private hashMap = HashMap.createDefault()
+  private hashSet = HashSet.createDefault()
+  private bloomFilter = BloomFilter.createDefault()
 
   constructor(props: Record<string, never>) {
     super(props)
@@ -256,6 +284,9 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private selectStructure = (kind: StructureKind): void => {
     const menu = this.state.menu.selectStructure(kind)
+    this.hashMap = HashMap.createDefault()
+    this.hashSet = HashSet.createDefault()
+    this.bloomFilter = BloomFilter.createDefault()
     this.list = LinkedList.createDefault()
     this.array = FixedArray.createDefault()
     this.tree = BinaryTree.createDefault()
@@ -286,6 +317,9 @@ export default class App extends Component<Record<string, never>, AppState> {
         this.redBlackTree,
         this.bTree,
         this.bPlusTree,
+        this.hashMap,
+        this.hashSet,
+        this.bloomFilter,
       ),
       actionOpen: false,
       selectedAction: null,
@@ -351,6 +385,9 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private getInputSize(structure: StructureKind): number {
     switch (structure) {
+      case 'hash-map': return this.hashMap.length
+      case 'hash-set': return this.hashSet.length
+      case 'bloom-filter': return this.bloomFilter.length
       case 'linked-list': return this.list.length
       case 'array': return this.array.length
       case 'stack': return this.stack.length
@@ -393,6 +430,29 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private describeAction(action: ActionKind): AlgorithmInformation | null {
+    if (this.state.selected === 'hash-map') {
+      switch (action) {
+        case 'insert': return HashMapInsertSequence.describe(this.hashMap.length)
+        case 'search-value': return HashMapSearchByKeySequence.describe(this.hashMap.length)
+        case 'delete-value': return HashMapDeleteByKeySequence.describe(this.hashMap.length)
+        case 'clear': return HashMapClearSequence.describe(this.hashMap.length)
+      }
+    }
+    if (this.state.selected === 'hash-set') {
+      switch (action) {
+        case 'insert': return HashSetAddSequence.describe(this.hashSet.length)
+        case 'search-value': return HashSetContainsSequence.describe(this.hashSet.length)
+        case 'delete-value': return HashSetRemoveSequence.describe(this.hashSet.length)
+        case 'clear': return HashSetClearSequence.describe(this.hashSet.length)
+      }
+    }
+    if (this.state.selected === 'bloom-filter') {
+      switch (action) {
+        case 'insert': return BloomFilterAddSequence.describe(this.bloomFilter.length)
+        case 'search-value': return BloomFilterCheckMembershipSequence.describe(this.bloomFilter.length)
+        case 'clear': return BloomFilterClearSequence.describe(this.bloomFilter.length)
+      }
+    }
     if (this.state.selected === 'avl-tree') {
       switch (action) {
         case 'insert': return AVLTreeInsertSequence.describe(this.avlTree.length)
@@ -520,6 +580,29 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private renderAction(): ReactNode {
     if (!this.state.actionOpen) return null
+    if (this.state.selected === 'hash-map') {
+      switch (this.state.selectedAction) {
+        case 'insert': return <HashMapInsert key={this.state.actionSession} model={this.hashMap} value={this.state.actionValue} upperValue={this.state.actionUpperValue} onSceneChange={this.updateHashMapScene} onComplete={this.completeAction} />
+        case 'search-value': return <HashMapSearchByKey key={this.state.actionSession} model={this.hashMap} value={this.state.actionValue} upperValue={this.state.actionUpperValue} onSceneChange={this.updateHashMapScene} onComplete={this.completeAction} />
+        case 'delete-value': return <HashMapDeleteByKey key={this.state.actionSession} model={this.hashMap} value={this.state.actionValue} upperValue={this.state.actionUpperValue} onSceneChange={this.updateHashMapScene} onComplete={this.completeAction} />
+        case 'clear': return <HashMapClear key={this.state.actionSession} model={this.hashMap} value={this.state.actionValue} upperValue={this.state.actionUpperValue} onSceneChange={this.updateHashMapScene} onComplete={this.completeAction} />
+      }
+    }
+    if (this.state.selected === 'hash-set') {
+      switch (this.state.selectedAction) {
+        case 'insert': return <HashSetAdd key={this.state.actionSession} model={this.hashSet} value={this.state.actionValue} upperValue={this.state.actionUpperValue} onSceneChange={this.updateHashSetScene} onComplete={this.completeAction} />
+        case 'search-value': return <HashSetContains key={this.state.actionSession} model={this.hashSet} value={this.state.actionValue} upperValue={this.state.actionUpperValue} onSceneChange={this.updateHashSetScene} onComplete={this.completeAction} />
+        case 'delete-value': return <HashSetRemove key={this.state.actionSession} model={this.hashSet} value={this.state.actionValue} upperValue={this.state.actionUpperValue} onSceneChange={this.updateHashSetScene} onComplete={this.completeAction} />
+        case 'clear': return <HashSetClear key={this.state.actionSession} model={this.hashSet} value={this.state.actionValue} upperValue={this.state.actionUpperValue} onSceneChange={this.updateHashSetScene} onComplete={this.completeAction} />
+      }
+    }
+    if (this.state.selected === 'bloom-filter') {
+      switch (this.state.selectedAction) {
+        case 'insert': return <BloomFilterAdd key={this.state.actionSession} model={this.bloomFilter} value={this.state.actionValue} upperValue={this.state.actionUpperValue} onSceneChange={this.updateBloomFilterScene} onComplete={this.completeAction} />
+        case 'search-value': return <BloomFilterCheckMembership key={this.state.actionSession} model={this.bloomFilter} value={this.state.actionValue} upperValue={this.state.actionUpperValue} onSceneChange={this.updateBloomFilterScene} onComplete={this.completeAction} />
+        case 'clear': return <BloomFilterClear key={this.state.actionSession} model={this.bloomFilter} value={this.state.actionValue} upperValue={this.state.actionUpperValue} onSceneChange={this.updateBloomFilterScene} onComplete={this.completeAction} />
+      }
+    }
     if (this.state.selected === 'avl-tree') {
       switch (this.state.selectedAction) {
         case 'insert': return <AVLTreeInsert key={this.state.actionSession} model={this.avlTree} value={this.state.actionValue} onSceneChange={this.updateAVLTreeScene} onComplete={this.completeAction} />
@@ -647,6 +730,9 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private resetStructure = (): void => {
     if (this.state.selected === null) return
+    this.hashMap = HashMap.createDefault()
+    this.hashSet = HashSet.createDefault()
+    this.bloomFilter = BloomFilter.createDefault()
     this.list = LinkedList.createDefault()
     this.array = FixedArray.createDefault()
     this.tree = BinaryTree.createDefault()
@@ -676,6 +762,9 @@ export default class App extends Component<Record<string, never>, AppState> {
         this.redBlackTree,
         this.bTree,
         this.bPlusTree,
+        this.hashMap,
+        this.hashSet,
+        this.bloomFilter,
       ),
       actionOpen: false,
       selectedAction: null,
@@ -752,6 +841,21 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private updateBPlusTreeScene = (scene: Scene, model: BPlusTree): void => {
     this.bPlusTree = model
+    this.setState({ scene })
+  }
+
+  private updateHashMapScene = (scene: Scene, model: HashMap): void => {
+    this.hashMap = model
+    this.setState({ scene })
+  }
+
+  private updateHashSetScene = (scene: Scene, model: HashSet): void => {
+    this.hashSet = model
+    this.setState({ scene })
+  }
+
+  private updateBloomFilterScene = (scene: Scene, model: BloomFilter): void => {
+    this.bloomFilter = model
     this.setState({ scene })
   }
 

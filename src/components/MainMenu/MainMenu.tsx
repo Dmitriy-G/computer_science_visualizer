@@ -113,6 +113,24 @@ export default class MainMenu extends Component<
   private renderStructureIcon(kind: StructureKind, fallback: string): ReactNode {
     let drawing: ReactNode
     switch (kind) {
+      case 'hash-map':
+      case 'hash-set':
+        drawing = (
+          <>
+            <path d="M10 4 6 28M24 4l-4 24M3 12h26M2 21h26" />
+            {kind === 'hash-set' && <circle cx="27" cy="27" r="3" />}
+          </>
+        )
+        break
+      case 'bloom-filter':
+        drawing = (
+          <>
+            <rect x="3" y="4" width="26" height="24" rx="3" />
+            <path d="M3 12h26M3 20h26M12 4v24M20 4v24" />
+            <path d="m6 8 2 1m7 7 2 1m6 7 2 1" />
+          </>
+        )
+        break
       case 'binary-tree':
       case 'avl-tree':
       case 'red-black-tree':

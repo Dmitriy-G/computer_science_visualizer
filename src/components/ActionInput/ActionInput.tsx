@@ -77,7 +77,7 @@ export default class ActionInput extends Component<ActionInputProps, ActionInput
     }
     this.props.onConfirm(
       Number(this.state.value),
-      this.props.request.rangeInput ? Number(this.state.upperValue) : undefined,
+      this.props.request.rangeInput || this.props.request.pairInput ? Number(this.state.upperValue) : undefined,
     )
   }
 
@@ -120,9 +120,9 @@ export default class ActionInput extends Component<ActionInputProps, ActionInput
           />
           <p id="action-input-hint" className="action-input-hint">{request.hint}</p>
           {this.state.error && <p id="action-input-error" className="action-input-error" role="alert">{this.state.error}</p>}
-          {request.rangeInput && (
+          {(request.rangeInput || request.pairInput) && (
             <>
-              <label htmlFor="action-input-upper-value">Maximum key (inclusive)</label>
+              <label htmlFor="action-input-upper-value">{request.secondLabel}</label>
               <input
                 id="action-input-upper-value"
                 ref={this.upperInput}
@@ -136,7 +136,7 @@ export default class ActionInput extends Component<ActionInputProps, ActionInput
                 aria-invalid={Boolean(this.state.upperError)}
                 aria-describedby={this.state.upperError ? 'action-input-upper-hint action-input-upper-error' : 'action-input-upper-hint'}
               />
-              <p id="action-input-upper-hint" className="action-input-hint">Both boundary keys are included in the range.</p>
+              <p id="action-input-upper-hint" className="action-input-hint">{request.secondHint}</p>
               {this.state.upperError && <p id="action-input-upper-error" className="action-input-error" role="alert">{this.state.upperError}</p>}
             </>
           )}

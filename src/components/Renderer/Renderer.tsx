@@ -96,7 +96,7 @@ export default class Renderer extends Component<
   }
 
   private edgeOffset(node: SceneNode, dx: number, dy: number): number {
-    if (node.keys === undefined) return 39
+    if (node.keys === undefined && node.width === undefined && node.height === undefined) return 39
     return Math.min(
       (node.width ?? 66) / 2 / Math.max(Math.abs(dx), 0.0001),
       (node.height ?? 66) / 2 / Math.max(Math.abs(dy), 0.0001),
@@ -111,7 +111,7 @@ export default class Renderer extends Component<
     const cellWidth = width / Math.max(1, keys.length)
     for (let index = 0; index < keys.length; index += 1) {
       const x = -width / 2 + cellWidth * (index + 0.5)
-      elements.push(<text key={`key-${index}`} className="node-value page-key" x={x} textAnchor="middle" dominantBaseline="central">{keys[index]}</text>)
+      elements.push(<text key={`key-${index}`} className="node-value page-key" x={x} textAnchor="middle" dominantBaseline="central" style={{ fontSize: Math.min(18, (cellWidth - 16) * 1.6 / String(keys[index]).length) }}>{keys[index]}</text>)
       if (index > 0) {
         const divider = -width / 2 + cellWidth * index
         elements.push(<line key={`divider-${index}`} className="page-divider" x1={divider} y1={-height / 2 + 8} x2={divider} y2={height / 2 - 8} />)
@@ -156,6 +156,7 @@ export default class Renderer extends Component<
           className="node-value"
           textAnchor="middle"
           dominantBaseline="central"
+          style={{ fontSize: Math.min(21, (width - 16) * 1.6 / String(node.value).length) }}
         >
           {node.value}
         </text>}
@@ -227,7 +228,7 @@ export default class Renderer extends Component<
           {`${scene.kind.replaceAll('-', ' ')} visualization`}
         </title>
         <desc id="scene-description">
-          {scene.count} elements. Blue marks the current node, teal marks
+          {scene.count} {scene.countLabel ?? 'elements'}. Blue marks the current node, teal marks
           visited nodes, and amber marks the new node. Scroll horizontally to
           inspect the full structure on smaller screens.
         </desc>

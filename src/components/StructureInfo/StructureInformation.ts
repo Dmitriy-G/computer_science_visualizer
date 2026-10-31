@@ -18,6 +18,54 @@ export interface StructureOverview {
 
 export class StructureInformation {
   private static readonly overviews: Record<StructureKind, StructureOverview> = {
+    'hash-map': {
+      summary: 'A hash table or hash map associates unique keys with values by hashing each key to a storage bucket. This visualizer resolves collisions with linked chains and doubles the bucket count before a new entry would exceed a 0.75 load factor.',
+      useCases: [
+        { area: 'Caches', description: 'Map a resource key to its cached result so repeated requests can retrieve it without scanning the entire cache.' },
+        { area: 'Compiler symbol tables', description: 'Associate an identifier with its type or declaration so a compiler can resolve names during analysis.' },
+        { area: 'Database hash joins', description: 'Build a table of rows by join key, then probe it with rows from the other input to find equality matches.' },
+        { area: 'Frequency counting', description: 'Map each observed value to a running count so a program can summarize a stream in one pass.' },
+      ],
+      technologies: [
+        { name: 'Java (HashMap)', url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html' },
+        { name: '.NET (Dictionary<TKey, TValue>)', url: 'https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2' },
+        { name: 'CPython (dict)', url: 'https://docs.python.org/3/faq/design.html#how-are-dictionaries-implemented-in-cpython' },
+        { name: 'Rust (HashMap)', url: 'https://doc.rust-lang.org/std/collections/struct.HashMap.html' },
+        { name: 'GLib (GHashTable)', url: 'https://docs.gtk.org/glib/struct.HashTable.html' },
+      ],
+    },
+    'hash-set': {
+      summary: 'A hash set stores unique values in hash buckets and checks membership without keeping a separate associated value. This visualizer uses collision chains and automatic rehashing; adding a duplicate leaves the set unchanged.',
+      useCases: [
+        { area: 'Deduplication', description: 'Record previously seen values so duplicate records or events can be skipped while processing an input stream.' },
+        { area: 'Graph traversal', description: 'Keep visited vertices in a set so a search avoids following cycles and repeatedly exploring the same vertex.' },
+        { area: 'Access checks', description: 'Store allowed identifiers so a service can quickly check whether a requested resource belongs to the permitted collection.' },
+        { area: 'Set comparison', description: 'Check values against another set to find shared or missing members without comparing every pair of elements.' },
+      ],
+      technologies: [
+        { name: 'Java (HashSet)', url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashSet.html' },
+        { name: '.NET (HashSet<T>)', url: 'https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.hashset-1' },
+        { name: 'CPython (set)', url: 'https://docs.python.org/3/c-api/set.html' },
+        { name: 'Rust (HashSet)', url: 'https://doc.rust-lang.org/std/collections/struct.HashSet.html' },
+        { name: 'GLib (GHashTable used as a set)', url: 'https://docs.gtk.org/glib/type_func.HashTable.add.html' },
+      ],
+    },
+    'bloom-filter': {
+      summary: 'A Bloom filter uses several hashes and a bit array to report either definitely absent or possibly present, allowing false positives but no false negatives for added values until cleared. This standard filter uses 32 bits and three hashes, cannot safely delete individual items, and counts add operations rather than distinct members.',
+      useCases: [
+        { area: 'Storage read filtering', description: 'Check a filter before reading a disk table; a definite absence avoids an unnecessary read, while a positive result requires a real lookup.' },
+        { area: 'Cache miss filtering', description: 'Track keys that may exist in backing storage so requests for definitely absent keys can avoid expensive database calls.' },
+        { area: 'Large-scale deduplication', description: 'Use a compact first check for previously seen items, then confirm positive results in exact storage when duplicates must be identified reliably.' },
+        { area: 'Distributed query processing', description: 'Send a compact filter of join keys to another worker so it can discard definitely unmatched rows before transferring data.' },
+      ],
+      technologies: [
+        { name: 'Redis (Bloom filter commands)', url: 'https://redis.io/docs/latest/data-types/probabilistic/bloom-filter/' },
+        { name: 'RocksDB (SST filter blocks)', url: 'https://github.com/facebook/rocksdb/wiki/RocksDB-Bloom-Filter' },
+        { name: 'Apache Cassandra (SSTable Bloom filters)', url: 'https://cassandra.apache.org/doc/3.11/cassandra/operating/bloom_filters.html' },
+        { name: 'Apache HBase (row and column Bloom filters)', url: 'https://hbase.apache.org/docs/performance/' },
+        { name: 'LevelDB (BloomFilterPolicy)', url: 'https://github.com/google/leveldb/blob/main/util/bloom.cc' },
+      ],
+    },
     'array': {
       summary: 'An array stores elements in consecutive slots, each accessed by a numeric index. This visualizer uses fixed-size arrays, so insertion creates a separate array with one extra slot and preserves the original.',
       technologies: [

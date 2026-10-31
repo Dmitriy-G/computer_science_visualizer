@@ -1,4 +1,4 @@
-export type StructureKind = 'linked-list' | 'array' | 'binary-tree' | 'graph' | 'stack' | 'queue' | 'deque' | 'doubly-linked-list' | 'circular-buffer' | 'avl-tree' | 'red-black-tree' | 'b-tree' | 'b-plus-tree'
+export type StructureKind = 'linked-list' | 'array' | 'binary-tree' | 'graph' | 'stack' | 'queue' | 'deque' | 'doubly-linked-list' | 'circular-buffer' | 'avl-tree' | 'red-black-tree' | 'b-tree' | 'b-plus-tree' | 'hash-map' | 'hash-set' | 'bloom-filter'
 export type NodeTone = 'default' | 'visited' | 'active' | 'new'
 
 export interface SceneNode {
@@ -46,6 +46,7 @@ export interface Scene {
   readonly height: number
   readonly focusId: string | null
   readonly count: number
+  readonly countLabel?: string
   readonly slots?: readonly SceneSlot[]
 }
 

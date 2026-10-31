@@ -162,7 +162,17 @@ test('every structure preview has ten elements and valid edge endpoints', () => 
       LinkedList.createDefault(),
     )
     assert.equal(scene.count, 10)
-    assert.equal(scene.nodes.length, 10)
+    if (structure.kind === 'bloom-filter') {
+      assert.equal(scene.nodes.length, 32, 'Bloom filter nodes represent bits, not stored members')
+      assert.equal(scene.countLabel, 'add operations recorded')
+    } else if (structure.kind === 'hash-map' || structure.kind === 'hash-set') {
+      assert.equal(scene.nodes.filter((node) => node.id.startsWith('hash-entry-')).length, 10)
+    } else {
+      const records = structure.kind === 'b-plus-tree'
+        ? scene.nodes.filter((node) => node.label.includes('leaf'))
+        : scene.nodes
+      assert.equal(records.reduce((count, node) => count + (node.keys?.length ?? 1), 0), 10)
+    }
     const ids = new Set(ListAssertions.visibleNodeIds(scene))
     for (const edge of scene.edges) {
       assert.ok(ids.has(edge.from))

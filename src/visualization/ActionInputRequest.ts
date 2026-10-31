@@ -13,15 +13,21 @@ export class ActionInputRequest {
   public readonly maximum: number
   public readonly available: boolean
   public readonly rangeInput: boolean
+  public readonly pairInput: boolean
+  public readonly secondLabel: string
+  public readonly secondHint: string
 
   private constructor(structure: StructureKind, action: ActionKind, title: string, description: string, size: number) {
     this.structure = structure
     this.action = action
     this.title = title
     this.rangeInput = action === 'range-from-value'
+    this.pairInput = structure === 'hash-map' && action === 'insert'
+    this.secondLabel = this.pairInput ? 'Value' : 'Maximum key (inclusive)'
+    this.secondHint = this.pairInput ? 'The value stored for this key. An existing key is updated.' : 'Both boundary keys are included in the range.'
     const indexInput = action === 'search-index'
     const keyInput = structure === 'binary-tree' || structure === 'avl-tree' ||
-      structure === 'red-black-tree' || structure === 'b-tree' || structure === 'b-plus-tree'
+      structure === 'red-black-tree' || structure === 'b-tree' || structure === 'b-plus-tree' || structure === 'hash-map'
     this.minimum = indexInput ? 0 : Number.MIN_SAFE_INTEGER
     this.maximum = indexInput ? size - 1 : Number.MAX_SAFE_INTEGER
     this.available = !indexInput || size > 0
@@ -41,6 +47,9 @@ export class ActionInputRequest {
 
   public static supportsStructure(structure: StructureKind): boolean {
     switch (structure) {
+      case 'hash-map':
+      case 'hash-set':
+      case 'bloom-filter':
       case 'linked-list':
       case 'array':
       case 'stack':
@@ -106,6 +115,7 @@ export class ActionInputRequest {
   }
 
   public validateUpperBound(minimum: string, maximum: string): string | null {
+    if (this.pairInput) return this.validate(maximum)
     if (!this.rangeInput) return null
     const error = this.validate(maximum)
     if (error) return error

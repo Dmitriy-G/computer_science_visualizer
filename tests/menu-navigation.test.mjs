@@ -5,8 +5,8 @@ import { StructureCatalog } from '../src/visualization/StructureCatalog.ts'
 import { ActionCatalog } from '../src/visualization/ActionCatalog.ts'
 
 test('the common-operations category contains exactly the requested structure groups', () => {
-  assert.deepEqual(StructureCatalog.groups.map((group) => group.name), ['Linear', 'Trees', 'Graphs'])
-  const expected = { linear: ['array', 'circular-buffer', 'deque', 'doubly-linked-list', 'linked-list', 'queue', 'stack'], trees: ['avl-tree', 'b-plus-tree', 'b-tree', 'binary-tree', 'red-black-tree'], graphs: ['graph'] }
+  assert.deepEqual(StructureCatalog.groups.map((group) => group.name), ['Linear', 'Trees', 'Graphs', 'Hash-based'])
+  const expected = { linear: ['array', 'circular-buffer', 'deque', 'doubly-linked-list', 'linked-list', 'queue', 'stack'], trees: ['avl-tree', 'b-plus-tree', 'b-tree', 'binary-tree', 'red-black-tree'], graphs: ['graph'], 'hash-based': ['bloom-filter', 'hash-map', 'hash-set'] }
   const seen = new Set()
   for (const group of StructureCatalog.groups) {
     const structures = StructureCatalog.getStructures(group.kind)

@@ -25,8 +25,14 @@ import { GraphLayout } from '../components/DataStructures/Graphs/SimpleGraph/Gra
 import { Stack } from '../components/DataStructures/Linear/Stack/Stack.ts'
 import { StackLayout } from '../components/DataStructures/Linear/Stack/StackLayout.ts'
 import type { Scene, StructureKind } from './Scene.ts'
+import { HashMap } from '../components/DataStructures/HashBased/HashMap/HashMap.ts'
+import { HashMapLayout } from '../components/DataStructures/HashBased/HashMap/HashMapLayout.ts'
+import { HashSet } from '../components/DataStructures/HashBased/HashSet/HashSet.ts'
+import { HashSetLayout } from '../components/DataStructures/HashBased/HashSet/HashSetLayout.ts'
+import { BloomFilter } from '../components/DataStructures/HashBased/BloomFilter/BloomFilter.ts'
+import { BloomFilterLayout } from '../components/DataStructures/HashBased/BloomFilter/BloomFilterLayout.ts'
 
-export type StructureGroupKind = 'linear' | 'trees' | 'graphs'
+export type StructureGroupKind = 'linear' | 'trees' | 'graphs' | 'hash-based'
 
 export interface StructureGroupDefinition {
   readonly kind: StructureGroupKind
@@ -48,9 +54,13 @@ export class StructureCatalog {
     { kind: 'linear', name: 'Linear', description: 'Arrays, lists, stacks, queues, deques, and circular buffers', symbol: '[]' },
     { kind: 'trees', name: 'Trees', description: 'BST, AVL, Red-Black, B-Tree, and B+ Tree', symbol: '⋔' },
     { kind: 'graphs', name: 'Graphs', description: 'Vertices and edges', symbol: '◇' },
+    { kind: 'hash-based', name: 'Hash-based', description: 'Hash maps, hash sets, and Bloom filters', symbol: '#' },
   ]
 
   public static readonly structures: readonly StructureDefinition[] = [
+    { kind: 'hash-map', group: 'hash-based', name: 'Hash Table / Hash Map', description: 'Key-value buckets with collision chains and automatic rehashing', symbol: '#' },
+    { kind: 'hash-set', group: 'hash-based', name: 'Hash Set', description: 'Unique values located through hash buckets', symbol: '{}' },
+    { kind: 'bloom-filter', group: 'hash-based', name: 'Bloom Filter', description: 'A bit array for probabilistic membership checks', symbol: '01' },
     {
       kind: 'linked-list',
       group: 'linear',
@@ -140,7 +150,13 @@ export class StructureCatalog {
     redBlackTree: RedBlackTree = RedBlackTree.createDefault(),
     bTree: BTree = BTree.createDefault(),
     bPlusTree: BPlusTree = BPlusTree.createDefault(),
+    hashMap: HashMap = HashMap.createDefault(),
+    hashSet: HashSet = HashSet.createDefault(),
+    bloomFilter: BloomFilter = BloomFilter.createDefault(),
   ): Scene {
+    if (kind === 'hash-map') return new HashMapLayout().create(hashMap)
+    if (kind === 'hash-set') return new HashSetLayout().create(hashSet)
+    if (kind === 'bloom-filter') return new BloomFilterLayout().create(bloomFilter)
     if (kind === 'avl-tree') return new AVLTreeLayout().create(avlTree)
     if (kind === 'red-black-tree') return new RedBlackTreeLayout().create(redBlackTree)
     if (kind === 'b-tree') return new BTreeLayout().create(bTree)

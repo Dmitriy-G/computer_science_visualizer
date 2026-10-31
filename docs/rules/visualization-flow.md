@@ -7,7 +7,8 @@
    common operations**. Selecting it shows **Linear** (Array, Linked list, Stack,
    Queue, Deque, Doubly linked list, and Circular buffer),
    **Trees** (Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, and
-   B+ Tree), and **Graphs** (Graph). Choose a group to see only
+   B+ Tree), **Graphs** (Graph), and **Hash-based** (Hash Table / Hash Map,
+   Hash Set, Bloom Filter). Choose a group to see only
    its structures. Provide Back navigation through these levels, without a
    visible breadcrumb path or instruction text on the structure list.
 3. Selecting a structure loads an example containing 10 elements in the shared
@@ -16,7 +17,8 @@
    actions in a persistent card at the upper-left of the canvas. Mark the
    selected action with a highlight and `aria-current`, and put a small info
    button to each action's right.
-5. Selecting a supported value/index action on a linear structure or tree opens its input dialog.
+5. Selecting a supported value/index action on a linear structure, tree, or
+   hash-based structure opens its input dialog.
    Confirming valid input starts its animation. Actions without an argument run
    directly. Graph retains its existing default-input flow. Animations
    run to completion automatically. Reduced-motion styles still suppress visual
@@ -28,7 +30,7 @@ reopen its structure group and retain the group path for Back navigation.
 Actions are selected directly from the canvas card, without reopening the menu.
 On smaller screens, place the action card above the diagram so it does not
 overlap nodes. Move keyboard focus to the first action after choosing
-a structure. Linear-structure and tree actions can be repeated after completion, reopening
+a structure. Linear-structure, tree, and hash-based actions can be repeated after completion, reopening
 their input dialog when applicable and using the latest committed model. Disable their
 operation buttons while an animation runs; keep info buttons and full Reset
 available. Graph preserves its session when selecting the current action.
@@ -50,6 +52,11 @@ dialog for these actions:
   (inclusive)** in the same dialog. Start both empty, require whole safe integers,
   and require maximum >= minimum. Equal keys are valid; bounds need not exist in
   the tree. An empty tree can still be queried.
+- **Hash Table / Hash Map:** Insert / update collects separate **Key** and
+  **Value** fields. Look up a key and Delete a key collect only **Key**.
+- **Hash Set:** Add a value, Contains value, and Remove a value collect **Value**.
+- **Bloom Filter:** Add a value and Check membership collect **Value**.
+  Clear runs without input for all hash-based structures.
 
 Value actions accept any safely representable whole number. Start the input
 empty, and block nonnumeric
@@ -337,6 +344,34 @@ fixed allocation. Unused slots are not included in search or clear traversal.
 All four structures load 10 elements and use the shared playback session, final
 frame commits, deterministic snapshots, reduced-motion behavior, and lifecycle
 cleanup.
+
+## Hash-based structures
+
+Hash Map associates unique whole-number keys with whole-number values. Use
+separate collision chains and an initial eight buckets; double the bucket count
+before a new entry would exceed a 0.75 load factor. Existing-key updates keep the
+node ID and count, and do not resize. Normalize negative remainders into valid
+bucket indices. Show bucket roles, key/value cells, collision comparisons, and
+rehashing in the shared renderer. Hash Set composes the same storage, keeps values
+unique, and leaves duplicates unchanged. Clear releases entries one by one while
+retaining bucket capacity and the ID counter. Both default examples have ten entries.
+
+Bloom Filter uses 32 bits and three deterministic seeded hashes. Add sets bits;
+membership checks stop at the first zero (**definitely absent**), otherwise report
+**possibly present**, explicitly explaining false positives. Do not offer individual
+deletion, exact enumeration, or an exact distinct-member count. Its default records
+ten add operations, and repeated adds count as operations even if bits stay set.
+Clear resets all bits and the add-operation count. Show bit indices and SET/ZERO
+statuses, with results in the timeline description rather than standalone canvas text.
+
+All three reuse validated numeric input, automatic playback, final-frame commits,
+the full Reset button, structure information, and per-action complexity dialogs.
+Hash-table operations have expected O(1) time under uniform hashing and bounded
+load (amortized for insertion), with O(n) worst-case collision or resize work.
+Insertion may allocate O(b) bucket references during growth; clear visits all
+n entries and b buckets. Bloom add costs O(k), membership costs O(1) best and
+O(k) average/worst, and clear costs O(m), with k = 3 hashes and m = 32 bits.
+Explain these parameters even though the example fixes their values.
 
 ## Clear for Array, LinkedList, BinaryTree, and Graph
 
