@@ -141,7 +141,7 @@ import StackSearchByValue from '../DataStructures/Linear/Stack/SearchByValue/Sea
 import { SearchAnimation as StackSearchByValueSequence } from '../DataStructures/Linear/Stack/SearchByValue/SearchAnimation.ts'
 import type { ReactNode } from 'react'
 import { ActionCatalog } from '../../visualization/ActionCatalog.ts'
-import type { ActionKind } from '../../visualization/ActionCatalog.ts'
+import type { ActionKind, ActionScope } from '../../visualization/ActionCatalog.ts'
 import { Graph } from '../DataStructures/Graphs/SimpleGraph/Graph.ts'
 import BinaryTreeDeleteByKey from '../DataStructures/Trees/BinaryTree/DeleteByKey/DeleteByKey.tsx'
 import { DeletionAnimation as BinaryTreeDeleteByKeySequence } from '../DataStructures/Trees/BinaryTree/DeleteByKey/DeletionAnimation.ts'
@@ -175,6 +175,7 @@ import StructureInfo from '../StructureInfo/StructureInfo.tsx'
 import ActionInput from '../ActionInput/ActionInput.tsx'
 import { ActionInputRequest } from '../../visualization/ActionInputRequest.ts'
 import { MenuNavigation } from '../MainMenu/MenuNavigation.ts'
+import type { MenuCategoryKind, AlgorithmGroupKind } from '../MainMenu/MenuNavigation.ts'
 import type { StructureGroupKind } from '../../visualization/StructureCatalog.ts'
 import Renderer from '../Renderer/Renderer.tsx'
 import AddInTheMiddle from '../DataStructures/Linear/LinkedList/AddInTheMiddle/AddInTheMiddle.tsx'
@@ -197,6 +198,7 @@ import './App.css'
 interface AppState {
   readonly treeInput: TreeInputValues
   readonly selected: StructureKind | null
+  readonly selectedScope: ActionScope
   readonly menuOpen: boolean
   readonly menu: MenuNavigation
   readonly scene: Scene | null
@@ -239,6 +241,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.state = {
       treeInput: {},
       selected: null,
+      selectedScope: 'overview',
       menuOpen: false,
       menu: new MenuNavigation(),
       scene: null,
@@ -258,7 +261,7 @@ export default class App extends Component<Record<string, never>, AppState> {
   private openMenu = (): void => {
     this.setState({
       menuOpen: true,
-      menu: this.state.selected ? MenuNavigation.forStructure(this.state.selected) : new MenuNavigation(),
+      menu: this.state.selected ? MenuNavigation.forStructure(this.state.selected, this.state.selectedScope) : new MenuNavigation(),
     })
   }
 
@@ -274,8 +277,12 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.actionMenu.current?.focusFirstAction()
   }
 
-  private selectCategory = (): void => {
-    this.setState({ menu: this.state.menu.selectCategory() })
+  private selectCategory = (category: MenuCategoryKind): void => {
+    this.setState({ menu: this.state.menu.selectCategory(category) })
+  }
+
+  private selectAlgorithmGroup = (group: AlgorithmGroupKind): void => {
+    this.setState({ menu: this.state.menu.selectAlgorithmGroup(group) })
   }
 
   private selectGroup = (group: StructureGroupKind): void => {
@@ -288,26 +295,30 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private selectStructure = (kind: StructureKind): void => {
     const menu = this.state.menu.selectStructure(kind)
-    this.additionalTrees = AdditionalTreeCatalog.createModels()
-    this.hashMap = HashMap.createDefault()
-    this.hashSet = HashSet.createDefault()
-    this.bloomFilter = BloomFilter.createDefault()
-    this.list = LinkedList.createDefault()
-    this.array = FixedArray.createDefault()
-    this.tree = BinaryTree.createDefault()
-    this.avlTree = AVLTree.createDefault()
-    this.redBlackTree = RedBlackTree.createDefault()
-    this.bTree = BTree.createDefault()
-    this.bPlusTree = BPlusTree.createDefault()
-    this.graph = Graph.createDefault()
-    this.graphModels = GraphCatalog.createModels(this.graph)
-    this.stack = Stack.createDefault()
-    this.queue = Queue.createDefault()
-    this.deque = Deque.createDefault()
-    this.doublyList = DoublyLinkedList.createDefault()
-    this.buffer = CircularBuffer.createDefault()
+    const changingScope = this.state.selected === kind && this.state.selectedScope !== menu.actionScope
+    if (!changingScope) {
+      this.additionalTrees = AdditionalTreeCatalog.createModels()
+      this.hashMap = HashMap.createDefault()
+      this.hashSet = HashSet.createDefault()
+      this.bloomFilter = BloomFilter.createDefault()
+      this.list = LinkedList.createDefault()
+      this.array = FixedArray.createDefault()
+      this.tree = BinaryTree.createDefault()
+      this.avlTree = AVLTree.createDefault()
+      this.redBlackTree = RedBlackTree.createDefault()
+      this.bTree = BTree.createDefault()
+      this.bPlusTree = BPlusTree.createDefault()
+      this.graph = Graph.createDefault()
+      this.graphModels = GraphCatalog.createModels(this.graph)
+      this.stack = Stack.createDefault()
+      this.queue = Queue.createDefault()
+      this.deque = Deque.createDefault()
+      this.doublyList = DoublyLinkedList.createDefault()
+      this.buffer = CircularBuffer.createDefault()
+    }
     this.setState({
       selected: kind,
+      selectedScope: menu.actionScope,
       scene: StructureCatalog.createPreview(
         kind,
         this.list,
@@ -347,7 +358,7 @@ export default class App extends Component<Record<string, never>, AppState> {
   private selectAction = (action: ActionKind): void => {
     if (!this.state.selected) return
     if (ActionInputRequest.supportsStructure(this.state.selected) && this.state.actionRunning) return
-    if (!ActionCatalog.getActions(this.state.selected).some((choice) => choice.kind === action)) return
+    if (!ActionCatalog.getScopedActions(this.state.selected, this.state.selectedScope).some((choice) => choice.kind === action)) return
     if (ActionInputRequest.supportsStructure(this.state.selected)) {
       const graph = this.graphModels.get(this.state.selected)
       const context = graph ? { vertices: graph.getEntries().map((entry) => entry.value), edges: graph.getEdges().map((edge) => edge.number) } : undefined
@@ -430,7 +441,7 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private showActionInformation = (action: ActionKind): void => {
     if (!this.state.selected) return
-    if (!ActionCatalog.getActions(this.state.selected).some((choice) => choice.kind === action)) return
+    if (!ActionCatalog.getScopedActions(this.state.selected, this.state.selectedScope).some((choice) => choice.kind === action)) return
     this.setState({
       overviewInformation: this.state.selectedAction === action
         ? this.state.algorithmInformation
@@ -967,6 +978,7 @@ export default class App extends Component<Record<string, never>, AppState> {
           onStructureSelected={this.selectStructure}
           onCategorySelected={this.selectCategory}
           onGroupSelected={this.selectGroup}
+          onAlgorithmGroupSelected={this.selectAlgorithmGroup}
           onBack={this.backInMenu}
         />
 
@@ -998,6 +1010,7 @@ export default class App extends Component<Record<string, never>, AppState> {
               <ActionMenu
                 ref={this.actionMenu}
                 structure={selected}
+                scope={this.state.selectedScope}
                 selectedAction={this.state.selectedAction}
                 actionsDisabled={ActionInputRequest.supportsStructure(selected) && this.state.actionRunning}
                 onBack={this.openMenu}

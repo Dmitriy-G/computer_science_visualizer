@@ -43,6 +43,12 @@
   margin: 0 0 28px;
   line-height: 1.6;
 }
+.menu-empty-state {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 12px 0;
+}
 .structure-choice {
   display: flex;
   align-items: center;

@@ -3,8 +3,14 @@
 ## Main flow
 
 1. Start with an empty renderer and a clickable menu icon in the top left.
-2. Open the menu to see categories. The initial category is **Data structures
-   common operations**. Selecting it shows **Linear** (Array, Linked list, Stack,
+2. Open the menu to see **Data Structures Overview** and **Data Structures Algorithms**.
+   Overview contains the existing structure groups. Algorithms contains
+   **Array Sorting** (empty for now) and **Graphs Traversal** (all five graph
+   variants). Its graph action cards offer BFS and DFS, plus Dijkstra for Weighted
+   Graph and topological sorting for DAG. These four algorithm actions move out
+   of Overview; graph editing and value search remain there. Browsing either
+   branch preserves the current visualization and playback.
+   Selecting Overview shows **Linear** (Array, Linked list, Stack,
    Queue, Deque, Doubly linked list, and Circular buffer),
    **Trees** (Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, and
    B+ Tree, Trie, Heap, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, and
@@ -308,7 +314,7 @@ excluded from the algorithm memory cost.
 
 Use a linked, last-in-first-out stack with a top pointer and a cached count.
 The default example pushes 10 through 100, so 100 is initially at the top. Stack
-belongs to **Data structures common operations → Linear**.
+belongs to **Data Structures Overview → Linear**.
 
 Provide animated **Push**, **Pop**, **Peek (top)**, **Clear**, and **Search by value**
 actions. Push and pop modify only the top. Peek and search leave the stack unchanged.
@@ -603,3 +609,17 @@ query pseudocode must show the actual returned traversal, ordering, distance, or
 boolean. Snapshots are independent and model/count changes commit at the final
 frame; Reset disposes playback. GraphActionInput validates current vertex and
 edge IDs through ActionInputRequest in the shared dialog.
+
+## Algorithm navigation
+
+Keep algorithm groups separate from the Overview structure groups in
+MenuNavigation. Array Sorting opens an explicit empty state; Graphs Traversal
+lists the existing five graphs and reuses their model, input, sequence, renderer,
+and info implementations. ActionCatalog.getScopedActions controls the visible
+choices and App validates action selection against the selected scope. Keep the
+selected action scope separate from menu browsing state: opening Algorithms or
+Overview must not change a running example. Reopening the menu from a graph
+example returns to the branch where it was selected, with reversible Back
+navigation. Selecting the same graph in the other scope cancels the current
+playback, preserves its last committed model, and opens the new action card.
+Reset restores the default example within the selected scope.

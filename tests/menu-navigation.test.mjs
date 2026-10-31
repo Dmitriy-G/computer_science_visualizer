@@ -4,7 +4,7 @@ import { MenuNavigation } from '../src/components/MainMenu/MenuNavigation.ts'
 import { StructureCatalog } from '../src/visualization/StructureCatalog.ts'
 import { ActionCatalog } from '../src/visualization/ActionCatalog.ts'
 
-test('the common-operations category contains exactly the requested structure groups', () => {
+test('Overview contains exactly the requested structure groups', () => {
   assert.deepEqual(StructureCatalog.groups.map((group) => group.name), ['Linear', 'Trees', 'Graphs', 'Hash-based'])
   const expected = { linear: ['array', 'circular-buffer', 'deque', 'doubly-linked-list', 'linked-list', 'queue', 'stack'], trees: ['ast', 'avl-tree', 'b-plus-tree', 'b-tree', 'binary-tree', 'fenwick-tree', 'heap', 'lsm-tree', 'r-tree', 'red-black-tree', 'segment-tree', 'trie'], graphs: ['dag', 'directed-graph', 'graph', 'multigraph', 'weighted-graph'], 'hash-based': ['bloom-filter', 'hash-map', 'hash-set'] }
   const seen = new Set()
@@ -18,6 +18,60 @@ test('the common-operations category contains exactly the requested structure gr
     }
   }
   assert.equal(seen.size, StructureCatalog.structures.length)
+})
+
+test('algorithm subcategories keep array sorting empty and provide graph examples with reversible paths', () => {
+  const root = new MenuNavigation()
+  const algorithms = root.selectCategory('algorithms')
+  assert.deepEqual(MenuNavigation.algorithmGroups.map((group) => group.name), ['Array Sorting', 'Graphs Traversal'])
+  assert.equal(algorithms.title, 'Data Structures Algorithms')
+  assert.deepEqual(algorithms.getStructures(), [])
+  const sorting = algorithms.selectAlgorithmGroup('array-sorting')
+  assert.equal(sorting.title, 'Array Sorting')
+  assert.deepEqual(sorting.getStructures(), [])
+  assert.deepEqual(sorting.getPath(), ['Data Structures Algorithms', 'Array Sorting'])
+  assert.deepEqual(sorting.back(), algorithms)
+  assert.throws(() => sorting.selectStructure('array'), /current group/)
+
+  const graphs = algorithms.selectAlgorithmGroup('graph-traversal')
+  assert.equal(graphs.title, 'Graphs Traversal')
+  assert.equal(graphs.actionScope, 'graph-traversal')
+  assert.deepEqual(graphs.getStructures(), StructureCatalog.getStructures('graphs'))
+  assert.deepEqual(graphs.getPath(), ['Data Structures Algorithms', 'Graphs Traversal'])
+  for (const graph of graphs.getStructures()) {
+    const selected = graphs.selectStructure(graph.kind)
+    assert.deepEqual(selected, graphs)
+    assert.deepEqual(MenuNavigation.forStructure(graph.kind, selected.actionScope), graphs)
+    assert.deepEqual(selected.back(), algorithms)
+    assert.deepEqual(selected.back().back(), root)
+  }
+  assert.throws(() => graphs.selectStructure('array'), /current group/)
+  assert.throws(() => graphs.selectGroup('graphs'), /Overview/)
+  assert.throws(() => MenuNavigation.forStructure('array', 'graph-traversal'), /graph/)
+  assert.throws(() => root.selectAlgorithmGroup('graph-traversal'), /Algorithms/)
+  assert.equal(root.screen, 'categories')
+  assert.equal(algorithms.screen, 'algorithms')
+})
+
+test('graph algorithm actions move to traversal while Overview retains editing and search', () => {
+  const moved = new Set(['breadth-first', 'depth-first', 'shortest-path', 'topological-sort'])
+  for (const graph of StructureCatalog.getStructures('graphs')) {
+    const overview = ActionCatalog.getScopedActions(graph.kind, 'overview').map((action) => action.kind)
+    const traversal = ActionCatalog.getScopedActions(graph.kind, 'graph-traversal').map((action) => action.kind)
+    assert.ok(overview.includes('add-vertex') && overview.includes('add-edge') && overview.includes('search-value') && overview.includes('clear'))
+    assert.ok(overview.every((action) => !moved.has(action)))
+    assert.ok(traversal.every((action) => moved.has(action)))
+    assert.ok(traversal.includes('breadth-first') && traversal.includes('depth-first'))
+    assert.equal(traversal.includes('shortest-path'), graph.kind === 'weighted-graph')
+    assert.equal(traversal.includes('topological-sort'), graph.kind === 'dag')
+    assert.deepEqual([...overview, ...traversal].sort(), ActionCatalog.getActions(graph.kind).map((action) => action.kind).sort())
+    assert.equal(new Set([...overview, ...traversal]).size, overview.length + traversal.length)
+  }
+  for (const structure of StructureCatalog.structures) {
+    if (structure.group === 'graphs') continue
+    assert.deepEqual(ActionCatalog.getScopedActions(structure.kind, 'overview'), ActionCatalog.getActions(structure.kind))
+    assert.deepEqual(ActionCatalog.getScopedActions(structure.kind, 'graph-traversal'), [])
+  }
 })
 
 test('structure selection retains its group path and reversible back navigation', () => {

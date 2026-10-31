@@ -6,7 +6,9 @@ Build Computer Science Visualizer, an interactive app for computer science
 concepts with TypeScript and React, using Vite. Its current feature area is data structures.
 The app uses TypeScript and React class components. Linked list, array, binary
 search tree, graph, and stack operations have animated actions. The menu groups
-structures under Linear, Trees, Graphs, and Hash-based within common operations.
+structures under Linear, Trees, Graphs, and Hash-based within Data Structures
+Overview. Data Structures Algorithms contains Array Sorting (currently empty)
+and Graphs Traversal; graph algorithm examples live in the latter.
 Use npm for dependency management.
 
 ## Required project rules

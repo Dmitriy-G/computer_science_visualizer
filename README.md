@@ -8,7 +8,14 @@ Repository: [Dmitriy-G/computer_science_visualizer](https://github.com/Dmitriy-G
 
 ## Explore
 
-Open the menu and choose **Data structures common operations**, then a group:
+The root menu offers **Data Structures Overview** and **Data Structures Algorithms**.
+Algorithms contains **Array Sorting** (currently empty) and **Graphs Traversal**.
+Graphs Traversal lists all five graph types with BFS and DFS, plus Dijkstra for
+Weighted Graph and topological sorting for DAG. These algorithm actions live in
+Algorithms; Overview retains graph editing and value search. Switching branches
+for the same graph preserves its committed vertices and edges.
+
+Choose **Data Structures Overview**, then a group:
 
 | Group | Structures |
 | --- | --- |
@@ -38,8 +45,8 @@ present**; positive results can be false positives. Mutations commit only on the
 final frame.
 
 The original Graph is the **Undirected Graph** choice. All graphs support vertex
-and edge editing, BFS/DFS traversal, value search, and clear through the shared
-input and playback flow. Weighted Graph is undirected with nonnegative weights
+and edge editing, value search, and clear in Overview. Traversal examples use
+the same models, validated input, and playback under Algorithms. Weighted Graph is undirected with nonnegative weights
 and Dijkstra shortest paths; DAG rejects cycles and supports topological sort;
 Multigraph preserves parallel edges and self-loops with visible edge IDs.
 

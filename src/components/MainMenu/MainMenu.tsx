@@ -3,7 +3,9 @@ import type { MouseEvent, SyntheticEvent, ReactNode } from 'react'
 import { StructureCatalog } from '../../visualization/StructureCatalog.ts'
 import type { StructureGroupKind } from '../../visualization/StructureCatalog.ts'
 import { MenuNavigation } from './MenuNavigation.ts'
+import type { MenuCategoryKind, AlgorithmGroupKind } from './MenuNavigation.ts'
 import type { StructureKind } from '../../visualization/Scene.ts'
+import { ActionCatalog } from '../../visualization/ActionCatalog.ts'
 import './MainMenu.css'
 
 interface MainMenuProps {
@@ -12,8 +14,9 @@ interface MainMenuProps {
   readonly selected: StructureKind | null
   readonly onClose: () => void
   readonly onStructureSelected: (kind: StructureKind) => void
-  readonly onCategorySelected: () => void
+  readonly onCategorySelected: (category: MenuCategoryKind) => void
   readonly onGroupSelected: (group: StructureGroupKind) => void
+  readonly onAlgorithmGroupSelected: (group: AlgorithmGroupKind) => void
   readonly onBack: () => void
 }
 
@@ -56,9 +59,8 @@ export default class MainMenu extends Component<
   }
 
   private handleSelection = (event: MouseEvent<HTMLButtonElement>): void => {
-    if (!this.props.navigation.group) return
     const kind = event.currentTarget.dataset.kind
-    for (const structure of StructureCatalog.getStructures(this.props.navigation.group)) {
+    for (const structure of this.props.navigation.getStructures()) {
       if (structure.kind === kind) {
         this.props.onStructureSelected(structure.kind)
         return
@@ -75,17 +77,53 @@ export default class MainMenu extends Component<
     }
   }
 
-  private renderCategories(): ReactNode {
-    return (
-      <button className="structure-choice" onClick={this.props.onCategorySelected}>
-        <span className="structure-symbol" aria-hidden="true">≡</span>
-        <span className="choice-copy">
-          <strong>{MenuNavigation.categoryName}</strong>
-          <small>Insertion, search, and deletion</small>
-        </span>
-        <span className="choice-arrow" aria-hidden="true">→</span>
-      </button>
-    )
+  private handleCategory = (event: MouseEvent<HTMLButtonElement>): void => {
+    for (const category of MenuNavigation.categories) {
+      if (category.kind === event.currentTarget.dataset.category) {
+        this.props.onCategorySelected(category.kind)
+        return
+      }
+    }
+  }
+
+  private handleAlgorithmGroup = (event: MouseEvent<HTMLButtonElement>): void => {
+    for (const group of MenuNavigation.algorithmGroups) {
+      if (group.kind === event.currentTarget.dataset.algorithmGroup) {
+        this.props.onAlgorithmGroupSelected(group.kind)
+        return
+      }
+    }
+  }
+
+  private renderAlgorithmGroups(): ReactNode[] {
+    const buttons: ReactNode[] = []
+    for (const group of MenuNavigation.algorithmGroups) {
+      buttons.push(
+        <button className="structure-choice" key={group.kind} data-algorithm-group={group.kind} onClick={this.handleAlgorithmGroup}>
+          <span className="structure-symbol" aria-hidden="true">{group.symbol}</span>
+          <span className="choice-copy"><strong>{group.name}</strong><small>{group.description}</small></span>
+          <span className="choice-arrow" aria-hidden="true">→</span>
+        </button>,
+      )
+    }
+    return buttons
+  }
+
+  private renderCategories(): ReactNode[] {
+    const buttons: ReactNode[] = []
+    for (const category of MenuNavigation.categories) {
+      buttons.push(
+        <button className="structure-choice" key={category.kind} data-category={category.kind} onClick={this.handleCategory}>
+          <span className="structure-symbol" aria-hidden="true">{category.symbol}</span>
+          <span className="choice-copy">
+            <strong>{category.name}</strong>
+            <small>{category.description}</small>
+          </span>
+          <span className="choice-arrow" aria-hidden="true">→</span>
+        </button>,
+      )
+    }
+    return buttons
   }
 
   private renderGroups(): ReactNode[] {
@@ -268,8 +306,13 @@ export default class MainMenu extends Component<
 
   private renderStructures(): ReactNode[] {
     const buttons: ReactNode[] = []
-    if (!this.props.navigation.group) return buttons
-    for (const structure of StructureCatalog.getStructures(this.props.navigation.group)) {
+    for (const structure of this.props.navigation.getStructures()) {
+      let description = structure.description
+      if (this.props.navigation.actionScope === 'graph-traversal') {
+        const titles: string[] = []
+        for (const action of ActionCatalog.getScopedActions(structure.kind, 'graph-traversal')) titles.push(action.title)
+        description = titles.join(', ')
+      }
       buttons.push(
         <button
           className="structure-choice"
@@ -282,7 +325,7 @@ export default class MainMenu extends Component<
           </span>
           <span className="choice-copy">
             <strong>{structure.name}</strong>
-            <small>{structure.description}</small>
+            <small>{description}</small>
           </span>
           <span className="choice-arrow" aria-hidden="true">
             ↗
@@ -298,6 +341,9 @@ export default class MainMenu extends Component<
       case 'categories': return 'Choose a category to explore.'
       case 'groups': return null
       case 'structures': return null
+      case 'algorithms': return null
+      case 'algorithm-structures': return null
+      case 'array-sorting': return null
     }
   }
 
@@ -306,6 +352,9 @@ export default class MainMenu extends Component<
       case 'categories': return this.renderCategories()
       case 'groups': return this.renderGroups()
       case 'structures': return this.renderStructures()
+      case 'algorithm-structures': return this.renderStructures()
+      case 'algorithms': return this.renderAlgorithmGroups()
+      case 'array-sorting': return <p className="menu-empty-state">No array sorting examples have been added yet.</p>
     }
   }
 

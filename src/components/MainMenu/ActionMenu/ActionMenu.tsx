@@ -2,12 +2,13 @@ import { PureComponent, createRef } from 'react'
 import type { MouseEvent, ReactNode } from 'react'
 import { ActionCatalog } from '../../../visualization/ActionCatalog.ts'
 import { ActionInputRequest } from '../../../visualization/ActionInputRequest.ts'
-import type { ActionKind } from '../../../visualization/ActionCatalog.ts'
+import type { ActionKind, ActionScope } from '../../../visualization/ActionCatalog.ts'
 import { StructureCatalog } from '../../../visualization/StructureCatalog.ts'
 import type { StructureKind } from '../../../visualization/Scene.ts'
 import './ActionMenu.css'
 
 interface ActionMenuProps {
+  readonly scope: ActionScope
   readonly structure: StructureKind
   readonly selectedAction: ActionKind | null
   readonly actionsDisabled?: boolean
@@ -28,7 +29,7 @@ export default class ActionMenu extends PureComponent<
   }
 
   private selectAction = (event: MouseEvent<HTMLButtonElement>): void => {
-    for (const action of ActionCatalog.getActions(this.props.structure)) {
+    for (const action of ActionCatalog.getScopedActions(this.props.structure, this.props.scope)) {
       if (action.kind === event.currentTarget.dataset.action) {
         this.props.onActionSelected(action.kind)
         return
@@ -38,7 +39,7 @@ export default class ActionMenu extends PureComponent<
 
   private renderActions(): ReactNode[] {
     const buttons: ReactNode[] = []
-    for (const action of ActionCatalog.getActions(this.props.structure)) {
+    for (const action of ActionCatalog.getScopedActions(this.props.structure, this.props.scope)) {
       const selected = action.kind === this.props.selectedAction
       const requiresInput = ActionInputRequest.requiresInput(this.props.structure, action.kind)
       buttons.push(
@@ -79,7 +80,7 @@ export default class ActionMenu extends PureComponent<
   }
 
   private showInformation = (event: MouseEvent<HTMLButtonElement>): void => {
-    for (const action of ActionCatalog.getActions(this.props.structure)) {
+    for (const action of ActionCatalog.getScopedActions(this.props.structure, this.props.scope)) {
       if (action.kind === event.currentTarget.dataset.action) {
         this.props.onActionInformationRequested(action.kind)
         return
@@ -89,17 +90,19 @@ export default class ActionMenu extends PureComponent<
 
   public render() {
     const group = StructureCatalog.getGroup(StructureCatalog.getGroupForStructure(this.props.structure))
+    const traversal = this.props.scope === 'graph-traversal'
+    const backTitle = traversal ? 'Graphs Traversal' : group.name
     return (
       <aside className="action-menu" aria-labelledby="action-menu-title">
         <div className="action-menu-topline">
           <button
             className="back-button action-menu-back-button"
             onClick={this.props.onBack}
-            aria-label={`Back to ${group.name} structures`}
+            aria-label={`Back to ${backTitle} structures`}
             aria-haspopup="dialog"
             aria-controls="main-menu"
           >
-            <span aria-hidden="true">←</span> {group.name}
+            <span aria-hidden="true">←</span> {backTitle}
           </button>
           <button
             className="action-info-button structure-info-button"
@@ -116,8 +119,8 @@ export default class ActionMenu extends PureComponent<
           </button>
         </div>
         <h2 id="action-menu-title">{StructureCatalog.getName(this.props.structure)}</h2>
-        <p className="action-menu-summary">Choose an action to explore step by step.</p>
-        <nav aria-label="Data structure actions" aria-busy={Boolean(this.props.actionsDisabled)}>{this.renderActions()}</nav>
+        <p className="action-menu-summary">{traversal ? 'Choose a graph algorithm to explore step by step.' : 'Choose an action to explore step by step.'}</p>
+        <nav aria-label={traversal ? 'Graph traversal examples' : 'Data structure actions'} aria-busy={Boolean(this.props.actionsDisabled)}>{this.renderActions()}</nav>
       </aside>
     )
   }
