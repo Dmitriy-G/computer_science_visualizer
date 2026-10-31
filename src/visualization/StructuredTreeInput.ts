@@ -3,14 +3,8 @@ import type { StructureKind } from './Scene.ts'
 import type { TreeInputValues } from './AdditionalTreeModel.ts'
 import { ASTParser } from '../components/DataStructures/Trees/AST/ASTParser.ts'
 
-export interface TreeInputField {
-  readonly name: string
-  readonly label: string
-  readonly text?: boolean
-  readonly expression?: boolean
-  readonly minimum?: number
-  readonly maximum?: number
-}
+import type { ActionInputField as TreeInputField } from './StructuredActionInput.ts'
+export type { ActionInputField as TreeInputField } from './StructuredActionInput.ts'
 
 export class StructuredTreeInput {
   public readonly fields: readonly TreeInputField[]

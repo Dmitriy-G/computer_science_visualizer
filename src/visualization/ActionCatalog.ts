@@ -1,6 +1,7 @@
+import { GraphCatalog } from './GraphCatalog.ts'
 import type { StructureKind } from './Scene.ts'
 
-export type ActionKind = 'insert-middle' | 'insert-start' | 'insert-end' | 'insert' | 'search-value' | 'search-index' | 'delete-value' | 'push' | 'pop' | 'peek' | 'clear' | 'enqueue' | 'dequeue' | 'push-front' | 'push-back' | 'pop-front' | 'pop-back' | 'peek-front' | 'peek-back' | 'delete-start' | 'delete-end' | 'range-from-value' | 'starts-with' | 'extract-min' | 'update-index' | 'add-index' | 'prefix-sum' | 'range-sum' | 'search-overlap' | 'flush' | 'compact' | 'build-expression' | 'evaluate' | 'traverse-preorder' | 'traverse-inorder' | 'traverse-postorder'
+export type ActionKind = 'insert-middle' | 'insert-start' | 'insert-end' | 'insert' | 'search-value' | 'search-index' | 'delete-value' | 'push' | 'pop' | 'peek' | 'clear' | 'enqueue' | 'dequeue' | 'push-front' | 'push-back' | 'pop-front' | 'pop-back' | 'peek-front' | 'peek-back' | 'delete-start' | 'delete-end' | 'range-from-value' | 'starts-with' | 'extract-min' | 'update-index' | 'add-index' | 'prefix-sum' | 'range-sum' | 'search-overlap' | 'flush' | 'compact' | 'build-expression' | 'evaluate' | 'traverse-preorder' | 'traverse-inorder' | 'traverse-postorder' | 'add-vertex' | 'add-edge' | 'remove-edge' | 'breadth-first' | 'depth-first' | 'shortest-path' | 'topological-sort' | 'update-weight'
 
 export interface ActionChoice {
   readonly kind: ActionKind
@@ -10,6 +11,24 @@ export interface ActionChoice {
 
 export class ActionCatalog {
   public static getActions(structure: StructureKind): readonly ActionChoice[] {
+    if (GraphCatalog.supports(structure)) {
+      const actions: ActionChoice[] = [
+        { kind: 'add-vertex', title: 'Add vertex', description: 'Add an isolated vertex with a unique whole-number value.' },
+        { kind: 'add-edge', title: 'Add edge', description: structure === 'dag' ? 'Connect source to target only if no directed cycle would result.' : structure === 'multigraph' ? 'Add an undirected edge, including parallel edges and self-loops.' : 'Connect existing endpoints; duplicate edges are ignored.' },
+        { kind: 'remove-edge', title: 'Remove edge', description: 'Remove one edge by its visible e-number.' },
+        { kind: 'delete-value', title: 'Delete vertex', description: 'Find a vertex by value and remove all incident edges.' },
+        { kind: 'search-value', title: 'Search by value', description: 'Search with BFS, restarting at each unvisited component.' },
+        { kind: 'breadth-first', title: 'Breadth-first traversal', description: 'Visit vertices reachable from a start vertex using a queue.' },
+        { kind: 'depth-first', title: 'Depth-first traversal', description: 'Follow a branch before backtracking, using an explicit stack.' },
+      ]
+      if (structure === 'weighted-graph') actions.push(
+        { kind: 'update-weight', title: 'Update edge weight', description: 'Change one edge to a nonnegative integer weight.' },
+        { kind: 'shortest-path', title: 'Dijkstra shortest path', description: 'Find a minimum-weight path between two vertices.' },
+      )
+      if (structure === 'dag') actions.push({ kind: 'topological-sort', title: 'Topological sort', description: 'Use the Kahn algorithm to order predecessors before successors.' })
+      actions.push({ kind: 'clear', title: 'Clear', description: 'Detach all edges and release all vertices.' })
+      return actions
+    }
     if (structure === 'ast') return [
       { kind: 'build-expression', title: 'Build from expression', description: 'Parse an arithmetic expression, preserving precedence and grouping.' },
       { kind: 'traverse-preorder', title: 'Traverse preorder', description: 'Visit each operator before its operands: root, left, right.' },

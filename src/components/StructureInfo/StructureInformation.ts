@@ -870,33 +870,70 @@ export class StructureInformation {
         },
       ],
     },
+    'directed-graph': {
+      summary: 'A directed graph connects a source vertex to a target with an arrow; the reverse connection requires its own edge. This unweighted example permits cycles and self-loops, while duplicate directed edges are ignored.',
+      useCases: [
+        { area: 'Compiler control flow', description: 'Follow possible transfers between basic blocks, including loops and conditional branches.' },
+        { area: 'One-way networks', description: 'Represent links that can be followed only from source to destination.' },
+        { area: 'Web links', description: 'Distinguish pages that link to other pages from pages that receive those links.' },
+        { area: 'Dependency analysis', description: 'Trace who depends on whom and inspect reachability, including possible cycles.' },
+      ],
+      technologies: [
+        { name: 'LLVM (control-flow graphs)', url: 'https://llvm.org/docs/ProgrammersManual.html#viewing-graphs-while-debugging-code', usage: 'Represents control flow between basic blocks for compiler analysis, optimization, and CFG inspection.' },
+        { name: 'Neo4j (directed property-graph variant)', url: 'https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/', usage: 'Stores typed, directed relationships and properties for querying connected data; its property-graph model also supports multiple relationships.' },
+      ],
+    },
+    'weighted-graph': {
+      summary: 'A weighted graph attaches a cost to each edge; weighted graphs in general can be directed or undirected. This example is undirected with nonnegative whole-number weights, uses Dijkstra for minimum-cost paths, and keeps summed distances exact with BigInt.',
+      useCases: [
+        { area: 'Routing', description: 'Minimize total distance or travel cost instead of the number of edges.' },
+        { area: 'Communication networks', description: 'Find routes with minimum accumulated link latency or transmission cost.' },
+        { area: 'Network planning', description: 'Represent installation or maintenance costs when comparing network connections.' },
+        { area: 'Scientific graph analysis', description: 'Compute shortest-path distances on weighted relationships stored as sparse matrices.' },
+      ],
+      technologies: [
+        { name: 'SciPy (sparse.csgraph.dijkstra)', url: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csgraph.dijkstra.html', usage: 'Finds shortest paths on nonnegative sparse weighted graphs, including undirected graphs with directed=False. SciPy uses a priority queue; this teaching example uses a linear minimum scan.' },
+        { name: 'pgRouting (pgr_dijkstra)', url: 'https://github.com/pgRouting/pgrouting/blob/main/doc/dijkstra/pgr_dijkstra.rst', usage: 'Computes minimum-cost routes over database edge tables and supports an undirected mode with directed=false.' },
+      ],
+    },
+    'dag': {
+      summary: 'A Directed Acyclic Graph has oriented edges and no directed cycles. This example rejects any insertion that would create a cycle and uses topological sorting to place every source before its target; dependency-edge conventions can vary between real systems.',
+      useCases: [
+        { area: 'Workflow scheduling', description: 'Run a task only after the prerequisite tasks on its incoming dependencies are ready.' },
+        { area: 'Build dependencies', description: 'Order generated artifacts after the inputs needed to build them.' },
+        { area: 'Version history', description: 'Represent revision ancestry without cycles, including branching and merges.' },
+        { area: 'Data processing', description: 'Order transformations so intermediate inputs are available before consumers execute.' },
+      ],
+      technologies: [
+        { name: 'Apache Airflow (workflow Dags)', url: 'https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/dags.html', usage: 'Models tasks and dependencies to schedule and execute data workflows in dependency order.' },
+        { name: 'Git (commit graph)', url: 'https://git-scm.com/docs/gitglossary.html#def_DAG', usage: 'Stores commit ancestry as a DAG: commits point to parents, enabling history traversal and merges.' },
+      ],
+    },
+    'multigraph': {
+      summary: 'A multigraph preserves multiple distinct edges between the same endpoints. This example is undirected and also permits self-loops, with a stable e-number for every edge so removing one parallel connection preserves the others.',
+      useCases: [
+        { area: 'Street networks', description: 'Keep physically different street segments that connect the same intersections.' },
+        { area: 'Redundant links', description: 'Represent independent cables or connections between a pair of devices.' },
+        { area: 'Transport services', description: 'Store separate routes or services connecting the same two stops.' },
+        { area: 'Interaction records', description: 'Preserve distinct interactions between a pair of entities rather than collapsing them into one edge.' },
+      ],
+      technologies: [
+        { name: 'OSMnx (undirected MultiGraph conversion)', url: 'https://osmnx.readthedocs.io/en/stable/user-reference.html#osmnx.convert.to_undirected', usage: 'Converts street networks to undirected multigraphs for compatible analysis routines, retaining parallel edges when their geometries differ. Its default street graph is a directed multigraph.' },
+        { name: 'NetworkX (MultiGraph)', url: 'https://networkx.org/documentation/stable/reference/classes/multigraph.html', usage: 'Provides keyed parallel edges and self-loops for network analysis; OSMnx uses this class for its undirected conversion.' },
+      ],
+    },
     'graph': {
-      summary: 'A graph represents objects as vertices and relationships as edges, allowing connections beyond a simple sequence or hierarchy. This visualizer uses undirected edges, so each connection can be followed in either direction.',
+      summary: 'An undirected graph represents symmetric relationships: every edge can be followed in both directions. This is the original Graph example, now explicitly named; it is unweighted, permits self-loops, and stores one edge per endpoint pair.',
       technologies: [
         {
-          name: 'Neo4j (property graph database)',
-          url: 'https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/',
-          usage: 'Stores entities and relationships as a property graph for relationship traversal and querying.',
-        },
-        {
-          name: 'JanusGraph (distributed graph database)',
-          url: 'https://docs.janusgraph.org/',
-          usage: 'Stores and queries large property graphs over scalable storage backends.',
-        },
-        {
-          name: 'Apache TinkerPop (graph traversal framework)',
-          url: 'https://tinkerpop.apache.org/docs/current/reference/',
-          usage: 'Provides the property-graph model and Gremlin traversals for graph databases and applications.',
-        },
-        {
-          name: 'NetworkX (graph algorithms)',
+          name: 'NetworkX (undirected Graph)',
           url: 'https://networkx.org/documentation/stable/reference/classes/graph.html',
-          usage: 'Models networks as graph objects for scientific and analytical graph computations.',
+          usage: 'Stores undirected networks for scientific network analysis, connectivity queries, and graph computations. Self-loops are allowed; parallel edges are not.',
         },
         {
-          name: 'LLVM compilers (directed control-flow graphs)',
-          url: 'https://llvm.org/docs/ProgrammersManual.html#viewing-graphs-while-debugging-code',
-          usage: 'Represents compiler control flow as directed graphs for program analysis and optimization.',
+          name: 'SciPy (undirected sparse graph routines)',
+          url: 'https://docs.scipy.org/doc/scipy/reference/sparse.csgraph.html',
+          usage: 'Processes undirected networks in sparse-matrix form for connectivity and path analysis; this is a matrix representation rather than adjacency sets.',
         },
       ],
       useCases: [

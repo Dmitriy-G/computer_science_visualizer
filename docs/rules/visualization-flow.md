@@ -9,7 +9,7 @@
    **Trees** (Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, and
    B+ Tree, Trie, Heap, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, and
    Abstract Syntax Tree (AST)),
-   **Graphs** (Graph), and **Hash-based** (Hash Table / Hash Map,
+   **Graphs** (Undirected Graph, Directed Graph, Weighted Graph, DAG, and Multigraph), and **Hash-based** (Hash Table / Hash Map,
    Hash Set, Bloom Filter). Choose a group to see only
    its structures. Provide Back navigation through these levels, without a
    visible breadcrumb path or instruction text on the structure list.
@@ -19,10 +19,10 @@
    actions in a persistent card at the upper-left of the canvas. Mark the
    selected action with a highlight and `aria-current`, and put a small info
    button to each action's right.
-5. Selecting a supported value/index action on a linear structure, tree, or
+5. Selecting a supported value/index action on a linear structure, tree, graph, or
    hash-based structure opens its input dialog.
    Confirming valid input starts its animation. Actions without an argument run
-   directly. Graph retains its existing default-input flow. Animations
+   directly. Graph actions use the same structured input dialog. Animations
    run to completion automatically. Reduced-motion styles still suppress visual
    transitions.
 
@@ -32,10 +32,10 @@ reopen its structure group and retain the group path for Back navigation.
 Actions are selected directly from the canvas card, without reopening the menu.
 On smaller screens, place the action card above the diagram so it does not
 overlap nodes. Move keyboard focus to the first action after choosing
-a structure. Linear-structure, tree, and hash-based actions can be repeated after completion, reopening
+a structure. Linear-structure, tree, graph, and hash-based actions can be repeated after completion, reopening
 their input dialog when applicable and using the latest committed model. Disable their
 operation buttons while an animation runs; keep info buttons and full Reset
-available. Graph preserves its session when selecting the current action.
+available. Every graph action can be repeated after completion.
 Place the Current / Visited / New node legend at the top-left of the renderer's
 center area, beside the actions panel and above the code snippet. Let the legend
 wrap on narrow screens; do not keep it in the canvas footer.
@@ -77,6 +77,23 @@ dialog for these actions:
   minimum Y, maximum X, and maximum Y; Delete collects the rectangle ID.
 - **LSM Tree:** Insert / update collects Key and Value; Look up and Delete collect
   Key. Flush memtable and Compact all runs run without input.
+- **All graphs:** Add vertex collects a unique vertex value. Add edge collects existing
+  source and target vertex values. Search and Delete vertex collect a value;
+  BFS and DFS collect an existing starting vertex and visit only its reachable
+  vertices. Search restarts at unvisited components. Remove edge collects the
+  numeric part of a visible edge ID. Clear runs without input.
+- **Undirected Graph:** Reuses the original Graph model/key, with unweighted edges,
+  self-loops allowed, and duplicate endpoint pairs ignored.
+- **Directed Graph:** Unweighted arrows, cycles and self-loops allowed; opposite
+  directions are distinct edges.
+- **Weighted Graph:** Undirected, nonnegative safe-integer edge weights (zero is
+  valid). Add edge also collects Weight. Update weight collects an edge ID and
+  weight. Dijkstra collects source and target values and reports the actual path
+  and distance, or unreachable. Use BigInt for exact path sums.
+- **DAG:** Reject cycle-forming edges before changing the model. Topological sort
+  uses Kahn's algorithm and runs without input, including on an empty graph.
+- **Multigraph:** Undirected, with parallel edges and self-loops. Stable edge IDs
+  distinguish parallel edges; remove by ID rather than endpoint pair.
 - **AST:** Build from expression collects an arithmetic expression. Preorder,
   Inorder, Postorder, Evaluate, and Clear run without input, including on an empty
   tree. Validate expression syntax in the dialog before starting the build.
@@ -572,3 +589,17 @@ costs O(n) time and O(h) stack memory; clear takes O(n) time and O(h) stack memo
 Here n is syntax node count and h is tree height: logarithmic for balanced binary
 expressions, linear for a unary chain. State the balanced-shape average assumption
 and exclude animation snapshots and trace records from algorithm memory costs.
+
+## Graph variants
+
+Keep graph models on a shared edge-ID adjacency representation. Each variant has
+its own model class and action folders; reuse GraphModel, GraphSceneLayout,
+GraphAnimation, and StructuredGraphAction across variants. Preserve the original
+Graph API for legacy model consumers. New UI vertex values are unique so numeric
+endpoint selection is unambiguous. All five default examples have ten vertices.
+Render directed arrows, perpendicular curves for reciprocal/parallel edges,
+visible self-loops, and e-number labels (plus weights where appropriate). Final
+query pseudocode must show the actual returned traversal, ordering, distance, or
+boolean. Snapshots are independent and model/count changes commit at the final
+frame; Reset disposes playback. GraphActionInput validates current vertex and
+edge IDs through ActionInputRequest in the shared dialog.

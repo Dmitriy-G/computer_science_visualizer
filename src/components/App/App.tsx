@@ -1,3 +1,6 @@
+import { GraphCatalog } from '../../visualization/GraphCatalog.ts'
+import { GraphFeatures } from '../DataStructures/Graphs/GraphFeatures.tsx'
+import type { GraphModel } from '../../visualization/GraphModel.ts'
 import { HashMap } from '../DataStructures/HashBased/HashMap/HashMap.ts'
 import HashMapInsert from '../DataStructures/HashBased/HashMap/Insert/Insert.tsx'
 import { InsertAnimation as HashMapInsertSequence } from '../DataStructures/HashBased/HashMap/Insert/InsertAnimation.ts'
@@ -67,8 +70,6 @@ import LinkedListClear from '../DataStructures/Linear/LinkedList/Clear/Clear.tsx
 import { ClearAnimation as LinkedListClearSequence } from '../DataStructures/Linear/LinkedList/Clear/ClearAnimation.ts'
 import BinaryTreeClear from '../DataStructures/Trees/BinaryTree/Clear/Clear.tsx'
 import { ClearAnimation as BinaryTreeClearSequence } from '../DataStructures/Trees/BinaryTree/Clear/ClearAnimation.ts'
-import GraphClear from '../DataStructures/Graphs/SimpleGraph/Clear/Clear.tsx'
-import { ClearAnimation as GraphClearSequence } from '../DataStructures/Graphs/SimpleGraph/Clear/ClearAnimation.ts'
 import { Queue } from '../DataStructures/Linear/Queue/Queue.ts'
 import QueueEnqueue from '../DataStructures/Linear/Queue/Enqueue/Enqueue.tsx'
 import { InsertionAnimation as QueueEnqueueSequence } from '../DataStructures/Linear/Queue/Enqueue/InsertionAnimation.ts'
@@ -142,10 +143,6 @@ import type { ReactNode } from 'react'
 import { ActionCatalog } from '../../visualization/ActionCatalog.ts'
 import type { ActionKind } from '../../visualization/ActionCatalog.ts'
 import { Graph } from '../DataStructures/Graphs/SimpleGraph/Graph.ts'
-import GraphDeleteByValue from '../DataStructures/Graphs/SimpleGraph/DeleteByValue/DeleteByValue.tsx'
-import { DeletionAnimation as GraphDeleteByValueSequence } from '../DataStructures/Graphs/SimpleGraph/DeleteByValue/DeletionAnimation.ts'
-import GraphSearchByValue from '../DataStructures/Graphs/SimpleGraph/SearchByValue/SearchByValue.tsx'
-import { SearchAnimation as GraphSearchByValueSequence } from '../DataStructures/Graphs/SimpleGraph/SearchByValue/SearchAnimation.ts'
 import BinaryTreeDeleteByKey from '../DataStructures/Trees/BinaryTree/DeleteByKey/DeleteByKey.tsx'
 import { DeletionAnimation as BinaryTreeDeleteByKeySequence } from '../DataStructures/Trees/BinaryTree/DeleteByKey/DeletionAnimation.ts'
 import BinaryTreeSearchByKey from '../DataStructures/Trees/BinaryTree/SearchByKey/SearchByKey.tsx'
@@ -227,6 +224,7 @@ export default class App extends Component<Record<string, never>, AppState> {
   private readonly menuButton = createRef<HTMLButtonElement>()
   private readonly actionMenu = createRef<ActionMenu>()
   private graph = Graph.createDefault()
+  private graphModels = GraphCatalog.createModels(this.graph)
   private stack = Stack.createDefault()
   private queue = Queue.createDefault()
   private deque = Deque.createDefault()
@@ -302,6 +300,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.bTree = BTree.createDefault()
     this.bPlusTree = BPlusTree.createDefault()
     this.graph = Graph.createDefault()
+    this.graphModels = GraphCatalog.createModels(this.graph)
     this.stack = Stack.createDefault()
     this.queue = Queue.createDefault()
     this.deque = Deque.createDefault()
@@ -328,6 +327,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         this.hashSet,
         this.bloomFilter,
         this.additionalTrees,
+        this.graphModels,
       ),
       actionOpen: false,
       selectedAction: null,
@@ -349,7 +349,9 @@ export default class App extends Component<Record<string, never>, AppState> {
     if (ActionInputRequest.supportsStructure(this.state.selected) && this.state.actionRunning) return
     if (!ActionCatalog.getActions(this.state.selected).some((choice) => choice.kind === action)) return
     if (ActionInputRequest.supportsStructure(this.state.selected)) {
-      const request = ActionInputRequest.create(this.state.selected, action, this.getInputSize(this.state.selected))
+      const graph = this.graphModels.get(this.state.selected)
+      const context = graph ? { vertices: graph.getEntries().map((entry) => entry.value), edges: graph.getEdges().map((edge) => edge.number) } : undefined
+      const request = ActionInputRequest.create(this.state.selected, action, this.getInputSize(this.state.selected), context)
       if (request) {
         this.setState({ inputRequest: request, overviewInformation: null, structureInformation: null })
         return
@@ -402,6 +404,8 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private getInputSize(structure: StructureKind): number {
+    const graph = this.graphModels.get(structure)
+    if (graph) return graph.length
     const additional = this.additionalTrees.get(structure)
     if (additional) return additional.length
     switch (structure) {
@@ -450,6 +454,8 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private describeAction(action: ActionKind): AlgorithmInformation | null {
+    const graph = this.state.selected ? this.graphModels.get(this.state.selected) : undefined
+    if (graph) return GraphFeatures.describe(action, graph)
     const additional = this.state.selected ? this.additionalTrees.get(this.state.selected) : undefined
     if (additional) return TreeFeatures.describe(action, additional)
     if (this.state.selected === 'hash-map') {
@@ -590,18 +596,16 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'delete-value': return BinaryTreeDeleteByKeySequence.describe(this.tree.length)
       }
     }
-    if (this.state.selected === 'graph') {
-      switch (action) {
-        case 'clear': return GraphClearSequence.describe(this.graph.length)
-        case 'search-value': return GraphSearchByValueSequence.describe(this.graph.length)
-        case 'delete-value': return GraphDeleteByValueSequence.describe(this.graph.length)
-      }
-    }
     return null
   }
 
   private renderAction(): ReactNode {
     if (!this.state.actionOpen) return null
+    const graph = this.state.selected ? this.graphModels.get(this.state.selected) : undefined
+    if (graph && this.state.selectedAction) return GraphFeatures.render(this.state.selectedAction, {
+      model: graph, input: this.state.treeInput,
+      onSceneChange: this.updateGraphScene, onComplete: this.completeAction,
+    }, this.state.actionSession)
     const additional = this.state.selected ? this.additionalTrees.get(this.state.selected) : undefined
     if (additional && this.state.selectedAction) return TreeFeatures.render(this.state.selectedAction, {
       model: additional, input: this.state.treeInput,
@@ -745,13 +749,6 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'delete-value': return <BinaryTreeDeleteByKey key={this.state.actionSession} model={this.tree} value={this.state.actionValue} onSceneChange={this.updateTreeScene} onComplete={this.completeAction} />
       }
     }
-    if (this.state.selected === 'graph') {
-      switch (this.state.selectedAction) {
-        case 'clear': return <GraphClear key={this.state.actionSession} model={this.graph} onSceneChange={this.updateGraphScene} />
-        case 'search-value': return <GraphSearchByValue key={this.state.actionSession} model={this.graph} onSceneChange={this.updateGraphScene} />
-        case 'delete-value': return <GraphDeleteByValue key={this.state.actionSession} model={this.graph} onSceneChange={this.updateGraphScene} />
-      }
-    }
     return null
   }
 
@@ -769,6 +766,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.bTree = BTree.createDefault()
     this.bPlusTree = BPlusTree.createDefault()
     this.graph = Graph.createDefault()
+    this.graphModels = GraphCatalog.createModels(this.graph)
     this.stack = Stack.createDefault()
     this.queue = Queue.createDefault()
     this.deque = Deque.createDefault()
@@ -794,6 +792,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         this.hashSet,
         this.bloomFilter,
         this.additionalTrees,
+        this.graphModels,
       ),
       actionOpen: false,
       selectedAction: null,
@@ -828,8 +827,9 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.setState({ scene })
   }
 
-  private updateGraphScene = (scene: Scene, graph: Graph): void => {
-    this.graph = graph
+  private updateGraphScene = (scene: Scene, graph: GraphModel): void => {
+    this.graphModels.set(graph.kind, graph)
+    if (graph instanceof Graph) this.graph = graph
     this.setState({ scene })
   }
 

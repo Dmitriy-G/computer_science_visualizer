@@ -14,7 +14,7 @@ Open the menu and choose **Data structures common operations**, then a group:
 | --- | --- |
 | Linear | Array, Linked list, Stack, Queue, Deque, Doubly linked list, Circular buffer |
 | Trees | Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, B+ Tree, Trie, Heap (min-heap), Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, Abstract Syntax Tree (AST) |
-| Graphs | Graph |
+| Graphs | Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph |
 | Hash-based | Hash Table / Hash Map, Hash Set, Bloom Filter |
 
 Select a structure to load its example, then choose an action from the canvas
@@ -36,6 +36,12 @@ Searches finish on their result and preserve the highlight, reporting a location
 where available. Bloom Filter checks return **definitely absent** or **possibly
 present**; positive results can be false positives. Mutations commit only on the
 final frame.
+
+The original Graph is the **Undirected Graph** choice. All graphs support vertex
+and edge editing, BFS/DFS traversal, value search, and clear through the shared
+input and playback flow. Weighted Graph is undirected with nonnegative weights
+and Dijkstra shortest paths; DAG rejects cycles and supports topological sort;
+Multigraph preserves parallel edges and self-loops with visible edge IDs.
 
 Small info buttons open action complexity explanations. The large info button
 opens a structure introduction, use-case table, and technology links. Dialogs

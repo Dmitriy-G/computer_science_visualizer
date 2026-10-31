@@ -1,4 +1,4 @@
-export type StructureKind = 'linked-list' | 'array' | 'binary-tree' | 'graph' | 'stack' | 'queue' | 'deque' | 'doubly-linked-list' | 'circular-buffer' | 'avl-tree' | 'red-black-tree' | 'b-tree' | 'b-plus-tree' | 'hash-map' | 'hash-set' | 'bloom-filter' | 'trie' | 'heap' | 'segment-tree' | 'fenwick-tree' | 'r-tree' | 'lsm-tree' | 'ast'
+export type StructureKind = 'linked-list' | 'array' | 'binary-tree' | 'graph' | 'stack' | 'queue' | 'deque' | 'doubly-linked-list' | 'circular-buffer' | 'avl-tree' | 'red-black-tree' | 'b-tree' | 'b-plus-tree' | 'hash-map' | 'hash-set' | 'bloom-filter' | 'trie' | 'heap' | 'segment-tree' | 'fenwick-tree' | 'r-tree' | 'lsm-tree' | 'ast' | 'directed-graph' | 'weighted-graph' | 'dag' | 'multigraph'
 export type NodeTone = 'default' | 'visited' | 'active' | 'new'
 
 export interface SceneNode {
@@ -37,6 +37,8 @@ export interface SceneEdge {
   readonly opacity: number
   readonly label?: string
   readonly bend?: number
+  readonly curveOffset?: number
+  readonly loopRadius?: number
 }
 
 export interface SceneHint {

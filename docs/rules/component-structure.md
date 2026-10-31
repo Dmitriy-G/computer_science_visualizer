@@ -156,3 +156,13 @@ Keep Hash Map, Hash Set, and Bloom Filter under
 folders. Hash Set composes the chained Hash Map storage. Reuse shared hashing,
 bucket layout, and trace playback from `src/visualization/` where they serve more
 than one structure. Each action has its own sequence, class component, and CSS file.
+
+## Graphs
+
+Keep the original undirected Graph under Graphs/SimpleGraph and add DirectedGraph,
+WeightedGraph, DAG, and Multigraph beside it. GraphModel, GraphSceneLayout, and
+GraphAnimation are shared across these variants. Each allowed action has its own
+component, CSS, animation class, and complexity description. Reuse
+StructuredGraphAction for playback and GraphActionInput for structured dialogs;
+shared field contracts live in StructuredActionInput. Expose variant-specific real
+technology examples with primary links and explain differences from this model.

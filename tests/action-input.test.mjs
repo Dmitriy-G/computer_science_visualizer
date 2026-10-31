@@ -90,11 +90,14 @@ test('B+ range input requires two inclusive whole-number keys in ascending order
   }
 })
 
-test('graph actions retain their existing flow and unavailable actions do not prompt', () => {
-  assert.equal(ActionInputRequest.supportsStructure('graph'), false)
-  for (const choice of ActionCatalog.getActions('graph')) {
-    assert.equal(ActionInputRequest.requiresInput('graph', choice.kind), false)
-    assert.equal(ActionInputRequest.create('graph', choice.kind, 10), null)
+test('graph variants prompt only for actions with arguments', () => {
+  for (const structure of ['graph', 'directed-graph', 'weighted-graph', 'dag', 'multigraph']) {
+    assert.equal(ActionInputRequest.supportsStructure(structure), true)
+    for (const choice of ActionCatalog.getActions(structure)) {
+      const requiresInput = choice.kind !== 'clear' && choice.kind !== 'topological-sort'
+      assert.equal(ActionInputRequest.requiresInput(structure, choice.kind), requiresInput)
+      assert.equal(ActionInputRequest.create(structure, choice.kind, 10) !== null, requiresInput)
+    }
   }
   assert.equal(ActionInputRequest.requiresInput('stack', 'search-index'), false)
   assert.equal(ActionInputRequest.requiresInput('queue', 'delete-value'), false)

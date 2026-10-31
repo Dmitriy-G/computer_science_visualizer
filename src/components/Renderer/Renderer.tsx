@@ -63,6 +63,15 @@ export default class Renderer extends Component<
     const from = nodes.get(edge.from)
     const to = nodes.get(edge.to)
     if (!from || !to) return null
+    if (edge.from === edge.to) {
+      const radius = edge.loopRadius ?? 62
+      return <g key={edge.id} className="scene-edge-group" style={{ opacity: edge.opacity }}>
+        <path className={`scene-edge${edge.highlighted ? ' scene-edge-highlighted' : ''}`}
+          d={`M ${from.x - 27} ${from.y - 27} C ${from.x - radius} ${from.y - radius * 2} ${from.x + radius} ${from.y - radius * 2} ${from.x + 27} ${from.y - 27}`}
+          markerEnd={edge.directed ? `url(#${edge.highlighted ? 'active-arrow' : 'default-arrow'})` : undefined} />
+        {edge.label && <text className="node-label graph-edge-label" textAnchor="middle" x={from.x} y={from.y - radius * 1.5 - 12}>{edge.label}</text>}
+      </g>
+    }
     const dx = to.x - from.x
     const dy = to.y - from.y
     const length = Math.hypot(dx, dy) || 1
@@ -75,11 +84,14 @@ export default class Renderer extends Component<
     const bend = edge.bend ?? 0
     const middleX = (x1 + x2) / 2
     const middleY = (y1 + y2) / 2
+    const curve = edge.curveOffset ?? 0
+    const normalX = -dy / length
+    const normalY = dx / length
     return (
       <g key={edge.id} className="scene-edge-group" style={{ opacity: edge.opacity }}>
         <path
           className={`scene-edge${edge.highlighted ? ' scene-edge-highlighted' : ''}`}
-          d={bend ? `M ${x1} ${y1} Q ${middleX} ${middleY + bend * 2} ${x2} ${y2}` : `M ${x1} ${y1} L ${x2} ${y2}`}
+          d={curve ? `M ${x1} ${y1} Q ${middleX + normalX * curve * 2} ${middleY + normalY * curve * 2} ${x2} ${y2}` : bend ? `M ${x1} ${y1} Q ${middleX} ${middleY + bend * 2} ${x2} ${y2}` : `M ${x1} ${y1} L ${x2} ${y2}`}
           markerEnd={
             edge.directed
               ? `url(#${edge.highlighted ? 'active-arrow' : 'default-arrow'})`
@@ -87,7 +99,7 @@ export default class Renderer extends Component<
           }
         />
         {edge.label && (
-          <text className="node-label" textAnchor="middle" x={middleX} y={middleY + bend + (bend > 0 ? 14 : -8)}>
+          <text className="node-label graph-edge-label" textAnchor="middle" x={middleX + normalX * curve} y={middleY + normalY * curve + bend + (bend > 0 ? 14 : -8)}>
             {edge.label}
           </text>
         )}
@@ -212,7 +224,7 @@ export default class Renderer extends Component<
     for (const node of scene.nodes) nodeMap.set(node.id, node)
     for (const edge of scene.edges)
       elements.push(this.renderEdge(edge, nodeMap))
-    const circular = scene.kind === 'graph' || scene.kind === 'binary-tree' || scene.kind === 'avl-tree' || scene.kind === 'red-black-tree'
+    const circular = scene.kind === 'directed-graph' || scene.kind === 'weighted-graph' || scene.kind === 'dag' || scene.kind === 'multigraph' || scene.kind === 'graph' || scene.kind === 'binary-tree' || scene.kind === 'avl-tree' || scene.kind === 'red-black-tree'
     for (const node of scene.nodes)
       elements.push(this.renderNode(node, circular))
     return (

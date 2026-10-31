@@ -331,3 +331,10 @@
     transition: none;
   }
 }
+
+.graph-edge-label {
+  paint-order: stroke;
+  stroke: #f8fafc;
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}

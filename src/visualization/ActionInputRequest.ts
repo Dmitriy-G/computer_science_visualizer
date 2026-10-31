@@ -1,10 +1,14 @@
+import { GraphActionInput } from './GraphActionInput.ts'
+import type { GraphInputContext } from './GraphActionInput.ts'
+import { GraphCatalog } from './GraphCatalog.ts'
+import type { StructuredActionInput } from './StructuredActionInput.ts'
 import { ActionCatalog } from './ActionCatalog.ts'
 import type { ActionKind } from './ActionCatalog.ts'
 import type { StructureKind } from './Scene.ts'
 import { StructuredTreeInput } from './StructuredTreeInput.ts'
 
 export class ActionInputRequest {
-  public readonly structured: StructuredTreeInput | null
+  public readonly structured: StructuredActionInput | null
   public readonly structure: StructureKind
   public readonly action: ActionKind
   public readonly title: string
@@ -19,9 +23,9 @@ export class ActionInputRequest {
   public readonly secondLabel: string
   public readonly secondHint: string
 
-  private constructor(structure: StructureKind, action: ActionKind, title: string, description: string, size: number) {
+  private constructor(structure: StructureKind, action: ActionKind, title: string, description: string, size: number, context?: GraphInputContext) {
     this.structure = structure
-    this.structured = StructuredTreeInput.create(structure, action, size)
+    this.structured = GraphActionInput.create(structure, action, size, context) ?? StructuredTreeInput.create(structure, action, size)
     this.action = action
     this.title = title
     this.rangeInput = action === 'range-from-value'
@@ -49,7 +53,7 @@ export class ActionInputRequest {
   }
 
   public static supportsStructure(structure: StructureKind): boolean {
-    if (StructuredTreeInput.supports(structure)) return true
+    if (GraphCatalog.supports(structure) || StructuredTreeInput.supports(structure)) return true
     switch (structure) {
       case 'hash-map':
       case 'hash-set':
@@ -74,6 +78,9 @@ export class ActionInputRequest {
 
   public static requiresInput(structure: StructureKind, action: ActionKind): boolean {
     if (!this.supportsStructure(structure)) return false
+    if (GraphCatalog.supports(structure)) {
+      return ActionCatalog.getActions(structure).some((choice) => choice.kind === action) && GraphActionInput.create(structure, action, 0) !== null
+    }
     if (StructuredTreeInput.supports(structure)) {
       for (const choice of ActionCatalog.getActions(structure)) {
         if (choice.kind === action) return StructuredTreeInput.create(structure, action, 0) !== null
@@ -100,11 +107,11 @@ export class ActionInputRequest {
     return false
   }
 
-  public static create(structure: StructureKind, action: ActionKind, size: number): ActionInputRequest | null {
+  public static create(structure: StructureKind, action: ActionKind, size: number, context?: GraphInputContext): ActionInputRequest | null {
     if (!Number.isSafeInteger(size) || size < 0) throw new RangeError('Structure size must be a nonnegative safe integer')
     if (!this.requiresInput(structure, action)) return null
     for (const choice of ActionCatalog.getActions(structure)) {
-      if (choice.kind === action) return new ActionInputRequest(structure, action, choice.title, choice.description, size)
+      if (choice.kind === action) return new ActionInputRequest(structure, action, choice.title, choice.description, size, context)
     }
     return null
   }

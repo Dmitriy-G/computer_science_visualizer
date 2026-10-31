@@ -21,7 +21,9 @@ import { ArrayLayout } from '../components/DataStructures/Linear/Array/ArrayLayo
 import { BinaryTree } from '../components/DataStructures/Trees/BinaryTree/BinaryTree.ts'
 import { BinaryTreeLayout } from '../components/DataStructures/Trees/BinaryTree/BinaryTreeLayout.ts'
 import { Graph } from '../components/DataStructures/Graphs/SimpleGraph/Graph.ts'
-import { GraphLayout } from '../components/DataStructures/Graphs/SimpleGraph/GraphLayout.ts'
+import { GraphSceneLayout } from './GraphSceneLayout.ts'
+import { GraphCatalog } from './GraphCatalog.ts'
+import type { GraphModel } from './GraphModel.ts'
 import { Stack } from '../components/DataStructures/Linear/Stack/Stack.ts'
 import { StackLayout } from '../components/DataStructures/Linear/Stack/StackLayout.ts'
 import type { Scene, StructureKind } from './Scene.ts'
@@ -55,7 +57,7 @@ export class StructureCatalog {
   public static readonly groups: readonly StructureGroupDefinition[] = [
     { kind: 'linear', name: 'Linear', description: 'Arrays, lists, stacks, queues, deques, and circular buffers', symbol: '[]' },
     { kind: 'trees', name: 'Trees', description: 'Search trees, tries, heaps, range indexes, spatial indexes, and LSM storage', symbol: '⋔' },
-    { kind: 'graphs', name: 'Graphs', description: 'Vertices and edges', symbol: '◇' },
+    { kind: 'graphs', name: 'Graphs', description: 'Undirected, directed, weighted, acyclic, and parallel edges', symbol: '◇' },
     { kind: 'hash-based', name: 'Hash-based', description: 'Hash maps, hash sets, and Bloom filters', symbol: '#' },
   ]
 
@@ -109,10 +111,14 @@ export class StructureCatalog {
     {
       kind: 'graph',
       group: 'graphs',
-      name: 'Graph',
+      name: 'Undirected Graph',
       description: 'Vertices connected by undirected edges',
       symbol: '◇',
     },
+    { kind: 'directed-graph', group: 'graphs', name: 'Directed Graph', description: 'Oriented edges; cycles and reciprocal edges are allowed', symbol: '->' },
+    { kind: 'weighted-graph', group: 'graphs', name: 'Weighted Graph', description: 'Undirected edges with nonnegative weights and Dijkstra paths', symbol: 'w' },
+    { kind: 'dag', group: 'graphs', name: 'DAG', description: 'A directed acyclic graph with cycle-safe insertion and topological ordering', symbol: '->' },
+    { kind: 'multigraph', group: 'graphs', name: 'Multigraph', description: 'Undirected parallel edges and self-loops, each with a stable edge ID', symbol: '->' },
   ]
 
   public static getGroup(kind: StructureGroupKind): StructureGroupDefinition {
@@ -163,7 +169,12 @@ export class StructureCatalog {
     hashSet: HashSet = HashSet.createDefault(),
     bloomFilter: BloomFilter = BloomFilter.createDefault(),
     additionalModels?: ReadonlyMap<StructureKind, AdditionalTreeModel>,
+    graphModels?: ReadonlyMap<StructureKind, GraphModel>,
   ): Scene {
+    if (GraphCatalog.supports(kind)) {
+      const model = graphModels?.get(kind) ?? (kind === 'graph' ? graph : GraphCatalog.createDefault(kind))
+      if (model) return new GraphSceneLayout().create(model)
+    }
     const additional = additionalModels?.get(kind) ?? AdditionalTreeCatalog.createDefault(kind)
     if (additional) return AdditionalTreeCatalog.createScene(additional)
     if (kind === 'hash-map') return new HashMapLayout().create(hashMap)
@@ -184,6 +195,6 @@ export class StructureCatalog {
     if (kind === 'binary-tree')
       return new BinaryTreeLayout().create(tree.getEntries())
 
-    return new GraphLayout().create(graph.getEntries())
+    throw new RangeError('Unknown data structure')
   }
 }
