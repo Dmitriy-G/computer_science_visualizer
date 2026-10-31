@@ -136,8 +136,15 @@ Provide a larger info button at the action card's top-right corner for general
 structure information. It opens a separate centered dialog with a one- or
 two-sentence introduction and a two-column table containing four or five areas
 of use, each with a one- or two-sentence explanation of how it is used and what
-problem it solves. Below the table, list five or six named real technologies
-with documentation links and identify implementation variants where relevant.
+problem it solves. Below the table, list verified real technologies, with primary
+documentation or source links and a short explanation of their concrete use.
+Include real systems, language runtimes, standard libraries, and established
+application libraries; exclude competitive-programming collections, educational
+algorithm catalogs, and standalone projects without evidence of application use.
+Identify variants explicitly, and do not count a related structure as an example
+of the exact implementation shown. There is no minimum count: one verified use is
+better than five padded entries. If none can be verified, explain the limitation
+in the description and leave the list empty; do not assert universal non-use.
 Support close, Escape, backdrop dismissal, focus return,
 and uninterrupted playback in the same way as the action overview dialog.
 Do not add generic definitions or unused variables to every action. For example,

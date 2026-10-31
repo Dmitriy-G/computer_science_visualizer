@@ -233,7 +233,9 @@ for (const [kind, className, actions, input] of features) {
     const overview = StructureInformation.get(kind)
     assert.ok(overview.summary)
     assert.ok(overview.useCases.length >= 4)
-    assert.ok(overview.technologies.length >= 5)
+    for (const technology of overview.technologies) {
+      assert.ok(technology.name && technology.usage && technology.url.startsWith('https://'))
+    }
     const original = structuredClone(AdditionalTreeCatalog.createScene(source))
     for (const [action, folder] of Object.entries(actions)) {
       const request = ActionInputRequest.create(kind, action, source.length)

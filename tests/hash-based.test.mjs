@@ -264,7 +264,9 @@ test('hash actions expose validated inputs, suitable menus, previews, and comple
     const information = StructureInformation.get(kind)
     assert.ok(information.summary)
     assert.ok(information.useCases.length >= 4)
-    assert.ok(information.technologies.length >= 5)
+    for (const technology of information.technologies) {
+      assert.ok(technology.name && technology.usage && technology.url.startsWith('https://'))
+    }
     for (const action of ActionCatalog.getActions(kind)) {
       const request = ActionInputRequest.create(kind, action.kind, 0)
       if (action.kind === 'clear') assert.equal(request, null)

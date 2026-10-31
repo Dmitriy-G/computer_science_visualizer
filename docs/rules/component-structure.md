@@ -119,8 +119,14 @@ The card's top-right corner has a larger info button for general structure
 information. Keep that separate dialog in `src/components/StructureInfo/`;
 it shows a one- or two-sentence introduction and a two-column table of four or
 five use cases, pairing each area of use with a short explanation of its purpose.
-Below the table, list five or six named real technologies with documentation
-links, identifying implementation variants where relevant.
+Below the table, list only verified uses in real systems, language runtimes,
+standard libraries, or established application libraries. Each entry needs a
+primary documentation or source link and a short explanation of what the
+technology uses the structure for. Identify implementation variants explicitly.
+There is no minimum example count. Exclude competitive-programming collections,
+educational algorithm catalogs, and standalone projects without evidence of real
+application use. If no use can be verified, leave the list empty and state that
+limitation without claiming the structure is never used anywhere.
 Shared value/index dialogs belong in `src/components/ActionInput/`, with their
 request configuration and validation in `src/visualization/ActionInputRequest.ts`.
 Reuse them for Array, Linked list, Stack, Queue, Deque, Doubly linked list,

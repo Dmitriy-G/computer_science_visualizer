@@ -157,7 +157,9 @@ test('AST menu, structured input, preview, and overview are integrated', () => {
   for (const action of actions.slice(1)) assert.equal(ActionInputRequest.create('ast', action, 0), null)
   const overview = StructureInformation.get('ast')
   assert.equal(overview.useCases.length, 4)
-  assert.equal(overview.technologies.length, 5)
+  for (const technology of overview.technologies) {
+    assert.ok(technology.name && technology.usage && technology.url.startsWith('https://'))
+  }
   for (const Sequence of [BuildAnimation, PreorderAnimation, InorderAnimation, PostorderAnimation, EvaluateAnimation, ClearAnimation]) {
     const info = Sequence.describe(10)
     for (const section of [info.time, info.memory]) assert.ok(section.best && section.average && section.worst && section.explanation)

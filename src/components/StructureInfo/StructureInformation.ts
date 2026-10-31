@@ -8,6 +8,7 @@ export interface StructureUseCase {
 export interface StructureTechnology {
   readonly name: string
   readonly url: string
+  readonly usage: string
 }
 
 export interface StructureOverview {
@@ -27,11 +28,31 @@ export class StructureInformation {
         { area: 'Source transformations', description: 'Rewrite selected constructs while preserving their syntactic relationships, supporting transpilation and automated refactoring.' },
       ],
       technologies: [
-        { name: 'Python (ast module)', url: 'https://docs.python.org/3/library/ast.html' },
-        { name: 'Babel (@babel/parser)', url: 'https://babeljs.io/docs/babel-parser' },
-        { name: 'TypeScript (Compiler API)', url: 'https://github.com/microsoft/TypeScript/wiki/Using-the-Compiler-API' },
-        { name: 'Clang (C/C++ AST)', url: 'https://clang.llvm.org/docs/IntroductionToTheClangAST.html' },
-        { name: 'ESLint (AST visitors for custom rules)', url: 'https://eslint.org/docs/latest/extend/custom-rules' },
+        {
+          name: 'Python (ast module)',
+          url: 'https://docs.python.org/3/library/ast.html',
+          usage: 'Exposes parsed Python syntax so tools can inspect and transform programs.',
+        },
+        {
+          name: 'Babel (@babel/parser)',
+          url: 'https://babeljs.io/docs/babel-parser',
+          usage: 'Parses JavaScript, JSX, and TypeScript syntax into trees used by the Babel tooling pipeline.',
+        },
+        {
+          name: 'TypeScript (Compiler API)',
+          url: 'https://github.com/microsoft/TypeScript/wiki/Using-the-Compiler-API',
+          usage: 'Exposes syntax nodes and visitors for compiler tooling and source analysis.',
+        },
+        {
+          name: 'Clang (C/C++ AST)',
+          url: 'https://clang.llvm.org/docs/IntroductionToTheClangAST.html',
+          usage: 'Represents C and C++ source constructs for compilation, analysis, and refactoring tools.',
+        },
+        {
+          name: 'ESLint (AST visitors for custom rules)',
+          url: 'https://eslint.org/docs/latest/extend/custom-rules',
+          usage: 'Visits JavaScript syntax nodes to detect code patterns and report rule violations.',
+        },
       ],
     },
     'trie': {
@@ -43,11 +64,21 @@ export class StructureInformation {
         { area: 'Lexical analysis', description: 'Recognize keywords through shared character transitions.' },
       ],
       technologies: [
-        { name: 'pygtrie (character and string tries)', url: 'https://pygtrie.readthedocs.io/en/latest/index.html' },
-        { name: 'Apache Commons Collections (PatriciaTrie variant)', url: 'https://commons.apache.org/proper/commons-collections/apidocs/org/apache/commons/collections4/trie/PatriciaTrie.html' },
-        { name: 'MARISA (compact static trie)', url: 'https://github.com/s-yata/marisa-trie' },
-        { name: 'Cedar (double-array trie)', url: 'https://www.tkl.iis.u-tokyo.ac.jp/~ynaga/cedar/' },
-        { name: 'trie-rs (LOUDS-based Rust trie)', url: 'https://docs.rs/trie-rs/latest/trie_rs/' },
+        {
+          name: 'Linux (LC-trie routing tables)',
+          url: 'https://docs.kernel.org/networking/fib_trie.html',
+          usage: 'Uses a compressed prefix trie to find matching IPv4 routes, including longest-prefix matches.',
+        },
+        {
+          name: 'Redis Streams (radix-tree variant)',
+          url: 'https://redis.io/docs/latest/develop/data-types/streams/',
+          usage: 'Indexes stream entries by their IDs to support efficient entry lookup and range access.',
+        },
+        {
+          name: 'DuckDB (Adaptive Radix Tree indexes)',
+          url: 'https://duckdb.org/why_duckdb',
+          usage: 'Uses the ART trie variant for secondary indexes that locate database rows by key.',
+        },
       ],
     },
     'heap': {
@@ -59,15 +90,35 @@ export class StructureInformation {
         { area: 'Merging sorted streams', description: 'Keep one candidate per stream and repeatedly extract the smallest.' },
       ],
       technologies: [
-        { name: 'Python (heapq min-heap)', url: 'https://docs.python.org/3/library/heapq.html' },
-        { name: 'Java (PriorityQueue)', url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/PriorityQueue.html' },
-        { name: 'Rust (BinaryHeap, max-heap by default)', url: 'https://doc.rust-lang.org/std/collections/struct.BinaryHeap.html' },
-        { name: '.NET (PriorityQueue, quaternary min-heap variant)', url: 'https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.priorityqueue-2' },
-        { name: 'Boost.Heap (multiple variants)', url: 'https://www.boost.org/doc/libs/latest/doc/html/heap.html' },
+        {
+          name: 'Python (heapq min-heap)',
+          url: 'https://docs.python.org/3/library/heapq.html',
+          usage: 'Maintains a minimum-priority queue for selecting the next item and merging sorted input streams.',
+        },
+        {
+          name: 'Java (PriorityQueue)',
+          url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/PriorityQueue.html',
+          usage: 'Removes the least-priority element according to the configured ordering without sorting the entire queue.',
+        },
+        {
+          name: 'Rust (BinaryHeap, max-heap by default)',
+          url: 'https://doc.rust-lang.org/std/collections/struct.BinaryHeap.html',
+          usage: 'Provides a binary priority heap; it is a max-heap by default and supports min-heap ordering through Reverse.',
+        },
+        {
+          name: '.NET (PriorityQueue, quaternary min-heap variant)',
+          url: 'https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.priorityqueue-2',
+          usage: 'Stores prioritized work in an array-backed four-child min-heap.',
+        },
+        {
+          name: 'Boost.Heap (multiple variants)',
+          url: 'https://www.boost.org/doc/libs/latest/doc/html/heap.html',
+          usage: 'Provides priority queues with variants supporting operations such as changing priorities and merging queues.',
+        },
       ],
     },
     'segment-tree': {
-      summary: 'A Segment Tree caches aggregates over recursively divided array intervals. This example uses exact integer sums, point assignment, and inclusive range queries; clear resets values to zero while preserving indices.',
+      summary: 'A Segment Tree caches aggregates over recursively divided array intervals; DuckDB uses this approach for SQL window aggregation. This example uses exact integer sums, point assignment, and inclusive range queries; clear resets values to zero while preserving indices.',
       useCases: [
         { area: 'Range totals', description: 'Combine cached interval sums after individual values change.' },
         { area: 'Range extremes', description: 'Variants using minimum or maximum answer interval-extreme queries after updates.' },
@@ -75,27 +126,32 @@ export class StructureInformation {
         { area: 'Geometric sweeps', description: 'Specialized variants track coverage counts across changing coordinate intervals.' },
       ],
       technologies: [
-        { name: 'AtCoder Library (segtree)', url: 'https://atcoder.github.io/ac-library/production/document_en/segtree.html' },
-        { name: 'KACTL (SegmentTree)', url: 'https://github.com/kth-competitive-programming/kactl/blob/main/content/data-structures/SegmentTree.h' },
-        { name: 'ac-library-rs (Rust port)', url: 'https://github.com/rust-lang-ja/ac-library-rs/blob/master/src/segtree.rs' },
-        { name: 'NyaanNyaan library (segment tree)', url: 'https://github.com/NyaanNyaan/library/blob/master/segment-tree/segment-tree.hpp' },
-        { name: 'maspypy library (monoid segment tree)', url: 'https://github.com/maspypy/library/blob/main/ds/segtree/segtree.hpp' },
+        {
+          name: 'DuckDB (segment-tree window aggregation)',
+          url: 'https://duckdb.org/2025/02/14/window-flying',
+          usage: 'Combines cached aggregate states over SQL window frames so overlapping windows do not require repeated full scans.',
+        },
       ],
     },
     'fenwick-tree': {
-      summary: 'A Fenwick Tree, or Binary Indexed Tree (BIT), stores prefix blocks in a compact array and navigates them using the least significant set bit. This example uses zero-based input indices, one-based BIT cells, exact sums, and additive updates.',
+      summary: 'A Fenwick Tree (BIT) stores prefix blocks for cumulative sums and additive updates, with documented uses in SciPy rank correlation and Maple range-sum operations. This example uses zero-based input indices, one-based BIT cells, and exact integer sums.',
       useCases: [
         { area: 'Running totals', description: 'Update counters and query the total through a chosen position.' },
         { area: 'Frequency tables', description: 'Count observations at ranked values and query cumulative frequencies.' },
-        { area: 'Inversion counting', description: 'Count previously seen larger or smaller ranks while scanning a sequence.' },
+        { area: 'Rank correlation', description: 'Count discordant observation pairs efficiently when calculating Kendall rank correlation, as in SciPy.' },
         { area: 'Weighted selection', description: 'BIT variants search cumulative totals as individual weights change.' },
       ],
       technologies: [
-        { name: 'AtCoder Library (fenwick_tree)', url: 'https://atcoder.github.io/ac-library/production/document_en/fenwicktree.html' },
-        { name: 'KACTL (FenwickTree)', url: 'https://github.com/kth-competitive-programming/kactl/blob/main/content/data-structures/FenwickTree.h' },
-        { name: 'ac-library-rs (Rust port)', url: 'https://github.com/rust-lang-ja/ac-library-rs/blob/master/src/fenwicktree.rs' },
-        { name: 'NyaanNyaan library (binary indexed tree)', url: 'https://github.com/NyaanNyaan/library/blob/master/data-structure/binary-indexed-tree.hpp' },
-        { name: 'maspypy library (Fenwick tree)', url: 'https://github.com/maspypy/library/blob/main/ds/fenwicktree/fenwicktree.hpp' },
+        {
+          name: 'SciPy (scipy.stats.kendalltau)',
+          url: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kendalltau.html',
+          usage: 'Counts discordant pairs with a Fenwick tree to compute Kendall rank correlation in O(n log n) time.',
+        },
+        {
+          name: 'Maple (FenwickTree object)',
+          url: 'https://www.maplesoft.com/support/help/Maple/view.aspx?path=FenwickTree',
+          usage: 'Provides mutable cumulative sums, range-sum queries, and cumulative-value lower-bound lookup in the mathematical computing system.',
+        },
       ],
     },
     'r-tree': {
@@ -107,11 +163,26 @@ export class StructureInformation {
         { area: 'Drawing tools', description: 'Locate shapes in a selected region without scanning the whole drawing.' },
       ],
       technologies: [
-        { name: 'SQLite (R*Tree variant)', url: 'https://www.sqlite.org/rtree.html' },
-        { name: 'libspatialindex (R-tree variants)', url: 'https://libspatialindex.org/' },
-        { name: 'Boost.Geometry (R-tree)', url: 'https://www.boost.org/doc/libs/latest/libs/geometry/doc/html/geometry/spatial_indexes/introduction.html' },
-        { name: 'RBush (JavaScript R-tree variant)', url: 'https://github.com/mourner/rbush' },
-        { name: 'Python Rtree (libspatialindex wrapper)', url: 'https://rtree.readthedocs.io/en/latest/' },
+        {
+          name: 'SQLite (R*Tree spatial index)',
+          url: 'https://www.sqlite.org/rtree.html',
+          usage: 'Filters geometric records by their bounding boxes for overlap and containment queries.',
+        },
+        {
+          name: 'MySQL InnoDB (R-tree spatial indexes)',
+          url: 'https://dev.mysql.com/doc/refman/8.4/en/creating-spatial-indexes.html',
+          usage: 'Uses SPATIAL indexes to find candidate geometries through their bounding rectangles.',
+        },
+        {
+          name: 'PostGIS (R-tree indexes implemented with GiST)',
+          url: 'https://postgis.net/workshops/postgis-intro/indexing.html',
+          usage: 'Narrows spatial joins and geometry searches to overlapping bounds before exact geometry checks.',
+        },
+        {
+          name: 'OpenLayers (vector-feature R-tree index)',
+          url: 'https://openlayers.org/en/latest/apidoc/module-ol_source_Vector-VectorSource.html',
+          usage: 'Indexes map features by extent to accelerate spatial feature lookup and nearest-feature queries.',
+        },
       ],
     },
     'lsm-tree': {
@@ -123,11 +194,31 @@ export class StructureInformation {
         { area: 'Storage maintenance', description: 'Merge sorted runs to reduce lookup work and reclaim obsolete versions.' },
       ],
       technologies: [
-        { name: 'RocksDB (LSM storage engine)', url: 'https://github.com/facebook/rocksdb/wiki/RocksDB-Overview' },
-        { name: 'LevelDB (sorted tables and compaction)', url: 'https://github.com/google/leveldb/blob/main/doc/impl.md' },
-        { name: 'Apache Cassandra (SSTables and compaction)', url: 'https://cassandra.apache.org/doc/latest/cassandra/managing/operating/compaction/overview.html' },
-        { name: 'Apache HBase (memstores and StoreFiles)', url: 'https://hbase.apache.org/book.html#architecture' },
-        { name: 'Pebble (Go LSM storage engine)', url: 'https://github.com/cockroachdb/pebble' },
+        {
+          name: 'RocksDB (LSM storage engine)',
+          url: 'https://github.com/meta/rocksdb/wiki/RocksDB-Overview',
+          usage: 'Buffers writes in memtables and flushes sorted SST files, using compaction to reconcile versions.',
+        },
+        {
+          name: 'LevelDB (sorted tables and compaction)',
+          url: 'https://github.com/google/leveldb/blob/main/doc/impl.md',
+          usage: 'Stores recent changes in memory and merges sorted table files to maintain a persistent key-value store.',
+        },
+        {
+          name: 'Apache Cassandra (SSTables and compaction)',
+          url: 'https://cassandra.apache.org/doc/latest/cassandra/managing/operating/compaction/overview.html',
+          usage: 'Writes immutable SSTables and compacts them to reconcile updates and deletion markers.',
+        },
+        {
+          name: 'Apache HBase (memstores and StoreFiles)',
+          url: 'https://hbase.apache.org/book.html#architecture',
+          usage: 'Buffers region writes in MemStores, flushes StoreFiles, and compacts stored data.',
+        },
+        {
+          name: 'Pebble (Go LSM storage engine)',
+          url: 'https://github.com/cockroachdb/pebble',
+          usage: 'Provides the LSM storage engine used by CockroachDB for persistent key-value data.',
+        },
       ],
     },
     'hash-map': {
@@ -139,11 +230,31 @@ export class StructureInformation {
         { area: 'Frequency counting', description: 'Map each observed value to a running count so a program can summarize a stream in one pass.' },
       ],
       technologies: [
-        { name: 'Java (HashMap)', url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html' },
-        { name: '.NET (Dictionary<TKey, TValue>)', url: 'https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2' },
-        { name: 'CPython (dict)', url: 'https://docs.python.org/3/faq/design.html#how-are-dictionaries-implemented-in-cpython' },
-        { name: 'Rust (HashMap)', url: 'https://doc.rust-lang.org/std/collections/struct.HashMap.html' },
-        { name: 'GLib (GHashTable)', url: 'https://docs.gtk.org/glib/struct.HashTable.html' },
+        {
+          name: 'Java (HashMap)',
+          url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html',
+          usage: 'Associates application keys with values for efficient dictionary lookup and updates.',
+        },
+        {
+          name: '.NET (Dictionary<TKey, TValue>)',
+          url: 'https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2',
+          usage: 'Provides a hash-based generic key-value dictionary for .NET applications.',
+        },
+        {
+          name: 'CPython (dict)',
+          url: 'https://docs.python.org/3/faq/design.html#how-are-dictionaries-implemented-in-cpython',
+          usage: 'Implements Python dictionaries with hash tables for key-to-value lookup.',
+        },
+        {
+          name: 'Rust (HashMap)',
+          url: 'https://doc.rust-lang.org/std/collections/struct.HashMap.html',
+          usage: 'Provides a hash-based key-value map in the Rust standard library.',
+        },
+        {
+          name: 'GLib (GHashTable)',
+          url: 'https://docs.gtk.org/glib/struct.HashTable.html',
+          usage: 'Provides hash-based lookup of keys and associated values to GLib applications.',
+        },
       ],
     },
     'hash-set': {
@@ -155,11 +266,31 @@ export class StructureInformation {
         { area: 'Set comparison', description: 'Check values against another set to find shared or missing members without comparing every pair of elements.' },
       ],
       technologies: [
-        { name: 'Java (HashSet)', url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashSet.html' },
-        { name: '.NET (HashSet<T>)', url: 'https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.hashset-1' },
-        { name: 'CPython (set)', url: 'https://docs.python.org/3/c-api/set.html' },
-        { name: 'Rust (HashSet)', url: 'https://doc.rust-lang.org/std/collections/struct.HashSet.html' },
-        { name: 'GLib (GHashTable used as a set)', url: 'https://docs.gtk.org/glib/type_func.HashTable.add.html' },
+        {
+          name: 'Java (HashSet)',
+          url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashSet.html',
+          usage: 'Uses a backing HashMap to store unique values and test membership.',
+        },
+        {
+          name: '.NET (HashSet<T>)',
+          url: 'https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.hashset-1',
+          usage: 'Provides hash-based membership and deduplication for generic .NET values.',
+        },
+        {
+          name: 'CPython (set)',
+          url: 'https://docs.python.org/3/c-api/set.html',
+          usage: 'Stores unique hashable Python objects for membership tests and set operations.',
+        },
+        {
+          name: 'Rust (HashSet)',
+          url: 'https://doc.rust-lang.org/std/collections/struct.HashSet.html',
+          usage: 'Provides unique-value membership through a hash map in the Rust standard library.',
+        },
+        {
+          name: 'GLib (GHashTable used as a set)',
+          url: 'https://docs.gtk.org/glib/type_func.HashTable.add.html',
+          usage: 'Stores keys as their own values so a GHashTable can represent a set without separate payloads.',
+        },
       ],
     },
     'bloom-filter': {
@@ -171,21 +302,61 @@ export class StructureInformation {
         { area: 'Distributed query processing', description: 'Send a compact filter of join keys to another worker so it can discard definitely unmatched rows before transferring data.' },
       ],
       technologies: [
-        { name: 'Redis (Bloom filter commands)', url: 'https://redis.io/docs/latest/data-types/probabilistic/bloom-filter/' },
-        { name: 'RocksDB (SST filter blocks)', url: 'https://github.com/facebook/rocksdb/wiki/RocksDB-Bloom-Filter' },
-        { name: 'Apache Cassandra (SSTable Bloom filters)', url: 'https://cassandra.apache.org/doc/3.11/cassandra/operating/bloom_filters.html' },
-        { name: 'Apache HBase (row and column Bloom filters)', url: 'https://hbase.apache.org/docs/performance/' },
-        { name: 'LevelDB (BloomFilterPolicy)', url: 'https://github.com/google/leveldb/blob/main/util/bloom.cc' },
+        {
+          name: 'Redis (Bloom filter commands)',
+          url: 'https://redis.io/docs/latest/develop/data-types/probabilistic/bloom-filter/',
+          usage: 'Provides probabilistic membership commands for compact checks that can avoid more expensive lookups.',
+        },
+        {
+          name: 'RocksDB (SST filter blocks)',
+          url: 'https://github.com/meta/rocksdb/wiki/RocksDB-Bloom-Filter',
+          usage: 'Rejects absent keys before reading SST data blocks; positives still require a real lookup.',
+        },
+        {
+          name: 'Apache Cassandra (SSTable Bloom filters)',
+          url: 'https://cassandra.apache.org/doc/3.11/cassandra/operating/bloom_filters.html',
+          usage: 'Checks whether an SSTable may contain a partition key to avoid unnecessary file reads.',
+        },
+        {
+          name: 'Apache HBase (row and column Bloom filters)',
+          url: 'https://hbase.apache.org/docs/performance/',
+          usage: 'Filters StoreFiles during Get requests so disk reads focus on files likely to contain the requested row or column.',
+        },
+        {
+          name: 'LevelDB (BloomFilterPolicy)',
+          url: 'https://github.com/google/leveldb/blob/main/util/bloom.cc',
+          usage: 'Builds compact table filters that can rule out missing keys before searching stored data.',
+        },
       ],
     },
     'array': {
       summary: 'An array stores elements in consecutive slots, each accessed by a numeric index. This visualizer uses fixed-size arrays, so insertion creates a separate array with one extra slot and preserves the original.',
       technologies: [
-        { name: 'NumPy (ndarray)', url: 'https://numpy.org/doc/stable/reference/arrays.ndarray.html' },
-        { name: 'JavaScript (typed arrays)', url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray' },
-        { name: 'Java (native arrays)', url: 'https://docs.oracle.com/javase/tutorial/java/nutsandbolts/arrays.html' },
-        { name: 'Rust (fixed-size arrays)', url: 'https://doc.rust-lang.org/std/primitive.array.html' },
-        { name: '.NET (System.Array)', url: 'https://learn.microsoft.com/en-us/dotnet/api/system.array' },
+        {
+          name: 'NumPy (ndarray)',
+          url: 'https://numpy.org/doc/stable/reference/arrays.ndarray.html',
+          usage: 'Stores numerical data in shaped, typed arrays with support for strided views and numerical operations.',
+        },
+        {
+          name: 'JavaScript (typed arrays)',
+          url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray',
+          usage: 'Provides typed views over binary buffers for processing numeric and binary data.',
+        },
+        {
+          name: 'Java (native arrays)',
+          url: 'https://docs.oracle.com/javase/tutorial/java/nutsandbolts/arrays.html',
+          usage: 'Provides fixed-length indexed storage for primitive values and object references.',
+        },
+        {
+          name: 'Rust (fixed-size arrays)',
+          url: 'https://doc.rust-lang.org/std/primitive.array.html',
+          usage: 'Stores a fixed number of elements of one type, with the length included in the type.',
+        },
+        {
+          name: '.NET (System.Array)',
+          url: 'https://learn.microsoft.com/en-us/dotnet/api/system.array',
+          usage: 'Provides indexed, fixed-length array storage for .NET applications.',
+        },
       ],
       useCases: [
         {
@@ -209,11 +380,31 @@ export class StructureInformation {
     'linked-list': {
       summary: 'A singly linked list stores elements in nodes, each pointing to the next node. It grows without requiring consecutive memory, but reaching an element means following links from the head.',
       technologies: [
-        { name: 'GLib (GSList)', url: 'https://docs.gtk.org/glib/struct.SList.html' },
-        { name: 'Java (ConcurrentLinkedQueue)', url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ConcurrentLinkedQueue.html' },
-        { name: 'Boost.Intrusive (slist)', url: 'https://www.boost.org/doc/libs/latest/doc/html/intrusive/presenting_containers.html' },
-        { name: 'Linux kernel (llist)', url: 'https://github.com/torvalds/linux/blob/master/include/linux/llist.h' },
-        { name: 'Microsoft C++ STL (std::forward_list)', url: 'https://github.com/microsoft/STL/blob/main/stl/inc/forward_list' },
+        {
+          name: 'GLib (GSList)',
+          url: 'https://docs.gtk.org/glib/struct.SList.html',
+          usage: 'Stores sequences as singly linked nodes with insertion and removal through next links.',
+        },
+        {
+          name: 'Java (ConcurrentLinkedQueue)',
+          url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ConcurrentLinkedQueue.html',
+          usage: 'Implements a concurrent FIFO queue using linked nodes and nonblocking operations.',
+        },
+        {
+          name: 'Boost.Intrusive (slist)',
+          url: 'https://www.boost.org/doc/libs/latest/doc/html/intrusive/presenting_containers.html',
+          usage: 'Stores singly linked sequences with links embedded in the application objects.',
+        },
+        {
+          name: 'Linux kernel (llist)',
+          url: 'https://github.com/torvalds/linux/blob/master/include/linux/llist.h',
+          usage: 'Provides lockless singly linked lists for concurrent kernel producers and consumers.',
+        },
+        {
+          name: 'Microsoft C++ STL (std::forward_list)',
+          url: 'https://github.com/microsoft/STL/blob/main/stl/inc/forward_list',
+          usage: 'Implements the C++ singly linked sequence container with insertion and erasure after a known position.',
+        },
       ],
       useCases: [
         {
@@ -237,11 +428,31 @@ export class StructureInformation {
     'stack': {
       summary: 'A stack stores elements in last-in, first-out order: the most recently added item is removed first. Push, pop, and peek operate at the top; this visualizer implements the stack with linked nodes.',
       technologies: [
-        { name: 'Java Virtual Machine (call frames and operand stacks)', url: 'https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-2.html' },
-        { name: 'LLVM compilers (alloca stack memory)', url: 'https://llvm.org/docs/LangRef.html#alloca-instruction' },
-        { name: 'Python (list used as a stack)', url: 'https://docs.python.org/3/tutorial/datastructures.html#using-lists-as-stacks' },
-        { name: '.NET (Stack<T>)', url: 'https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.stack-1' },
-        { name: 'Java (ArrayDeque used as a stack)', url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayDeque.html' },
+        {
+          name: 'Java Virtual Machine (call frames and operand stacks)',
+          url: 'https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-2.html',
+          usage: 'Stores active method frames and per-frame operand stacks while executing Java bytecode.',
+        },
+        {
+          name: 'LLVM compilers (alloca stack memory)',
+          url: 'https://llvm.org/docs/LangRef.html#alloca-instruction',
+          usage: 'Represents function-local stack allocations with alloca, reclaimed when the function returns.',
+        },
+        {
+          name: 'Python (list used as a stack)',
+          url: 'https://docs.python.org/3/tutorial/datastructures.html#using-lists-as-stacks',
+          usage: 'Supports LIFO processing with list append and pop; its backing storage is an array rather than linked nodes.',
+        },
+        {
+          name: '.NET (Stack<T>)',
+          url: 'https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.stack-1',
+          usage: 'Provides a LIFO collection backed by a growable array.',
+        },
+        {
+          name: 'Java (ArrayDeque used as a stack)',
+          url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayDeque.html',
+          usage: 'Provides stack push and pop operations through an array-backed deque.',
+        },
       ],
       useCases: [
         {
@@ -265,11 +476,31 @@ export class StructureInformation {
     'queue': {
       summary: 'A queue stores elements in first-in, first-out order: the earliest added item is removed first. Items enter at the rear and leave from the front, with linked nodes connecting them in this visualizer.',
       technologies: [
-        { name: 'RabbitMQ (message queues)', url: 'https://www.rabbitmq.com/docs/queues' },
-        { name: 'Apache ActiveMQ (message queues)', url: 'https://activemq.apache.org/components/classic/documentation/how-do-i-preserve-order-of-messages' },
-        { name: 'TCP (queued send data)', url: 'https://www.rfc-editor.org/rfc/rfc9293.html#section-3.9.1.7' },
-        { name: 'Python (queue.Queue)', url: 'https://docs.python.org/3/library/queue.html' },
-        { name: 'Java (ConcurrentLinkedQueue)', url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ConcurrentLinkedQueue.html' },
+        {
+          name: 'RabbitMQ (message queues)',
+          url: 'https://www.rabbitmq.com/docs/queues',
+          usage: 'Buffers messages between publishers and consumers; priority, redelivery, and consumer configuration can affect observed ordering.',
+        },
+        {
+          name: 'Apache ActiveMQ (message queues)',
+          url: 'https://activemq.apache.org/components/classic/documentation/how-do-i-preserve-order-of-messages',
+          usage: 'Preserves producer ordering for a queue with a single consumer and supports asynchronous message delivery.',
+        },
+        {
+          name: 'TCP (queued send data)',
+          url: 'https://www.rfc-editor.org/rfc/rfc9293.html#section-3.9.1.7',
+          usage: 'Queues application data for ordered byte-stream transmission; the protocol specifies behavior rather than one linked-node implementation.',
+        },
+        {
+          name: 'Python (queue.Queue)',
+          url: 'https://docs.python.org/3/library/queue.html',
+          usage: 'Provides a synchronized FIFO queue for transferring work between Python threads.',
+        },
+        {
+          name: 'Java (ConcurrentLinkedQueue)',
+          url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ConcurrentLinkedQueue.html',
+          usage: 'Provides a nonblocking FIFO queue implemented with linked nodes.',
+        },
       ],
       useCases: [
         {
@@ -293,11 +524,31 @@ export class StructureInformation {
     'deque': {
       summary: 'A deque is a double-ended queue that allows insertion, removal, and inspection at either end. This visualizer uses doubly linked nodes and keeps pointers to both the front and back.',
       technologies: [
-        { name: 'Python (collections.deque)', url: 'https://docs.python.org/3/library/collections.html#collections.deque' },
-        { name: 'Java (ArrayDeque)', url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayDeque.html' },
-        { name: 'Rust (VecDeque)', url: 'https://doc.rust-lang.org/std/collections/struct.VecDeque.html' },
-        { name: 'C++ Standard Library (std::deque)', url: 'https://eel.is/c++draft/deque.overview' },
-        { name: 'Java concurrency library (LinkedBlockingDeque)', url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/LinkedBlockingDeque.html' },
+        {
+          name: 'Python (collections.deque)',
+          url: 'https://docs.python.org/3/library/collections.html#collections.deque',
+          usage: 'Supports efficient additions and removals at either end of a Python sequence.',
+        },
+        {
+          name: 'Java (ArrayDeque)',
+          url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayDeque.html',
+          usage: 'Provides a growable array-backed double-ended queue that can also serve as a stack.',
+        },
+        {
+          name: 'Rust (VecDeque)',
+          url: 'https://doc.rust-lang.org/std/collections/struct.VecDeque.html',
+          usage: 'Stores a growable ring-buffer deque with insertion and removal at both ends.',
+        },
+        {
+          name: 'C++ Standard Library (std::deque)',
+          url: 'https://eel.is/c++draft/deque.overview',
+          usage: 'Provides the C++ double-ended sequence container with efficient end operations and indexed access.',
+        },
+        {
+          name: 'Java concurrency library (LinkedBlockingDeque)',
+          url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/LinkedBlockingDeque.html',
+          usage: 'Provides a thread-safe blocking deque for producer-consumer work at either end.',
+        },
       ],
       useCases: [
         {
@@ -321,11 +572,31 @@ export class StructureInformation {
     'doubly-linked-list': {
       summary: 'A doubly linked list stores nodes with links to both their previous and next neighbors. Head and tail pointers allow traversal in either direction and direct updates at either end.',
       technologies: [
-        { name: 'Java (LinkedList)', url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/LinkedList.html' },
-        { name: '.NET (LinkedList<T>)', url: 'https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.linkedlist-1' },
-        { name: 'GLib (GList)', url: 'https://docs.gtk.org/glib/struct.List.html' },
-        { name: 'Linux kernel (list_head)', url: 'https://docs.kernel.org/core-api/list.html' },
-        { name: 'Java LinkedHashMap (access-order LRU caches)', url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/LinkedHashMap.html' },
+        {
+          name: 'Java (LinkedList)',
+          url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/LinkedList.html',
+          usage: 'Stores a sequence with links to both neighboring nodes for traversal and updates at either end.',
+        },
+        {
+          name: '.NET (LinkedList<T>)',
+          url: 'https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.linkedlist-1',
+          usage: 'Provides linked nodes with previous and next references for direct insertion and removal.',
+        },
+        {
+          name: 'GLib (GList)',
+          url: 'https://docs.gtk.org/glib/struct.List.html',
+          usage: 'Stores GLib sequences in nodes linked in both directions.',
+        },
+        {
+          name: 'Linux kernel (circular intrusive list_head)',
+          url: 'https://docs.kernel.org/core-api/list.html',
+          usage: 'Embeds circular doubly linked lists in kernel objects to connect and manipulate collections of records.',
+        },
+        {
+          name: 'Java LinkedHashMap (access-order LRU caches)',
+          url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/LinkedHashMap.html',
+          usage: 'Links hash-map entries in insertion or access order, supporting predictable iteration and LRU-style caches.',
+        },
       ],
       useCases: [
         {
@@ -349,11 +620,31 @@ export class StructureInformation {
     'circular-buffer': {
       summary: 'A circular buffer reuses a fixed set of slots by wrapping its read and write indices back to the start. This visualizer preserves first-in, first-out order and rejects new items when full instead of overwriting stored values.',
       technologies: [
-        { name: 'Linux io_uring (I/O submission and completion rings)', url: 'https://man7.org/linux/man-pages/man7/io_uring.7.html' },
-        { name: 'Linux kfifo (kernel FIFO buffers)', url: 'https://docs.kernel.org/core-api/kernel-api.html#fifo-buffer' },
-        { name: 'JACK Audio Connection Kit (ringbuffer)', url: 'https://jackaudio.org/api/ringbuffer_8h.html' },
-        { name: 'PortAudio (PaUtilRingBuffer)', url: 'https://portaudio.com/docs/v19-doxydocs-dev/pa__ringbuffer_8h.html' },
-        { name: 'Boost.CircularBuffer', url: 'https://www.boost.org/doc/libs/latest/doc/html/circular_buffer.html' },
+        {
+          name: 'Linux io_uring (I/O submission and completion rings)',
+          url: 'https://man7.org/linux/man-pages/man7/io_uring.7.html',
+          usage: 'Exchanges I/O submissions and completions through shared rings between applications and the kernel.',
+        },
+        {
+          name: 'Linux kfifo (kernel FIFO buffers)',
+          url: 'https://docs.kernel.org/core-api/kernel-api.html#fifo-buffer',
+          usage: 'Provides bounded FIFO buffering for kernel data with wraparound storage.',
+        },
+        {
+          name: 'JACK Audio Connection Kit (ringbuffer)',
+          url: 'https://jackaudio.org/api/ringbuffer_8h.html',
+          usage: 'Transfers data between audio-processing contexts through a lock-free ring buffer.',
+        },
+        {
+          name: 'PortAudio (PaUtilRingBuffer)',
+          url: 'https://portaudio.com/docs/v19-doxydocs-dev/pa__ringbuffer_8h.html',
+          usage: 'Transfers samples between a single reader and writer without locks, including audio callbacks.',
+        },
+        {
+          name: 'Boost.CircularBuffer (overwriting ring-buffer variant)',
+          url: 'https://www.boost.org/doc/libs/latest/doc/html/circular_buffer.html',
+          usage: 'Keeps a fixed-capacity sequence and overwrites old elements when full, a different policy from this visualizer.',
+        },
       ],
       useCases: [
         {
@@ -375,13 +666,13 @@ export class StructureInformation {
       ],
     },
     'binary-tree': {
-      summary: 'A binary search tree stores keys in nodes with at most two children, placing smaller keys on the left and larger keys on the right. This version rejects duplicate keys and does not rebalance, so insertion order can produce a long chain.',
+      summary: 'A binary search tree routes smaller keys left and larger keys right; this unbalanced version rejects duplicates and can become a chain. Boost.Intrusive exposes an unbalanced container, while AVL and Red-Black examples are listed under their own structures.',
       technologies: [
-        { name: 'Boost.Intrusive (unbalanced bstree)', url: 'https://www.boost.org/doc/libs/1_86_0/doc/html/doxygen/classboost_1_1intrusive_1_1bstree.html' },
-        { name: 'GNU libavl (plain BST implementation)', url: 'https://adtinfo.org/libavl.html/index.html' },
-        { name: 'Java TreeMap (Red-Black BST variant)', url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeMap.html' },
-        { name: '.NET SortedSet<T> (Red-Black BST variant)', url: 'https://github.com/dotnet/runtime/blob/main/src/libraries/System.Collections/src/System/Collections/Generic/SortedSet.cs' },
-        { name: 'Windows kernel generic tables (AVL BST variant)', url: 'https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtlinitializegenerictableavl' },
+        {
+          name: 'Boost.Intrusive (unbalanced bstree)',
+          url: 'https://www.boost.org/doc/libs/1_86_0/doc/html/doxygen/classboost_1_1intrusive_1_1bstree.html',
+          usage: 'Provides an ordered container whose links are embedded in application objects, avoiding a separate wrapper allocation per stored object.',
+        },
       ],
       useCases: [
         {
@@ -405,11 +696,21 @@ export class StructureInformation {
     'avl-tree': {
       summary: 'An AVL tree is a binary search tree that keeps the heights of each node\'s two subtrees within one level of each other. Rotations restore this balance after updates, keeping searches, insertions, and deletions logarithmic in the worst case.',
       technologies: [
-        { name: 'Windows kernel (AVL generic tables)', url: 'https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtlinitializegenerictableavl' },
-        { name: 'illumos (libavl)', url: 'https://www.smartos.org/man/3LIB/libavl' },
-        { name: 'Apache Directory Server (AvlTreeImpl)', url: 'https://nightlies.apache.org/directory/apacheds/2.0.0.AM26/apidocs/org/apache/directory/server/core/avltree/AvlTreeImpl.html' },
-        { name: 'Boost.Intrusive (avl_set)', url: 'https://www.boost.org/doc/libs/latest/doc/html/intrusive/presenting_containers.html' },
-        { name: 'GNU libavl (AVL implementation)', url: 'https://adtinfo.org/libavl.html/index.html' },
+        {
+          name: 'Windows kernel (AVL generic tables)',
+          url: 'https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtlinitializegenerictableavl',
+          usage: 'Keeps kernel generic-table records ordered; file systems use it for data such as open-file name lookup.',
+        },
+        {
+          name: 'illumos (libavl)',
+          url: 'https://github.com/illumos/illumos-gate/blob/master/usr/src/common/avl/avl.c',
+          usage: 'Supplies ordered record lookup in kernel and user-space components, including the runtime linker and debugger.',
+        },
+        {
+          name: 'Boost.Intrusive (avl_set)',
+          url: 'https://www.boost.org/doc/libs/latest/doc/html/intrusive/presenting_containers.html',
+          usage: 'Provides AVL-based ordered sets with links embedded in application objects.',
+        },
       ],
       useCases: [
         {
@@ -433,11 +734,31 @@ export class StructureInformation {
     'red-black-tree': {
       summary: 'A Red-Black tree is a binary search tree whose nodes carry red or black labels that enforce balance rules. Recoloring and rotations after updates keep its height logarithmic, giving worst-case logarithmic search, insertion, and deletion.',
       technologies: [
-        { name: 'Java (TreeMap)', url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeMap.html' },
-        { name: 'Java (TreeSet, backed by TreeMap)', url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeSet.html' },
-        { name: '.NET (SortedSet<T>)', url: 'https://github.com/dotnet/runtime/blob/main/src/libraries/System.Collections/src/System/Collections/Generic/SortedSet.cs' },
-        { name: 'Linux kernel (rbtree)', url: 'https://docs.kernel.org/core-api/rbtree.html' },
-        { name: 'NGINX (event timer tree)', url: 'https://github.com/nginx/nginx/blob/master/src/event/ngx_event_timer.h' },
+        {
+          name: 'Java (TreeMap)',
+          url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeMap.html',
+          usage: 'Provides an ordered key-value map with logarithmic search and updates.',
+        },
+        {
+          name: 'Java (TreeSet, backed by TreeMap)',
+          url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeSet.html',
+          usage: 'Provides an ordered set backed by TreeMap.',
+        },
+        {
+          name: '.NET (SortedSet<T>)',
+          url: 'https://github.com/dotnet/runtime/blob/main/src/libraries/System.Collections/src/System/Collections/Generic/SortedSet.cs',
+          usage: 'Maintains sorted unique values using a red-black tree implementation.',
+        },
+        {
+          name: 'Linux kernel (rbtree)',
+          url: 'https://docs.kernel.org/core-api/rbtree.html',
+          usage: 'Provides balanced ordered trees used by kernel subsystems for tasks such as timers and resource tracking.',
+        },
+        {
+          name: 'NGINX (event timer tree)',
+          url: 'https://github.com/nginx/nginx/blob/master/src/event/ngx_event_timer.h',
+          usage: 'Orders pending event timers so the event loop can find and expire the earliest timer.',
+        },
       ],
       useCases: [
         {
@@ -461,11 +782,26 @@ export class StructureInformation {
     'b-tree': {
       summary: 'A B-Tree is a balanced search tree that stores several keys and child pointers in each page, with all leaves at the same depth. Splits, borrowing, and merges preserve its shape; this visualizer uses pages with at most three keys and four children.',
       technologies: [
-        { name: 'SQLite (index B-trees)', url: 'https://sqlite.org/fileformat.html#b_tree_pages' },
-        { name: 'Rust (BTreeMap)', url: 'https://doc.rust-lang.org/std/collections/struct.BTreeMap.html' },
-        { name: 'Abseil (C++ B-tree containers)', url: 'https://abseil.io/about/design/btree' },
-        { name: 'Google BTree (Go library)', url: 'https://github.com/google/btree' },
-        { name: 'PostgreSQL (B-tree indexes with a B+ tree layout)', url: 'https://www.postgresql.org/docs/current/btree.html#BTREE-STRUCTURE' },
+        {
+          name: 'SQLite (index B-trees)',
+          url: 'https://sqlite.org/fileformat.html#b_tree_pages',
+          usage: 'Stores SQL index keys in balanced pages for ordered lookup; SQLite index B-trees differ from its table B-tree variant.',
+        },
+        {
+          name: 'Rust (BTreeMap)',
+          url: 'https://doc.rust-lang.org/std/collections/struct.BTreeMap.html',
+          usage: 'Maintains a sorted key-value map with ordered iteration and range queries in the Rust standard library.',
+        },
+        {
+          name: 'Abseil (C++ B-tree containers)',
+          url: 'https://abseil.io/about/design/btree',
+          usage: 'Provides C++ ordered maps and sets that pack multiple keys per node to reduce pointer overhead and improve locality.',
+        },
+        {
+          name: 'etcd (in-memory MVCC key index)',
+          url: 'https://github.com/etcd-io/etcd/blob/main/server/storage/mvcc/index.go',
+          usage: 'Uses a B-tree to index user keys and their revision histories for versioned lookup and ordered range access.',
+        },
       ],
       useCases: [
         {
@@ -489,11 +825,31 @@ export class StructureInformation {
     'b-plus-tree': {
       summary: 'A B+ Tree is a balanced multiway search tree that stores all records in linked leaves and uses internal keys to route searches. After finding a starting leaf, a range query can follow leaf links to read consecutive records efficiently.',
       technologies: [
-        { name: 'MySQL InnoDB (non-spatial indexes)', url: 'https://dev.mysql.com/doc/refman/8.4/en/innodb-physical-structure.html' },
-        { name: 'PostgreSQL (B-tree index implementation)', url: 'https://www.postgresql.org/docs/current/btree.html#BTREE-STRUCTURE' },
-        { name: 'Microsoft SQL Server (rowstore indexes)', url: 'https://learn.microsoft.com/en-us/sql/relational-databases/sql-server-index-design-guide' },
-        { name: 'LMDB (embedded key-value storage)', url: 'https://github.com/LMDB/lmdb' },
-        { name: 'bbolt (embedded Go database)', url: 'https://github.com/etcd-io/bbolt' },
+        {
+          name: 'MySQL InnoDB (non-spatial indexes)',
+          url: 'https://dev.mysql.com/doc/refman/8.4/en/innodb-physical-structure.html',
+          usage: 'Stores index records in leaf pages for point lookup and ordered range scans.',
+        },
+        {
+          name: 'PostgreSQL (B-tree index implementation)',
+          url: 'https://www.postgresql.org/docs/current/btree.html#BTREE-STRUCTURE',
+          usage: 'Keeps row-reference tuples in leaf pages and routing tuples in internal pages for ordered SQL indexing.',
+        },
+        {
+          name: 'Microsoft SQL Server (rowstore indexes)',
+          url: 'https://learn.microsoft.com/en-us/sql/relational-databases/sql-server-index-design-guide',
+          usage: 'Organizes disk-based rowstore indexes into B+ trees for row lookup and range access.',
+        },
+        {
+          name: 'OpenLDAP (LMDB storage backend)',
+          url: 'https://github.com/LMDB/lmdb/blob/mdb.master/libraries/liblmdb/lmdb.h',
+          usage: 'Uses memory-mapped ordered pages for transactional key-value storage, including the OpenLDAP storage backend.',
+        },
+        {
+          name: 'bbolt (embedded Go database)',
+          url: 'https://github.com/etcd-io/bbolt/blob/main/doc.go',
+          usage: 'Provides a transactional B+ tree key-value store with sorted iteration and cursor-based range access.',
+        },
       ],
       useCases: [
         {
@@ -517,11 +873,31 @@ export class StructureInformation {
     'graph': {
       summary: 'A graph represents objects as vertices and relationships as edges, allowing connections beyond a simple sequence or hierarchy. This visualizer uses undirected edges, so each connection can be followed in either direction.',
       technologies: [
-        { name: 'Neo4j (property graph database)', url: 'https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/' },
-        { name: 'JanusGraph (distributed graph database)', url: 'https://docs.janusgraph.org/' },
-        { name: 'Apache TinkerPop (graph traversal framework)', url: 'https://tinkerpop.apache.org/docs/current/reference/' },
-        { name: 'NetworkX (graph algorithms)', url: 'https://networkx.org/documentation/stable/reference/classes/graph.html' },
-        { name: 'LLVM compilers (directed control-flow graphs)', url: 'https://llvm.org/docs/ProgrammersManual.html#viewing-graphs-while-debugging-code' },
+        {
+          name: 'Neo4j (property graph database)',
+          url: 'https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/',
+          usage: 'Stores entities and relationships as a property graph for relationship traversal and querying.',
+        },
+        {
+          name: 'JanusGraph (distributed graph database)',
+          url: 'https://docs.janusgraph.org/',
+          usage: 'Stores and queries large property graphs over scalable storage backends.',
+        },
+        {
+          name: 'Apache TinkerPop (graph traversal framework)',
+          url: 'https://tinkerpop.apache.org/docs/current/reference/',
+          usage: 'Provides the property-graph model and Gremlin traversals for graph databases and applications.',
+        },
+        {
+          name: 'NetworkX (graph algorithms)',
+          url: 'https://networkx.org/documentation/stable/reference/classes/graph.html',
+          usage: 'Models networks as graph objects for scientific and analytical graph computations.',
+        },
+        {
+          name: 'LLVM compilers (directed control-flow graphs)',
+          url: 'https://llvm.org/docs/ProgrammersManual.html#viewing-graphs-while-debugging-code',
+          usage: 'Represents compiler control flow as directed graphs for program analysis and optimization.',
+        },
       ],
       useCases: [
         {

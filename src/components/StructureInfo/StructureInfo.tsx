@@ -69,6 +69,7 @@ export default class StructureInfo extends PureComponent<
       items.push(
         <li key={technology.name}>
           <a href={technology.url} target="_blank" rel="noreferrer">{technology.name}</a>
+          {' — '}{technology.usage}
         </li>,
       )
     }
@@ -113,7 +114,9 @@ export default class StructureInfo extends PureComponent<
               </table>
               <section className="structure-technologies" aria-labelledby="structure-technologies-title">
                 <h3 id="structure-technologies-title">Real technologies</h3>
-                <ul>{this.renderTechnologies(information)}</ul>
+                {information.technologies.length > 0
+                  ? <ul>{this.renderTechnologies(information)}</ul>
+                  : <p>No use in a production system, language runtime, or established application library has been verified for this structure.</p>}
               </section>
             </>
           )}

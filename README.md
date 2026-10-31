@@ -42,6 +42,12 @@ opens a structure introduction, use-case table, and technology links. Dialogs
 leave playback running. Hash-based structures also show their hash function
 below the legend.
 
+The technology lists include documented uses in systems, language runtimes,
+standard libraries, and established application libraries. Each entry explains
+its purpose and links to primary documentation or source. Counts vary by
+structure; competition libraries and educational algorithm collections are not
+used to fill a quota, and implementation variants are identified explicitly.
+
 The additional tree structures offer these actions:
 
 | Structure | Allowed actions |
