@@ -97,9 +97,14 @@ choose the data structure. Keep its canvas action card in
 action selection remains separate from drawing the scene.
 Each action row has a separate info button on its right. It opens that action's
 overview dialog without selecting or restarting the action.
+The card's top-left back button reopens the current structure group's list,
+preserving the selected structure and playback session.
 The card's top-right corner has a larger info button for general structure
 information. Keep that separate dialog in `src/components/StructureInfo/`;
-its content area is intentionally empty until structure information is added.
+it shows a one- or two-sentence introduction and a two-column table of four or
+five use cases, pairing each area of use with a short explanation of its purpose.
+Below the table, list five or six named real technologies with documentation
+links, identifying implementation variants where relevant.
 Shared value/index dialogs belong in `src/components/ActionInput/`, with their
 request configuration and validation in `src/visualization/ActionInputRequest.ts`.
 Reuse them for Array, Linked list, Stack, Queue, Deque, Doubly linked list,

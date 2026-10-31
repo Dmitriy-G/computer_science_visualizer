@@ -28,6 +28,10 @@
   font-size: 12px;
   line-height: 1.6;
 }
+.action-menu-back-button {
+  justify-self: start;
+  text-align: left;
+}
 .action-menu nav {
   display: flex;
   flex-direction: column;

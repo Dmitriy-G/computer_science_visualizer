@@ -861,6 +861,7 @@ export default class App extends Component<Record<string, never>, AppState> {
                 structure={selected}
                 selectedAction={this.state.selectedAction}
                 actionsDisabled={ActionInputRequest.supportsStructure(selected) && this.state.actionRunning}
+                onBack={this.openMenu}
                 onActionSelected={this.selectAction}
                 onActionInformationRequested={this.showActionInformation}
                 onStructureInformationRequested={this.showStructureInformation}

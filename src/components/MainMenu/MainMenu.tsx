@@ -220,25 +220,11 @@ export default class MainMenu extends Component<
     return buttons
   }
 
-  private renderPath(): ReactNode {
-    const path = this.props.navigation.getPath()
-    if (path.length < 2) return null
-    const segments: ReactNode[] = []
-    for (let index = 0; index < path.length; index += 1) {
-      segments.push(
-        <li key={index} aria-current={index === path.length - 1 ? 'page' : undefined}>
-          {path[index]}
-        </li>,
-      )
-    }
-    return <nav aria-label="Menu path"><ol className="menu-path">{segments}</ol></nav>
-  }
-
-  private getDescription(): string {
+  private getDescription(): string | null {
     switch (this.props.navigation.screen) {
       case 'categories': return 'Choose a category to explore.'
-      case 'groups': return 'Choose a data structure group.'
-      case 'structures': return 'Pick a structure. Start with 10 elements.'
+      case 'groups': return null
+      case 'structures': return null
     }
   }
 
@@ -252,6 +238,7 @@ export default class MainMenu extends Component<
 
   public render() {
     const navigation = this.props.navigation
+    const description = this.getDescription()
     return (
       <dialog
         id="main-menu"
@@ -275,21 +262,15 @@ export default class MainMenu extends Component<
           <h2 id="menu-title" ref={this.title} tabIndex={-1}>
             {navigation.title}
           </h2>
-          <p className="menu-description">
-            {this.getDescription()}
-          </p>
+          {description && <p className="menu-description">{description}</p>}
           {navigation.screen !== 'categories' && (
             <button className="back-button" onClick={this.props.onBack}>
               <span aria-hidden="true">←</span> {navigation.backLabel}
             </button>
           )}
-          {this.renderPath()}
           <nav aria-label={navigation.title}>
             {this.renderChoices()}
           </nav>
-          <p className="menu-footer">
-            Every change has a story. See how it works.
-          </p>
         </div>
       </dialog>
     )

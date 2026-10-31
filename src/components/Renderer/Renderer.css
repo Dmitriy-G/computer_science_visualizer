@@ -203,15 +203,6 @@
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.canvas-footer {
-  padding: 18px 32px 22px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  color: #7b8c9e;
-  font: 10px var(--mono);
-}
 .scene-legend {
   display: flex;
   flex-wrap: wrap;
@@ -297,11 +288,6 @@
 @media (max-width: 650px) {
   .renderer-content {
     padding: 20px var(--renderer-inset);
-  }
-  .canvas-footer {
-    flex-wrap: wrap;
-    padding: 18px 20px;
-    gap: 14px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

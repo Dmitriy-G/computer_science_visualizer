@@ -8,7 +8,8 @@
    Queue, Deque, Doubly linked list, and Circular buffer),
    **Trees** (Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, and
    B+ Tree), and **Graphs** (Graph). Choose a group to see only
-   its structures. Provide a path and Back navigation through these levels.
+   its structures. Provide Back navigation through these levels, without a
+   visible breadcrumb path or instruction text on the structure list.
 3. Selecting a structure loads an example containing 10 elements in the shared
    renderer. Lists, trees, graphs, and other structures can use different layouts.
 4. After selection, close the structure picker and show the structure's allowed
@@ -102,8 +103,12 @@ both costs, and definitions of only the terms and letters used
 by that action. Each action owns its summary, complexity explanations, and glossary
 in its sequence class; the shared dialog only displays the supplied information.
 Provide a larger info button at the action card's top-right corner for general
-structure information. It opens a separate centered dialog with an empty content
-area for future text. Support close, Escape, backdrop dismissal, focus return,
+structure information. It opens a separate centered dialog with a one- or
+two-sentence introduction and a two-column table containing four or five areas
+of use, each with a one- or two-sentence explanation of how it is used and what
+problem it solves. Below the table, list five or six named real technologies
+with documentation links and identify implementation variants where relevant.
+Support close, Escape, backdrop dismissal, focus return,
 and uninterrupted playback in the same way as the action overview dialog.
 Do not add generic definitions or unused variables to every action. For example,
 linked list insertion explains `n`, `O(n)`, and `O(1)` without introducing `k`.

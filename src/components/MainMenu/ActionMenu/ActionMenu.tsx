@@ -11,6 +11,7 @@ interface ActionMenuProps {
   readonly structure: StructureKind
   readonly selectedAction: ActionKind | null
   readonly actionsDisabled?: boolean
+  readonly onBack: () => void
   readonly onActionSelected: (action: ActionKind) => void
   readonly onActionInformationRequested: (action: ActionKind) => void
   readonly onStructureInformationRequested: () => void
@@ -87,10 +88,19 @@ export default class ActionMenu extends PureComponent<
   }
 
   public render() {
+    const group = StructureCatalog.getGroup(StructureCatalog.getGroupForStructure(this.props.structure))
     return (
       <aside className="action-menu" aria-labelledby="action-menu-title">
         <div className="action-menu-topline">
-          <span className="eyebrow">Available actions</span>
+          <button
+            className="back-button action-menu-back-button"
+            onClick={this.props.onBack}
+            aria-label={`Back to ${group.name} structures`}
+            aria-haspopup="dialog"
+            aria-controls="main-menu"
+          >
+            <span aria-hidden="true">←</span> {group.name}
+          </button>
           <button
             className="action-info-button structure-info-button"
             onClick={this.props.onStructureInformationRequested}

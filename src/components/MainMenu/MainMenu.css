@@ -108,25 +108,8 @@
   color: var(--accent);
   font-size: 13px;
 }
-.menu-path {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding: 0;
-  margin: 12px 0 20px;
-  list-style: none;
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.6;
-  overflow-wrap: anywhere;
-}
-.menu-path li + li::before {
-  content: '/';
-  margin-right: 6px;
-  color: #a7b7c8;
-}
-.menu-path [aria-current] {
-  color: var(--ink);
+.main-menu .back-button {
+  margin-bottom: 12px;
 }
 .menu-section-label {
   text-transform: uppercase;
@@ -142,12 +125,4 @@
   font-size: 14px;
   line-height: 1.8;
   color: var(--muted);
-}
-.menu-footer {
-  border-top: 1px solid var(--border);
-  padding-top: 20px;
-  margin-top: auto;
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.6;
 }

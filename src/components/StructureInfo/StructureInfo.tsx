@@ -1,7 +1,9 @@
 import { PureComponent, createRef } from 'react'
-import type { MouseEvent, SyntheticEvent } from 'react'
+import type { MouseEvent, ReactNode, SyntheticEvent } from 'react'
 import { StructureCatalog } from '../../visualization/StructureCatalog.ts'
 import type { StructureKind } from '../../visualization/Scene.ts'
+import { StructureInformation } from './StructureInformation.ts'
+import type { StructureOverview } from './StructureInformation.ts'
 import './StructureInfo.css'
 
 interface StructureInfoProps {
@@ -48,8 +50,34 @@ export default class StructureInfo extends PureComponent<
     ) this.props.onClose()
   }
 
+  private renderUseCases(information: StructureOverview): ReactNode[] {
+    const rows: ReactNode[] = []
+    for (const useCase of information.useCases) {
+      rows.push(
+        <tr key={useCase.area}>
+          <th scope="row">{useCase.area}</th>
+          <td>{useCase.description}</td>
+        </tr>,
+      )
+    }
+    return rows
+  }
+
+  private renderTechnologies(information: StructureOverview): ReactNode[] {
+    const items: ReactNode[] = []
+    for (const technology of information.technologies) {
+      items.push(
+        <li key={technology.name}>
+          <a href={technology.url} target="_blank" rel="noreferrer">{technology.name}</a>
+        </li>,
+      )
+    }
+    return items
+  }
+
   public render() {
     const name = this.props.structure ? StructureCatalog.getName(this.props.structure) : 'data structure'
+    const information = this.props.structure ? StructureInformation.get(this.props.structure) : null
     return (
       <dialog
         id="structure-overview"
@@ -57,15 +85,38 @@ export default class StructureInfo extends PureComponent<
         ref={this.dialog}
         onCancel={this.handleCancel}
         onClick={this.handleBackdrop}
-        aria-label={`About ${name}`}
+        aria-labelledby="structure-info-title"
+        aria-describedby={information ? 'structure-info-summary' : undefined}
       >
-        <button className="icon-button close-structure-info" onClick={this.props.onClose} aria-label="Close structure information">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="m6 6 12 12M18 6 6 18" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-          </svg>
-        </button>
+        <div className="structure-info-heading">
+          <span className="eyebrow">Structure overview</span>
+          <button className="icon-button close-structure-info" onClick={this.props.onClose} aria-label="Close structure information">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="m6 6 12 12M18 6 6 18" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
         <div className="structure-info-content">
-          {/* Add the selected structure's general information here. */}
+          <h2 id="structure-info-title">{name}</h2>
+          {information && (
+            <>
+              <p id="structure-info-summary" className="structure-info-summary">{information.summary}</p>
+              <table className="structure-use-cases">
+                <caption>Where it is used</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Area of use</th>
+                    <th scope="col">How it is used and what it solves</th>
+                  </tr>
+                </thead>
+                <tbody>{this.renderUseCases(information)}</tbody>
+              </table>
+              <section className="structure-technologies" aria-labelledby="structure-technologies-title">
+                <h3 id="structure-technologies-title">Real technologies</h3>
+                <ul>{this.renderTechnologies(information)}</ul>
+              </section>
+            </>
+          )}
         </div>
       </dialog>
     )

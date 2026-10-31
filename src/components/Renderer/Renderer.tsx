@@ -307,11 +307,6 @@ export default class Renderer extends Component<
             </div>
           </div>
         </div>
-        {!scene && (
-          <div className="canvas-footer">
-            <span>No structure selected</span>
-          </div>
-        )}
       </section>
     )
   }
