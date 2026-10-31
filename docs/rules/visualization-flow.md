@@ -37,6 +37,11 @@ available. Graph preserves its session when selecting the current action.
 Place the Current / Visited / New node legend at the top-left of the renderer's
 center area, beside the actions panel and above the code snippet. Let the legend
 wrap on narrow screens; do not keep it in the canvas footer.
+An optional scene hint appears directly below this legend and above action
+pseudocode. Hide it by default when the scene supplies no hint. Hash Map and Hash
+Set show their normalized modulo hash formula with the current bucket count;
+Bloom Filter shows its custom seeded FNV-1a-style hash formula, three seeds, and
+current bit-array size. The block wraps on narrow screens and stays outside the SVG.
 
 Do not render a bottom animation panel or speed selector. Use the shared input
 dialog for these actions:
@@ -151,6 +156,12 @@ a TypeScript class next to its `.tsx` component and `.css` file in the action fo
 Each step includes a phase, title, explanation, relevant pseudocode, duration, and
 scene snapshot. Keep scene snapshots independent so stepping backward and replaying
 are deterministic.
+Searches and membership checks end on their result frame, without an extra
+commit, no-mutation, or generic completion step. Report whether the value was
+found and include its location when available (index, bucket and collision-chain
+position, tree depth or page/key position, vertex, or checked Bloom bit indices).
+Retain the result highlight. Bloom positives remain **possibly present**, never
+an exact match. Mutating actions keep their existing final commit step.
 Retain phase metadata in the animation plan without displaying a phase progress
 bar in the controls. A duplicate rejection skips creation stages entirely.
 

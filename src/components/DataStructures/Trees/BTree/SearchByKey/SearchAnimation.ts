@@ -20,6 +20,6 @@ export class SearchAnimation extends TreeActionAnimation<BTree> {
     this.begin('Follow the ordering rules from the root. Search does not change keys, links, or balance.', 'current = root')
     const found = this.result.find(value, this)
     this.foundId = found?.id ?? null
-    this.finish(found ? 'Key found' : 'Key not found', found ? `Found ${value}. The tree is unchanged.` : `Key ${value} was not found. The tree is unchanged.`, found ? 'return match' : 'return notFound', this.foundId, 'FOUND')
+    this.finish(found ? 'Key found' : 'Key not found', found ? `Found ${value} at ${this.searchLocation(found.id, value)}.` : `Key ${value} was not found.`, found ? 'return match' : 'return notFound', this.foundId, 'FOUND')
   }
 }

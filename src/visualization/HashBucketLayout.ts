@@ -47,7 +47,7 @@ export class HashBucketLayout {
             keys: this.kind === 'hash-map' ? [entry.key, entry.value] : undefined,
             label: this.kind === 'hash-map' ? 'KEY / VALUE' : 'VALUE',
             tone: active ? event?.type === 'insert' ? 'new' : 'active' : 'default',
-            status: active ? event?.type === 'insert' ? 'NEW' : event?.type === 'update' ? this.kind === 'hash-set' ? 'DUPLICATE' : 'UPDATED' : 'CURRENT' : undefined,
+            status: active ? event?.type === 'insert' ? 'NEW' : event?.type === 'result' && event.found ? 'FOUND' : event?.type === 'update' ? this.kind === 'hash-set' ? 'DUPLICATE' : 'UPDATED' : 'CURRENT' : undefined,
             opacity: 1,
           })
           edges.push({ id: `${previous}-${entry.id}`, from: previous, to: entry.id, directed: true, highlighted: active, opacity: 1 })
@@ -60,6 +60,11 @@ export class HashBucketLayout {
     return {
       kind: this.kind, nodes, edges, width: columns * spacing + 120,
       height: y, count: model.length,
+      hint: {
+        title: 'Hash function',
+        code: 'h(key) = ((key % b) + b) % b',
+        description: `Division hashing with b = ${model.bucketCount} buckets. Normalize the remainder so negative keys also map to a valid bucket; recalculate after resizing.`,
+      },
       focusId: event?.id && event.type !== 'remove' ? event.id : event?.bucket !== undefined ? `${this.kind}-bucket-${event.bucket}` : null,
     }
   }

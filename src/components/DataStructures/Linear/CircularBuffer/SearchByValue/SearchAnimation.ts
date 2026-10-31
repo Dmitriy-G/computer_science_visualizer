@@ -37,6 +37,6 @@ export class SearchAnimation extends AnimationSequence {
       const next = entries[index + 1]
       this.add(2, 'Advance with wraparound', 'Move to the next occupied slot in logical FIFO order.', 'index = (index + 1) % capacity', layout.create(model, { activeId: next?.id, activeSlot: next?.slot, visitedIds: visited }))
     }
-    this.add(3, found ? 'Value found' : 'Value not found', found ? `Found ${value}. The structure and its order are unchanged.` : `Value ${value} was not found. The structure is unchanged.`, found ? 'return current' : 'return notFound', layout.create(model, { activeId: this.foundId, activeStatus: 'FOUND', visitedIds: visited }))
+    this.add(3, found ? 'Value found' : 'Value not found', found ? `Found ${value} at physical slot ${found.slot}, FIFO position ${visited.length} (zero-based).` : `Value ${value} was not found.`, found ? 'return current' : 'return notFound', layout.create(model, { activeId: this.foundId, activeStatus: 'FOUND', visitedIds: visited }))
   }
 }

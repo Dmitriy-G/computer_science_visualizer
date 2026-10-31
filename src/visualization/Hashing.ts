@@ -8,6 +8,7 @@ export interface HashTrace {
   readonly id?: string
   readonly found?: boolean
   readonly hashIndex?: number
+  readonly chainIndex?: number
 }
 
 export type HashObserver = (event: HashTrace) => void

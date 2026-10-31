@@ -38,6 +38,12 @@ export interface SceneEdge {
   readonly bend?: number
 }
 
+export interface SceneHint {
+  readonly title: string
+  readonly description: string
+  readonly code?: string
+}
+
 export interface Scene {
   readonly kind: StructureKind
   readonly nodes: readonly SceneNode[]
@@ -47,6 +53,7 @@ export interface Scene {
   readonly focusId: string | null
   readonly count: number
   readonly countLabel?: string
+  readonly hint?: SceneHint
   readonly slots?: readonly SceneSlot[]
 }
 

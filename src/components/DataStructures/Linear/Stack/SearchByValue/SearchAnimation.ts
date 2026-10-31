@@ -30,7 +30,7 @@ export class SearchAnimation extends AnimationSequence {
       visited.push(entry.id)
       this.add(2, 'Follow the next pointer', 'Continue toward the bottom without changing the stack.', 'current = current.next', layout.create(entries, { visitedIds: visited }))
     }
-    const description = found ? `Found ${value}. The stack and its order are unchanged.` : `Value ${value} was not found. The stack is unchanged.`
+    const description = found ? `Found ${value} at depth ${visited.length} from the top (zero-based).` : `Value ${value} was not found.`
     this.add(3, found ? 'Value found' : 'Value not found', description, found ? 'return current' : 'return notFound', layout.create(entries, { activeId: this.foundId, activeStatus: 'FOUND', visitedIds: visited }))
   }
 }

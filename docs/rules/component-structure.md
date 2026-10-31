@@ -62,6 +62,11 @@ Keep data structure operations separate from rendering and animation timing.
 Keep the algorithm overview dialog in `src/components/AlgorithmInfo/`, outside
 the renderer. The app supplies its action information and open/close state.
 
+Scenes can supply an optional `hint` with a title, description, and optional code.
+The renderer displays it in a small block below the node-state legend and above
+the action pseudocode, outside the SVG. Omit the block entirely when no hint is
+supplied. Keep structure-specific hint content in its layout, not in the renderer.
+
 ## Shared action playback
 
 Use `src/components/ActionPlayback/` for the shared playback component and its

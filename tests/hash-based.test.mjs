@@ -196,7 +196,19 @@ test('every hash action produces independent scenes and commits its count only i
               assert.ok(node.y + (node.height ?? 66) / 2 <= step.scene.height)
             }
           }
-          assert.deepEqual(plan.steps.at(-1).scene, new Layout().create(plan.result))
+          const finalScene = plan.steps.at(-1).scene
+          const expectedScene = new Layout().create(plan.result)
+          const search = Action === SearchByKeyAnimation || Action === ContainsAnimation || Action === CheckMembershipAnimation
+          if (search) {
+            assert.match(plan.steps.at(-1).code, /^return /)
+            assert.ok(!plan.steps.some((step) => step.code === 'commit completed result'))
+            assert.deepEqual(finalScene.nodes.map(({ tone, status, ...node }) => node), expectedScene.nodes.map(({ tone, status, ...node }) => node))
+            assert.deepEqual(finalScene.edges.map(({ highlighted, ...edge }) => edge), expectedScene.edges.map(({ highlighted, ...edge }) => edge))
+            assert.deepEqual(finalScene.hint, expectedScene.hint)
+          } else {
+            assert.equal(plan.steps.at(-1).code, 'commit completed result')
+            assert.deepEqual(finalScene, expectedScene)
+          }
           const snapshots = JSON.stringify(plan.steps)
           plan.result.clear()
           assert.equal(JSON.stringify(plan.steps), snapshots)
@@ -206,6 +218,33 @@ test('every hash action produces independent scenes and commits its count only i
       }
     }
   }
+})
+
+test('searches finish on their located result while mutation completion is preserved', () => {
+  const map = new HashMap()
+  for (const key of [5, 13, 21]) map.put(key, key * 10)
+  const search = new SearchByKeyAnimation(map, 13)
+  const found = search.steps.at(-1)
+  assert.equal(found.title, 'Element found')
+  assert.match(found.description, /bucket 5, chain position 1/)
+  assert.match(found.description, /Stored value: 130/)
+  assert.equal(found.scene.focusId, map.get(13).id)
+  assert.equal(found.scene.nodes.find((node) => node.id === found.scene.focusId).status, 'FOUND')
+  assert.match(found.code, /^return matchingEntry/)
+  const miss = new SearchByKeyAnimation(map, 29).steps.at(-1)
+  assert.match(miss.description, /29 was not found in bucket 5/)
+  assert.match(miss.code, /^return notFound/)
+  const set = new HashSet()
+  set.add(13)
+  assert.match(new ContainsAnimation(set, 13).steps.at(-1).description, /Found value 13 in bucket 5/)
+  const emptyFilter = new BloomFilter()
+  const bit = emptyFilter.getIndices(17)[0]
+  const absent = new CheckMembershipAnimation(emptyFilter, 17).steps.at(-1)
+  assert.match(absent.description, /definitely absent/)
+  assert.ok(absent.description.includes(`bit ${bit} is zero`))
+  assert.equal(absent.scene.focusId, `bloom-bit-${bit}`)
+  assert.equal(new InsertAnimation(map, 13, 99).steps.at(-1).code, 'commit completed result')
+  assert.equal(new MapClear(map).steps.at(-1).code, 'commit completed result')
 })
 
 test('hash actions expose validated inputs, suitable menus, previews, and complete information', () => {

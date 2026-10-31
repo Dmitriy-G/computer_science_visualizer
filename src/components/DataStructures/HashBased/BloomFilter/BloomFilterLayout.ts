@@ -12,12 +12,17 @@ export class BloomFilterLayout {
         x: 60 + index % 8 * 90, y: 80 + Math.floor(index / 8) * 116,
         width: 50, height: 50, label: `BIT ${index}`, opacity: 1,
         tone: event?.bucket === index ? 'active' : bits[index] === 1 ? 'visited' : 'default',
-        status: event?.bucket === index ? event.type === 'bit' ? bits[index] === 1 ? 'SET' : 'ZERO' : 'HASH' : 'SET',
+        status: event?.bucket === index ? event.type === 'bit' || event.type === 'result' ? bits[index] === 1 ? 'SET' : 'ZERO' : 'HASH' : 'SET',
       })
     }
     return {
       kind: 'bloom-filter', nodes, edges: [], width: 760, height: 540,
       count: model.length, countLabel: 'add operations recorded',
+      hint: {
+        title: 'Hash function',
+        code: `h_i(value) = mix32(FNV1a32(String(value), seed_i)) % ${model.bitCount}`,
+        description: `Custom seeded FNV-1a-style hashing with unsigned 32-bit mixing. Use ${model.hashCount} different seeds (i = 0 to ${model.hashCount - 1}) to select positions in the ${model.bitCount}-bit array.`,
+      },
       focusId: event?.bucket === undefined ? null : `bloom-bit-${event.bucket}`,
     }
   }

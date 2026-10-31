@@ -33,6 +33,6 @@ export class SearchAnimation extends AnimationSequence {
       const next = entries[index + 1]
       this.add(2, 'Follow next', 'Move to the next node without changing any pointer.', 'current = current.next', layout.create(entries, { activeId: next?.id, visitedIds: visited }))
     }
-    this.add(3, found ? 'Value found' : 'Value not found', found ? `Found ${value}. The structure and its order are unchanged.` : `Value ${value} was not found. The structure is unchanged.`, found ? 'return current' : 'return notFound', layout.create(entries, { activeId: this.foundId, activeStatus: 'FOUND', visitedIds: visited }))
+    this.add(3, found ? 'Value found' : 'Value not found', found ? `Found ${value} at position ${visited.length} from the front (zero-based).` : `Value ${value} was not found.`, found ? 'return current' : 'return notFound', layout.create(entries, { activeId: this.foundId, activeStatus: 'FOUND', visitedIds: visited }))
   }
 }

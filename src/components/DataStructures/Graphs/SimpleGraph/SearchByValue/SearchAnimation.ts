@@ -38,9 +38,8 @@ export class SearchAnimation extends AnimationSequence {
     const last = path[path.length - 1]
     const success = last !== undefined && last.value === value
     this.foundId = success ? last.id : null
-    const message = success ? `Found ${value}` : `Value ${value} was not found`
+    const message = success ? `Found ${value} at vertex ${last.id.slice(6)}` : `Value ${value} was not found`
     const resultScene = AnimationSequence.mark(scene, this.foundId, visited, 'FOUND')
     this.add(3, success ? 'Element found' : 'No matching element', message, success ? 'return current' : 'return notFound', resultScene)
-    this.add(4, 'Search complete', `${message}. The graph is unchanged.`, '// no mutation', resultScene)
   }
 }

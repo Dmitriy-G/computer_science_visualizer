@@ -40,6 +40,5 @@ export class SearchAnimation extends AnimationSequence {
     const message = success ? `Index ${value} contains ${last.value}` : `Index ${value} is outside this structure of length ${model.length}`
     const resultScene = AnimationSequence.mark(scene, this.foundId, visited, 'FOUND')
     this.add(3, success ? 'Element found' : 'Index out of range', message, success ? `return array[${value}]` : 'return notFound', resultScene)
-    this.add(4, 'Search complete', `${message}. The array is unchanged.`, '// no mutation', resultScene)
   }
 }

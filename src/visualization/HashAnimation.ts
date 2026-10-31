@@ -24,18 +24,53 @@ export class HashAnimation<TModel extends HashActionModel<TModel>> extends Anima
     this.add(1, 'Start', operation === 'clear' ? 'Clear the structure without changing the committed model until completion.' : `Start with ${key}. Compute its hash before accessing storage.`, operation === 'clear' ? 'begin clear' : 'read input', layout.create(model))
     let conclusion = operation === 'insert' ? kind === 'bloom-filter' ? `Recorded an add operation for ${key}; distinct membership is not counted.` : `Stored ${key}.` : 'Operation complete.'
     const visited = new Set<string>()
+    const checkedBits: number[] = []
     this.result.apply(operation, key, value, (event) => {
-      const description = this.describeEvent(event, kind, operation)
+      if (kind === 'bloom-filter' && event.type === 'hash' && event.bucket !== undefined) checkedBits.push(event.bucket)
+      const description = event.type === 'result'
+        ? this.describeResult(event, kind, checkedBits)
+        : this.describeEvent(event, kind, operation)
       if (event.type === 'result' || event.type === 'update' || event.type === 'remove' || event.type === 'clear') conclusion = description[1]
       const scene = layout.create(this.result, event)
       const nodes: SceneNode[] = []
       for (const node of scene.nodes) {
         nodes.push(node.tone === 'default' && visited.has(node.id) ? { ...node, tone: 'visited', status: 'VISITED' } : node)
       }
-      this.add(event.type === 'hash' ? 2 : 3, description[0], description[1], description[2], { ...scene, nodes, count: model.length })
+      this.add(event.type === 'result' && operation === 'search-value' ? 4 : event.type === 'hash' ? 2 : 3, description[0], description[1], description[2], { ...scene, nodes, count: model.length })
       if (event.type === 'compare' && event.id) visited.add(event.id)
     })
-    this.add(4, 'Finish', conclusion, 'commit completed result', layout.create(this.result))
+    if (operation !== 'search-value') this.add(4, 'Finish', conclusion, 'commit completed result', layout.create(this.result))
+  }
+
+  private describeResult(event: HashTrace, kind: StructureKind, checkedBits: readonly number[]): readonly [string, string, string] {
+    if (kind === 'bloom-filter') {
+      if (event.found) {
+        return [
+          'Possibly present',
+          `${event.key} is possibly present: checked bit indices ${checkedBits.join(', ')} are all one. This can be a false positive; verify against the original data.`,
+          `return possiblyPresent // bits ${checkedBits.join(', ')} are all 1`,
+        ]
+      }
+      return [
+        'Definitely absent',
+        `${event.key} is definitely absent: bit ${event.bucket} is zero. Checked bit indices: ${checkedBits.join(', ')}.`,
+        `return definitelyAbsent // bit ${event.bucket} is 0`,
+      ]
+    }
+    if (event.found) {
+      const target = kind === 'hash-map' ? `key ${event.key}` : `value ${event.key}`
+      const storedValue = kind === 'hash-map' ? ` Stored value: ${event.value}.` : ''
+      return [
+        'Element found',
+        `Found ${target} in bucket ${event.bucket}, chain position ${event.chainIndex} (zero-based).${storedValue}`,
+        `return matchingEntry // bucket ${event.bucket}, chain position ${event.chainIndex}`,
+      ]
+    }
+    return [
+      'Element not found',
+      `${kind === 'hash-map' ? 'Key' : 'Value'} ${event.key} was not found in bucket ${event.bucket}.`,
+      `return notFound // bucket ${event.bucket} has no match`,
+    ]
   }
 
   private describeEvent(event: HashTrace, kind: StructureKind, operation: HashOperation): readonly [string, string, string] {
@@ -50,7 +85,7 @@ export class HashAnimation<TModel extends HashActionModel<TModel>> extends Anima
       case 'rehash': return ['Verify new bucket', `Key ${event.key} now belongs to bucket ${event.bucket} under the new bucket count.`, 'bucket = normalizedModulo(node.key, newBucketCount)']
       case 'bit': return ['Access bit', operation === 'clear' ? `Reset bit ${event.bucket} to zero.` : operation === 'insert' ? `Set bit ${event.bucket} to one; a previously set bit stays one.` : `Read bit ${event.bucket}: ${event.value}.`, operation === 'search-value' ? 'if bits[index] == 0: return definitelyAbsent' : `bits[index] = ${operation === 'clear' ? 0 : 1}`]
       case 'clear': return ['Cleared', bloom ? 'All bits are zero and the add-operation count is reset. Previously added values are no longer represented.' : 'Every entry is released. Keep the bucket allocation so the structure can be reused.', bloom ? 'addCount = 0' : 'count = 0']
-      case 'result': return ['Membership result', bloom ? event.found ? `${event.key} is possibly present: all checked bits are one. This can be a false positive; verify against the original data.` : `${event.key} is definitely absent: at least one checked bit is zero.` : event.found ? kind === 'hash-map' ? `Found key ${event.key} with value ${event.value}.` : `${event.key} is present.` : `Key ${event.key} is absent; the structure stays unchanged.`, bloom ? 'return all checked bits are one' : event.found ? 'return matching entry' : 'return notFound']
+      case 'result': return this.describeResult(event, kind, [])
     }
   }
 

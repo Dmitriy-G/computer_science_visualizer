@@ -44,6 +44,5 @@ export class SearchAnimation extends AnimationSequence {
     const message = success ? `Found ${value} at index ${path.length - 1}` : `Value ${value} was not found`
     const resultScene = AnimationSequence.mark(scene, this.foundId, visited, 'FOUND')
     this.add(3, success ? 'Element found' : 'No matching element', message, success ? 'return current' : 'return notFound', resultScene)
-    this.add(4, 'Search complete', `${message}. The list is unchanged.`, '// no mutation', resultScene)
   }
 }

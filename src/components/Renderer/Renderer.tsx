@@ -284,6 +284,13 @@ export default class Renderer extends Component<
                 </span>
               </div>
             )}
+            {scene?.hint && (
+              <aside className="structure-hint" aria-label={scene.hint.title}>
+                <strong>{scene.hint.title}</strong>
+                {scene.hint.code && <pre><code>{scene.hint.code}</code></pre>}
+                <p>{scene.hint.description}</p>
+              </aside>
+            )}
             <div id="renderer-code" className="renderer-code-host" />
             <div
               className="renderer-viewport"

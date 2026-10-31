@@ -48,6 +48,19 @@ export abstract class TreeActionAnimation<TModel extends TracedTreeModel<TModel>
     this.add(5, title, description, code, this.factory.create(this.result, { activeId, status }))
   }
 
+  protected searchLocation(id: string, key: number): string {
+    const scene = this.steps[this.steps.length - 1].scene
+    for (const node of scene.nodes) {
+      if (node.id !== id) continue
+      if (node.keys) {
+        const role = node.label.includes('leaf') ? 'leaf' : 'page'
+        return `${role} [${node.keys.join(', ')}], key index ${node.keys.indexOf(key)} (zero-based)`
+      }
+      return `depth ${Math.max(0, this.visited.length - 1)} (root depth is 0)`
+    }
+    return 'the highlighted node'
+  }
+
   public onTreeChange(event: TreeTraceEvent): void {
     if (event.pendingId) this.pendingId = event.pendingId
     const requestedPhase = event.phase === 'visit' && this.phase >= 3 ? 4

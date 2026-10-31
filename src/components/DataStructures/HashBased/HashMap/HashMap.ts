@@ -51,13 +51,15 @@ export class HashMap {
     const bucket = Hashing.bucket(key, this.bucketCount)
     trace?.({ type: 'hash', key, bucket })
     let node = this.buckets[bucket]
+    let chainIndex = 0
     while (node) {
       trace?.({ type: 'compare', key, bucket, id: node.id })
       if (node.key === key) {
-        trace?.({ type: 'result', key, value: node.value, bucket, id: node.id, found: true })
+        trace?.({ type: 'result', key, value: node.value, bucket, chainIndex, id: node.id, found: true })
         return { id: node.id, key, value: node.value, bucket }
       }
       node = node.next
+      chainIndex += 1
     }
     trace?.({ type: 'result', key, bucket, found: false })
     return null
