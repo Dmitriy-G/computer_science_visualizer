@@ -1,6 +1,6 @@
 import type { StructureKind } from './Scene.ts'
 
-export type ActionKind = 'insert-middle' | 'insert-start' | 'insert-end' | 'insert' | 'search-value' | 'search-index' | 'delete-value' | 'push' | 'pop' | 'peek' | 'clear' | 'enqueue' | 'dequeue' | 'push-front' | 'push-back' | 'pop-front' | 'pop-back' | 'peek-front' | 'peek-back' | 'delete-start' | 'delete-end' | 'range-from-value'
+export type ActionKind = 'insert-middle' | 'insert-start' | 'insert-end' | 'insert' | 'search-value' | 'search-index' | 'delete-value' | 'push' | 'pop' | 'peek' | 'clear' | 'enqueue' | 'dequeue' | 'push-front' | 'push-back' | 'pop-front' | 'pop-back' | 'peek-front' | 'peek-back' | 'delete-start' | 'delete-end' | 'range-from-value' | 'starts-with' | 'extract-min' | 'update-index' | 'add-index' | 'prefix-sum' | 'range-sum' | 'search-overlap' | 'flush' | 'compact' | 'build-expression' | 'evaluate' | 'traverse-preorder' | 'traverse-inorder' | 'traverse-postorder'
 
 export interface ActionChoice {
   readonly kind: ActionKind
@@ -10,6 +10,52 @@ export interface ActionChoice {
 
 export class ActionCatalog {
   public static getActions(structure: StructureKind): readonly ActionChoice[] {
+    if (structure === 'ast') return [
+      { kind: 'build-expression', title: 'Build from expression', description: 'Parse an arithmetic expression, preserving precedence and grouping.' },
+      { kind: 'traverse-preorder', title: 'Traverse preorder', description: 'Visit each operator before its operands: root, left, right.' },
+      { kind: 'traverse-inorder', title: 'Traverse inorder', description: 'Visit binary nodes between operands; visit unary signs before their operand.' },
+      { kind: 'traverse-postorder', title: 'Traverse postorder', description: 'Visit operands before their operator: left, right, root.' },
+      { kind: 'evaluate', title: 'Evaluate expression', description: 'Evaluate operands and apply operators, showing the computed result.' },
+      { kind: 'clear', title: 'Clear', description: 'Release syntax nodes after their children and empty the AST.' },
+    ]
+    if (structure === 'trie') return [
+      { kind: 'insert', title: 'Insert a word', description: 'Follow shared prefixes, create missing characters, and mark a word end.' },
+      { kind: 'search-value', title: 'Search by word', description: 'Follow the characters and require a word-end marker.' },
+      { kind: 'starts-with', title: 'Check a prefix', description: 'Check whether a character prefix exists, without requiring a word end.' },
+      { kind: 'delete-value', title: 'Delete a word', description: 'Unmark a word and prune only its unused suffix nodes.' },
+      { kind: 'clear', title: 'Clear', description: 'Release all character nodes and keep the empty root.' },
+    ]
+    if (structure === 'heap') return [
+      { kind: 'insert', title: 'Insert a value', description: 'Append a leaf and sift up in a binary min-heap. Duplicates are allowed.' },
+      { kind: 'extract-min', title: 'Extract minimum', description: 'Remove the root, replace it with the last leaf, and sift down.' },
+      { kind: 'peek', title: 'Peek minimum', description: 'Read the root without removing it.' },
+      { kind: 'clear', title: 'Clear', description: 'Release all heap entries from the last slot.' },
+    ]
+    if (structure === 'segment-tree') return [
+      { kind: 'update-index', title: 'Update a value', description: 'Set one array value and recompute sums on its path to the root.' },
+      { kind: 'range-sum', title: 'Range sum', description: 'Sum an inclusive index range using cached covered segments.' },
+      { kind: 'clear', title: 'Clear (reset to zero)', description: 'Reset all array values and sums to zero, preserving the indexed length.' },
+    ]
+    if (structure === 'fenwick-tree') return [
+      { kind: 'add-index', title: 'Add to a value', description: 'Add a delta at an array index and update its BIT ancestors.' },
+      { kind: 'prefix-sum', title: 'Prefix sum', description: 'Sum from array index zero through the chosen inclusive index.' },
+      { kind: 'range-sum', title: 'Range sum', description: 'Subtract two prefix sums to sum an inclusive index range.' },
+      { kind: 'clear', title: 'Clear (reset to zero)', description: 'Reset values and BIT cells to zero while keeping the indexed length.' },
+    ]
+    if (structure === 'r-tree') return [
+      { kind: 'insert', title: 'Insert a rectangle', description: 'Choose least enlargement, insert a spatial record, and split overflowing pages.' },
+      { kind: 'search-overlap', title: 'Search overlapping rectangles', description: 'Prune disjoint bounding rectangles and report intersecting record IDs.' },
+      { kind: 'delete-value', title: 'Delete by rectangle ID', description: 'Locate a rectangle ID, remove it, condense pages, and reinsert orphan records.' },
+      { kind: 'clear', title: 'Clear', description: 'Release all spatial records and pages.' },
+    ]
+    if (structure === 'lsm-tree') return [
+      { kind: 'insert', title: 'Insert / update', description: 'Write a key/value version to a sorted memtable; flush at four distinct keys.' },
+      { kind: 'search-value', title: 'Look up a key', description: 'Search memory and sorted runs from newest to oldest; respect tombstones.' },
+      { kind: 'delete-value', title: 'Delete a key (tombstone)', description: 'Write a tombstone that hides older values until full compaction.' },
+      { kind: 'flush', title: 'Flush memtable', description: 'Copy the sorted memtable into a new immutable level-0 run.' },
+      { kind: 'compact', title: 'Compact all runs', description: 'Flush memory, merge all sorted runs, and discard obsolete versions and covered tombstones.' },
+      { kind: 'clear', title: 'Clear', description: 'Release memory records and sorted runs.' },
+    ]
     if (structure === 'hash-map') {
       return [
         { kind: 'insert', title: 'Insert / update', description: 'Store a key-value pair or update an existing key; rehash when needed.' },

@@ -134,7 +134,7 @@ export default class Renderer extends Component<
         key={node.id}
         className={`scene-node tone-${node.tone}${node.nodeColor ? ` tree-color-${node.nodeColor}` : ''}`}
         style={style}
-        aria-label={`${node.keys ? node.keys.length ? node.keys.join(', ') : 'empty page' : node.value}, ${node.label}${node.tone === 'active' ? ', current node' : ''}`}
+        aria-label={`${node.keys ? node.keys.length ? node.keys.join(', ') : 'empty page' : node.displayValue ?? node.value}, ${node.label}${node.tone === 'active' ? ', current node' : ''}`}
       >
         <rect
           className="node-halo"
@@ -156,9 +156,9 @@ export default class Renderer extends Component<
           className="node-value"
           textAnchor="middle"
           dominantBaseline="central"
-          style={{ fontSize: Math.min(21, (width - 16) * 1.6 / String(node.value).length) }}
+          style={{ fontSize: Math.min(21, (width - 16) * 1.6 / String(node.displayValue ?? node.value).length) }}
         >
-          {node.value}
+          {node.displayValue ?? node.value}
         </text>}
         <text
           className="node-label"

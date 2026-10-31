@@ -28,6 +28,7 @@ export abstract class TreeActionAnimation<TModel extends TracedTreeModel<TModel>
   private readonly originalSize: number
   private readonly factory: TreeSceneFactory<TModel>
   private readonly visited: string[] = []
+  protected get visitedIds(): readonly string[] { return this.visited }
   private pendingId: string | undefined
   private readonly clearing: boolean
   private phase = 1

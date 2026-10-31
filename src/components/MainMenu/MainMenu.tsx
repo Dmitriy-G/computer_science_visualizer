@@ -131,6 +131,61 @@ export default class MainMenu extends Component<
           </>
         )
         break
+      case 'trie':
+      case 'ast':
+        drawing = (
+          <>
+            <path d="M16 8 7 21m9-13 9 13" />
+            <text x="13" y="9" stroke="none" fill="currentColor" fontSize="11">{kind === 'ast' ? '+' : 'a'}</text>
+            <text x="3" y="29" stroke="none" fill="currentColor" fontSize="11">{kind === 'ast' ? '2' : 'b'}</text>
+            <text x="23" y="29" stroke="none" fill="currentColor" fontSize="11">{kind === 'ast' ? '3' : 'c'}</text>
+          </>
+        )
+        break
+      case 'heap':
+        drawing = (
+          <>
+            <path d="M16 10 7 22m9-12 9 12" />
+            <circle cx="16" cy="6" r="4" />
+            <circle cx="6" cy="25" r="4" />
+            <circle cx="26" cy="25" r="4" />
+          </>
+        )
+        break
+      case 'segment-tree':
+        drawing = (
+          <>
+            <rect x="10" y="3" width="12" height="7" rx="2" />
+            <path d="m13 10-7 10m13-10 7 10" />
+            <rect x="1" y="21" width="11" height="7" rx="2" />
+            <rect x="20" y="21" width="11" height="7" rx="2" />
+            <path d="M14 6h4M16 4v4" />
+          </>
+        )
+        break
+      case 'fenwick-tree':
+        drawing = <path d="M4 27V17h6v10m5 0V10h6v17m5 0V3h5v24M7 17V8h11m0 2V3h11" />
+        break
+      case 'r-tree':
+        drawing = (
+          <>
+            <rect x="2" y="3" width="28" height="26" rx="2" />
+            <rect x="5" y="7" width="14" height="13" rx="1" />
+            <rect x="14" y="15" width="12" height="10" rx="1" />
+          </>
+        )
+        break
+      case 'lsm-tree':
+        drawing = (
+          <>
+            <rect x="11" y="2" width="10" height="6" rx="1" />
+            <path d="M16 9v3m-2-2 2 2 2-2" />
+            <rect x="6" y="14" width="20" height="6" rx="1" />
+            <rect x="2" y="24" width="28" height="6" rx="1" />
+            <path d="M12 14v6m8-6v6M9 24v6m7-6v6m7-6v6" />
+          </>
+        )
+        break
       case 'binary-tree':
       case 'avl-tree':
       case 'red-black-tree':

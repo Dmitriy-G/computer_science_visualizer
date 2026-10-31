@@ -167,6 +167,14 @@ test('every structure preview has ten elements and valid edge endpoints', () => 
       assert.equal(scene.countLabel, 'add operations recorded')
     } else if (structure.kind === 'hash-map' || structure.kind === 'hash-set') {
       assert.equal(scene.nodes.filter((node) => node.id.startsWith('hash-entry-')).length, 10)
+    } else if (structure.kind === 'trie') {
+      assert.equal(scene.nodes.filter((node) => node.label === 'WORD END').length, 10)
+    } else if (structure.kind === 'segment-tree') {
+      assert.equal(scene.nodes.filter((node) => /^\[(\d+), \1\]$/.test(node.label)).length, 10)
+    } else if (structure.kind === 'r-tree') {
+      assert.equal(scene.nodes.filter((node) => node.label.startsWith('rectangle ID')).length, 10)
+    } else if (structure.kind === 'lsm-tree') {
+      assert.equal(scene.nodes.filter((node) => node.label.startsWith('seq ')).length, 10)
     } else {
       const records = structure.kind === 'b-plus-tree'
         ? scene.nodes.filter((node) => node.label.includes('leaf'))

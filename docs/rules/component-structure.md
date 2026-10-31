@@ -27,6 +27,12 @@ same action folder. Import the structure's model and layout from the parent
 folder, using relative imports and matching the exact directory casing.
 Tree action components use key terminology: `SearchByKey`, `DeleteByKey`, and
 the B+ Tree's `RangeFromKey`. Match their class, folder, `.tsx`, and `.css` names.
+Trie uses word terminology (`SearchByWord`, `DeleteByWord`, and `StartsWith`),
+and R-Tree deletes spatial records with `DeleteById`. Segment and Fenwick actions
+use `Update` / `Add`, `PrefixSum`, and `RangeSum` as appropriate.
+AST keeps its grammar parser beside its model and uses `Build`, `Preorder`,
+`Inorder`, `Postorder`, `Evaluate`, and `Clear` action folders. Reuse its parser
+for expression validation in the shared input dialog.
 
 ```text
 src/components/
@@ -118,7 +124,14 @@ links, identifying implementation variants where relevant.
 Shared value/index dialogs belong in `src/components/ActionInput/`, with their
 request configuration and validation in `src/visualization/ActionInputRequest.ts`.
 Reuse them for Array, Linked list, Stack, Queue, Deque, Doubly linked list,
-Circular buffer, all five tree types, Hash Map, Hash Set, and Bloom Filter.
+Circular buffer, all tree types, Hash Map, Hash Set, and Bloom Filter.
+The additional Trie, Heap, Segment Tree, Fenwick Tree, R-Tree, LSM Tree, and AST
+use structured fields in the same dialog. Keep field validation in
+`src/visualization/StructuredTreeInput.ts`, with its request attached to
+`ActionInputRequest`. Word, expression, and rectangle input must not be coerced through the
+legacy single-number callback. Reuse the shared playback session through
+`StructuredTreeAction`; keep each action's component, CSS, sequence, and
+complexity information in its own action folder.
 Hash Map insertion collects
 separate whole-number key and value fields; the second value is not a range bound.
 These dialogs are separate from the info dialogs and start an action only when

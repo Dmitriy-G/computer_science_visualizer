@@ -18,6 +18,118 @@ export interface StructureOverview {
 
 export class StructureInformation {
   private static readonly overviews: Record<StructureKind, StructureOverview> = {
+    'ast': {
+      summary: 'An Abstract Syntax Tree represents the structure of source code with nodes for meaningful constructs rather than every punctuation mark. This arithmetic subset stores integer literals, unary signs, and binary operators; parentheses guide grouping, and the default expression has ten syntax nodes.',
+      useCases: [
+        { area: 'Compilers', description: 'Represent parsed source constructs so later stages can check types and generate executable code.' },
+        { area: 'Interpreters', description: 'Evaluate expression nodes by first computing their operands and then applying each operator.' },
+        { area: 'Code analysis', description: 'Traverse structured syntax to identify suspicious patterns or enforce coding rules.' },
+        { area: 'Source transformations', description: 'Rewrite selected constructs while preserving their syntactic relationships, supporting transpilation and automated refactoring.' },
+      ],
+      technologies: [
+        { name: 'Python (ast module)', url: 'https://docs.python.org/3/library/ast.html' },
+        { name: 'Babel (@babel/parser)', url: 'https://babeljs.io/docs/babel-parser' },
+        { name: 'TypeScript (Compiler API)', url: 'https://github.com/microsoft/TypeScript/wiki/Using-the-Compiler-API' },
+        { name: 'Clang (C/C++ AST)', url: 'https://clang.llvm.org/docs/IntroductionToTheClangAST.html' },
+        { name: 'ESLint (AST visitors for custom rules)', url: 'https://eslint.org/docs/latest/extend/custom-rules' },
+      ],
+    },
+    'trie': {
+      summary: 'A Trie shares character paths among words and uses word-end markers to distinguish a stored word from a prefix. This example stores lowercase a-z words up to 32 letters and prunes only unused suffix nodes.',
+      useCases: [
+        { area: 'Autocomplete', description: 'Find the branch of words sharing a typed prefix.' },
+        { area: 'Dictionary lookup', description: 'Check character transitions and the word-end marker for exact membership.' },
+        { area: 'Prefix routing', description: 'Trie variants select address or path rules by matching prefixes.' },
+        { area: 'Lexical analysis', description: 'Recognize keywords through shared character transitions.' },
+      ],
+      technologies: [
+        { name: 'pygtrie (character and string tries)', url: 'https://pygtrie.readthedocs.io/en/latest/index.html' },
+        { name: 'Apache Commons Collections (PatriciaTrie variant)', url: 'https://commons.apache.org/proper/commons-collections/apidocs/org/apache/commons/collections4/trie/PatriciaTrie.html' },
+        { name: 'MARISA (compact static trie)', url: 'https://github.com/s-yata/marisa-trie' },
+        { name: 'Cedar (double-array trie)', url: 'https://www.tkl.iis.u-tokyo.ac.jp/~ynaga/cedar/' },
+        { name: 'trie-rs (LOUDS-based Rust trie)', url: 'https://docs.rs/trie-rs/latest/trie_rs/' },
+      ],
+    },
+    'heap': {
+      summary: 'A binary min-heap is a complete binary tree in which every parent is no greater than its children, so the root holds a minimum. This array-backed example allows duplicates and restores order with sift-up and sift-down.',
+      useCases: [
+        { area: 'Priority scheduling', description: 'Retrieve the smallest pending priority without sorting all queued work.' },
+        { area: 'Shortest paths', description: 'Keep candidate distances in a priority queue for Dijkstra-style algorithms.' },
+        { area: 'Event simulation', description: 'Remove the earliest event and insert newly scheduled events.' },
+        { area: 'Merging sorted streams', description: 'Keep one candidate per stream and repeatedly extract the smallest.' },
+      ],
+      technologies: [
+        { name: 'Python (heapq min-heap)', url: 'https://docs.python.org/3/library/heapq.html' },
+        { name: 'Java (PriorityQueue)', url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/PriorityQueue.html' },
+        { name: 'Rust (BinaryHeap, max-heap by default)', url: 'https://doc.rust-lang.org/std/collections/struct.BinaryHeap.html' },
+        { name: '.NET (PriorityQueue, quaternary min-heap variant)', url: 'https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.priorityqueue-2' },
+        { name: 'Boost.Heap (multiple variants)', url: 'https://www.boost.org/doc/libs/latest/doc/html/heap.html' },
+      ],
+    },
+    'segment-tree': {
+      summary: 'A Segment Tree caches aggregates over recursively divided array intervals. This example uses exact integer sums, point assignment, and inclusive range queries; clear resets values to zero while preserving indices.',
+      useCases: [
+        { area: 'Range totals', description: 'Combine cached interval sums after individual values change.' },
+        { area: 'Range extremes', description: 'Variants using minimum or maximum answer interval-extreme queries after updates.' },
+        { area: 'Online analytics', description: 'Maintain aggregates as measurements change while serving interval queries.' },
+        { area: 'Geometric sweeps', description: 'Specialized variants track coverage counts across changing coordinate intervals.' },
+      ],
+      technologies: [
+        { name: 'AtCoder Library (segtree)', url: 'https://atcoder.github.io/ac-library/production/document_en/segtree.html' },
+        { name: 'KACTL (SegmentTree)', url: 'https://github.com/kth-competitive-programming/kactl/blob/main/content/data-structures/SegmentTree.h' },
+        { name: 'ac-library-rs (Rust port)', url: 'https://github.com/rust-lang-ja/ac-library-rs/blob/master/src/segtree.rs' },
+        { name: 'NyaanNyaan library (segment tree)', url: 'https://github.com/NyaanNyaan/library/blob/master/segment-tree/segment-tree.hpp' },
+        { name: 'maspypy library (monoid segment tree)', url: 'https://github.com/maspypy/library/blob/main/ds/segtree/segtree.hpp' },
+      ],
+    },
+    'fenwick-tree': {
+      summary: 'A Fenwick Tree, or Binary Indexed Tree (BIT), stores prefix blocks in a compact array and navigates them using the least significant set bit. This example uses zero-based input indices, one-based BIT cells, exact sums, and additive updates.',
+      useCases: [
+        { area: 'Running totals', description: 'Update counters and query the total through a chosen position.' },
+        { area: 'Frequency tables', description: 'Count observations at ranked values and query cumulative frequencies.' },
+        { area: 'Inversion counting', description: 'Count previously seen larger or smaller ranks while scanning a sequence.' },
+        { area: 'Weighted selection', description: 'BIT variants search cumulative totals as individual weights change.' },
+      ],
+      technologies: [
+        { name: 'AtCoder Library (fenwick_tree)', url: 'https://atcoder.github.io/ac-library/production/document_en/fenwicktree.html' },
+        { name: 'KACTL (FenwickTree)', url: 'https://github.com/kth-competitive-programming/kactl/blob/main/content/data-structures/FenwickTree.h' },
+        { name: 'ac-library-rs (Rust port)', url: 'https://github.com/rust-lang-ja/ac-library-rs/blob/master/src/fenwicktree.rs' },
+        { name: 'NyaanNyaan library (binary indexed tree)', url: 'https://github.com/NyaanNyaan/library/blob/master/data-structure/binary-indexed-tree.hpp' },
+        { name: 'maspypy library (Fenwick tree)', url: 'https://github.com/maspypy/library/blob/main/ds/fenwicktree/fenwicktree.hpp' },
+      ],
+    },
+    'r-tree': {
+      summary: 'An R-Tree groups spatial records inside covering rectangles so overlap queries can skip disjoint branches. This order-4 example uses quadratic splitting, at least two entries per non-root page, and condensation with record reinsertion after deletion.',
+      useCases: [
+        { area: 'Map searches', description: 'Retrieve object bounds intersecting a map viewport or selection.' },
+        { area: 'Collision detection', description: 'Find potentially colliding bounds before detailed geometric tests.' },
+        { area: 'Spatial databases', description: 'Reduce candidate records for intersection queries over geometric objects.' },
+        { area: 'Drawing tools', description: 'Locate shapes in a selected region without scanning the whole drawing.' },
+      ],
+      technologies: [
+        { name: 'SQLite (R*Tree variant)', url: 'https://www.sqlite.org/rtree.html' },
+        { name: 'libspatialindex (R-tree variants)', url: 'https://libspatialindex.org/' },
+        { name: 'Boost.Geometry (R-tree)', url: 'https://www.boost.org/doc/libs/latest/libs/geometry/doc/html/geometry/spatial_indexes/introduction.html' },
+        { name: 'RBush (JavaScript R-tree variant)', url: 'https://github.com/mourner/rbush' },
+        { name: 'Python Rtree (libspatialindex wrapper)', url: 'https://rtree.readthedocs.io/en/latest/' },
+      ],
+    },
+    'lsm-tree': {
+      summary: 'An LSM Tree buffers writes and merges immutable sorted runs, with tombstones hiding deleted values. This in-memory teaching model uses a sorted-array memtable of four distinct keys, automatic flushes, and manual full compaction, without disk I/O or a write-ahead log.',
+      useCases: [
+        { area: 'Write-heavy storage', description: 'Buffer changing keys and flush sorted tables to favor sequential storage writes.' },
+        { area: 'Version reconciliation', description: 'Keep newer values ahead of older runs and discard superseded versions in compaction.' },
+        { area: 'Persistent deletion', description: 'Keep a tombstone visible while older stored values still exist.' },
+        { area: 'Storage maintenance', description: 'Merge sorted runs to reduce lookup work and reclaim obsolete versions.' },
+      ],
+      technologies: [
+        { name: 'RocksDB (LSM storage engine)', url: 'https://github.com/facebook/rocksdb/wiki/RocksDB-Overview' },
+        { name: 'LevelDB (sorted tables and compaction)', url: 'https://github.com/google/leveldb/blob/main/doc/impl.md' },
+        { name: 'Apache Cassandra (SSTables and compaction)', url: 'https://cassandra.apache.org/doc/latest/cassandra/managing/operating/compaction/overview.html' },
+        { name: 'Apache HBase (memstores and StoreFiles)', url: 'https://hbase.apache.org/book.html#architecture' },
+        { name: 'Pebble (Go LSM storage engine)', url: 'https://github.com/cockroachdb/pebble' },
+      ],
+    },
     'hash-map': {
       summary: 'A hash table or hash map associates unique keys with values by hashing each key to a storage bucket. This visualizer resolves collisions with linked chains and doubles the bucket count before a new entry would exceed a 0.75 load factor.',
       useCases: [

@@ -1,9 +1,10 @@
-export type StructureKind = 'linked-list' | 'array' | 'binary-tree' | 'graph' | 'stack' | 'queue' | 'deque' | 'doubly-linked-list' | 'circular-buffer' | 'avl-tree' | 'red-black-tree' | 'b-tree' | 'b-plus-tree' | 'hash-map' | 'hash-set' | 'bloom-filter'
+export type StructureKind = 'linked-list' | 'array' | 'binary-tree' | 'graph' | 'stack' | 'queue' | 'deque' | 'doubly-linked-list' | 'circular-buffer' | 'avl-tree' | 'red-black-tree' | 'b-tree' | 'b-plus-tree' | 'hash-map' | 'hash-set' | 'bloom-filter' | 'trie' | 'heap' | 'segment-tree' | 'fenwick-tree' | 'r-tree' | 'lsm-tree' | 'ast'
 export type NodeTone = 'default' | 'visited' | 'active' | 'new'
 
 export interface SceneNode {
   readonly id: string
   readonly value: number
+  readonly displayValue?: string
   readonly x: number
   readonly y: number
   readonly label: string

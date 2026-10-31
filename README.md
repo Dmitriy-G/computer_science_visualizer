@@ -13,7 +13,7 @@ Open the menu and choose **Data structures common operations**, then a group:
 | Group | Structures |
 | --- | --- |
 | Linear | Array, Linked list, Stack, Queue, Deque, Doubly linked list, Circular buffer |
-| Trees | Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, B+ Tree |
+| Trees | Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, B+ Tree, Trie, Heap (min-heap), Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, Abstract Syntax Tree (AST) |
 | Graphs | Graph |
 | Hash-based | Hash Table / Hash Map, Hash Set, Bloom Filter |
 
@@ -22,9 +22,12 @@ card. Examples start with ten elements; Bloom Filter records ten add operations
 rather than an exact distinct-member count. The back button reopens the current
 group's structure list.
 
-Actions that need input open a numeric dialog. Hash Map insertion collects a
+Actions that need input open a validated dialog. Hash Map insertion collects a
 key and a value; B+ Tree range search collects inclusive minimum and maximum
-keys. Animations run automatically at normal speed. The header shows the current
+keys. Trie accepts lowercase words or prefixes; range indexes collect indices
+and values; R-Tree accepts rectangle coordinates or a rectangle ID; LSM writes
+collect a key and value. Animations run automatically at normal speed. The header
+shows the current
 explanation and progress; pseudocode appears above the diagram. **Reset** cancels
 playback and restores the default example. Reduced-motion preferences suppress
 visual transitions.
@@ -38,6 +41,32 @@ Small info buttons open action complexity explanations. The large info button
 opens a structure introduction, use-case table, and technology links. Dialogs
 leave playback running. Hash-based structures also show their hash function
 below the legend.
+
+The additional tree structures offer these actions:
+
+| Structure | Allowed actions |
+| --- | --- |
+| Trie | Insert a word, Search by word, Check a prefix, Delete a word, Clear |
+| Heap (min-heap) | Insert a value, Extract minimum, Peek minimum, Clear |
+| Segment Tree | Update a value, Range sum, Clear (reset to zero) |
+| Fenwick Tree (BIT) | Add to a value, Prefix sum, Range sum, Clear (reset to zero) |
+| R-Tree | Insert a rectangle, Search overlapping rectangles, Delete by rectangle ID, Clear |
+| LSM Tree | Insert / update, Look up a key, Delete a key (tombstone), Flush memtable, Compact all runs, Clear |
+| Abstract Syntax Tree (AST) | Build from expression, Traverse preorder, Traverse inorder, Traverse postorder, Evaluate expression, Clear |
+
+Segment and Fenwick queries use inclusive zero-based array indices and exact
+integer sums. Their Clear action preserves length and zeroes the values so
+point operations remain available. R-Tree uses order-4 pages with quadratic
+splitting and inclusive overlap, including touching edges. LSM Tree is an
+in-memory teaching model with a sorted-array memtable, a four-key flush threshold,
+immutable runs, and full compaction; it does not simulate disk I/O or a WAL.
+
+AST models arithmetic expressions with integer literals, unary signs, `+`, `-`,
+`*`, `/`, and parentheses (up to 128 characters). The default expression
+`-(8 + 2) * (9 - 3) / 2` has ten syntax nodes and evaluates to `-30`.
+Traversal results list node tokens, using `neg` and `pos` for unary signs;
+inorder does not reconstruct parentheses. Evaluation displays the computed value
+and reports division by zero or unsafe integer results without changing the tree.
 
 ## Project layout
 

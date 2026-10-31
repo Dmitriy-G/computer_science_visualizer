@@ -1,8 +1,10 @@
 import { ActionCatalog } from './ActionCatalog.ts'
 import type { ActionKind } from './ActionCatalog.ts'
 import type { StructureKind } from './Scene.ts'
+import { StructuredTreeInput } from './StructuredTreeInput.ts'
 
 export class ActionInputRequest {
+  public readonly structured: StructuredTreeInput | null
   public readonly structure: StructureKind
   public readonly action: ActionKind
   public readonly title: string
@@ -19,6 +21,7 @@ export class ActionInputRequest {
 
   private constructor(structure: StructureKind, action: ActionKind, title: string, description: string, size: number) {
     this.structure = structure
+    this.structured = StructuredTreeInput.create(structure, action, size)
     this.action = action
     this.title = title
     this.rangeInput = action === 'range-from-value'
@@ -28,13 +31,13 @@ export class ActionInputRequest {
     const indexInput = action === 'search-index'
     const keyInput = structure === 'binary-tree' || structure === 'avl-tree' ||
       structure === 'red-black-tree' || structure === 'b-tree' || structure === 'b-plus-tree' || structure === 'hash-map'
-    this.minimum = indexInput ? 0 : Number.MIN_SAFE_INTEGER
-    this.maximum = indexInput ? size - 1 : Number.MAX_SAFE_INTEGER
-    this.available = !indexInput || size > 0
-    this.label = this.rangeInput ? 'Minimum key (inclusive)' : indexInput ? 'Index (zero-based)' : keyInput ? 'Key' : 'Value'
+    this.minimum = this.structured?.fields[0].minimum ?? (indexInput ? 0 : Number.MIN_SAFE_INTEGER)
+    this.maximum = this.structured?.fields[0].maximum ?? (indexInput ? size - 1 : Number.MAX_SAFE_INTEGER)
+    this.available = this.structured ? this.structured.available : !indexInput || size > 0
+    this.label = this.structured?.fields[0].label ?? (this.rangeInput ? 'Minimum key (inclusive)' : indexInput ? 'Index (zero-based)' : keyInput ? 'Key' : 'Value')
     const name = structure === 'array' ? 'array' : 'list'
     const elements = structure === 'array' ? 'elements' : 'nodes'
-    this.hint = indexInput
+    this.hint = this.structured ? this.structured.hint : indexInput
       ? size > 0
         ? `The ${name} has ${size} ${elements}. Choose an index from 0 to ${size - 1}.`
         : `The ${name} is empty. Insert a value before searching by index.`
@@ -46,6 +49,7 @@ export class ActionInputRequest {
   }
 
   public static supportsStructure(structure: StructureKind): boolean {
+    if (StructuredTreeInput.supports(structure)) return true
     switch (structure) {
       case 'hash-map':
       case 'hash-set':
@@ -70,6 +74,12 @@ export class ActionInputRequest {
 
   public static requiresInput(structure: StructureKind, action: ActionKind): boolean {
     if (!this.supportsStructure(structure)) return false
+    if (StructuredTreeInput.supports(structure)) {
+      for (const choice of ActionCatalog.getActions(structure)) {
+        if (choice.kind === action) return StructuredTreeInput.create(structure, action, 0) !== null
+      }
+      return false
+    }
     switch (action) {
       case 'insert-middle':
       case 'insert-start':
@@ -100,11 +110,16 @@ export class ActionInputRequest {
   }
 
   public acceptsDraft(input: string): boolean {
+    if (this.structured) return this.structured.acceptsDraft(this.structured.fields[0], input)
     return this.action === 'search-index' ? /^\d*$/.test(input) : /^-?\d*$/.test(input)
   }
 
   public validate(input: string): string | null {
     if (!this.available) return this.hint
+    if (this.structured) {
+      const name = this.structured.fields[0].name
+      return this.structured.validate({ [name]: input })[name] ?? null
+    }
     const text = input.trim()
     if (!/^-?\d+$/.test(text)) return 'Enter a whole number.'
     const value = Number(text)

@@ -7,7 +7,9 @@
    common operations**. Selecting it shows **Linear** (Array, Linked list, Stack,
    Queue, Deque, Doubly linked list, and Circular buffer),
    **Trees** (Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, and
-   B+ Tree), **Graphs** (Graph), and **Hash-based** (Hash Table / Hash Map,
+   B+ Tree, Trie, Heap, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, and
+   Abstract Syntax Tree (AST)),
+   **Graphs** (Graph), and **Hash-based** (Hash Table / Hash Map,
    Hash Set, Bloom Filter). Choose a group to see only
    its structures. Provide Back navigation through these levels, without a
    visible breadcrumb path or instruction text on the structure list.
@@ -62,6 +64,22 @@ dialog for these actions:
 - **Hash Set:** Add a value, Contains value, and Remove a value collect **Value**.
 - **Bloom Filter:** Add a value and Check membership collect **Value**.
   Clear runs without input for all hash-based structures.
+- **Trie:** Insert a word, Search by word, Delete a word, and Check a prefix
+  collect lowercase a-z text of 1 to 32 letters.
+- **Heap:** Insert collects a whole-number value; Extract minimum and Peek minimum
+  run without input. Use a binary min-heap with duplicate values allowed.
+- **Segment Tree:** Update collects an index and replacement value; Range sum
+  collects inclusive minimum and maximum array indices.
+- **Fenwick Tree (BIT):** Add collects an index and delta; Prefix sum collects an
+  inclusive ending index; Range sum collects inclusive minimum and maximum indices.
+  Array indices are zero-based even though BIT cells are one-based.
+- **R-Tree:** Insert and Search overlapping rectangles collect minimum X,
+  minimum Y, maximum X, and maximum Y; Delete collects the rectangle ID.
+- **LSM Tree:** Insert / update collects Key and Value; Look up and Delete collect
+  Key. Flush memtable and Compact all runs run without input.
+- **AST:** Build from expression collects an arithmetic expression. Preorder,
+  Inorder, Postorder, Evaluate, and Clear run without input, including on an empty
+  tree. Validate expression syntax in the dialog before starting the build.
 
 Value actions accept any safely representable whole number. Start the input
 empty, and block nonnumeric
@@ -477,3 +495,73 @@ its O(1) average allocation is amortized over insertion-only unique-key sequence
 Clear releases nodes/pages in postorder in O(n) time with O(log n) stack space;
 it does not repeatedly rebalance a discarded tree. Exclude tracing and snapshot
 storage from algorithm costs, and explain empty inputs separately.
+
+## Additional tree structures
+
+Trie, Heap, Segment Tree, Fenwick Tree (BIT), R-Tree, and LSM Tree each load ten
+logical elements. Reuse the shared renderer, input dialog, progress toolbar,
+automatic playback, final-frame commits, and full Reset. Each action retains its
+own sequence class and complexity information beside its component and CSS.
+
+- Trie stores words through character nodes with cached parent links and word-end
+  markers. Reject duplicate words without allocating IDs; preserve shared prefixes
+  during deletion. Prefix checks do not require a word-end marker.
+- Heap is a complete binary min-heap in array order. Insertion appends and sifts
+  up; extraction replaces the root with the last leaf and sifts down. Only offer
+  insert, extract minimum, peek minimum, and clear; allow duplicate values.
+- Segment Tree stores cached interval sums; point assignment recomputes only its
+  ancestor path. Query fully covered segments and prune disjoint ones.
+- Fenwick Tree stores one-based BIT cells, with zero-based user indices. Add a
+  delta through update ancestors; prefix queries subtract the least significant
+  set bit. Range queries subtract two prefixes. Show each cell's covered interval.
+  Segment and Fenwick sums use exact integers; Clear resets values to zero and
+  preserves array length. Their input dialogs enforce current index bounds.
+- R-Tree uses order-4 pages with at least two entries per non-root page, quadratic
+  splitting, least-area-enlargement descent, and inclusive rectangle intersection.
+  Deletion scans for the record ID, condenses underfull pages, reinserts orphan
+  records without changing their IDs, and collapses a one-child root. Draw the
+  bounding-rectangle hierarchy and record IDs; describe returned IDs above the
+  timeline. Rectangle area comparisons use exact integer arithmetic.
+- LSM Tree is an in-memory teaching model: a sorted-array memtable, automatic
+  flush at four distinct keys, immutable sorted runs, and explicit full compaction.
+  Keep sequence numbers and tombstones. Lookups search memory and newest runs first
+  and stop at tombstones. Compaction flushes memory, pairwise merges every run,
+  keeps the newest version, then drops tombstones only when all older runs are
+  covered. Show storage rows newest first and distinguish pending compaction
+  output from source records with unique scene IDs. State that disk I/O and a
+  write-ahead log are outside this model. Complexity describes this implementation,
+  including exact-count lookups before writes and sequential pairwise merging.
+
+## Abstract Syntax Tree (AST)
+
+Add AST under Trees with a ten-node default expression:
+`-(8 + 2) * (9 - 3) / 2`, which evaluates to `-30`. Support Build from expression,
+preorder/inorder/postorder traversals, evaluation, and clear. Expressions contain
+whole safe integer literals, unary signs, `+`, `-`, `*`, `/`, and parentheses,
+with at most 128 source characters. Use a class-based recursive-descent parser;
+never execute source text. Multiplication/division bind before addition/subtraction,
+binary operators associate left, and unary signs bind to the next operand.
+
+Keep the parser and node types with the AST model. Validate the complete expression
+before replacing a root or allocating IDs. Build a new tree with separate creation
+and operand-connection frames; the source remains committed until the final frame.
+Build replaces the old root reference; collection of discarded storage is outside
+parsing cost. Clear explicitly releases children before parents and preserves the
+next ID. Parentheses affect grouping but are not stored as syntax nodes.
+
+Show literals, unary operators, and binary operators as labeled nodes with ordered
+operand edges. Traversals return token lists, using `neg` and `pos` for unary signs;
+inorder visits a unary sign before its operand and does not recreate parentheses.
+Evaluation uses finite JavaScript numbers, supports fractional division results,
+and reports division by zero or unsafe integer results at the offending node.
+Queries leave syntax intact and finish with their actual numeric or token-list
+return value in the code bar; arithmetic failures display their error there.
+Empty traversal returns `[]`, empty evaluation returns `null`, and empty clear is
+safe. Use the shared input, playback, reset, renderer, and info dialogs.
+
+Building costs O(m) time and additional memory for m source characters. Traversals
+cost O(n) time and O(n) memory, including the returned tokens. Successful evaluation
+costs O(n) time and O(h) stack memory; clear takes O(n) time and O(h) stack memory.
+Here n is syntax node count and h is tree height: logarithmic for balanced binary
+expressions, linear for a unary chain. State the balanced-shape average assumption
+and exclude animation snapshots and trace records from algorithm memory costs.

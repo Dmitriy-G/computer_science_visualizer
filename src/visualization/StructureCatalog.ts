@@ -25,6 +25,8 @@ import { GraphLayout } from '../components/DataStructures/Graphs/SimpleGraph/Gra
 import { Stack } from '../components/DataStructures/Linear/Stack/Stack.ts'
 import { StackLayout } from '../components/DataStructures/Linear/Stack/StackLayout.ts'
 import type { Scene, StructureKind } from './Scene.ts'
+import { AdditionalTreeCatalog } from './AdditionalTreeCatalog.ts'
+import type { AdditionalTreeModel } from './AdditionalTreeModel.ts'
 import { HashMap } from '../components/DataStructures/HashBased/HashMap/HashMap.ts'
 import { HashMapLayout } from '../components/DataStructures/HashBased/HashMap/HashMapLayout.ts'
 import { HashSet } from '../components/DataStructures/HashBased/HashSet/HashSet.ts'
@@ -52,7 +54,7 @@ export interface StructureDefinition {
 export class StructureCatalog {
   public static readonly groups: readonly StructureGroupDefinition[] = [
     { kind: 'linear', name: 'Linear', description: 'Arrays, lists, stacks, queues, deques, and circular buffers', symbol: '[]' },
-    { kind: 'trees', name: 'Trees', description: 'BST, AVL, Red-Black, B-Tree, and B+ Tree', symbol: '⋔' },
+    { kind: 'trees', name: 'Trees', description: 'Search trees, tries, heaps, range indexes, spatial indexes, and LSM storage', symbol: '⋔' },
     { kind: 'graphs', name: 'Graphs', description: 'Vertices and edges', symbol: '◇' },
     { kind: 'hash-based', name: 'Hash-based', description: 'Hash maps, hash sets, and Bloom filters', symbol: '#' },
   ]
@@ -97,6 +99,13 @@ export class StructureCatalog {
     { kind: 'red-black-tree', group: 'trees', name: 'Red-Black tree', description: 'Balanced search using red/black colors and rotations', symbol: '+' },
     { kind: 'b-tree', group: 'trees', name: 'B-Tree', description: 'Multi-key order-4 pages with splitting, borrowing, and merging', symbol: '+' },
     { kind: 'b-plus-tree', group: 'trees', name: 'B+ Tree', description: 'Order-4 routing pages and linked leaves containing all records', symbol: '+' },
+    { kind: 'trie', group: 'trees', name: 'Trie', description: 'Shared character prefixes with explicit word ends', symbol: 'abc' },
+    { kind: 'heap', group: 'trees', name: 'Heap (min-heap)', description: 'Complete binary min-heap with sift-up and sift-down', symbol: 'min' },
+    { kind: 'segment-tree', group: 'trees', name: 'Segment Tree', description: 'Cached interval sums with point assignment and range queries', symbol: 'sum' },
+    { kind: 'fenwick-tree', group: 'trees', name: 'Fenwick Tree (BIT)', description: 'Binary indexed sums navigated by the least significant set bit', symbol: 'BIT' },
+    { kind: 'r-tree', group: 'trees', name: 'R-Tree', description: 'Bounding rectangles in balanced pages with quadratic splitting', symbol: 'xy' },
+    { kind: 'lsm-tree', group: 'trees', name: 'LSM Tree', description: 'Memtable writes, immutable sorted runs, tombstones, and full compaction', symbol: 'LSM' },
+    { kind: 'ast', group: 'trees', name: 'Abstract Syntax Tree (AST)', description: 'Arithmetic expressions represented by operators and operand nodes', symbol: 'AST' },
     {
       kind: 'graph',
       group: 'graphs',
@@ -153,7 +162,10 @@ export class StructureCatalog {
     hashMap: HashMap = HashMap.createDefault(),
     hashSet: HashSet = HashSet.createDefault(),
     bloomFilter: BloomFilter = BloomFilter.createDefault(),
+    additionalModels?: ReadonlyMap<StructureKind, AdditionalTreeModel>,
   ): Scene {
+    const additional = additionalModels?.get(kind) ?? AdditionalTreeCatalog.createDefault(kind)
+    if (additional) return AdditionalTreeCatalog.createScene(additional)
     if (kind === 'hash-map') return new HashMapLayout().create(hashMap)
     if (kind === 'hash-set') return new HashSetLayout().create(hashSet)
     if (kind === 'bloom-filter') return new BloomFilterLayout().create(bloomFilter)

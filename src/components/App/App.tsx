@@ -192,9 +192,13 @@ import { InsertionAnimation as TreeInsertionAnimation } from '../DataStructures/
 import { StructureCatalog } from '../../visualization/StructureCatalog.ts'
 import type { Scene, StructureKind } from '../../visualization/Scene.ts'
 import type { AlgorithmInformation } from '../../visualization/AlgorithmInformation.ts'
+import { AdditionalTreeCatalog } from '../../visualization/AdditionalTreeCatalog.ts'
+import type { AdditionalTreeModel, TreeInputValues } from '../../visualization/AdditionalTreeModel.ts'
+import { TreeFeatures } from '../DataStructures/Trees/TreeFeatures.tsx'
 import './App.css'
 
 interface AppState {
+  readonly treeInput: TreeInputValues
   readonly selected: StructureKind | null
   readonly menuOpen: boolean
   readonly menu: MenuNavigation
@@ -212,6 +216,7 @@ interface AppState {
 }
 
 export default class App extends Component<Record<string, never>, AppState> {
+  private additionalTrees = AdditionalTreeCatalog.createModels()
   private list = LinkedList.createDefault()
   private array = FixedArray.createDefault()
   private tree = BinaryTree.createDefault()
@@ -234,6 +239,7 @@ export default class App extends Component<Record<string, never>, AppState> {
   constructor(props: Record<string, never>) {
     super(props)
     this.state = {
+      treeInput: {},
       selected: null,
       menuOpen: false,
       menu: new MenuNavigation(),
@@ -284,6 +290,7 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private selectStructure = (kind: StructureKind): void => {
     const menu = this.state.menu.selectStructure(kind)
+    this.additionalTrees = AdditionalTreeCatalog.createModels()
     this.hashMap = HashMap.createDefault()
     this.hashSet = HashSet.createDefault()
     this.bloomFilter = BloomFilter.createDefault()
@@ -320,6 +327,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         this.hashMap,
         this.hashSet,
         this.bloomFilter,
+        this.additionalTrees,
       ),
       actionOpen: false,
       selectedAction: null,
@@ -350,10 +358,11 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.startAction(action)
   }
 
-  private startAction(action: ActionKind, value?: number, upperValue?: number): void {
+  private startAction(action: ActionKind, value?: number, upperValue?: number, treeInput: TreeInputValues = {}): void {
     if (!this.state.selected) return
     this.setState({
       actionOpen: true,
+      treeInput,
       selectedAction: action,
       actionValue: value,
       actionUpperValue: upperValue,
@@ -379,11 +388,22 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.setState({ inputRequest: null })
   }
 
+  private confirmStructuredInput = (values: TreeInputValues): void => {
+    const request = this.state.inputRequest
+    if (!request?.structured || this.state.selected !== request.structure || this.state.actionRunning) return
+    const drafts: Record<string, string> = {}
+    for (const field of request.structured.fields) drafts[field.name] = String(values[field.name] ?? '')
+    if (Object.keys(request.structured.validate(drafts)).length) return
+    this.startAction(request.action, undefined, undefined, request.structured.parse(drafts))
+  }
+
   private completeAction = (): void => {
     this.setState({ actionRunning: false })
   }
 
   private getInputSize(structure: StructureKind): number {
+    const additional = this.additionalTrees.get(structure)
+    if (additional) return additional.length
     switch (structure) {
       case 'hash-map': return this.hashMap.length
       case 'hash-set': return this.hashSet.length
@@ -430,6 +450,8 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private describeAction(action: ActionKind): AlgorithmInformation | null {
+    const additional = this.state.selected ? this.additionalTrees.get(this.state.selected) : undefined
+    if (additional) return TreeFeatures.describe(action, additional)
     if (this.state.selected === 'hash-map') {
       switch (action) {
         case 'insert': return HashMapInsertSequence.describe(this.hashMap.length)
@@ -580,6 +602,11 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private renderAction(): ReactNode {
     if (!this.state.actionOpen) return null
+    const additional = this.state.selected ? this.additionalTrees.get(this.state.selected) : undefined
+    if (additional && this.state.selectedAction) return TreeFeatures.render(this.state.selectedAction, {
+      model: additional, input: this.state.treeInput,
+      onSceneChange: this.updateAdditionalTreeScene, onComplete: this.completeAction,
+    }, this.state.actionSession)
     if (this.state.selected === 'hash-map') {
       switch (this.state.selectedAction) {
         case 'insert': return <HashMapInsert key={this.state.actionSession} model={this.hashMap} value={this.state.actionValue} upperValue={this.state.actionUpperValue} onSceneChange={this.updateHashMapScene} onComplete={this.completeAction} />
@@ -730,6 +757,7 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private resetStructure = (): void => {
     if (this.state.selected === null) return
+    this.additionalTrees = AdditionalTreeCatalog.createModels()
     this.hashMap = HashMap.createDefault()
     this.hashSet = HashSet.createDefault()
     this.bloomFilter = BloomFilter.createDefault()
@@ -765,6 +793,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         this.hashMap,
         this.hashSet,
         this.bloomFilter,
+        this.additionalTrees,
       ),
       actionOpen: false,
       selectedAction: null,
@@ -781,6 +810,11 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private updateScene = (scene: Scene, list: LinkedList): void => {
     this.list = list
+    this.setState({ scene })
+  }
+
+  private updateAdditionalTreeScene = (scene: Scene, model: AdditionalTreeModel): void => {
+    this.additionalTrees.set(model.kind, model)
     this.setState({ scene })
   }
 
@@ -950,6 +984,7 @@ export default class App extends Component<Record<string, never>, AppState> {
           <ActionInput
             request={this.state.inputRequest}
             onConfirm={this.confirmActionInput}
+            onConfirmStructured={this.confirmStructuredInput}
             onClose={this.closeActionInput}
           />
         )}

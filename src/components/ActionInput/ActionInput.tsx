@@ -1,12 +1,14 @@
 import { Component, createRef } from 'react'
-import type { ChangeEvent, FormEvent, MouseEvent, SyntheticEvent } from 'react'
+import type { ChangeEvent, FormEvent, MouseEvent, ReactNode, SyntheticEvent } from 'react'
 import type { ActionInputRequest } from '../../visualization/ActionInputRequest.ts'
+import type { TreeInputValues } from '../../visualization/AdditionalTreeModel.ts'
 import { StructureCatalog } from '../../visualization/StructureCatalog.ts'
 import './ActionInput.css'
 
 interface ActionInputProps {
   readonly request: ActionInputRequest
   readonly onConfirm: (value: number, upperValue?: number) => void
+  readonly onConfirmStructured?: (values: TreeInputValues) => void
   readonly onClose: () => void
 }
 
@@ -15,6 +17,8 @@ interface ActionInputState {
   readonly upperValue: string
   readonly error: string
   readonly upperError: string
+  readonly fields: Readonly<Record<string, string>>
+  readonly fieldErrors: Readonly<Record<string, string>>
 }
 
 export default class ActionInput extends Component<ActionInputProps, ActionInputState> {
@@ -24,7 +28,7 @@ export default class ActionInput extends Component<ActionInputProps, ActionInput
 
   constructor(props: ActionInputProps) {
     super(props)
-    this.state = { value: '', upperValue: '', error: '', upperError: '' }
+    this.state = { value: '', upperValue: '', error: '', upperError: '', fields: {}, fieldErrors: {} }
   }
 
   public componentDidMount(): void {
@@ -67,6 +71,19 @@ export default class ActionInput extends Component<ActionInputProps, ActionInput
 
   private submit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault()
+    const structured = this.props.request.structured
+    if (structured) {
+      const fieldErrors = structured.validate(this.state.fields)
+      const firstError = Object.keys(fieldErrors)[0]
+      if (firstError) {
+        this.setState({ fieldErrors }, () => {
+          this.dialog.current?.querySelector<HTMLInputElement>(`[data-field="${firstError}"]`)?.focus()
+        })
+        return
+      }
+      this.props.onConfirmStructured?.(structured.parse(this.state.fields))
+      return
+    }
     const error = this.props.request.validate(this.state.value)
     const upperError = this.props.request.validateUpperBound(this.state.value, this.state.upperValue)
     if (error || upperError) {
@@ -79,6 +96,41 @@ export default class ActionInput extends Component<ActionInputProps, ActionInput
       Number(this.state.value),
       this.props.request.rangeInput || this.props.request.pairInput ? Number(this.state.upperValue) : undefined,
     )
+  }
+
+  private changeField = (event: ChangeEvent<HTMLInputElement>): void => {
+    const name = event.currentTarget.dataset.field
+    const structured = this.props.request.structured
+    if (!name || !structured) return
+    for (const field of structured.fields) {
+      if (field.name !== name) continue
+      const value = event.currentTarget.value
+      if (!structured.acceptsDraft(field, value)) return
+      this.setState({ fields: { ...this.state.fields, [name]: value }, fieldErrors: {} })
+    }
+  }
+
+  private renderFields(): ReactNode {
+    const structured = this.props.request.structured
+    if (!structured) return null
+    const fields: ReactNode[] = []
+    for (let index = 0; index < structured.fields.length; index += 1) {
+      const field = structured.fields[index]
+      const id = `action-field-${field.name}`
+      const error = this.state.fieldErrors[field.name]
+      fields.push(
+        <div key={field.name}>
+          <label htmlFor={id}>{field.label}</label>
+          <input id={id} ref={index === 0 ? this.input : undefined} type="text"
+            inputMode={field.text ? 'text' : 'numeric'} autoComplete="off" autoCapitalize="none" spellCheck={false}
+            data-field={field.name} value={this.state.fields[field.name] ?? ''} onChange={this.changeField}
+            disabled={!structured.available} required aria-invalid={Boolean(error)}
+            aria-describedby={error ? `${id}-error structured-input-hint` : 'structured-input-hint'} />
+          {error && <p id={`${id}-error`} className="action-input-error" role="alert">{error}</p>}
+        </div>,
+      )
+    }
+    return <>{fields}<p id="structured-input-hint" className="action-input-hint">{structured.hint}</p></>
   }
 
   public render() {
@@ -104,6 +156,7 @@ export default class ActionInput extends Component<ActionInputProps, ActionInput
         <h2 id="action-input-title">{request.title}</h2>
         <p id="action-input-description">{request.description}</p>
         <form onSubmit={this.submit} noValidate>
+          {request.structured ? this.renderFields() : <>
           <label htmlFor="action-input-value">{request.label}</label>
           <input
             id="action-input-value"
@@ -140,6 +193,7 @@ export default class ActionInput extends Component<ActionInputProps, ActionInput
               {this.state.upperError && <p id="action-input-upper-error" className="action-input-error" role="alert">{this.state.upperError}</p>}
             </>
           )}
+          </>}
           <div className="action-input-buttons">
             <button type="button" className="text-button" onClick={this.props.onClose}>Cancel</button>
             <button type="submit" className="primary-button" disabled={!request.available}>Start animation</button>
