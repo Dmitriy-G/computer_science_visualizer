@@ -1,12 +1,16 @@
 # Component structure
 
 All React components belong under `src/components/`.
+`App` is the root of Computer Science Visualizer. `DataStructures` names the
+current subject area; keep this folder and its structure-specific module names
+so future computer science subjects can be added alongside it.
 
 ## Data structures and actions
 
 Use `src/components/DataStructures/` for data structure components and related
-entities. Paths in these rules are relative to the project root. Give each
-data structure its own PascalCase folder, such as `LinkedList` or `Array`.
+entities. Paths in these rules are relative to the project root. Group structures
+under `Linear`, `Trees`, `Graphs`, or `HashBased`, with a PascalCase folder for
+each structure, such as `Linear/LinkedList` or `Linear/Array`.
 
 Keep all entities specific to one structure together in that structure's folder:
 its model class, layout class, supporting types, and action folders. Follow the
@@ -15,7 +19,7 @@ sit beside `AddInTheMiddle/`. Do not split structure-specific entities into
 top-level model or visualization folders.
 
 Inside each data structure folder, create a PascalCase folder for each action,
-such as `AddInTheMiddle` or `SearchByElementValue`. Every action folder must contain
+such as `AddInTheMiddle` or `SearchByValue`. Every action folder must contain
 a `.tsx` React component and a separate `.css` file with its styles. Name both
 files after the action and import the stylesheet from the component.
 Keep action-specific sequence classes, such as `InsertionAnimation.ts`, in the
@@ -27,22 +31,23 @@ the B+ Tree's `RangeFromKey`. Match their class, folder, `.tsx`, and `.css` name
 ```text
 src/components/
   DataStructures/
-    LinkedList/
-      LinkedList.ts
-      LinkedListLayout.ts
-      AddInTheMiddle/
-        AddInTheMiddle.tsx
-        AddInTheMiddle.css
-        InsertionAnimation.ts
-    Array/
-      FixedArray.ts
-      ArrayLayout.ts
-      AddInTheMiddle/
-        AddInTheMiddle.tsx
-        AddInTheMiddle.css
-      SearchByElementValue/
-        SearchByElementValue.tsx
-        SearchByElementValue.css
+    Linear/
+      LinkedList/
+        LinkedList.ts
+        LinkedListLayout.ts
+        AddInTheMiddle/
+          AddInTheMiddle.tsx
+          AddInTheMiddle.css
+          InsertionAnimation.ts
+      Array/
+        FixedArray.ts
+        ArrayLayout.ts
+        AddInTheMiddle/
+          AddInTheMiddle.tsx
+          AddInTheMiddle.css
+        SearchByValue/
+          SearchByValue.tsx
+          SearchByValue.css
   Renderer/
     Renderer.tsx
     Renderer.css

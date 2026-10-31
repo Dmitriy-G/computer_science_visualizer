@@ -889,9 +889,9 @@ export default class App extends Component<Record<string, never>, AppState> {
             </svg>
           </button>
           <div className="brand">
-            <span className="brand-mark">ds.</span>
+            <span className="brand-mark" aria-hidden="true">cs.</span>
             <span>
-              Data structures
+              Computer Science Visualizer
               <span className="brand-caption">Visualize the idea.</span>
             </span>
           </div>

@@ -1,93 +1,67 @@
-# Data Structures Visualizer
+# Computer Science Visualizer
 
-A TypeScript and React app powered by Vite, built with class components and
-object-oriented data structure and animation classes.
+An interactive TypeScript and React app powered by Vite for exploring computer
+science concepts. Its current subject area is data structures, implemented with
+React class components and separate model, layout, and animation classes.
+
+Repository: [Dmitriy-G/computer_science_visualizer](https://github.com/Dmitriy-G/computer_science_visualizer).
 
 ## Explore
 
-Open the menu in the top left and choose **Data structures common operations**.
-Choose **Linear** for Array, Linked list, Stack, Queue, Deque, Doubly linked list,
-and Circular buffer, **Trees** for BST, AVL, Red-Black, B-Tree, and B+ Tree, or
-**Graphs** for Graph, then choose the structure and an action. Each structure
-starts with 10 elements. Back navigation follows the same category path.
+Open the menu and choose **Data structures common operations**, then a group:
 
-Choose **Linked list → Insert in the middle** to watch traversal, node creation,
-unlinking, opening space, insertion, and both new pointer connections. Playback
-starts automatically unless reduced motion is enabled. Pause, step backward or
-forward, scrub the timeline, replay, or adjust speed. Reset the animation to its
-first step to change the inserted value. Completion commits the new node;
-rewinding or replaying restores the original list before applying the action again.
+| Group | Structures |
+| --- | --- |
+| Linear | Array, Linked list, Stack, Queue, Deque, Doubly linked list, Circular buffer |
+| Trees | Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, B+ Tree |
+| Graphs | Graph |
+| Hash-based | Hash Table / Hash Map, Hash Set, Bloom Filter |
 
-Choose **Array → Insert in the middle** to see an original fixed array and a
-separate newly allocated array with exactly one extra slot. Copy the prefix to
-the same indices, place the new value in the middle, then copy the suffix one
-index farther right in the new array. The original values stay in place throughout
-copying. Once the result is complete, switch to it and release the original if
-unused. The default array has exactly 10 slots, and the first result has 11.
-Both time and additional memory are O(n).
+Select a structure to load its example, then choose an action from the canvas
+card. Examples start with ten elements; Bloom Filter records ten add operations
+rather than an exact distinct-member count. The back button reopens the current
+group's structure list.
 
-Choose **Binary search tree (BST) → Insert a value** to insert into an unbalanced binary search tree.
-Compare from the root, follow left for smaller values or right for larger values,
-find an empty child pointer, and create and connect a new leaf. Duplicate keys
-are rejected: the animation highlights the existing node and leaves links, count,
-and node IDs unchanged. The tree does not rebalance itself. Insertion
-takes O(h) time, where h is the tree height, and O(1) additional algorithm memory.
-The new node remains pending until the final step; rewind and replay preserve
-the original tree. Subsequent insertions use the completed result.
+Actions that need input open a numeric dialog. Hash Map insertion collects a
+key and a value; B+ Tree range search collects inclusive minimum and maximum
+keys. Animations run automatically at normal speed. The header shows the current
+explanation and progress; pseudocode appears above the diagram. **Reset** cancels
+playback and restores the default example. Reduced-motion preferences suppress
+visual transitions.
 
-Choose **AVL tree** to inspect cached heights, balance factors, and single/double
-rotations. Choose **Red-Black tree** to watch red/black recoloring and rotations,
-including the repair of black-height deficits after deletion. Colors also have
-explicit RED/BLACK labels.
+Searches finish on their result and preserve the highlight, reporting a location
+where available. Bloom Filter checks return **definitely absent** or **possibly
+present**; positive results can be false positives. Mutations commit only on the
+final frame.
 
-Choose **B-Tree** for order-4 pages with up to three keys, or **B+ Tree** for
-order-4 internal pages and linked leaves that hold all records. Insertion shows
-page splits; deletion shows borrowing, merging, separator updates, and root
-contraction. Both count stored keys rather than page nodes; B+ separator copies
-do not increase the count. Their default insertion of 99 demonstrates splits.
+Small info buttons open action complexity explanations. The large info button
+opens a structure introduction, use-case table, and technology links. Dialogs
+leave playback running. Hash-based structures also show their hash function
+below the legend.
 
-All four new trees provide **Insert a key**, **Search by value**, **Delete by
-value**, and **Clear**. They use unique keys: duplicate insertion and missing
-deletion leave the tree unchanged. The original unbalanced BST also rejects
-duplicates and keeps its existing selection key. **B+ Tree / Range from value** reports all
-records at or above an inclusive minimum, using the next-leaf chain after one
-descent. Results appear in the animation controls.
+## Project layout
 
-Choose **Linear → Stack** for a linked, last-in-first-out stack. Animate **Push**,
-**Pop**, **Peek (top)**, **Clear**, or **Search by value**. The example pushes 10
-through 100, so 100 starts at the top. Push, pop, and peek take O(1) time. Clear
-releases every node in O(n); search walks from the top with O(n) worst-case time.
-Empty pop and peek return no value, and search preserves the stack order. Only
-push and search need a value input. Each action supports the shared playback,
-rewind, and replay controls. Mutations commit only on the final frame.
+The app's display name is **Computer Science Visualizer**. Its package and IntelliJ
+module use `computer_science_visualizer`. Use that name for the checkout folder
+as well; close apps using an existing checkout before renaming its directory.
 
-Choose **Queue** for FIFO enqueue/dequeue, front peek, clear, and value search.
-Choose **Deque** (double-ended queue) to push, pop, and peek at either end, plus
-clear and value search. End operations use cached pointers and take O(1) time.
+- `src/components/App/`: application shell and branding.
+- `src/components/DataStructures/<Group>/<Structure>/`: models, layouts, and
+  actions, grouped under `Linear`, `Trees`, `Graphs`, and `HashBased`.
+- `src/components/MainMenu/`: menu navigation and action selection.
+- `src/components/Renderer/`: shared diagram renderer and optional hints.
+- `src/components/ActionPlayback/`: animation progress and pseudocode display.
+- `src/visualization/`: shared scene contracts, catalogs, and playback classes.
+- `docs/rules/`: implementation rules.
+- `tests/`: models, sequences, input validation, navigation, and playback.
+- `public/`: static assets.
 
-Choose **Doubly linked list** to see separate **next** and **prev** connections.
-Insert at the start, middle, or end; delete at either end or by value; search by
-value or index; or clear. Indexed searches traverse from the nearer end, showing
-backward navigation through prev pointers when starting at the tail.
-
-Choose **Circular buffer** for a fixed-capacity FIFO ring. Its 12 slots initially
-contain 10 values, with read starting at slot 8 to show wraparound. Enqueue writes
-to the next free slot and rejects full buffers. Dequeue releases the oldest slot.
-Peek, clear, and value search preserve physical slot positions while read/write
-indices wrap around. Capacity stays fixed and full writes never overwrite data.
-
-Every structure has animated actions with shared playback controls.
-**Clear** is available for every structure. Array clear selects a new empty
-fixed array; linked list clear releases nodes from the head; binary tree clear
-uses postorder; and graph clear releases edges before vertices. Clear supports
-empty inputs, stepping backward, and replay, and commits only on the final frame.
-**Reset** restores the selected 10-element example.
-When an action is selected, its overview in the upper-right of the canvas explains
-time complexity, additional memory, and only the terms used by that action.
+`DataStructures` remains the current subject module. Future computer science
+subjects can be added alongside it.
 
 ## Development
 
-Use Node.js 22.12+ and npm.
+Use Node.js 22.12+ and npm. Run commands manually:
 
 ```sh
 npm install
@@ -103,7 +77,7 @@ npm run build
 npm run preview
 ```
 
-`npm run build` runs the TypeScript checker before building.
+The build checks TypeScript before generating `dist/`.
 
 ## Checks
 
@@ -112,17 +86,10 @@ npm run typecheck
 npm test
 ```
 
-Tests cover linked list, array, and binary search tree edge cases, insertion sequences,
-final pointer connections, strict tree ordering and duplicate rejection, fixed-array allocation,
-preserved originals, prefix/suffix copies, structure previews, FIFO ordering,
-reciprocal prev/next pointers, deque end operations, circular-buffer wraparound
-and full/empty boundaries,
-and playback cancellation, stepping, speed, and replay. They run with Node.js's built-in test runner and experimental
-TypeScript stripping; the experimental warning on Node.js 22 is expected.
+Tests use Node.js's built-in test runner and experimental TypeScript stripping.
+Coverage includes structure invariants, collision handling and rehashing, Bloom
+filter membership, independent animation snapshots, input validation, navigation,
+and playback cancellation.
 
-See [AGENTS.md](AGENTS.md) for project structure and development conventions,
-and [visualization flow](docs/rules/visualization-flow.md) for the action contract.
-
-Algorithm references: [MIT search-tree rotations and Red-Black trees](https://ocw.mit.edu/courses/6-046j-introduction-to-algorithms-sma-5503-fall-2005/resources/lecture-10-red-black-trees-rotations-insertions-deletions/),
-[University of Alberta B-Tree deletion](https://webdocs.cs.ualberta.ca/~holte/T26/del-b-tree.html),
-and [University of Utah B+ Tree split, redistribution, and merge exercises](https://users.cs.utah.edu/~lifeifei/cs6530/lab2.html).
+See [AGENTS.md](AGENTS.md), [component structure](docs/rules/component-structure.md),
+and [visualization flow](docs/rules/visualization-flow.md) for project guidance.

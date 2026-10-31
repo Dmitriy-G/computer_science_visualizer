@@ -1,11 +1,12 @@
-# Project guidance
+# Computer Science Visualizer project guidance
 
 ## Purpose and stack
 
-Build an interactive data structures visualizer with TypeScript and React, using Vite.
+Build Computer Science Visualizer, an interactive app for computer science
+concepts with TypeScript and React, using Vite. Its current feature area is data structures.
 The app uses TypeScript and React class components. Linked list, array, binary
 search tree, graph, and stack operations have animated actions. The menu groups
-structures under Linear, Trees, and Graphs within common operations.
+structures under Linear, Trees, Graphs, and Hash-based within common operations.
 Use npm for dependency management.
 
 ## Required project rules
@@ -49,7 +50,7 @@ Commit `package-lock.json` when generated; do not commit `node_modules/` or `dis
 - `src/components/MainMenu/`: structure and action selection.
 - `src/components/Renderer/`: shared scene renderer.
 - `src/components/ActionPlayback/`: shared playback controls and animation session.
-- `src/components/DataStructures/<StructureName>/`: each structure's model,
+- `src/components/DataStructures/<Group>/<StructureName>/`: each structure's model,
   layout, supporting types, and action folders, kept together.
 - `src/visualization/`: shared scene contracts, structure catalog, and animation
   playback classes used across structures.
@@ -68,7 +69,7 @@ Create directories when needed, rather than adding empty scaffolding.
   [code style rules](docs/rules/code-style.md).
 - Use `.tsx` for React components, `.ts` for other application code, and PascalCase
   for class and component names.
-- Follow the existing `DataStructures/LinkedList/` organization for new structures:
+- Follow the existing `DataStructures/Linear/LinkedList/` organization for new structures:
   keep structure-specific entities beside their actions and reserve shared
   infrastructure for code used across structures. Match path casing exactly.
 - Follow the existing two-space indentation, single quotes, and no-semicolon style.
