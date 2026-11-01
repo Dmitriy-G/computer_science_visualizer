@@ -10,10 +10,23 @@ export interface AlgorithmTerm {
   readonly meaning: string
 }
 
+export interface AlgorithmTechnology {
+  readonly name: string
+  readonly url: string
+  readonly usage: string
+}
+
+export interface AlgorithmUsage {
+  readonly technologies: readonly AlgorithmTechnology[]
+  readonly products: readonly AlgorithmTechnology[]
+  readonly note: string | null
+}
+
 export interface AlgorithmInformation {
   readonly name: string
   readonly summary: string
   readonly time: ComplexityInformation
   readonly memory: ComplexityInformation
   readonly terms: readonly AlgorithmTerm[]
+  readonly realWorldUsage?: AlgorithmUsage
 }

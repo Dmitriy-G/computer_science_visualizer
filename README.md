@@ -18,6 +18,13 @@ Weighted Graph and topological sorting for DAG. These algorithm actions live in
 Algorithms; Overview retains graph editing and value search. Switching branches
 for the same graph preserves its committed vertices and edges.
 
+Sorting and graph algorithm info dialogs include **Real technologies**, with
+primary source links, concrete uses, and implementation-variant notes. A separate
+**Real products** section displays comma-separated product names linked to original evidence
+of their use of the specific algorithm. Unverified
+algorithms display an explicit educational-example notice. Overview operations
+such as Add, Search, and Clear do not receive this section.
+
 Choose **Data Structures Overview**, then a group:
 
 | Group | Structures |

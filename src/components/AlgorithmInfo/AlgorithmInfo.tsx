@@ -2,6 +2,7 @@ import { PureComponent, createRef } from 'react'
 import type { MouseEvent, ReactNode, SyntheticEvent } from 'react'
 import type {
   AlgorithmInformation,
+  AlgorithmTechnology,
   ComplexityInformation,
 } from '../../visualization/AlgorithmInformation.ts'
 import './AlgorithmInfo.css'
@@ -111,8 +112,46 @@ export default class AlgorithmInfo extends PureComponent<
             <dl className="algorithm-terms">{this.renderTerms(information)}</dl>
           </>
         )}
+        {information.realWorldUsage && (
+          <section className="algorithm-technologies" aria-labelledby="algorithm-technologies-title">
+            <h3 id="algorithm-technologies-title">Real technologies</h3>
+            {information.realWorldUsage.technologies.length > 0
+              ? <ul>{this.renderExamples(information.realWorldUsage.technologies)}</ul>
+              : information.realWorldUsage.note && <p>{information.realWorldUsage.note}</p>}
+          </section>
+        )}
+        {information.realWorldUsage && (
+          <section className="algorithm-technologies" aria-labelledby="algorithm-products-title">
+            <h3 id="algorithm-products-title">Real products</h3>
+            {information.realWorldUsage.products.length > 0
+              ? <p>{this.renderProductLinks(information.realWorldUsage.products)}</p>
+              : <p>No verified real products.</p>}
+          </section>
+        )}
       </>
     )
+  }
+
+  private renderProductLinks(products: readonly AlgorithmTechnology[]): ReactNode[] {
+    const links: ReactNode[] = []
+    for (const product of products) {
+      if (links.length > 0) links.push(', ')
+      links.push(<a key={product.url} href={product.url} target="_blank" rel="noreferrer">{product.name}</a>)
+    }
+    return links
+  }
+
+  private renderExamples(examples: readonly AlgorithmTechnology[]): ReactNode[] {
+    const items: ReactNode[] = []
+    for (const technology of examples) {
+      items.push(
+        <li key={technology.url}>
+          <a href={technology.url} target="_blank" rel="noreferrer">{technology.name}</a>
+          {' — '}{technology.usage}
+        </li>,
+      )
+    }
+    return items
   }
 
   public render() {

@@ -155,6 +155,26 @@ additional memory complexity, with labeled best, average, and worst cases for
 both costs, and definitions of only the terms and letters used
 by that action. Each action owns its summary, complexity explanations, and glossary
 in its sequence class; the shared dialog only displays the supplied information.
+For actions under Data Structures Algorithms (Sorting and Graphs Traversal), also
+show **Real technologies** with verified primary documentation or source links
+and a description of the algorithm's actual use in each bullet. Do not display
+an additional explanatory paragraph below populated technology lists. Keep
+supporting variant notes in the evidence catalog; show the educational-use
+notice only when the technology list is empty.
+Add a separate **Real products** section for these algorithms. Each product name
+links directly to first-party documentation, engineering articles, or source code
+that supports the specific algorithm use. Display only linked product names in
+a comma-separated paragraph, without bullets or descriptions. Include multiple
+verified products when available; one product is enough when that is all the
+evidence supports. Keep supporting explanations and version/variant details in
+the evidence catalog. If no product can be verified, show "No verified real products."
+Never infer use from a company's
+industry, a general graph feature, or an interview-preparation example.
+Keep this section out of Overview operations such as Add, Search, and Clear.
+Store shared algorithm-use evidence in `AlgorithmTechnologyCatalog`; App attaches
+it only for the selected algorithm scope. If no practical use has been verified,
+display an explicit educational-example notice instead of invented examples.
+Do not infer that an algorithm is used only academically from missing evidence.
 Provide a larger info button at the action card's top-right corner for general
 structure information. It opens a separate centered dialog with a one- or
 two-sentence introduction and a two-column table containing four or five areas

@@ -143,6 +143,7 @@ import StackSearchByValue from '../DataStructures/Linear/Stack/SearchByValue/Sea
 import { SearchAnimation as StackSearchByValueSequence } from '../DataStructures/Linear/Stack/SearchByValue/SearchAnimation.ts'
 import type { ReactNode } from 'react'
 import { ActionCatalog } from '../../visualization/ActionCatalog.ts'
+import { AlgorithmTechnologyCatalog } from '../../visualization/AlgorithmTechnologyCatalog.ts'
 import type { ActionKind, ActionScope } from '../../visualization/ActionCatalog.ts'
 import { Graph } from '../DataStructures/Graphs/SimpleGraph/Graph.ts'
 import BinaryTreeDeleteByKey from '../DataStructures/Trees/BinaryTree/DeleteByKey/DeleteByKey.tsx'
@@ -467,6 +468,13 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private describeAction(action: ActionKind): AlgorithmInformation | null {
+    const information = this.describeActionDetails(action)
+    if (!information || !this.state.selected) return information
+    const realWorldUsage = AlgorithmTechnologyCatalog.get(this.state.selected, action, this.state.selectedScope)
+    return realWorldUsage ? { ...information, realWorldUsage } : information
+  }
+
+  private describeActionDetails(action: ActionKind): AlgorithmInformation | null {
     const graph = this.state.selected ? this.graphModels.get(this.state.selected) : undefined
     if (graph) return GraphFeatures.describe(action, graph)
     const additional = this.state.selected ? this.additionalTrees.get(this.state.selected) : undefined

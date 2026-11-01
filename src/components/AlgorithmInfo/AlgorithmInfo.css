@@ -122,6 +122,30 @@
 .algorithm-info code {
   font-family: var(--mono);
 }
+.algorithm-technologies ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.algorithm-technologies li,
+.algorithm-technologies p {
+  color: #5c7088;
+  font-size: 12px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.algorithm-technologies li + li {
+  margin-top: 10px;
+}
+.algorithm-technologies a {
+  color: #2e66b1;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.algorithm-technologies a:focus-visible {
+  outline: 2px solid #2e66b1;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
 @media (max-width: 650px) {
   .algorithm-info {
     width: calc(100% - 24px);
