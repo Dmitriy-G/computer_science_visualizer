@@ -3,8 +3,26 @@ import type { ActionKind, ActionScope } from './ActionCatalog.ts'
 import type { StructureKind } from './Scene.ts'
 import type { AlgorithmUsage } from './AlgorithmInformation.ts'
 
+export interface AlgorithmUsageLabel {
+  readonly kind: 'real-systems' | 'educational'
+  readonly text: 'Real systems' | 'Educational'
+  readonly description: string
+}
+
 // Only algorithm scopes receive real-world examples. Overview operations do not.
 export class AlgorithmTechnologyCatalog {
+  private static readonly realSystemsLabel: AlgorithmUsageLabel = {
+    kind: 'real-systems',
+    text: 'Real systems',
+    description: 'Verified practical use of this algorithm or an identified variant is documented in its information. This app demonstrates it through visualization.',
+  }
+
+  private static readonly educationalLabel: AlgorithmUsageLabel = {
+    kind: 'educational',
+    text: 'Educational',
+    description: 'Educational example; practical use of this variant has not been verified in the catalog.',
+  }
+
   private static readonly uses: Readonly<Partial<Record<ActionKind, AlgorithmUsage>>> = {
     'interpolation-sort': {
       technologies: [],
@@ -440,5 +458,11 @@ export class AlgorithmTechnologyCatalog {
       if (choice.kind === action) return this.uses[action] ?? this.unverified
     }
     return null
+  }
+
+  public static getLabel(structure: StructureKind, action: ActionKind, scope: ActionScope): AlgorithmUsageLabel | null {
+    const usage = this.get(structure, action, scope)
+    if (!usage) return null
+    return usage.technologies.length > 0 || usage.products.length > 0 ? this.realSystemsLabel : this.educationalLabel
   }
 }

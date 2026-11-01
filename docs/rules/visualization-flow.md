@@ -25,6 +25,13 @@
    actions in a persistent card at the upper-left of the canvas. Mark the
    selected action with a highlight and `aria-current`, and put a small info
    button to each action's right.
+   In Sorting and Graphs Traversal, show a small **Real systems** or
+   **Educational** tag inside the top of each algorithm button. Derive the tag
+   from AlgorithmTechnologyCatalog: verified technology or product evidence
+   means Real systems; otherwise Educational. The tag describes practical use,
+   not execution mode or actual threads in this visualizer. Preserve button
+   width and the existing 112px height, leaving space for two-line titles and
+   descriptions. Overview operation buttons do not receive algorithm-use tags.
 5. Selecting a supported value/index action on a linear structure, tree, graph, or
    hash-based structure opens its input dialog.
    Confirming valid input starts its animation. Actions without an argument run

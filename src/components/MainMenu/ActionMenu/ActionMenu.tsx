@@ -2,6 +2,7 @@ import { PureComponent, createRef } from 'react'
 import type { MouseEvent, ReactNode } from 'react'
 import { ActionCatalog } from '../../../visualization/ActionCatalog.ts'
 import { ActionInputRequest } from '../../../visualization/ActionInputRequest.ts'
+import { AlgorithmTechnologyCatalog } from '../../../visualization/AlgorithmTechnologyCatalog.ts'
 import type { ActionKind, ActionScope } from '../../../visualization/ActionCatalog.ts'
 import { StructureCatalog } from '../../../visualization/StructureCatalog.ts'
 import type { StructureKind } from '../../../visualization/Scene.ts'
@@ -42,10 +43,11 @@ export default class ActionMenu extends PureComponent<
     for (const action of ActionCatalog.getScopedActions(this.props.structure, this.props.scope)) {
       const selected = action.kind === this.props.selectedAction
       const requiresInput = ActionInputRequest.requiresInput(this.props.structure, action.kind)
+      const usageLabel = AlgorithmTechnologyCatalog.getLabel(this.props.structure, action.kind, this.props.scope)
       buttons.push(
         <div className="canvas-action-row" key={action.kind}>
           <button
-            className="canvas-action"
+            className={`canvas-action${usageLabel ? ' canvas-action--labeled' : ''}`}
             ref={buttons.length === 0 ? this.firstAction : undefined}
             data-action={action.kind}
             onClick={this.selectAction}
@@ -54,6 +56,11 @@ export default class ActionMenu extends PureComponent<
             aria-controls={requiresInput ? 'action-input-dialog' : undefined}
             aria-current={selected ? 'true' : undefined}
           >
+            {usageLabel && (
+              <span className={`algorithm-usage-tag algorithm-usage-tag--${usageLabel.kind}`} title={usageLabel.description}>
+                {usageLabel.text}
+              </span>
+            )}
             <span className="canvas-action-heading">
               <strong title={action.title}>{action.title}</strong>
             </span>
