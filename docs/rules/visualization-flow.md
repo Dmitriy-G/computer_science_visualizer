@@ -5,7 +5,7 @@
 1. Start with an empty renderer and a clickable menu icon in the top left.
 2. Open the menu to see **Data Structures Overview** and **Data Structures Algorithms**.
    Overview contains the existing structure groups. Algorithms contains
-   **Sorting** (Array with fifteen sorting actions) and **Graphs Traversal** (all five graph
+   **Sorting** (Array with twenty sorting actions) and **Graphs Traversal** (all five graph
    variants). Its graph action cards offer BFS and DFS, plus Dijkstra for Weighted
    Graph and topological sorting for DAG. These four algorithm actions move out
    of Overview; graph editing and value search remain there. Browsing either
@@ -174,6 +174,10 @@ Keep this section out of Overview operations such as Add, Search, and Clear.
 Store shared algorithm-use evidence in `AlgorithmTechnologyCatalog`; App attaches
 it only for the selected algorithm scope. If no practical use has been verified,
 display an explicit educational-example notice instead of invented examples.
+Algorithm demonstration libraries, sorting collections such as cpp-sort, and
+educational visualizers do not qualify as real technology or product examples.
+Require evidence of an algorithm's practical use in a product or system beyond
+merely providing a demonstration implementation.
 Do not infer that an algorithm is used only academically from missing evidence.
 Provide a larger info button at the action card's top-right corner for general
 structure information. It opens a separate centered dialog with a one- or
@@ -633,7 +637,7 @@ edge IDs through ActionInputRequest in the shared dialog.
 ## Algorithm navigation
 
 Keep algorithm groups separate from the Overview structure groups in
-MenuNavigation. Sorting lists Array and exposes its fifteen sorting actions; Graphs Traversal
+MenuNavigation. Sorting lists Array and exposes its twenty sorting actions; Graphs Traversal
 lists the existing five graphs and reuses their model, input, sequence, renderer,
 and info implementations. ActionCatalog.getScopedActions controls the visible
 choices and App validates action selection against the selected scope. Keep the
@@ -660,6 +664,7 @@ playback clones and snapshots.
 Also provide Selection Sort, Insertion Sort, Binary Insertion Sort, Merge Sort,
 Quick Sort, Heap Sort, Shell Sort, Counting Sort, Radix Sort, and Bucket Sort.
 Also include TimSort, IntroSort, Dual-Pivot QuickSort, and Block Merge Sort.
+Also include WikiSort, Smoothsort, Tree Sort, Tournament Sort, and Patience Sort.
 Each action owns its component, CSS, sequence, and complexity
 information. Keep model entry points and optional synchronous trace callbacks in
 FixedArray, with array-specific algorithm helpers beside it. Reuse ArraySortingLayout and ArraySortingAnimation for independent
@@ -741,3 +746,50 @@ extra memory, including output; head cursors and the heap use O(√n). This is
 distinct from constant-space internal-buffer block sorting. Show block pieces,
 buffer reads, heap-head comparisons, and growing output with independent scene
 IDs. Copy output back into the fixed allocation before the final commit.
+
+WikiSort demonstrates the cache-free internal-buffer block merge algorithm.
+Insertion-sort small base runs, borrow distinct keys as block tags and a second
+internal merge buffer when available, roll tagged blocks through the right run,
+then sort and redistribute all borrowed keys. Adapt the block size and use
+stable rotation merging when distinct keys are scarce. Never allocate an
+input-sized external buffer or replace this with the buffered Block Merge Sort
+lesson. An ordered-input scan gives O(n) best time; average/worst time is
+O(n log n), with random distinct permutations as the average assumption.
+Additional algorithm memory is O(1), excluding trace snapshots; ties stay stable.
+
+Smoothsort uses Leonardo max-heaps with iterative sift, trinkle, and semitrinkle
+repairs. Encode the forest with arithmetic rather than JavaScript's signed
+32-bit bitwise operations. Grow the forest, then split its rightmost heap while
+finalizing the sorted suffix. Sorted input gives O(n) best time; random distinct
+permutations and worst-case repairs take O(n log n). Extra memory is O(1) and
+the algorithm is unstable.
+
+Tree Sort inserts one auxiliary unbalanced BST node per array entry, directing
+equal keys right to preserve arrival order. Read the tree in order through
+parent links, without recursion, into the existing array. Show the auxiliary
+tree and leave unwritten destination slots empty during output. Best/average
+time is O(n log n), with balanced insertion order for the best and random
+distinct permutations for the average. Sorted, reverse-sorted, and all-equal
+input takes O(n²). Additional memory is O(n), and this variant is stable.
+
+Tournament Sort builds a complete padded winner tree in O(n), then repeatedly
+outputs the minimum and replays only that leaf's ancestors. Show matches,
+exhausted leaves, and growing output. Use an empty marker rather than a numeric
+sentinel, and break ties by original input position. All time cases are
+O(n log n), additional memory is O(n), and this variant is stable. The verified
+STXXL example uses tournament selection during external run merging; distinguish
+that application from this whole-array lesson.
+
+Patience Sort binary-searches for the leftmost pile whose top is at least the
+new key. Show decreasing piles, then merge their tops through a min-heap into
+output. Equal keys stacked together pop in reverse order, so this variant is
+unstable. Nonincreasing and all-equal input gives O(n) best time; random distinct
+permutations give O(n log n) average time and the worst case is O(n log n).
+Extra memory, including piles, heap, and output, is O(n). Do not present patience
+diff or subsequence detection as verified use of the complete sorting algorithm.
+
+All five actions handle empty/singleton arrays in O(1), keep the allocation and
+entry IDs, sort only the playback clone, and commit on the final frame. Reserve
+consistent viewport bounds for growing auxiliary trees and piles throughout
+each animation. Auxiliary copies have separate scene IDs and are removed from
+the final frame; source element counts remain unchanged throughout playback.

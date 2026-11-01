@@ -15,6 +15,11 @@ import { TimSortAnimation } from '../src/components/DataStructures/Linear/Array/
 import { IntroSortAnimation } from '../src/components/DataStructures/Linear/Array/IntroSort/IntroSortAnimation.ts'
 import { DualPivotQuickSortAnimation } from '../src/components/DataStructures/Linear/Array/DualPivotQuickSort/DualPivotQuickSortAnimation.ts'
 import { BlockMergeSortAnimation } from '../src/components/DataStructures/Linear/Array/BlockMergeSort/BlockMergeSortAnimation.ts'
+import { WikiSortAnimation } from '../src/components/DataStructures/Linear/Array/WikiSort/WikiSortAnimation.ts'
+import { SmoothsortAnimation } from '../src/components/DataStructures/Linear/Array/Smoothsort/SmoothsortAnimation.ts'
+import { TreeSortAnimation } from '../src/components/DataStructures/Linear/Array/TreeSort/TreeSortAnimation.ts'
+import { TournamentSortAnimation } from '../src/components/DataStructures/Linear/Array/TournamentSort/TournamentSortAnimation.ts'
+import { PatienceSortAnimation } from '../src/components/DataStructures/Linear/Array/PatienceSort/PatienceSortAnimation.ts'
 import { ActionInputRequest } from '../src/visualization/ActionInputRequest.ts'
 
 const sorts = [
@@ -32,6 +37,11 @@ const sorts = [
   ['introSort', 'intro-sort', IntroSortAnimation, false],
   ['dualPivotQuickSort', 'dual-pivot-quick-sort', DualPivotQuickSortAnimation, false],
   ['blockMergeSort', 'block-merge-sort', BlockMergeSortAnimation, true],
+  ['wikiSort', 'wiki-sort', WikiSortAnimation, true],
+  ['smoothSort', 'smooth-sort', SmoothsortAnimation, false],
+  ['treeSort', 'tree-sort', TreeSortAnimation, true],
+  ['tournamentSort', 'tournament-sort', TournamentSortAnimation, true],
+  ['patienceSort', 'patience-sort', PatienceSortAnimation, false],
 ]
 
 const cases = [[], [4], [1, 2, 3, 4], [4, 3, 2, 1], [2, 2, 2], [3, -2, 3, 0, -2], [Number.MAX_SAFE_INTEGER, 0, Number.MIN_SAFE_INTEGER], [2, 2, 1], [4, 1, 3, 1, 2]]
@@ -248,7 +258,7 @@ test('heap extraction finalizes a growing suffix and Shell Sort uses descending 
   assert.ok(!information.terms.some((term) => term.symbol === 'Not established'))
 })
 
-test('hybrid and block sorts handle run boundaries, partial blocks, and few distinct keys stably', () => {
+test('hybrid, block, and additional sorts handle run boundaries, partial blocks, and few distinct keys', () => {
   let seed = 0x7a31
   const shuffle = (values) => {
     for (let index = values.length - 1; index > 0; index -= 1) {
@@ -268,7 +278,7 @@ test('hybrid and block sorts handle run boundaries, partial blocks, and few dist
       ...[2, 3, 4, 5, 8].map((keys) => shuffle(Array.from({ length }, (_, index) => index % keys - 2))),
     ]
     for (const values of valuesList) {
-      for (const [method, , , stable] of sorts.slice(-4)) {
+      for (const [method, , , stable] of sorts.slice(10)) {
         const source = new FixedArray(values)
         const original = source.getEntries()
         const model = source.clone()
@@ -346,5 +356,114 @@ test('buffered merge scenes preserve unique IDs and publish an intact final arra
     }
     assert.deepEqual(plan.steps.at(-1).scene.nodes.map((node) => node.id), plan.result.getEntries().map((entry) => entry.id))
     assert.ok(plan.steps.at(-1).scene.nodes.every((node) => node.status === 'SORTED'))
+  }
+})
+
+test('WikiSort restores internal buffers and stable ties across distinct-key and duplicate-heavy merge levels', () => {
+  for (const length of [8, 10, 17, 33, 65, 129, 513]) {
+    for (const keys of [1, 2, 3, 5, 13, length]) {
+      const values = Array.from({ length }, (_, index) => (length - index) % keys - 3)
+      const model = new FixedArray(values)
+      const before = model.getEntries()
+      const events = []
+      model.wikiSort((event) => {
+        events.push(event)
+        assert.equal(new Set(model.getEntries().map((entry) => entry.id)).size, length, 'internal exchanges retain every entry')
+      })
+      assert.deepEqual(model.getEntries().map((entry) => entry.value), [...values].sort((a, b) => a - b))
+      for (const value of new Set(values)) {
+        assert.deepEqual(model.getEntries().filter((entry) => entry.value === value), before.filter((entry) => entry.value === value))
+      }
+      assert.ok(events.every((event) => !event.frame.buffer && !event.frame.output), 'internal buffers remain inside the array')
+      if (keys > 1) assert.ok(events.some((event) => event.label === 'Extract unique internal buffer keys'))
+    }
+  }
+})
+
+test('Smoothsort finalizes each maximum and adapts to already ordered Leonardo heaps', () => {
+  const length = 128
+  for (const values of [Array.from({ length }, (_, index) => index), Array.from({ length }, (_, index) => length - index), Array.from({ length }, (_, index) => index % 7)]) {
+    const model = new FixedArray(values)
+    const events = []
+    model.smoothSort((event) => {
+      events.push(event)
+      if (event.kind !== 'extract') return
+      const entries = model.getEntries().map((entry) => entry.value)
+      const suffix = entries.slice(event.index)
+      assert.deepEqual(suffix, [...suffix].sort((a, b) => a - b))
+      assert.ok(entries.slice(0, event.index).every((value) => value <= suffix[0]))
+    })
+    assert.equal(events.filter((event) => event.kind === 'extract').length, length - 1)
+    assert.ok(events.some((event) => event.detail.includes('Leonardo heap has size 5')))
+    if (values[0] === 0 && values[1] === 1 && values.at(-1) === length - 1) {
+      assert.ok(!events.some((event) => event.kind === 'swap'))
+      assert.ok(events.filter((event) => event.kind === 'compare').length < 10 * length)
+    }
+  }
+})
+
+test('Tree Sort stores duplicate entries and traverses a degenerate tree without recursive output', () => {
+  for (const values of [new Array(64).fill(3), Array.from({ length: 64 }, (_, index) => index), [3, 1, 3, 2, 1, 3]]) {
+    const model = new FixedArray(values)
+    const before = model.getEntries()
+    const events = []
+    model.treeSort((event) => events.push(event))
+    assert.equal(events.filter((event) => event.kind === 'place').length, values.length)
+    assert.equal(events.filter((event) => event.kind === 'write').length, values.length)
+    assert.equal(events.findLast((event) => event.kind === 'place').frame.tree.length, values.length)
+    for (const value of new Set(values)) assert.deepEqual(model.getEntries().filter((entry) => entry.value === value), before.filter((entry) => entry.value === value))
+  }
+})
+
+test('Tournament Sort exhausts non-power-of-two leaves once and uses original positions for equal winners', () => {
+  const values = [Number.MAX_SAFE_INTEGER, -1, Number.MIN_SAFE_INTEGER, -1, 0]
+  const model = new FixedArray(values)
+  const before = model.getEntries()
+  const events = []
+  model.tournamentSort((event) => events.push(event))
+  const winners = events.filter((event) => event.kind === 'extract')
+  assert.equal(winners.length, values.length)
+  assert.equal(new Set(winners.map((event) => event.index)).size, values.length)
+  assert.ok(events.some((event) => event.frame.tree?.some((node) => node.entry === null)))
+  assert.deepEqual(model.getEntries(), [...before].sort((a, b) => a.value - b.value))
+  assert.ok(winners.at(-1).frame.output.every((entry) => entry !== null))
+})
+
+test('Patience Sort preserves decreasing pile order and exposes its unstable equal-key stack order', () => {
+  const model = new FixedArray([3, 1, 2, 1, 4, 0])
+  const events = []
+  model.patienceSort((event) => events.push(event))
+  for (const event of events.filter((event) => event.kind === 'place')) {
+    const piles = event.frame.buckets
+    for (const pile of piles) {
+      for (let index = 1; index < pile.length; index += 1) assert.ok(pile[index - 1].value >= pile[index].value)
+    }
+    for (let index = 1; index < piles.length; index += 1) assert.ok(piles[index - 1].at(-1).value < piles[index].at(-1).value)
+  }
+  assert.equal(events.filter((event) => event.kind === 'extract').length, model.length)
+  const equal = new FixedArray([2, 2, 2])
+  const originalIds = equal.getEntries().map((entry) => entry.id)
+  equal.patienceSort()
+  assert.deepEqual(equal.getEntries().map((entry) => entry.id), originalIds.reverse())
+})
+
+test('auxiliary sorting diagrams reserve stable bounds and finish with only array nodes', () => {
+  for (const Animation of [TreeSortAnimation, TournamentSortAnimation, PatienceSortAnimation]) {
+    const plan = new Animation(new FixedArray([5, 2, 4, 2, 0, 3]))
+    assert.ok(plan.steps.every((step) => step.scene.width === plan.steps[0].scene.width && step.scene.height === plan.steps[0].scene.height))
+    for (const step of plan.steps) {
+      const ids = new Set(step.scene.nodes.map((node) => node.id))
+      for (const edge of step.scene.edges) assert.ok(ids.has(edge.from) && ids.has(edge.to))
+      for (const node of step.scene.nodes) {
+        assert.ok(node.x >= 0 && node.x < step.scene.width)
+        assert.ok(node.y >= 0 && node.y < step.scene.height)
+      }
+    }
+    if (Animation === PatienceSortAnimation) {
+      assert.ok(plan.steps.some((step) => step.scene.slots.some((slot) => slot.label.startsWith('pile '))))
+      assert.ok(plan.steps.some((step) => step.scene.nodes.filter((node) => node.id.startsWith('bucket-') && node.status === 'COMPARE').length === 2))
+    } else assert.ok(plan.steps.some((step) => step.scene.edges.length > 0))
+    assert.ok(plan.steps.at(-1).scene.nodes.every((node) => node.id.startsWith('array-element-') && node.status === 'SORTED'))
+    assert.equal(plan.steps.at(-1).scene.edges.length, 0)
   }
 })

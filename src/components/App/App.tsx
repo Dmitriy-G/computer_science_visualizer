@@ -95,6 +95,16 @@ import DualPivotQuickSort from '../DataStructures/Linear/Array/DualPivotQuickSor
 import { DualPivotQuickSortAnimation } from '../DataStructures/Linear/Array/DualPivotQuickSort/DualPivotQuickSortAnimation.ts'
 import BlockMergeSort from '../DataStructures/Linear/Array/BlockMergeSort/BlockMergeSort.tsx'
 import { BlockMergeSortAnimation } from '../DataStructures/Linear/Array/BlockMergeSort/BlockMergeSortAnimation.ts'
+import WikiSort from '../DataStructures/Linear/Array/WikiSort/WikiSort.tsx'
+import { WikiSortAnimation } from '../DataStructures/Linear/Array/WikiSort/WikiSortAnimation.ts'
+import Smoothsort from '../DataStructures/Linear/Array/Smoothsort/Smoothsort.tsx'
+import { SmoothsortAnimation } from '../DataStructures/Linear/Array/Smoothsort/SmoothsortAnimation.ts'
+import TreeSort from '../DataStructures/Linear/Array/TreeSort/TreeSort.tsx'
+import { TreeSortAnimation } from '../DataStructures/Linear/Array/TreeSort/TreeSortAnimation.ts'
+import TournamentSort from '../DataStructures/Linear/Array/TournamentSort/TournamentSort.tsx'
+import { TournamentSortAnimation } from '../DataStructures/Linear/Array/TournamentSort/TournamentSortAnimation.ts'
+import PatienceSort from '../DataStructures/Linear/Array/PatienceSort/PatienceSort.tsx'
+import { PatienceSortAnimation } from '../DataStructures/Linear/Array/PatienceSort/PatienceSortAnimation.ts'
 import { ClearAnimation as ArrayClearSequence } from '../DataStructures/Linear/Array/Clear/ClearAnimation.ts'
 import LinkedListClear from '../DataStructures/Linear/LinkedList/Clear/Clear.tsx'
 import { ClearAnimation as LinkedListClearSequence } from '../DataStructures/Linear/LinkedList/Clear/ClearAnimation.ts'
@@ -643,6 +653,11 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'intro-sort': return IntroSortAnimation.describe(this.array.length)
         case 'dual-pivot-quick-sort': return DualPivotQuickSortAnimation.describe(this.array.length)
         case 'block-merge-sort': return BlockMergeSortAnimation.describe(this.array.length)
+        case 'wiki-sort': return WikiSortAnimation.describe(this.array.length)
+        case 'smooth-sort': return SmoothsortAnimation.describe(this.array.length)
+        case 'tree-sort': return TreeSortAnimation.describe(this.array.length)
+        case 'tournament-sort': return TournamentSortAnimation.describe(this.array.length)
+        case 'patience-sort': return PatienceSortAnimation.describe(this.array.length)
         case 'clear': return ArrayClearSequence.describe(this.array.length)
         case 'insert-middle': return ArrayInsertionAnimation.describe(this.array.length)
         case 'insert-start': return ArrayAddAtStartSequence.describe(this.array.length)
@@ -811,6 +826,11 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'intro-sort': return <IntroSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'dual-pivot-quick-sort': return <DualPivotQuickSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'block-merge-sort': return <BlockMergeSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'wiki-sort': return <WikiSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'smooth-sort': return <Smoothsort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'tree-sort': return <TreeSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'tournament-sort': return <TournamentSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'patience-sort': return <PatienceSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'clear': return <ArrayClear key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'insert-middle': return <ArrayAddInTheMiddle key={this.state.actionSession} array={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'insert-start': return <ArrayAddAtStart key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />

@@ -32,4 +32,19 @@ export class ArraySortingAnimation extends AnimationSequence {
       : event.kind === 'merge' || event.kind === 'partition' || event.kind === 'collapse' || event.kind === 'pass' ? 4 : 3
     this.record(event, phase, event.label!, event.detail!, event.code!)
   }
+
+  // Reserve the largest auxiliary diagram for the entire session, so growing
+  // trees or piles never resize the viewport during playback.
+  protected fitScenes(): void {
+    let width = 0
+    let height = 0
+    for (const step of this.steps) {
+      width = Math.max(width, step.scene.width)
+      height = Math.max(height, step.scene.height)
+    }
+    for (let index = 0; index < this.steps.length; index += 1) {
+      const step = this.steps[index]
+      this.steps[index] = { ...step, scene: { ...step.scene, width, height } }
+    }
+  }
 }

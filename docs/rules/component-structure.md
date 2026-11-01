@@ -179,13 +179,18 @@ Algorithm menu groups stay in MainMenu/MenuNavigation alongside root-category
 navigation. Reuse MainMenu to list graphs under Algorithms > Graphs Traversal;
 list Array under Sorting with Bubble Sort, SelectionSort, InsertionSort,
 BinaryInsertionSort, MergeSort, QuickSort, HeapSort, ShellSort, CountingSort,
-RadixSort, BucketSort, TimSort, IntroSort, DualPivotQuickSort, and BlockMergeSort.
+RadixSort, BucketSort, TimSort, IntroSort, DualPivotQuickSort, BlockMergeSort,
+WikiSort, Smoothsort, TreeSort, TournamentSort, and PatienceSort.
 Each action owns its component,
 CSS, and sequence folder under Linear/Array. Keep the model entry points in FixedArray,
 with shared array-specific algorithms, trace, layout, and snapshot helpers beside it.
 HybridArraySort implements TimSort, IntroSort, and Dual-Pivot QuickSort on the
 existing allocation. BlockMergeArraySort implements buffered block-wise multiway
 merging with stable ties and O(n) working storage.
+WikiArraySort implements cache-free internal-buffer block merging; SmoothArraySort
+implements Leonardo heaps. TreeArraySort, TournamentArraySort, and PatienceArraySort
+keep their BST, winner-tree, and pile/heap operations beside the array model.
+ArraySortOperations shares only comparison, exchange, and trace primitives.
 ActionMenu receives an explicit
 ActionScope, and App preserves the selected scope independently of menu browsing.
 Algorithm structure buttons show at most two example names in one truncated line;

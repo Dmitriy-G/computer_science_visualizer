@@ -1,19 +1,22 @@
 import { ArrayLayout } from './ArrayLayout.ts'
 import type { ArrayEntry } from './FixedArray.ts'
-import type { ArraySortFrame } from './ArraySortTrace.ts'
-import type { Scene, SceneNode, SceneSlot } from '../../../../visualization/Scene.ts'
+import type { ArraySortFrame, ArraySortTreeNode } from './ArraySortTrace.ts'
+import type { Scene, SceneEdge, SceneNode, SceneSlot } from '../../../../visualization/Scene.ts'
 
 export class ArraySortingLayout {
   public create(entries: readonly ArrayEntry[], frame: ArraySortFrame = {}): Scene {
     const scene = new ArrayLayout().create(entries)
     const nodes: SceneNode[] = []
     const slots: SceneSlot[] = []
+    const edges: SceneEdge[] = []
+    let width = scene.width
+    let height = frame.distribution ? 780 : 600
     const active = new Set(frame.activeIndices ?? [])
     const sorted = new Set(frame.sortedIndices ?? [])
     const sourceSlots = scene.slots ?? []
     for (let index = 0; index < entries.length; index += 1) {
       const buffered = Boolean(frame.buffer) && index >= (frame.writeIndex ?? 0) && index <= (frame.rangeEnd ?? -1)
-      const empty = index === frame.hole || buffered
+      const empty = index === frame.hole || index >= (frame.unwrittenFrom ?? entries.length) || buffered
       const role = frame.roles?.[index]
       const highlighted = active.has(index) || role !== undefined
       const finalized = index < (frame.sortedPrefix ?? 0) || index >= (frame.sortedFrom ?? entries.length) || sorted.has(index)
@@ -36,10 +39,14 @@ export class ArraySortingLayout {
       for (let bucket = 0; bucket < frame.buckets.length; bucket += 1) {
         for (let index = 0; index < frame.buckets[bucket].length; index += 1) {
           const entry = frame.buckets[bucket][index]
-          const x = 80 + position * 92 + bucket * 20
-          const highlighted = bucket === frame.activeBucket && Boolean(frame.activeBucketIndices?.includes(index))
-          nodes.push({ ...entry, id: `bucket-${entry.id}`, x, y: 440, label: '', tone: highlighted ? 'active' : 'visited', status: highlighted ? frame.bucketStatus ?? 'COMPARE' : 'BUCKET', opacity: 1 })
-          slots.push({ id: `bucket-slot-${bucket}-${index}`, x, y: 440, label: `bucket ${bucket} [${index}]`, empty: false, highlighted, opacity: 1 })
+          const x = frame.piles ? 80 + bucket * 112 : 80 + position * 92 + bucket * 20
+          const y = frame.piles ? 620 + (frame.buckets[bucket].length - 1 - index) * 140 : 440
+          const top = index === frame.buckets[bucket].length - 1
+          const highlighted = bucket === frame.activeBucket && Boolean(frame.activeBucketIndices?.includes(index)) || Boolean(frame.activePileTops?.includes(bucket)) && top
+          const status = frame.piles ? top ? 'TOP' : 'PILE' : 'BUCKET'
+          nodes.push({ ...entry, id: `bucket-${entry.id}`, x, y, label: '', tone: highlighted ? 'active' : 'visited', status: highlighted ? frame.bucketStatus ?? 'COMPARE' : status, opacity: 1 })
+          slots.push({ id: `bucket-slot-${bucket}-${index}`, x, y, label: `${frame.piles ? 'pile' : 'bucket'} ${bucket} [${index}]`, empty: false, highlighted, opacity: 1 })
+          if (frame.piles) height = Math.max(height, y + 160)
           position += 1
         }
       }
@@ -77,14 +84,39 @@ export class ArraySortingLayout {
         slots.push({ id: `buffer-slot-${index}`, x: 80 + index * 92, y: 440, label: `buffer [${index}]`, empty: false, highlighted: reading, opacity: 1 })
       }
     }
+    if (frame.tree && frame.treeRoot) {
+      const tree = new Map<string, ArraySortTreeNode>()
+      for (const node of frame.tree) tree.set(node.id, node)
+      const pending: { id: string, depth: number, visit: boolean }[] = [{ id: frame.treeRoot, depth: 0, visit: false }]
+      let column = 0
+      while (pending.length) {
+        const item = pending.pop()!
+        const node = tree.get(item.id)!
+        if (!item.visit) {
+          if (node.right) pending.push({ id: node.right, depth: item.depth + 1, visit: false })
+          pending.push({ ...item, visit: true })
+          if (node.left) pending.push({ id: node.left, depth: item.depth + 1, visit: false })
+          continue
+        }
+        const x = 80 + column++ * 92
+        const y = 640 + item.depth * 120
+        const id = `sort-tree-${node.id}`
+        nodes.push({ id, value: node.entry?.value ?? 0, displayValue: node.entry ? undefined : '∅', x, y, label: '', tone: node.active ? 'active' : 'visited', status: node.status, opacity: 1 })
+        for (const child of [node.left, node.right]) {
+          if (child) edges.push({ id: `sort-edge-${node.id}-${child}`, from: id, to: `sort-tree-${child}`, directed: true, highlighted: node.active || tree.get(child)!.active, opacity: 1 })
+        }
+        width = Math.max(width, x + 120)
+        height = Math.max(height, y + 160)
+      }
+    }
     let focusId: string | null = frame.held?.id ?? null
     for (const node of nodes) {
       if (node.tone === 'active') { focusId = node.id; break }
     }
     return {
-      ...scene, nodes, slots, focusId,
-      width: frame.distribution ? Math.max(scene.width, 160 + entries.length * 92 + Math.max(10, entries.length) * 20, 160 + Math.max(10, entries.length) * 112) : scene.width,
-      height: frame.distribution ? 780 : 600,
+      ...scene, nodes, edges, slots, focusId,
+      width: frame.distribution ? Math.max(width, 160 + entries.length * 92 + Math.max(10, entries.length) * 20, 160 + Math.max(10, entries.length) * 112) : width,
+      height,
       hint: frame.counterHint ? { title: 'Auxiliary storage', description: frame.counterHint } : undefined,
     }
   }

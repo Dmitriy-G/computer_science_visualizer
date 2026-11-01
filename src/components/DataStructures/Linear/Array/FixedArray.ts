@@ -1,6 +1,11 @@
 import type { ArraySortCounter, ArraySortObserver } from './ArraySortTrace.ts'
 import { HybridArraySort } from './HybridArraySort.ts'
 import { BlockMergeArraySort } from './BlockMergeArraySort.ts'
+import { WikiArraySort } from './WikiArraySort.ts'
+import { SmoothArraySort } from './SmoothArraySort.ts'
+import { TreeArraySort } from './TreeArraySort.ts'
+import { TournamentArraySort } from './TournamentArraySort.ts'
+import { PatienceArraySort } from './PatienceArraySort.ts'
 
 export interface ArrayEntry {
   readonly id: string
@@ -94,6 +99,26 @@ export class FixedArray {
 
   public blockMergeSort(onStep?: ArraySortObserver): void {
     new BlockMergeArraySort(this.items, onStep).sort()
+  }
+
+  public wikiSort(onStep?: ArraySortObserver): void {
+    new WikiArraySort(this.items, onStep).sort()
+  }
+
+  public smoothSort(onStep?: ArraySortObserver): void {
+    new SmoothArraySort(this.items, onStep).sort()
+  }
+
+  public treeSort(onStep?: ArraySortObserver): void {
+    new TreeArraySort(this.items, onStep).sort()
+  }
+
+  public tournamentSort(onStep?: ArraySortObserver): void {
+    new TournamentArraySort(this.items, onStep).sort()
+  }
+
+  public patienceSort(onStep?: ArraySortObserver): void {
+    new PatienceArraySort(this.items, onStep).sort()
   }
 
   public insertionSort(onStep?: ArraySortObserver): void {

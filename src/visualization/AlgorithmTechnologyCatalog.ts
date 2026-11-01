@@ -6,14 +6,37 @@ import type { AlgorithmUsage } from './AlgorithmInformation.ts'
 // Only algorithm scopes receive real-world examples. Overview operations do not.
 export class AlgorithmTechnologyCatalog {
   private static readonly uses: Readonly<Partial<Record<ActionKind, AlgorithmUsage>>> = {
+    'wiki-sort': {
+      technologies: [],
+      products: [],
+      note: 'WikiSort is presented here as an educational sorting example. No production use has been verified.',
+    },
+    'smooth-sort': {
+      technologies: [],
+      products: [],
+      note: 'Smoothsort is presented here as an educational sorting example. No production use has been verified.',
+    },
+    'tree-sort': {
+      technologies: [],
+      products: [],
+      note: 'This unbalanced BST Tree Sort is an educational implementation. No production use of this exact variant has been verified. Balanced ordered containers alone do not establish use of this sorting algorithm.',
+    },
+    'tournament-sort': {
+      technologies: [{ name: 'STXXL: tournament-tree merging', url: 'https://stxxl.org/tags/1.4.1/design_algo_sorting.html', usage: 'STXXL 1.4.1 documents tournament-tree selection of the smallest buffered entry during external multiway sorting. This is the run-merging application of tournament selection; the lesson gives each input entry its own leaf and exhausts it after one win.' }],
+      products: [{ name: 'STXXL', url: 'https://stxxl.org/tags/1.4.1/design_algo_sorting.html', usage: 'Uses tournament-tree selection in the merge stage of its external sorter, rather than this whole-array winner-tree variant.' }],
+      note: 'The verified use is tournament selection during external run merging, not a claim that STXXL uses this exact in-memory whole-array sorting implementation.',
+    },
+    'patience-sort': {
+      technologies: [],
+      products: [],
+      note: 'This pile-and-heap Patience Sort is an educational implementation. No production use of this complete sorting variant has been verified. Patience diff and longest-increasing-subsequence algorithms are related applications, not evidence of the full sorting pipeline.',
+    },
     'tim-sort': {
       technologies: [
         { name: 'OpenJDK: TimSort', url: 'https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/TimSort.java', usage: 'Stably sorts object-array ranges using natural runs, binary insertion, a run stack, and galloping merges. This lesson reduces the minrun threshold and uses a fixed galloping trigger for readable small-array steps.' },
-        { name: 'cpp-sort: tim_sorter', url: 'https://github.com/Morwenn/cpp-sort/wiki/Sorters#tim_sorter', usage: 'Exposes a stable TimSort implementation for random-access iterators, documenting linear best-case and O(n log n) worst-case time.' },
       ],
       products: [
         { name: 'Java', url: 'https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/TimSort.java', usage: 'OpenJDK provides TimSort for object-array sorting.' },
-        { name: 'cpp-sort', url: 'https://github.com/Morwenn/cpp-sort/wiki/Sorters#tim_sorter', usage: 'Provides TimSort as a reusable stable sorter.' },
       ],
       note: 'Current CPython uses a different run-merge scheduling policy; it is not claimed to implement this exact TimSort variant.',
     },

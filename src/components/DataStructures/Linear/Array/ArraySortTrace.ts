@@ -7,6 +7,15 @@ export interface ArraySortCounter {
   readonly status: string
 }
 
+export interface ArraySortTreeNode {
+  readonly id: string
+  readonly entry: ArrayEntry | null
+  readonly left: string | null
+  readonly right: string | null
+  readonly status: string
+  readonly active: boolean
+}
+
 export interface ArraySortFrame {
   readonly activeIndices?: readonly number[]
   readonly roles?: Readonly<Record<number, string>>
@@ -29,6 +38,11 @@ export interface ArraySortFrame {
   readonly output?: readonly (ArrayEntry | null)[]
   readonly counters?: readonly ArraySortCounter[]
   readonly counterHint?: string
+  readonly tree?: readonly ArraySortTreeNode[]
+  readonly treeRoot?: string | null
+  readonly piles?: boolean
+  readonly activePileTops?: readonly number[]
+  readonly unwrittenFrom?: number
 }
 
 export interface ArraySortEvent {
