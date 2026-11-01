@@ -49,16 +49,21 @@
   line-height: 1.6;
   margin: 12px 0;
 }
+.main-menu nav {
+  display: grid;
+  gap: 12px;
+}
 .structure-choice {
-  display: flex;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
   align-items: center;
   width: 100%;
+  height: var(--menu-card-height);
   gap: 14px;
   background: #fff;
   border: 1px solid var(--border);
   border-radius: 12px;
-  margin-bottom: 12px;
-  padding: 20px 14px;
+  padding: 14px;
   text-align: left;
 }
 .structure-choice:hover {
@@ -69,8 +74,8 @@
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 10px;
   background: #eef4fc;
   color: var(--accent);
@@ -85,31 +90,35 @@
   height: 28px;
 }
 .structure-choice strong {
-  display: block;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
   font-size: 14px;
   font-weight: 600;
+  line-height: 20px;
 }
 .choice-copy {
-  flex: 1;
   min-width: 0;
   overflow-wrap: anywhere;
 }
 .structure-choice small {
-  display: block;
-  font-size: 11px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  height: 36px;
+  overflow: hidden;
+  font-size: 12px;
   color: var(--muted);
-  line-height: 1.5;
-  margin-top: 6px;
+  line-height: 18px;
+  margin-top: 4px;
 }
 .structure-choice-examples small {
+  display: block;
+  -webkit-line-clamp: unset;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.choice-arrow {
-  margin-left: auto;
-  flex-shrink: 0;
-  color: var(--muted);
 }
 .back-button {
   align-self: flex-start;

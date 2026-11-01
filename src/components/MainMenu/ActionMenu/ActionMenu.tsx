@@ -55,9 +55,9 @@ export default class ActionMenu extends PureComponent<
             aria-current={selected ? 'true' : undefined}
           >
             <span className="canvas-action-heading">
-              <strong>{action.title}</strong>
+              <strong title={action.title}>{action.title}</strong>
             </span>
-            <span className="canvas-action-description">{action.description}</span>
+            <span className="canvas-action-description" title={action.description}>{action.description}</span>
           </button>
           <button
             className="action-info-button"

@@ -113,6 +113,14 @@ choose the data structure. Keep its canvas action card in
 action selection remains separate from drawing the scene.
 Each action row has a separate info button on its right. It opens that action's
 overview dialog without selecting or restarting the action.
+Use two consistent card styles for menu buttons. Category, group, and structure
+cards have one leading icon, a heading, and up to two description lines; omit
+trailing arrow icons. Action cards have a heading and up to two description lines,
+with no icon inside the card. Keep their info controls separate and vertically
+centered beside them. Both styles use the shared --menu-card-height token (112px),
+matching text sizes and spacing. Allow headings up to two lines for long names;
+keep full text in the DOM and provide title text for clipped content. Preserve
+keyboard focus visibility and the independently scrolling action list.
 The card's top-left back button reopens the current structure group's list,
 preserving the selected structure and playback session.
 The card's top-right corner has a larger info button for general structure

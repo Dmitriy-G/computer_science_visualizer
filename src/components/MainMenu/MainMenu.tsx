@@ -101,8 +101,7 @@ export default class MainMenu extends Component<
       buttons.push(
         <button className="structure-choice" key={group.kind} data-algorithm-group={group.kind} onClick={this.handleAlgorithmGroup}>
           <span className="structure-symbol" aria-hidden="true">{group.symbol}</span>
-          <span className="choice-copy"><strong>{group.name}</strong><small>{group.description}</small></span>
-          <span className="choice-arrow" aria-hidden="true">→</span>
+            <span className="choice-copy"><strong title={group.name}>{group.name}</strong><small title={group.description}>{group.description}</small></span>
         </button>,
       )
     }
@@ -116,10 +115,9 @@ export default class MainMenu extends Component<
         <button className="structure-choice" key={category.kind} data-category={category.kind} onClick={this.handleCategory}>
           <span className="structure-symbol" aria-hidden="true">{category.symbol}</span>
           <span className="choice-copy">
-            <strong>{category.name}</strong>
-            <small>{category.description}</small>
+              <strong title={category.name}>{category.name}</strong>
+              <small title={category.description}>{category.description}</small>
           </span>
-          <span className="choice-arrow" aria-hidden="true">→</span>
         </button>,
       )
     }
@@ -138,10 +136,9 @@ export default class MainMenu extends Component<
         >
           <span className="structure-symbol" aria-hidden="true">{group.symbol}</span>
           <span className="choice-copy">
-            <strong>{group.name}</strong>
-            <small>{group.description}</small>
+              <strong title={group.name}>{group.name}</strong>
+              <small title={group.description}>{group.description}</small>
           </span>
-          <span className="choice-arrow" aria-hidden="true">→</span>
         </button>,
       )
     }
@@ -330,11 +327,8 @@ export default class MainMenu extends Component<
             {this.renderStructureIcon(structure.kind, structure.symbol)}
           </span>
           <span className="choice-copy">
-            <strong>{structure.name}</strong>
-            <small>{description}</small>
-          </span>
-          <span className="choice-arrow" aria-hidden="true">
-            ↗
+              <strong title={structure.name}>{structure.name}</strong>
+              <small title={description}>{description}</small>
           </span>
         </button>,
       )

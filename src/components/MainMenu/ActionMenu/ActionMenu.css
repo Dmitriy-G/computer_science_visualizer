@@ -47,18 +47,24 @@
   scrollbar-width: thin;
   scrollbar-color: #b8c9db transparent;
   scrollbar-gutter: stable;
-  padding: 6px;
-  margin: -6px;
-  gap: 8px;
+  padding: 8px;
+  margin: -8px;
+  gap: 12px;
 }
 .canvas-action-row {
   flex-shrink: 0;
 }
 .canvas-action {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: 100%;
-  padding: 12px;
+  min-width: 0;
+  height: var(--menu-card-height);
+  padding: 14px;
+  gap: 4px;
   border: 1px solid #e0eaf7;
-  border-radius: 8px;
+  border-radius: 12px;
   background: #f3f7fd;
   text-align: left;
 }
@@ -79,7 +85,7 @@
   background: #ecf3ff;
 }
 .canvas-action-row > .action-info-button {
-  align-self: start;
+  align-self: center;
 }
 .action-info-button.structure-info-button {
   width: 36px;
@@ -95,22 +101,31 @@
   background: #e9f2ff;
 }
 .canvas-action-heading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 6px;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  flex-shrink: 0;
 }
 .canvas-action-heading strong {
-  font-size: 13px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: 14px;
   font-weight: 600;
+  line-height: 20px;
 }
 .canvas-action-description {
-  display: block;
-  margin-top: 6px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  width: 100%;
+  height: 36px;
+  flex-shrink: 0;
+  overflow: hidden;
   color: #5c7088;
-  font-size: 11px;
-  line-height: 1.6;
+  font-size: 12px;
+  line-height: 18px;
 }
 @media (max-width: 800px) {
   .action-menu {
