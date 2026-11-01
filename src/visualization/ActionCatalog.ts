@@ -5,7 +5,7 @@ export type ActionScope = 'overview' | 'graph-traversal' | 'sorting'
 
 export type ActionKind = ArraySortingActionKind | 'insert-middle' | 'insert-start' | 'insert-end' | 'insert' | 'search-value' | 'search-index' | 'delete-value' | 'push' | 'pop' | 'peek' | 'clear' | 'enqueue' | 'dequeue' | 'push-front' | 'push-back' | 'pop-front' | 'pop-back' | 'peek-front' | 'peek-back' | 'delete-start' | 'delete-end' | 'range-from-value' | 'starts-with' | 'extract-min' | 'update-index' | 'add-index' | 'prefix-sum' | 'range-sum' | 'search-overlap' | 'flush' | 'compact' | 'build-expression' | 'evaluate' | 'traverse-preorder' | 'traverse-inorder' | 'traverse-postorder' | 'add-vertex' | 'add-edge' | 'remove-edge' | 'breadth-first' | 'depth-first' | 'shortest-path' | 'topological-sort' | 'update-weight' | 'bubble-sorting'
 
-export type ArraySortingActionKind = 'selection-sort' | 'insertion-sort' | 'binary-insertion-sort' | 'merge-sort' | 'quick-sort' | 'heap-sort' | 'shell-sort' | 'counting-sort' | 'radix-sort' | 'bucket-sort' | 'tim-sort' | 'intro-sort' | 'dual-pivot-quick-sort' | 'block-merge-sort' | 'wiki-sort' | 'smooth-sort' | 'tree-sort' | 'tournament-sort' | 'patience-sort' | 'cycle-sort' | 'comb-sort' | 'cocktail-shaker-sort' | 'gnome-sort' | 'odd-even-sort' | 'odd-even-merge-sort' | 'bitonic-sort' | 'pairwise-sorting-network' | 'sample-sort' | 'parallel-merge-sort' | 'parallel-quick-sort' | 'external-merge-sort' | 'polyphase-merge-sort' | 'natural-merge-sort'
+export type ArraySortingActionKind = 'selection-sort' | 'insertion-sort' | 'binary-insertion-sort' | 'merge-sort' | 'quick-sort' | 'heap-sort' | 'shell-sort' | 'counting-sort' | 'radix-sort' | 'bucket-sort' | 'tim-sort' | 'intro-sort' | 'dual-pivot-quick-sort' | 'block-merge-sort' | 'wiki-sort' | 'smooth-sort' | 'tree-sort' | 'tournament-sort' | 'patience-sort' | 'cycle-sort' | 'comb-sort' | 'cocktail-shaker-sort' | 'gnome-sort' | 'odd-even-sort' | 'odd-even-merge-sort' | 'bitonic-sort' | 'pairwise-sorting-network' | 'sample-sort' | 'parallel-merge-sort' | 'parallel-quick-sort' | 'external-merge-sort' | 'polyphase-merge-sort' | 'natural-merge-sort' | 'flash-sort' | 'american-flag-sort' | 'spread-sort' | 'burst-sort' | 'pigeonhole-sort'
 
 export interface ActionChoice {
   readonly kind: ActionKind
@@ -51,6 +51,11 @@ export class ActionCatalog {
         { kind: 'external-merge-sort', title: 'External Merge Sort', description: 'Sort three-record RAM chunks into runs, then perform balanced two-way merge passes over four virtual tapes.' },
         { kind: 'polyphase-merge-sort', title: 'Polyphase Merge Sort', description: 'Distribute sorted runs in Fibonacci quotas over two tapes and rotate a third empty tape through polyphase merges.' },
         { kind: 'natural-merge-sort', title: 'Natural Merge Sort', description: 'Detect existing monotone runs, reverse strictly decreasing ones, and stably merge adjacent run pairs.' },
+        { kind: 'flash-sort', title: 'Flashsort', description: 'Count value-range classes, cycle entries into their class regions, and finish with insertion exchanges.' },
+        { kind: 'american-flag-sort', title: 'American Flag Sort', description: 'Count most-significant hexadecimal digits and cyclically permute entries into contiguous bins in place.' },
+        { kind: 'spread-sort', title: 'Spreadsort', description: 'Choose adaptive integer-range bins, permute in place, and switch to comparison sorting for small or deep ranges.' },
+        { kind: 'burst-sort', title: 'Burstsort', description: 'Encode integer keys as equal-width hexadecimal strings, burst overflowing prefix containers into a trie, and sort leaf suffixes.' },
+        { kind: 'pigeonhole-sort', title: 'Pigeonhole Sort', description: 'Put whole entries in one hole per possible integer key, then gather holes in key order with stable ties.' },
       ]
       : []
     const actions = this.getActions(structure)

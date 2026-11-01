@@ -39,6 +39,8 @@ export class AnimationSequence {
       if (!symbol.startsWith('O(')) continue
       let meaning = 'Constant work or storage, independent of input size.'
       if (symbol === 'O(n)') meaning = 'Linear work or storage, proportional to the number of elements.'
+      if (symbol === 'O(nd)') meaning = 'Work or storage proportional to entries times the encoded key length in digits.'
+      if (symbol === 'O(d)') meaning = 'Storage proportional to the number of digit levels in the encoded keys.'
       if (symbol === 'O(n²)') meaning = 'Quadratic work, proportional to the square of the number of elements.'
       if (symbol === 'O(log n)') meaning = 'Logarithmic work or storage, proportional to the logarithm of the number of elements.'
       if (symbol === 'O(√n)') meaning = 'Storage proportional to the square root of the number of entries.'

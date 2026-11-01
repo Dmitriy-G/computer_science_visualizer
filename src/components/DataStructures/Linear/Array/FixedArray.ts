@@ -18,6 +18,11 @@ import { SampleArraySort } from './SampleArraySort.ts'
 import { ParallelArraySort } from './ParallelArraySort.ts'
 import { ExternalArraySort } from './ExternalArraySort.ts'
 import { NaturalMergeArraySort } from './NaturalMergeArraySort.ts'
+import { FlashArraySort } from './FlashArraySort.ts'
+import { AmericanFlagArraySort } from './AmericanFlagArraySort.ts'
+import { SpreadArraySort } from './SpreadArraySort.ts'
+import { BurstArraySort } from './BurstArraySort.ts'
+import { PigeonholeArraySort } from './PigeonholeArraySort.ts'
 
 export interface ArrayEntry {
   readonly id: string
@@ -33,6 +38,7 @@ export interface BubbleSortEvent {
 
 export class FixedArray {
   public static readonly maximumCountingRange = 4096
+  public static readonly maximumPigeonholeRange = 4096
   private items: ArrayEntry[]
   private nextId: number
 
@@ -179,6 +185,26 @@ export class FixedArray {
 
   public polyphaseMergeSort(onStep?: ArraySortObserver): void {
     new ExternalArraySort(this.items, onStep).polyphaseMergeSort()
+  }
+
+  public flashSort(onStep?: ArraySortObserver): void {
+    new FlashArraySort(this.items, onStep).sort()
+  }
+
+  public americanFlagSort(onStep?: ArraySortObserver): void {
+    new AmericanFlagArraySort(this.items, onStep).sort()
+  }
+
+  public spreadSort(onStep?: ArraySortObserver): void {
+    new SpreadArraySort(this.items, onStep).sort()
+  }
+
+  public burstSort(onStep?: ArraySortObserver): void {
+    new BurstArraySort(this.items, onStep).sort()
+  }
+
+  public pigeonholeSort(onStep?: ArraySortObserver): boolean {
+    return new PigeonholeArraySort(this.items, onStep).sort(FixedArray.maximumPigeonholeRange)
   }
 
   public naturalMergeSort(onStep?: ArraySortObserver): void {

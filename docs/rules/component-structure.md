@@ -183,7 +183,8 @@ RadixSort, BucketSort, TimSort, IntroSort, DualPivotQuickSort, BlockMergeSort,
 WikiSort, Smoothsort, TreeSort, TournamentSort, PatienceSort, CycleSort, CombSort,
 CocktailShakerSort, GnomeSort, OddEvenSort, OddEvenMergeSort, BitonicSort,
 PairwiseSortingNetwork, SampleSort, ParallelMergeSort, ParallelQuickSort,
-ExternalMergeSort, PolyphaseMergeSort, and NaturalMergeSort.
+ExternalMergeSort, PolyphaseMergeSort, NaturalMergeSort, Flashsort,
+AmericanFlagSort, Spreadsort, Burstsort, and PigeonholeSort.
 Each action owns its component,
 CSS, and sequence folder under Linear/Array. Keep the model entry points in FixedArray,
 with shared array-specific algorithms, trace, layout, and snapshot helpers beside it.
@@ -210,6 +211,13 @@ graph for merge sort and three-way quicksort. ExternalArraySort owns bounded
 run generation, balanced four-tape merging, and three-tape Fibonacci polyphase
 merging. Extend ArraySortTrace and ArraySortingLayout for immutable task and
 storage snapshots; keep algorithm execution outside the renderer.
+IntegerDistributionSort shares exact bounds, histogram permutation, and small
+insertion ranges. FlashArraySort owns Flashsort class cycles and cleanup;
+AmericanFlagArraySort owns fixed hexadecimal MSD recursion; SpreadArraySort
+owns adaptive range splits and the comparison-sort fallback. BurstArraySort
+keeps its encoded integer keys and bursting prefix containers beside FixedArray;
+ArraySortTrace and ArraySortingLayout describe its trie and leaf records.
+PigeonholeArraySort owns guarded full-record hole lists and stable gathering.
 ActionMenu receives an explicit
 ActionScope, and App preserves the selected scope independently of menu browsing.
 Algorithm structure buttons show at most two example names in one truncated line;

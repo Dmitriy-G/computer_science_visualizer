@@ -34,6 +34,11 @@ import { ParallelQuickSortAnimation } from '../src/components/DataStructures/Lin
 import { ExternalMergeSortAnimation } from '../src/components/DataStructures/Linear/Array/ExternalMergeSort/ExternalMergeSortAnimation.ts'
 import { PolyphaseMergeSortAnimation } from '../src/components/DataStructures/Linear/Array/PolyphaseMergeSort/PolyphaseMergeSortAnimation.ts'
 import { NaturalMergeSortAnimation } from '../src/components/DataStructures/Linear/Array/NaturalMergeSort/NaturalMergeSortAnimation.ts'
+import { FlashsortAnimation } from '../src/components/DataStructures/Linear/Array/Flashsort/FlashsortAnimation.ts'
+import { AmericanFlagSortAnimation } from '../src/components/DataStructures/Linear/Array/AmericanFlagSort/AmericanFlagSortAnimation.ts'
+import { SpreadsortAnimation } from '../src/components/DataStructures/Linear/Array/Spreadsort/SpreadsortAnimation.ts'
+import { BurstsortAnimation } from '../src/components/DataStructures/Linear/Array/Burstsort/BurstsortAnimation.ts'
+import { PigeonholeSortAnimation } from '../src/components/DataStructures/Linear/Array/PigeonholeSort/PigeonholeSortAnimation.ts'
 import { ActionInputRequest } from '../src/visualization/ActionInputRequest.ts'
 
 const sorts = [
@@ -70,9 +75,153 @@ const sorts = [
   ['externalMergeSort', 'external-merge-sort', ExternalMergeSortAnimation, true],
   ['polyphaseMergeSort', 'polyphase-merge-sort', PolyphaseMergeSortAnimation, false],
   ['naturalMergeSort', 'natural-merge-sort', NaturalMergeSortAnimation, true],
+  ['flashSort', 'flash-sort', FlashsortAnimation, false],
+  ['americanFlagSort', 'american-flag-sort', AmericanFlagSortAnimation, false],
+  ['spreadSort', 'spread-sort', SpreadsortAnimation, false],
+  ['burstSort', 'burst-sort', BurstsortAnimation, true],
+  ['pigeonholeSort', 'pigeonhole-sort', PigeonholeSortAnimation, true],
 ]
 
 const cases = [[], [4], [1, 2, 3, 4], [4, 3, 2, 1], [2, 2, 2], [3, -2, 3, 0, -2], [Number.MAX_SAFE_INTEGER, 0, Number.MIN_SAFE_INTEGER], [2, 2, 1], [4, 1, 3, 1, 2]]
+
+test('Flashsort forms contiguous value classes before insertion cleanup and retains held IDs', () => {
+  const values = [80, 5, 60, 25, 95, 0, 50, 30, 100, 20, 75, 45]
+  const model = new FixedArray(values)
+  let classified
+  model.flashSort((event) => {
+    if (event.label === 'Finish class permutation') classified = model.getEntries().map((entry) => entry.value)
+  })
+  assert.deepEqual(classified.slice(0, 3).sort((a, b) => a - b), [0, 5, 20])
+  assert.deepEqual(classified.slice(3, 6).sort((a, b) => a - b), [25, 30, 45])
+  assert.deepEqual(classified.slice(6, 8).sort((a, b) => a - b), [50, 60])
+  assert.deepEqual(classified.slice(8, 11).sort((a, b) => a - b), [75, 80, 95])
+  assert.equal(classified[11], 100)
+  const source = new FixedArray(values)
+  const ids = new Set(source.getEntries().map((entry) => entry.id))
+  const plan = new FlashsortAnimation(source)
+  assert.ok(plan.steps.some((step) => step.scene.nodes.some((node) => node.status === 'HELD')))
+  for (const step of plan.steps) assert.deepEqual(new Set(step.scene.nodes.filter((node) => node.id.startsWith('array-element-')).map((node) => node.id)), ids)
+  const equal = []
+  new FixedArray(new Array(20).fill(4)).flashSort((event) => equal.push(event))
+  assert.ok(!equal.some((event) => event.kind === 'count' || event.kind === 'swap' || event.kind === 'write'))
+})
+
+test('American Flag Sort partitions high digits in place before processing lower digits', () => {
+  const model = new FixedArray([0x21, 0x13, 0x20, 0x02, 0x12, 0x01, 0x11, 0x03])
+  const events = []
+  let firstPartition
+  model.americanFlagSort((event) => {
+    events.push(event)
+    if (event.kind === 'partition' && !firstPartition) firstPartition = model.getEntries().map((entry) => entry.value)
+  })
+  assert.deepEqual(firstPartition.slice(0, 3).sort((a, b) => a - b), [1, 2, 3])
+  assert.deepEqual(firstPartition.slice(3, 7).sort((a, b) => a - b), [0x11, 0x12, 0x13, 0x20])
+  assert.equal(firstPartition[7], 0x21)
+  assert.equal(events.find((event) => event.kind === 'prefix').frame.counters.length, 16)
+  assert.deepEqual(events.find((event) => event.kind === 'prefix').frame.counters.slice(0, 4).map((cell) => cell.count), [0, 3, 7, 8])
+  assert.ok(events.filter((event) => event.kind === 'digit').length > 1)
+  assert.ok(events.every((event) => event.frame.output === undefined && event.frame.buckets === undefined))
+})
+
+test('Spreadsort adapts to the local numeric range and uses small comparison leaves', () => {
+  const offset = 2 ** 50
+  const values = [8, 1, 7, 0, 6, 2, 5, 3, 4, 9].map((value) => value + offset)
+  const model = new FixedArray(values)
+  const events = []
+  model.spreadSort((event) => events.push(event))
+  assert.match(events.find((event) => event.kind === 'split').code, /divider = 2\^2; bins = 3/)
+  assert.ok(events.some((event) => event.kind === 'bucket-sort'))
+  assert.ok(events.every((event) => (event.frame.counters?.length ?? 0) <= 16))
+  assert.deepEqual(model.getEntries().map((entry) => entry.value), [...values].sort((a, b) => a - b))
+  const ordered = []
+  new FixedArray([1, 2, 3, 4, 5, 6]).spreadSort((event) => ordered.push(event))
+  assert.deepEqual(ordered.map((event) => event.kind), ['pass'])
+  for (const values of [Array.from({ length: 52 }, (_, index) => 2 ** (51 - index)), [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER, 0, -1, 1, 2, -2]]) {
+    const sample = new FixedArray(values)
+    sample.spreadSort()
+    assert.deepEqual(sample.getEntries().map((entry) => entry.value), [...values].sort((a, b) => a - b))
+  }
+})
+
+test('Burstsort bursts actual prefix containers, stops at terminal equal keys, and preserves ties', () => {
+  const values = [0, 0, 0, 0, 0, 16, 17, 18, 19, 256, 257]
+  const model = new FixedArray(values)
+  const original = model.getEntries()
+  const events = []
+  model.burstSort((event) => {
+    events.push(event)
+    if (event.kind === 'gather') return
+    assert.deepEqual(model.getEntries(), original)
+    const trie = event.frame.trie
+    const nodes = new Map(trie.map((node) => [node.id, node]))
+    const runs = event.frame.storage[0].runs
+    const entries = runs.flatMap((run) => run.entries)
+    assert.equal(new Set(entries.map((entry) => entry.id)).size, entries.length)
+    assert.equal(entries.length, trie.find((node) => node.parent === null).count)
+    for (const node of trie) {
+      assert.ok(node.prefix.length <= event.frame.trieDepth)
+      if (node.parent !== null) {
+        const parent = nodes.get(node.parent)
+        assert.ok(parent && node.prefix.startsWith(parent.prefix))
+        assert.equal(node.prefix.length, parent.prefix.length + 1)
+      }
+      if (!node.leaf) assert.equal(trie.filter((child) => child.parent === node.id).reduce((count, child) => count + child.count, 0), node.count)
+    }
+    if (event.kind === 'write') {
+      for (const node of trie.filter((item) => item.leaf && !item.terminal)) assert.ok(node.count <= 3)
+    }
+  })
+  assert.ok(events.some((event) => event.kind === 'split'))
+  assert.ok(events.some((event) => event.frame.trie?.some((node) => node.terminal && node.count === 5)))
+  assert.deepEqual(model.getEntries(), [...original].sort((a, b) => a.value - b.value))
+  const equal = new FixedArray(new Array(30).fill(-7))
+  equal.burstSort()
+  assert.deepEqual(equal.getEntries().map((entry) => entry.id), Array.from({ length: 30 }, (_, index) => `array-element-${index}`))
+})
+
+test('Pigeonhole Sort gathers whole records stably and rejects wide ranges before allocation', () => {
+  for (const values of [[3, -2, 3, 0, -2], [Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER - 1, Number.MAX_SAFE_INTEGER], [0, FixedArray.maximumPigeonholeRange - 1]]) {
+    const model = new FixedArray(values)
+    const before = model.getEntries()
+    const events = []
+    assert.equal(model.pigeonholeSort((event) => events.push(event)), true)
+    assert.deepEqual(model.getEntries(), [...before].sort((a, b) => a.value - b.value))
+    assert.ok(events.some((event) => event.frame.storage?.some((row) => row.id === 'pigeonholes')))
+    assert.ok(!events.some((event) => event.kind === 'prefix'))
+    assert.equal(events.filter((event) => event.kind === 'distribute').length, values.length)
+    assert.equal(events.filter((event) => event.kind === 'write').length, values.length)
+  }
+  for (const values of [[0, FixedArray.maximumPigeonholeRange], [Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER]]) {
+    const model = new FixedArray(values)
+    const before = model.getEntries()
+    const events = []
+    assert.equal(model.pigeonholeSort((event) => events.push(event)), false)
+    assert.deepEqual(model.getEntries(), before)
+    assert.deepEqual(events.map((event) => event.kind), ['reject'])
+    assert.equal(events[0].frame.storage, undefined)
+    const plan = new PigeonholeSortAnimation(model)
+    assert.equal(plan.steps.at(-1).title, 'Array unchanged')
+    assert.deepEqual(plan.result.getEntries(), before)
+    assert.ok(plan.steps.at(-1).scene.nodes.every((node) => node.status !== 'SORTED'))
+  }
+})
+
+test('distribution diagrams reserve bounds and keep trie edges attached to real nodes', () => {
+  for (const Animation of [FlashsortAnimation, AmericanFlagSortAnimation, SpreadsortAnimation, BurstsortAnimation, PigeonholeSortAnimation]) {
+    const plan = new Animation(new FixedArray([80, 5, 60, 25, 95, 0, 50, 30, 100, 20, 75, 45]))
+    for (const step of plan.steps) {
+      const ids = new Set(step.scene.nodes.map((node) => node.id))
+      assert.equal(ids.size, step.scene.nodes.length)
+      assert.equal(step.scene.width, plan.steps[0].scene.width)
+      assert.equal(step.scene.height, plan.steps[0].scene.height)
+      for (const node of step.scene.nodes) assert.ok(node.x + 40 <= step.scene.width && node.y + 70 <= step.scene.height)
+      for (const edge of step.scene.edges) assert.ok(ids.has(edge.from) && ids.has(edge.to))
+    }
+    assert.ok(plan.steps.at(-1).scene.nodes.every((node) => node.status === 'SORTED'))
+  }
+  assert.ok(AmericanFlagSortAnimation.describe(12).terms.some((term) => term.symbol === 'd' && term.meaning.includes('hexadecimal')))
+  assert.ok(BurstsortAnimation.describe(12).terms.some((term) => term.symbol === 'O(nd)' && term.meaning.includes('key length')))
+})
 
 test('virtual parallel tasks respect disjoint ranges and join dependencies', () => {
   for (const method of ['parallelMergeSort', 'parallelQuickSort']) {
@@ -181,7 +330,7 @@ test('new task and run diagrams retain fixed bounds and valid dependency edges',
   assert.equal(NaturalMergeSortAnimation.describe(10).memory.worst, 'O(n)')
 })
 
-const accepted = (method, values) => method !== 'countingSort' || values.length < 2 || BigInt(Math.max(...values)) - BigInt(Math.min(...values)) + 1n <= BigInt(FixedArray.maximumCountingRange)
+const accepted = (method, values) => !['countingSort', 'pigeonholeSort'].includes(method) || values.length < 2 || BigInt(Math.max(...values)) - BigInt(Math.min(...values)) + 1n <= BigInt(method === 'pigeonholeSort' ? FixedArray.maximumPigeonholeRange : FixedArray.maximumCountingRange)
 
 test('sorts preserve values, IDs, fixed length, source clones, and future IDs for accepted inputs', () => {
   for (const [method, , , stable] of sorts) {

@@ -6,6 +6,31 @@ import type { AlgorithmUsage } from './AlgorithmInformation.ts'
 // Only algorithm scopes receive real-world examples. Overview operations do not.
 export class AlgorithmTechnologyCatalog {
   private static readonly uses: Readonly<Partial<Record<ActionKind, AlgorithmUsage>>> = {
+    'flash-sort': {
+      technologies: [],
+      products: [],
+      note: 'Flashsort is presented as an educational example of value classification, in-place cycle permutation, and insertion cleanup. No production use of this exact variant has been verified. Algorithm reference: https://www.neubert.net/FSOIntro.html.',
+    },
+    'american-flag-sort': {
+      technologies: [],
+      products: [],
+      note: 'This 16-bin integer American Flag Sort is an educational example. No production use of this exact variant has been verified. String radix-sort implementations and proposals alone do not establish product use for this variant. Algorithm reference: https://www.usenix.org/publications/compsystems/1993/win_mcilroy.pdf.',
+    },
+    'spread-sort': {
+      technologies: [{ name: 'NEST: Boost Spreadsort for connections', url: 'https://nest-simulator.readthedocs.io/en/main/installation/cmake_options.html', usage: 'NEST documents Boost Spreadsort for high-performance sorting of simulation connections when Boost support is enabled. This lesson reduces fan-out to 16, uses four-entry insertion leaves, and adds a depth-limited heap fallback; its complexity notes describe that teaching variant.' }],
+      products: [{ name: 'NEST Simulator', url: 'https://nest-simulator.readthedocs.io/en/main/installation/cmake_options.html', usage: 'Uses Boost Spreadsort to order simulation connections, beyond demonstrating the algorithm.' }],
+      note: 'The verified use is NEST connection sorting through Boost Spreadsort. The teaching implementation uses its own reduced parameters and safety fallback, not the optimized Boost implementation or its precise performance bounds. Boost algorithm documentation: https://www.boost.org/doc/libs/latest/libs/sort/doc/html/sort/single_thread/spreadsort.html.',
+    },
+    'burst-sort': {
+      technologies: [],
+      products: [],
+      note: 'This Burstsort is an educational integer adaptation of string sorting, using exact hexadecimal offset keys and prefix-container bursting. No production use of this exact variant has been verified. Research benchmarks alone do not establish product use. Algorithm reference: https://people.eng.unimelb.edu.au/jzobel/fulltext/acmjea04.pdf.',
+    },
+    'pigeonhole-sort': {
+      technologies: [],
+      products: [],
+      note: 'This stable full-record Pigeonhole Sort is an educational example. No production use of this exact variant has been verified. Counting Sort applications alone do not establish use of this separate hole-list implementation. Algorithm reference: https://xlinux.nist.gov/dads/HTML/pigeonholeSort.html.',
+    },
     'parallel-merge-sort': {
       technologies: [{ name: 'OpenJDK: Arrays.parallelSort object path', url: 'https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/ArraysParallelSortHelpers.java', usage: 'OpenJDK uses fork/join sorting and merging for large object-array ranges, with TimSort leaves and parallel merges. This lesson instead uses binary singleton tasks, sequential merges, and two virtual worker lanes.' }],
       products: [{ name: 'Java', url: 'https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/ArraysParallelSortHelpers.java', usage: 'Provides a production fork/join merge-sort family implementation for object-array parallel sorting.' }],

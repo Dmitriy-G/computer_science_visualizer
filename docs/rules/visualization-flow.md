@@ -5,7 +5,7 @@
 1. Start with an empty renderer and a clickable menu icon in the top left.
 2. Open the menu to see **Data Structures Overview** and **Data Structures Algorithms**.
    Overview contains the existing structure groups. Algorithms contains
-   **Sorting** (Array with thirty-four sorting actions) and **Graphs Traversal** (all five graph
+   **Sorting** (Array with thirty-nine sorting actions) and **Graphs Traversal** (all five graph
    variants). Its graph action cards offer BFS and DFS, plus Dijkstra for Weighted
    Graph and topological sorting for DAG. These four algorithm actions move out
    of Overview; graph editing and value search remain there. Browsing either
@@ -637,7 +637,7 @@ edge IDs through ActionInputRequest in the shared dialog.
 ## Algorithm navigation
 
 Keep algorithm groups separate from the Overview structure groups in
-MenuNavigation. Sorting lists Array and exposes its thirty-four sorting actions; Graphs Traversal
+MenuNavigation. Sorting lists Array and exposes its thirty-nine sorting actions; Graphs Traversal
 lists the existing five graphs and reuses their model, input, sequence, renderer,
 and info implementations. ActionCatalog.getScopedActions controls the visible
 choices and App validates action selection against the selected scope. Keep the
@@ -670,6 +670,7 @@ Also include Odd-Even Sort, Odd-Even Merge Sort, Bitonic Sort, Pairwise Sorting
 Network, and Sample Sort.
 Also include Parallel Merge Sort, Parallel QuickSort, External Merge Sort,
 Polyphase Merge Sort, and Natural Merge Sort.
+Also include Flashsort, American Flag Sort, Spreadsort, Burstsort, and Pigeonhole Sort.
 Each action owns its component, CSS, sequence, and complexity
 information. Keep model entry points and optional synchronous trace callbacks in
 FixedArray, with array-specific algorithm helpers beside it. Reuse ArraySortingLayout and ArraySortingAnimation for independent
@@ -940,3 +941,63 @@ session. Production examples must identify their actual variant: OpenJDK has
 optimized parallel merges, oneTBB has different quicksort pivots and leaf sorts,
 PostgreSQL uses balanced multiway merging (polyphase is historical version 14),
 and GHC sorts lists using optimized natural-run merges.
+
+Flashsort uses max(2, floor(0.43n)) value-range classes. Map keys with exact
+BigInt arithmetic, accumulate exclusive class ends, move the maximum to the
+first slot, and perform class-end-directed cycles with one held entry. Hide
+the cycle hole so every original ID remains represented exactly once alongside
+the held entry. Finish by adjacent insertion exchanges. All-equal input takes
+O(n) time and O(1) memory before allocating classes. Expected time is O(n) for
+independent uniform keys with this linear class count; clustered keys can need
+O(n²) cleanup. Otherwise extra memory is O(n), and class permutation is unstable.
+
+American Flag Sort uses an in-place MSD radix permutation with 16 hexadecimal
+bins. Normalize keys by subtracting the observed minimum exactly; never coerce
+safe integer keys through JavaScript signed 32-bit operations. Count each digit,
+prefix-sum the contiguous bin intervals, and exchange misplaced entries with
+the next free slot of their actual bin. Recurse to the next lower digit. State
+O(nd) average/worst upper bounds and O(d) stack/metadata space for fixed radix
+16, where d is the hexadecimal width of max - min (1 through 14). All-equal
+input takes O(n) time and O(1) space. The permutation is unstable.
+
+Spreadsort is a reduced-fan-out teaching integer variant. Scan each range for
+actual bounds and existing order, choose up to four significant range bits
+according to range size, and permute up to 16 bins in place. Sort ranges of at
+most four entries by insertion exchanges. Limit partition depth to
+2 floor(log2 n); heap-sort a remaining range when that budget expires. Ordered
+input takes O(n) time and O(1) space. O(n log n) average/worst entries are
+guaranteed upper bounds, not tight claims about the optimized Boost algorithm;
+active boundaries and recursion use O(log n) space. This variant is unstable.
+NEST Simulator documents practical Boost Spreadsort use for connection sorting;
+explain the difference from the lesson rather than citing a demo collection.
+
+Burstsort is explicitly an integer adaptation of string Burstsort. Encode
+value - min as a zero-padded hexadecimal string of common width d so lexical
+and numeric order agree. Insert record pointers into prefix containers; when a
+container exceeds three records, replace it with a trie node and redistribute
+by the next digit. Recursively burst oversized children. Full-key equal
+containers are terminal and must never recurse beyond d. Sort nonterminal
+leaf suffixes by stable insertion exchanges, traverse trie children in digit
+order, and gather into stable output. Retain one digit and parent link per
+trie node; reconstruct complete prefixes only in trace snapshots. With bounded
+leaf size, encoding, traversal, and suffix comparisons take O(nd) time and
+encoded keys, trie nodes, and output use O(nd) memory. Do not claim the cache
+performance of optimized string Burstsort for this teaching adaptation.
+
+Pigeonhole Sort allocates one list for each possible integer key in the
+inclusive range k = max - min + 1, appends complete original entries to these
+lists in arrival order, and gathers lists in key order into output. This is
+distinct from Counting Sort frequency/prefix placement. Reject ranges wider
+than FixedArray.maximumPigeonholeRange (4,096) unchanged after a bounds scan,
+before allocating holes. Use exact BigInt offsets for negatives and extreme
+safe keys. Accepted inputs take O(n + k) time and memory in every case, with
+stable ties. Display occupied holes and explain omitted empty holes.
+
+These five actions use shared no-input playback, independent snapshots, stable
+entry IDs, fixed slot positions, and clone-only execution with final commit.
+Empty/singleton inputs take O(1). Reserve the maximum diagram bounds throughout
+each session, label counts/cursors and trie/container roles, and keep every
+dependency edge attached to an existing scene node. The Burstsort diagram
+places containers below the deepest possible key level. Rejected Pigeonhole
+Sort ends with an unchanged array, without sorted badges. Show educational-use
+notices wherever concrete product use has not been verified.

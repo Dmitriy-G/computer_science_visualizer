@@ -70,6 +70,8 @@ export class ArraySortingLayout {
       const x = 80 + index * 112
       nodes.push({ id: `counter-${counter.label}`, value: counter.count, x, y: 620, label: '', tone: counter.active ? 'active' : 'visited', status: counter.status, opacity: 1 })
       slots.push({ id: `counter-slot-${counter.label}`, x, y: 620, label: counter.label, empty: false, highlighted: counter.active, opacity: 1 })
+      width = Math.max(width, x + 120)
+      height = Math.max(height, 780)
     }
     if (frame.held) nodes.push({
       ...frame.held,
@@ -123,10 +125,25 @@ export class ArraySortingLayout {
         height = Math.max(height, y + 160)
       }
     }
+    if (frame.trie) {
+      const columns = new Map<number, number>()
+      for (const node of frame.trie) {
+        const depth = node.prefix.length
+        const column = columns.get(depth) ?? 0
+        columns.set(depth, column + 1)
+        const x = 80 + column * 132
+        const y = 640 + depth * 150
+        const id = `trie-${node.id}`
+        nodes.push({ id, value: node.count, displayValue: node.prefix.slice(-1) || 'root', x, y, label: `size ${node.count}`, tone: node.active ? 'active' : 'visited', status: node.terminal ? 'TERMINAL' : node.leaf ? 'CONTAINER' : 'TRIE NODE', opacity: 1 })
+        if (node.parent) edges.push({ id: `trie-edge-${node.id}`, from: `trie-${node.parent}`, to: id, directed: true, highlighted: node.active, opacity: 1 })
+        width = Math.max(width, x + 140)
+        height = Math.max(height, y + 160)
+      }
+    }
     if (frame.storage) {
       for (let row = 0; row < frame.storage.length; row += 1) {
         const storage = frame.storage[row]
-        const y = 640 + row * 180
+        const y = (frame.trie ? 820 + (frame.trieDepth ?? 0) * 150 : 640) + row * 180
         let column = 2
         nodes.push({ id: `storage-heading-${storage.id}`, value: 0, displayValue: storage.label, x: 80, y, label: storage.id === 'ram' ? '≤3 RECORDS' : storage.status, tone: 'visited', status: 'STORAGE', opacity: 1 })
         const runs: readonly ArraySortRun[] = storage.runs.length ? storage.runs : [{ id: `${storage.id}-empty`, label: 'empty', entries: [], status: 'EMPTY' }]

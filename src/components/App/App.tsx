@@ -133,6 +133,16 @@ import PolyphaseMergeSort from '../DataStructures/Linear/Array/PolyphaseMergeSor
 import { PolyphaseMergeSortAnimation } from '../DataStructures/Linear/Array/PolyphaseMergeSort/PolyphaseMergeSortAnimation.ts'
 import NaturalMergeSort from '../DataStructures/Linear/Array/NaturalMergeSort/NaturalMergeSort.tsx'
 import { NaturalMergeSortAnimation } from '../DataStructures/Linear/Array/NaturalMergeSort/NaturalMergeSortAnimation.ts'
+import Flashsort from '../DataStructures/Linear/Array/Flashsort/Flashsort.tsx'
+import { FlashsortAnimation } from '../DataStructures/Linear/Array/Flashsort/FlashsortAnimation.ts'
+import AmericanFlagSort from '../DataStructures/Linear/Array/AmericanFlagSort/AmericanFlagSort.tsx'
+import { AmericanFlagSortAnimation } from '../DataStructures/Linear/Array/AmericanFlagSort/AmericanFlagSortAnimation.ts'
+import Spreadsort from '../DataStructures/Linear/Array/Spreadsort/Spreadsort.tsx'
+import { SpreadsortAnimation } from '../DataStructures/Linear/Array/Spreadsort/SpreadsortAnimation.ts'
+import Burstsort from '../DataStructures/Linear/Array/Burstsort/Burstsort.tsx'
+import { BurstsortAnimation } from '../DataStructures/Linear/Array/Burstsort/BurstsortAnimation.ts'
+import PigeonholeSort from '../DataStructures/Linear/Array/PigeonholeSort/PigeonholeSort.tsx'
+import { PigeonholeSortAnimation } from '../DataStructures/Linear/Array/PigeonholeSort/PigeonholeSortAnimation.ts'
 import { ClearAnimation as ArrayClearSequence } from '../DataStructures/Linear/Array/Clear/ClearAnimation.ts'
 import LinkedListClear from '../DataStructures/Linear/LinkedList/Clear/Clear.tsx'
 import { ClearAnimation as LinkedListClearSequence } from '../DataStructures/Linear/LinkedList/Clear/ClearAnimation.ts'
@@ -700,6 +710,11 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'external-merge-sort': return ExternalMergeSortAnimation.describe(this.array.length)
         case 'polyphase-merge-sort': return PolyphaseMergeSortAnimation.describe(this.array.length)
         case 'natural-merge-sort': return NaturalMergeSortAnimation.describe(this.array.length)
+        case 'flash-sort': return FlashsortAnimation.describe(this.array.length)
+        case 'american-flag-sort': return AmericanFlagSortAnimation.describe(this.array.length)
+        case 'spread-sort': return SpreadsortAnimation.describe(this.array.length)
+        case 'burst-sort': return BurstsortAnimation.describe(this.array.length)
+        case 'pigeonhole-sort': return PigeonholeSortAnimation.describe(this.array.length)
         case 'clear': return ArrayClearSequence.describe(this.array.length)
         case 'insert-middle': return ArrayInsertionAnimation.describe(this.array.length)
         case 'insert-start': return ArrayAddAtStartSequence.describe(this.array.length)
@@ -887,6 +902,11 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'external-merge-sort': return <ExternalMergeSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'polyphase-merge-sort': return <PolyphaseMergeSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'natural-merge-sort': return <NaturalMergeSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'flash-sort': return <Flashsort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'american-flag-sort': return <AmericanFlagSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'spread-sort': return <Spreadsort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'burst-sort': return <Burstsort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'pigeonhole-sort': return <PigeonholeSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'clear': return <ArrayClear key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'insert-middle': return <ArrayAddInTheMiddle key={this.state.actionSession} array={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'insert-start': return <ArrayAddAtStart key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />

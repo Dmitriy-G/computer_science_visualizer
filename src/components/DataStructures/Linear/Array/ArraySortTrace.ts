@@ -43,6 +43,16 @@ export interface ArraySortTask {
   readonly worker?: number
 }
 
+export interface ArraySortTrieNode {
+  readonly id: string
+  readonly parent: string | null
+  readonly prefix: string
+  readonly count: number
+  readonly leaf: boolean
+  readonly terminal: boolean
+  readonly active: boolean
+}
+
 export interface ArraySortFrame {
   readonly activeIndices?: readonly number[]
   readonly roles?: Readonly<Record<number, string>>
@@ -78,6 +88,8 @@ export interface ArraySortFrame {
   readonly activeSplitter?: number
   readonly storage?: readonly ArraySortStorage[]
   readonly tasks?: readonly ArraySortTask[]
+  readonly trie?: readonly ArraySortTrieNode[]
+  readonly trieDepth?: number
 }
 
 export interface ArraySortEvent {
