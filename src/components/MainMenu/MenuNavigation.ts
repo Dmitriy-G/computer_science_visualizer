@@ -4,9 +4,9 @@ import type { StructureKind } from '../../visualization/Scene.ts'
 import type { StructureDefinition } from '../../visualization/StructureCatalog.ts'
 import type { ActionScope } from '../../visualization/ActionCatalog.ts'
 
-export type MenuScreen = 'categories' | 'groups' | 'structures' | 'algorithms' | 'array-sorting' | 'algorithm-structures'
+export type MenuScreen = 'categories' | 'groups' | 'structures' | 'algorithms' | 'sorting' | 'algorithm-structures'
 export type MenuCategoryKind = 'overview' | 'algorithms'
-export type AlgorithmGroupKind = 'array-sorting' | 'graph-traversal'
+export type AlgorithmGroupKind = 'sorting' | 'graph-traversal'
 
 export interface MenuCategory {
   readonly kind: MenuCategoryKind
@@ -27,7 +27,7 @@ export class MenuNavigation {
   public static readonly categoryName = 'Data Structures Overview'
   public static readonly algorithmsCategoryName = 'Data Structures Algorithms'
   public static readonly algorithmGroups: readonly AlgorithmGroup[] = [
-    { kind: 'array-sorting', name: 'Array Sorting', description: 'Sorting algorithms for arrays', symbol: '[]' },
+    { kind: 'sorting', name: 'Sorting', description: 'Sorting algorithms for data structures', symbol: '[]' },
     { kind: 'graph-traversal', name: 'Graphs Traversal', description: 'Breadth-first, depth-first, shortest paths, and topological ordering', symbol: '→' },
   ]
   public static readonly categories: readonly MenuCategory[] = [
@@ -45,6 +45,10 @@ export class MenuNavigation {
   }
 
   public static forStructure(kind: StructureKind, scope: ActionScope = 'overview'): MenuNavigation {
+    if (scope === 'sorting') {
+      if (kind !== 'array') throw new Error('Choose an array for sorting examples')
+      return new MenuNavigation('sorting')
+    }
     if (scope === 'graph-traversal') {
       if (StructureCatalog.getGroupForStructure(kind) !== 'graphs') throw new Error('Choose a graph for traversal examples')
       return new MenuNavigation('algorithm-structures')
@@ -52,9 +56,19 @@ export class MenuNavigation {
     return new MenuNavigation('structures', StructureCatalog.getGroupForStructure(kind))
   }
 
-  public get actionScope(): ActionScope { return this.screen === 'algorithm-structures' ? 'graph-traversal' : 'overview' }
+  public get actionScope(): ActionScope {
+    if (this.screen === 'sorting') return 'sorting'
+    return this.screen === 'algorithm-structures' ? 'graph-traversal' : 'overview'
+  }
 
   public getStructures(): readonly StructureDefinition[] {
+    if (this.screen === 'sorting') {
+      const structures: StructureDefinition[] = []
+      for (const structure of StructureCatalog.getStructures('linear')) {
+        if (structure.kind === 'array') structures.push(structure)
+      }
+      return structures
+    }
     if (this.screen === 'algorithm-structures') return StructureCatalog.getStructures('graphs')
     return this.screen === 'structures' && this.group ? StructureCatalog.getStructures(this.group) : []
   }
@@ -62,7 +76,7 @@ export class MenuNavigation {
   public selectAlgorithmGroup(kind: AlgorithmGroupKind): MenuNavigation {
     if (this.screen !== 'algorithms') throw new Error('Choose an algorithm group from Algorithms')
     switch (kind) {
-      case 'array-sorting': return new MenuNavigation('array-sorting')
+      case 'sorting': return new MenuNavigation('sorting')
       case 'graph-traversal': return new MenuNavigation('algorithm-structures')
       default: throw new RangeError('Unknown algorithm group')
     }
@@ -77,7 +91,7 @@ export class MenuNavigation {
   }
 
   public selectGroup(kind: StructureGroupKind): MenuNavigation {
-    if (this.screen === 'algorithms' || this.screen === 'algorithm-structures' || this.screen === 'array-sorting')
+    if (this.screen === 'algorithms' || this.screen === 'algorithm-structures' || this.screen === 'sorting')
       throw new Error('Structure groups belong to the Overview category')
     StructureCatalog.getGroup(kind)
     return new MenuNavigation('structures', kind)
@@ -91,7 +105,7 @@ export class MenuNavigation {
   }
 
   public back(): MenuNavigation {
-    if (this.screen === 'algorithm-structures' || this.screen === 'array-sorting') return new MenuNavigation('algorithms')
+    if (this.screen === 'algorithm-structures' || this.screen === 'sorting') return new MenuNavigation('algorithms')
     if (this.screen === 'structures') return new MenuNavigation('groups')
     return new MenuNavigation()
   }
@@ -100,13 +114,13 @@ export class MenuNavigation {
     if (this.screen === 'categories') return 'Categories'
     if (this.screen === 'algorithms') return MenuNavigation.algorithmsCategoryName
     if (this.screen === 'algorithm-structures') return 'Graphs Traversal'
-    if (this.screen === 'array-sorting') return 'Array Sorting'
+    if (this.screen === 'sorting') return 'Sorting'
     if (this.screen === 'groups') return MenuNavigation.categoryName
     return StructureCatalog.getGroup(this.group!).name
   }
 
   public get backLabel(): string {
-    if (this.screen === 'algorithm-structures' || this.screen === 'array-sorting') return 'Algorithms'
+    if (this.screen === 'algorithm-structures' || this.screen === 'sorting') return 'Algorithms'
     if (this.screen === 'structures') return 'Structure groups'
     return 'Categories'
   }
@@ -114,7 +128,7 @@ export class MenuNavigation {
   public getPath(): readonly string[] {
     if (this.screen === 'categories') return []
     if (this.screen === 'algorithms') return [MenuNavigation.algorithmsCategoryName]
-    if (this.screen === 'algorithm-structures' || this.screen === 'array-sorting') return [MenuNavigation.algorithmsCategoryName, this.title]
+    if (this.screen === 'algorithm-structures' || this.screen === 'sorting') return [MenuNavigation.algorithmsCategoryName, this.title]
     const path = [MenuNavigation.categoryName]
     if (this.group) path.push(StructureCatalog.getGroup(this.group).name)
     return path

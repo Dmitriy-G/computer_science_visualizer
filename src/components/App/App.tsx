@@ -65,6 +65,8 @@ import { ClearAnimation as BPlusTreeClearSequence } from '../DataStructures/Tree
 import BPlusTreeRangeFromKey from '../DataStructures/Trees/BPlusTree/RangeFromKey/RangeFromKey.tsx'
 import { RangeAnimation as BPlusTreeRangeFromKeySequence } from '../DataStructures/Trees/BPlusTree/RangeFromKey/RangeAnimation.ts'
 import ArrayClear from '../DataStructures/Linear/Array/Clear/Clear.tsx'
+import BubbleSorting from '../DataStructures/Linear/Array/BubbleSorting/BubbleSorting.tsx'
+import { BubbleSortingAnimation } from '../DataStructures/Linear/Array/BubbleSorting/BubbleSortingAnimation.ts'
 import { ClearAnimation as ArrayClearSequence } from '../DataStructures/Linear/Array/Clear/ClearAnimation.ts'
 import LinkedListClear from '../DataStructures/Linear/LinkedList/Clear/Clear.tsx'
 import { ClearAnimation as LinkedListClearSequence } from '../DataStructures/Linear/LinkedList/Clear/ClearAnimation.ts'
@@ -302,7 +304,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       this.hashSet = HashSet.createDefault()
       this.bloomFilter = BloomFilter.createDefault()
       this.list = LinkedList.createDefault()
-      this.array = FixedArray.createDefault()
+      this.array = menu.actionScope === 'sorting' ? FixedArray.createSortingDefault() : FixedArray.createDefault()
       this.tree = BinaryTree.createDefault()
       this.avlTree = AVLTree.createDefault()
       this.redBlackTree = RedBlackTree.createDefault()
@@ -590,6 +592,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     }
     if (this.state.selected === 'array') {
       switch (action) {
+        case 'bubble-sorting': return BubbleSortingAnimation.describe(this.array.length)
         case 'clear': return ArrayClearSequence.describe(this.array.length)
         case 'insert-middle': return ArrayInsertionAnimation.describe(this.array.length)
         case 'insert-start': return ArrayAddAtStartSequence.describe(this.array.length)
@@ -743,6 +746,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     }
     if (this.state.selected === 'array') {
       switch (this.state.selectedAction) {
+        case 'bubble-sorting': return <BubbleSorting key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'clear': return <ArrayClear key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'insert-middle': return <ArrayAddInTheMiddle key={this.state.actionSession} array={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'insert-start': return <ArrayAddAtStart key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
@@ -770,7 +774,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.hashSet = HashSet.createDefault()
     this.bloomFilter = BloomFilter.createDefault()
     this.list = LinkedList.createDefault()
-    this.array = FixedArray.createDefault()
+    this.array = this.state.selectedScope === 'sorting' ? FixedArray.createSortingDefault() : FixedArray.createDefault()
     this.tree = BinaryTree.createDefault()
     this.avlTree = AVLTree.createDefault()
     this.redBlackTree = RedBlackTree.createDefault()

@@ -20,18 +20,24 @@ test('Overview contains exactly the requested structure groups', () => {
   assert.equal(seen.size, StructureCatalog.structures.length)
 })
 
-test('algorithm subcategories keep array sorting empty and provide graph examples with reversible paths', () => {
+test('algorithm subcategories provide sorting and graph examples with reversible paths', () => {
   const root = new MenuNavigation()
   const algorithms = root.selectCategory('algorithms')
-  assert.deepEqual(MenuNavigation.algorithmGroups.map((group) => group.name), ['Array Sorting', 'Graphs Traversal'])
+  assert.deepEqual(MenuNavigation.algorithmGroups.map((group) => group.name), ['Sorting', 'Graphs Traversal'])
   assert.equal(algorithms.title, 'Data Structures Algorithms')
   assert.deepEqual(algorithms.getStructures(), [])
-  const sorting = algorithms.selectAlgorithmGroup('array-sorting')
-  assert.equal(sorting.title, 'Array Sorting')
-  assert.deepEqual(sorting.getStructures(), [])
-  assert.deepEqual(sorting.getPath(), ['Data Structures Algorithms', 'Array Sorting'])
+  const sorting = algorithms.selectAlgorithmGroup('sorting')
+  assert.equal(sorting.title, 'Sorting')
+  assert.equal(sorting.actionScope, 'sorting')
+  assert.deepEqual(sorting.getStructures().map((structure) => structure.kind), ['array'])
+  assert.deepEqual(sorting.getPath(), ['Data Structures Algorithms', 'Sorting'])
   assert.deepEqual(sorting.back(), algorithms)
-  assert.throws(() => sorting.selectStructure('array'), /current group/)
+  assert.deepEqual(sorting.selectStructure('array'), sorting)
+  assert.deepEqual(MenuNavigation.forStructure('array', 'sorting'), sorting)
+  assert.deepEqual(sorting.back().back(), root)
+  assert.throws(() => sorting.selectStructure('graph'), /current group/)
+  assert.throws(() => sorting.selectGroup('linear'), /Overview/)
+  assert.throws(() => MenuNavigation.forStructure('linked-list', 'sorting'), /array/)
 
   const graphs = algorithms.selectAlgorithmGroup('graph-traversal')
   assert.equal(graphs.title, 'Graphs Traversal')
@@ -51,6 +57,14 @@ test('algorithm subcategories keep array sorting empty and provide graph example
   assert.throws(() => root.selectAlgorithmGroup('graph-traversal'), /Algorithms/)
   assert.equal(root.screen, 'categories')
   assert.equal(algorithms.screen, 'algorithms')
+})
+
+test('Sorting exposes only BubbleSorting for Array and keeps Overview actions separate', () => {
+  assert.deepEqual(ActionCatalog.getScopedActions('array', 'sorting').map((action) => action.title), ['BubbleSorting'])
+  assert.ok(!ActionCatalog.getScopedActions('array', 'overview').some((action) => action.kind === 'bubble-sorting'))
+  for (const structure of StructureCatalog.structures) {
+    if (structure.kind !== 'array') assert.deepEqual(ActionCatalog.getScopedActions(structure.kind, 'sorting'), [])
+  }
 })
 
 test('graph algorithm actions move to traversal while Overview retains editing and search', () => {

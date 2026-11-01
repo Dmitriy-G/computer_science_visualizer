@@ -38,6 +38,7 @@ export class AnimationSequence {
     for (const symbol of symbols) {
       let meaning = 'Constant work or storage, independent of input size.'
       if (symbol === 'O(n)') meaning = 'Linear work or storage, proportional to the number of elements.'
+      if (symbol === 'O(n²)') meaning = 'Quadratic work, proportional to the square of the number of elements.'
       if (symbol === 'O(log n)') meaning = 'Logarithmic work or storage, proportional to the logarithm of the number of elements.'
       if (symbol === 'O(n + e)') meaning = 'Work or storage proportional to vertices plus edges.'
       if (symbol === 'O(log n + k)') meaning = 'Logarithmic descent plus work proportional to the number of reported records.'

@@ -5,7 +5,7 @@
 1. Start with an empty renderer and a clickable menu icon in the top left.
 2. Open the menu to see **Data Structures Overview** and **Data Structures Algorithms**.
    Overview contains the existing structure groups. Algorithms contains
-   **Array Sorting** (empty for now) and **Graphs Traversal** (all five graph
+   **Sorting** (Array with BubbleSorting) and **Graphs Traversal** (all five graph
    variants). Its graph action cards offer BFS and DFS, plus Dijkstra for Weighted
    Graph and topological sorting for DAG. These four algorithm actions move out
    of Overview; graph editing and value search remain there. Browsing either
@@ -613,7 +613,7 @@ edge IDs through ActionInputRequest in the shared dialog.
 ## Algorithm navigation
 
 Keep algorithm groups separate from the Overview structure groups in
-MenuNavigation. Array Sorting opens an explicit empty state; Graphs Traversal
+MenuNavigation. Sorting lists Array and exposes only BubbleSorting; Graphs Traversal
 lists the existing five graphs and reuses their model, input, sequence, renderer,
 and info implementations. ActionCatalog.getScopedActions controls the visible
 choices and App validates action selection against the selected scope. Keep the
@@ -623,3 +623,16 @@ example returns to the branch where it was selected, with reversible Back
 navigation. Selecting the same graph in the other scope cancels the current
 playback, preserves its last committed model, and opens the new action card.
 Reset restores the default example within the selected scope.
+
+Sorting reuses the fixed array model, shared renderer, and automatic playback.
+Start its ten-element example in a deterministic shuffled order. BubbleSorting
+compares adjacent values, swaps only when the left value is greater, and shortens
+the unsorted prefix after each pass. Stop early after a pass without swaps.
+Show both compared entries and label the sorted suffix. Keep stable element IDs
+and fixed slot positions; never resize or add spare capacity. Sort a playback
+clone and commit it only on the final frame. Empty and singleton arrays complete
+safely. Reset restores the shuffled example, while switching scopes for the same
+array preserves its last committed values. Best time is O(n) for an already
+sorted array; average and worst time are O(n²), assuming uniformly random distinct
+permutations for the average. Algorithm auxiliary memory is O(1), excluding
+playback clones and snapshots.

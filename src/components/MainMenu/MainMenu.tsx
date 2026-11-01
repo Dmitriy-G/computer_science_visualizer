@@ -308,9 +308,9 @@ export default class MainMenu extends Component<
     const buttons: ReactNode[] = []
     for (const structure of this.props.navigation.getStructures()) {
       let description = structure.description
-      if (this.props.navigation.actionScope === 'graph-traversal') {
+      if (this.props.navigation.actionScope !== 'overview') {
         const titles: string[] = []
-        for (const action of ActionCatalog.getScopedActions(structure.kind, 'graph-traversal')) titles.push(action.title)
+        for (const action of ActionCatalog.getScopedActions(structure.kind, this.props.navigation.actionScope)) titles.push(action.title)
         description = titles.join(', ')
       }
       buttons.push(
@@ -343,7 +343,7 @@ export default class MainMenu extends Component<
       case 'structures': return null
       case 'algorithms': return null
       case 'algorithm-structures': return null
-      case 'array-sorting': return null
+      case 'sorting': return null
     }
   }
 
@@ -354,7 +354,7 @@ export default class MainMenu extends Component<
       case 'structures': return this.renderStructures()
       case 'algorithm-structures': return this.renderStructures()
       case 'algorithms': return this.renderAlgorithmGroups()
-      case 'array-sorting': return <p className="menu-empty-state">No array sorting examples have been added yet.</p>
+      case 'sorting': return this.renderStructures()
     }
   }
 

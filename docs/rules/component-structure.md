@@ -169,7 +169,9 @@ technology examples with primary links and explain differences from this model.
 
 Algorithm menu groups stay in MainMenu/MenuNavigation alongside root-category
 navigation. Reuse MainMenu to list graphs under Algorithms > Graphs Traversal;
-keep Array Sorting empty until examples exist. ActionMenu receives an explicit
+list Array under Sorting with its BubbleSorting action. Keep the action component,
+CSS, sequence, and layout in Linear/Array/BubbleSorting and the sorting operation
+in FixedArray. ActionMenu receives an explicit
 ActionScope, and App preserves the selected scope independently of menu browsing.
 Do not duplicate graph models or sequence classes to expose traversal examples
 in the Algorithms branch.

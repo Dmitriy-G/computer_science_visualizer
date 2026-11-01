@@ -1,9 +1,9 @@
 import { GraphCatalog } from './GraphCatalog.ts'
 import type { StructureKind } from './Scene.ts'
 
-export type ActionScope = 'overview' | 'graph-traversal'
+export type ActionScope = 'overview' | 'graph-traversal' | 'sorting'
 
-export type ActionKind = 'insert-middle' | 'insert-start' | 'insert-end' | 'insert' | 'search-value' | 'search-index' | 'delete-value' | 'push' | 'pop' | 'peek' | 'clear' | 'enqueue' | 'dequeue' | 'push-front' | 'push-back' | 'pop-front' | 'pop-back' | 'peek-front' | 'peek-back' | 'delete-start' | 'delete-end' | 'range-from-value' | 'starts-with' | 'extract-min' | 'update-index' | 'add-index' | 'prefix-sum' | 'range-sum' | 'search-overlap' | 'flush' | 'compact' | 'build-expression' | 'evaluate' | 'traverse-preorder' | 'traverse-inorder' | 'traverse-postorder' | 'add-vertex' | 'add-edge' | 'remove-edge' | 'breadth-first' | 'depth-first' | 'shortest-path' | 'topological-sort' | 'update-weight'
+export type ActionKind = 'insert-middle' | 'insert-start' | 'insert-end' | 'insert' | 'search-value' | 'search-index' | 'delete-value' | 'push' | 'pop' | 'peek' | 'clear' | 'enqueue' | 'dequeue' | 'push-front' | 'push-back' | 'pop-front' | 'pop-back' | 'peek-front' | 'peek-back' | 'delete-start' | 'delete-end' | 'range-from-value' | 'starts-with' | 'extract-min' | 'update-index' | 'add-index' | 'prefix-sum' | 'range-sum' | 'search-overlap' | 'flush' | 'compact' | 'build-expression' | 'evaluate' | 'traverse-preorder' | 'traverse-inorder' | 'traverse-postorder' | 'add-vertex' | 'add-edge' | 'remove-edge' | 'breadth-first' | 'depth-first' | 'shortest-path' | 'topological-sort' | 'update-weight' | 'bubble-sorting'
 
 export interface ActionChoice {
   readonly kind: ActionKind
@@ -13,6 +13,9 @@ export interface ActionChoice {
 
 export class ActionCatalog {
   public static getScopedActions(structure: StructureKind, scope: ActionScope): readonly ActionChoice[] {
+    if (scope === 'sorting') return structure === 'array'
+      ? [{ kind: 'bubble-sorting', title: 'BubbleSorting', description: 'Compare adjacent values and swap them into ascending order.' }]
+      : []
     const actions = this.getActions(structure)
     if (!GraphCatalog.supports(structure)) return scope === 'overview' ? actions : []
     const choices: ActionChoice[] = []

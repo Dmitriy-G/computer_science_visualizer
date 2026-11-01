@@ -9,7 +9,10 @@ Repository: [Dmitriy-G/computer_science_visualizer](https://github.com/Dmitriy-G
 ## Explore
 
 The root menu offers **Data Structures Overview** and **Data Structures Algorithms**.
-Algorithms contains **Array Sorting** (currently empty) and **Graphs Traversal**.
+Algorithms contains **Sorting** and **Graphs Traversal**. Sorting contains
+**Array**, with a **BubbleSorting** action that animates adjacent comparisons,
+stable swaps, sorted suffixes, and early exit after a pass without swaps.
+Its ten-element example starts shuffled; Reset restores that example.
 Graphs Traversal lists all five graph types with BFS and DFS, plus Dijkstra for
 Weighted Graph and topological sorting for DAG. These algorithm actions live in
 Algorithms; Overview retains graph editing and value search. Switching branches
