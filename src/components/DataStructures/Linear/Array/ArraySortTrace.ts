@@ -16,6 +16,33 @@ export interface ArraySortTreeNode {
   readonly active: boolean
 }
 
+export interface ArraySortRun {
+  readonly id: string
+  readonly label: string
+  readonly entries: readonly ArrayEntry[]
+  readonly cursor?: number
+  readonly activeIndices?: readonly number[]
+  readonly dummy?: boolean
+  readonly status: string
+}
+
+export interface ArraySortStorage {
+  readonly id: string
+  readonly label: string
+  readonly status: string
+  readonly runs: readonly ArraySortRun[]
+}
+
+export interface ArraySortTask {
+  readonly id: string
+  readonly parent: string | null
+  readonly start: number
+  readonly end: number
+  readonly kind: string
+  readonly status: 'READY' | 'WAIT' | 'RUN' | 'DONE'
+  readonly worker?: number
+}
+
 export interface ArraySortFrame {
   readonly activeIndices?: readonly number[]
   readonly roles?: Readonly<Record<number, string>>
@@ -49,6 +76,8 @@ export interface ArraySortFrame {
   readonly activeSampleIndices?: readonly number[]
   readonly splitters?: readonly ArrayEntry[]
   readonly activeSplitter?: number
+  readonly storage?: readonly ArraySortStorage[]
+  readonly tasks?: readonly ArraySortTask[]
 }
 
 export interface ArraySortEvent {

@@ -5,7 +5,7 @@
 1. Start with an empty renderer and a clickable menu icon in the top left.
 2. Open the menu to see **Data Structures Overview** and **Data Structures Algorithms**.
    Overview contains the existing structure groups. Algorithms contains
-   **Sorting** (Array with twenty-nine sorting actions) and **Graphs Traversal** (all five graph
+   **Sorting** (Array with thirty-four sorting actions) and **Graphs Traversal** (all five graph
    variants). Its graph action cards offer BFS and DFS, plus Dijkstra for Weighted
    Graph and topological sorting for DAG. These four algorithm actions move out
    of Overview; graph editing and value search remain there. Browsing either
@@ -637,7 +637,7 @@ edge IDs through ActionInputRequest in the shared dialog.
 ## Algorithm navigation
 
 Keep algorithm groups separate from the Overview structure groups in
-MenuNavigation. Sorting lists Array and exposes its twenty-nine sorting actions; Graphs Traversal
+MenuNavigation. Sorting lists Array and exposes its thirty-four sorting actions; Graphs Traversal
 lists the existing five graphs and reuses their model, input, sequence, renderer,
 and info implementations. ActionCatalog.getScopedActions controls the visible
 choices and App validates action selection against the selected scope. Keep the
@@ -668,6 +668,8 @@ Also include WikiSort, Smoothsort, Tree Sort, Tournament Sort, and Patience Sort
 Also include Cycle Sort, Comb Sort, Cocktail Shaker Sort, and Gnome Sort.
 Also include Odd-Even Sort, Odd-Even Merge Sort, Bitonic Sort, Pairwise Sorting
 Network, and Sample Sort.
+Also include Parallel Merge Sort, Parallel QuickSort, External Merge Sort,
+Polyphase Merge Sort, and Natural Merge Sort.
 Each action owns its component, CSS, sequence, and complexity
 information. Keep model entry points and optional synchronous trace callbacks in
 FixedArray, with array-specific algorithm helpers beside it. Reuse ArraySortingLayout and ArraySortingAnimation for independent
@@ -894,3 +896,47 @@ parallel-time guarantees of production in-place parallel sample sorts.
 All five actions use the shared no-input playback and final-frame commit/reset
 flow. Empty and singleton inputs take O(1). Use educational-example notices when
 practical product use of the demonstrated variant has not been verified.
+
+Parallel Merge Sort and Parallel QuickSort show two logical worker lanes and
+explicit task dependencies. Record operations deterministically in one thread;
+do not present simulated lanes as actual browser parallelism. Merge parents
+wait for both child sorts, then perform a stable sequential buffered merge.
+Total work is O(n log n) in every case, auxiliary memory O(n), and ideal
+unlimited-worker span is O(n) with these sequential merges. QuickSort partitions
+around the middle-slot key into less/equal/greater regions before forking its
+disjoint children. All-equal input takes O(n) work and O(1) task space; random
+distinct input averages O(n log n), adversarial pivots can take O(n²), and the
+retained task graph uses O(n) average/worst space. QuickSort is unstable.
+
+External Merge Sort forms stable sorted runs in RAM chunks of at most three
+records and alternates them between two input tapes. Merge adjacent run pairs
+into two alternating output tapes; copy an unpaired run. Exchange the two pairs
+of tapes after each balanced pass. Polyphase Merge Sort instead uses three
+tapes: fill consecutive Fibonacci quotas on two inputs with real and empty
+dummy runs, then merge until an input is exhausted. Rotate that empty tape into
+the output role without redistributing the remaining runs. A dummy plus a real
+run transfers the real run without record I/O; two dummies yield a dummy. Its
+simple tape-order tie rule is unstable after rotation. Both lessons use O(n log n)
+total record work with fixed chunk size and O(n) auxiliary simulation storage.
+Logical merging needs two head records and one output record, but all virtual
+tape data lives in RAM. Never claim actual disk files or constant total app
+memory. Count logical one-record reads/writes during run generation and tape
+merges; exclude the final load into the visualization array. Keep the original
+array order visible until that final load and retain all record IDs.
+
+Natural Merge Sort recognizes nondecreasing or strictly decreasing runs,
+reverses only strict descents, and stably merges adjacent pairs in successive
+passes. Carry the final unpaired run. A single run takes O(n) time and O(1)
+auxiliary memory because its buffer is lazy. For r runs, work is O(n + n log r),
+with O(n log n) average/worst time and O(n) average/worst memory. Average
+assumptions use randomly ordered distinct keys. Distinguish this lesson from
+TimSort: do not extend short runs, use a run-stack policy, or gallop.
+
+All five sorts use no-input shared playback, clone-only execution and final
+commit/reset behavior. Empty/singleton inputs take O(1). Keep task/run/tape
+roles legible alongside color, use distinct auxiliary IDs, hide unread main
+slots during buffered writes, and reserve maximum diagram bounds for the full
+session. Production examples must identify their actual variant: OpenJDK has
+optimized parallel merges, oneTBB has different quicksort pivots and leaf sorts,
+PostgreSQL uses balanced multiway merging (polyphase is historical version 14),
+and GHC sorts lists using optimized natural-run merges.

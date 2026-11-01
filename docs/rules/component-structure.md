@@ -182,7 +182,8 @@ BinaryInsertionSort, MergeSort, QuickSort, HeapSort, ShellSort, CountingSort,
 RadixSort, BucketSort, TimSort, IntroSort, DualPivotQuickSort, BlockMergeSort,
 WikiSort, Smoothsort, TreeSort, TournamentSort, PatienceSort, CycleSort, CombSort,
 CocktailShakerSort, GnomeSort, OddEvenSort, OddEvenMergeSort, BitonicSort,
-PairwiseSortingNetwork, and SampleSort.
+PairwiseSortingNetwork, SampleSort, ParallelMergeSort, ParallelQuickSort,
+ExternalMergeSort, PolyphaseMergeSort, and NaturalMergeSort.
 Each action owns its component,
 CSS, and sequence folder under Linear/Array. Keep the model entry points in FixedArray,
 with shared array-specific algorithms, trace, layout, and snapshot helpers beside it.
@@ -202,6 +203,13 @@ stage schedules. SampleArraySort owns regular sampling, splitter selection,
 bucket classification, stable local merge sorting, and concatenation. Keep all
 these helpers beside FixedArray; use the shared layout for comparator links and
 separate sample/splitter/bucket/output rows.
+ArrayMergeOperations shares stable adjacent merging with a lazy buffer.
+NaturalMergeArraySort owns natural-run detection and pairwise merge passes.
+ParallelArraySort owns the two-lane virtual scheduler and fork/join dependency
+graph for merge sort and three-way quicksort. ExternalArraySort owns bounded
+run generation, balanced four-tape merging, and three-tape Fibonacci polyphase
+merging. Extend ArraySortTrace and ArraySortingLayout for immutable task and
+storage snapshots; keep algorithm execution outside the renderer.
 ActionMenu receives an explicit
 ActionScope, and App preserves the selected scope independently of menu browsing.
 Algorithm structure buttons show at most two example names in one truncated line;

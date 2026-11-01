@@ -29,6 +29,11 @@ import { OddEvenMergeSortAnimation } from '../src/components/DataStructures/Line
 import { BitonicSortAnimation } from '../src/components/DataStructures/Linear/Array/BitonicSort/BitonicSortAnimation.ts'
 import { PairwiseSortingNetworkAnimation } from '../src/components/DataStructures/Linear/Array/PairwiseSortingNetwork/PairwiseSortingNetworkAnimation.ts'
 import { SampleSortAnimation } from '../src/components/DataStructures/Linear/Array/SampleSort/SampleSortAnimation.ts'
+import { ParallelMergeSortAnimation } from '../src/components/DataStructures/Linear/Array/ParallelMergeSort/ParallelMergeSortAnimation.ts'
+import { ParallelQuickSortAnimation } from '../src/components/DataStructures/Linear/Array/ParallelQuickSort/ParallelQuickSortAnimation.ts'
+import { ExternalMergeSortAnimation } from '../src/components/DataStructures/Linear/Array/ExternalMergeSort/ExternalMergeSortAnimation.ts'
+import { PolyphaseMergeSortAnimation } from '../src/components/DataStructures/Linear/Array/PolyphaseMergeSort/PolyphaseMergeSortAnimation.ts'
+import { NaturalMergeSortAnimation } from '../src/components/DataStructures/Linear/Array/NaturalMergeSort/NaturalMergeSortAnimation.ts'
 import { ActionInputRequest } from '../src/visualization/ActionInputRequest.ts'
 
 const sorts = [
@@ -60,9 +65,121 @@ const sorts = [
   ['bitonicSort', 'bitonic-sort', BitonicSortAnimation, false],
   ['pairwiseSortingNetwork', 'pairwise-sorting-network', PairwiseSortingNetworkAnimation, false],
   ['sampleSort', 'sample-sort', SampleSortAnimation, true],
+  ['parallelMergeSort', 'parallel-merge-sort', ParallelMergeSortAnimation, true],
+  ['parallelQuickSort', 'parallel-quick-sort', ParallelQuickSortAnimation, false],
+  ['externalMergeSort', 'external-merge-sort', ExternalMergeSortAnimation, true],
+  ['polyphaseMergeSort', 'polyphase-merge-sort', PolyphaseMergeSortAnimation, false],
+  ['naturalMergeSort', 'natural-merge-sort', NaturalMergeSortAnimation, true],
 ]
 
 const cases = [[], [4], [1, 2, 3, 4], [4, 3, 2, 1], [2, 2, 2], [3, -2, 3, 0, -2], [Number.MAX_SAFE_INTEGER, 0, Number.MIN_SAFE_INTEGER], [2, 2, 1], [4, 1, 3, 1, 2]]
+
+test('virtual parallel tasks respect disjoint ranges and join dependencies', () => {
+  for (const method of ['parallelMergeSort', 'parallelQuickSort']) {
+    const events = []
+    new FixedArray([8, 2, 7, 1, 5, 3, 6, 4]).clone()[method]((event) => events.push(event))
+    assert.ok(events.some((event) => event.frame.tasks.filter((task) => task.status === 'RUN').length === 2))
+    for (const event of events) {
+      const tasks = event.frame.tasks
+      const running = tasks.filter((task) => task.status === 'RUN')
+      assert.ok(running.length <= 2)
+      assert.equal(new Set(running.map((task) => task.worker)).size, running.length)
+      if (running.length === 2) assert.ok(running[0].end <= running[1].start || running[1].end <= running[0].start)
+      for (const task of tasks) {
+        const children = tasks.filter((child) => child.parent === task.id)
+        if (task.status === 'DONE' || task.status === 'RUN' && task.kind === 'MERGE') assert.ok(children.every((child) => child.status === 'DONE'))
+      }
+    }
+    assert.ok(events.at(-1).frame.tasks.every((task) => task.status === 'DONE'))
+  }
+  const equal = []
+  new FixedArray(new Array(24).fill(7)).parallelQuickSort((event) => equal.push(event))
+  assert.equal(equal.filter((event) => event.kind === 'compare').length, 24)
+  assert.equal(equal.at(-1).frame.tasks.length, 1)
+})
+
+test('external merging preserves the source until final load and balances four tapes', () => {
+  const values = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+  const model = new FixedArray(values)
+  const before = model.getEntries()
+  const events = []
+  model.externalMergeSort((event) => {
+    events.push(event)
+    if (event.kind !== 'gather') assert.deepEqual(model.getEntries(), before)
+    const ram = event.frame.storage.find((row) => row.id === 'ram')
+    assert.ok(ram.runs[0].entries.length <= 3)
+  })
+  const passes = events.filter((event) => event.kind === 'pass')
+  assert.deepEqual(passes.map((event) => event.frame.storage.filter((row) => row.status === 'INPUT').reduce((count, row) => count + row.runs.length, 0)), [2, 1])
+  for (const event of passes) assert.ok(event.frame.storage.filter((row) => row.status === 'OUTPUT').every((row) => row.runs.length === 0))
+  assert.match(events.at(-1).frame.counterHint, /reads: 30; writes: 30/)
+  assert.deepEqual(model.getEntries().map((entry) => entry.value), [...values].reverse())
+})
+
+test('polyphase merging uses Fibonacci quotas, empty dummy runs, and tape rotation', () => {
+  for (const length of [10, 16, 25]) {
+    const model = new FixedArray(Array.from({ length }, (_, index) => length - index))
+    const events = []
+    model.polyphaseMergeSort((event) => events.push(event))
+    const distribution = events.find((event) => event.label === 'Complete the Fibonacci distribution')
+    const tapes = distribution.frame.storage.filter((row) => row.id.startsWith('tape-'))
+    const runCount = Math.ceil(length / 3)
+    assert.equal(tapes.length, 3)
+    assert.equal(tapes[2].runs.length, 0)
+    assert.ok(tapes[0].runs.length >= tapes[1].runs.length)
+    assert.equal(tapes.flatMap((row) => row.runs).filter((run) => !run.dummy).length, runCount)
+    assert.ok(tapes.flatMap((row) => row.runs).some((run) => run.dummy))
+    assert.ok(tapes.flatMap((row) => row.runs).filter((run) => run.dummy).every((run) => run.entries.length === 0))
+    const phases = events.filter((event) => event.kind === 'stage')
+    for (const event of phases) {
+      const storage = event.frame.storage.filter((row) => row.id.startsWith('tape-'))
+      assert.equal(storage.filter((row) => row.status === 'OUTPUT').length, 1)
+      assert.equal(storage.find((row) => row.status === 'OUTPUT').runs.length, 0)
+      assert.ok(storage.filter((row) => row.status === 'INPUT').every((row) => row.runs.length > 0))
+    }
+    if (length === 10) {
+      assert.deepEqual(phases.map((event) => event.frame.storage.filter((row) => row.status === 'INPUT').map((row) => row.runs.length).sort((a, b) => a - b)), [[2, 3], [1, 2], [1, 1]])
+      assert.match(events.at(-1).frame.counterHint, /reads: 31; writes: 31/)
+    }
+    assert.deepEqual(model.getEntries().map((entry) => entry.value), Array.from({ length }, (_, index) => index + 1))
+  }
+})
+
+test('natural merging adapts to one run and never reverses equal keys', () => {
+  for (const values of [[1, 2, 3, 4, 5], [5, 4, 3, 2, 1]]) {
+    const events = []
+    new FixedArray(values).naturalMergeSort((event) => events.push(event))
+    assert.equal(events.filter((event) => event.kind === 'compare').length, values.length - 1)
+    assert.equal(events.filter((event) => event.kind === 'run').length, 1)
+    assert.ok(!events.some((event) => event.frame.buffer))
+  }
+  const values = [5, 4, 4, 3, 2, 2, 1]
+  const model = new FixedArray(values)
+  const original = model.getEntries()
+  const events = []
+  model.naturalMergeSort((event) => events.push(event))
+  for (const event of events.filter((item) => item.kind === 'reverse')) {
+    for (let index = event.index + 1; index <= event.other; index += 1) assert.ok(values[index - 1] > values[index])
+  }
+  assert.deepEqual(model.getEntries(), [...original].sort((a, b) => a.value - b.value))
+})
+
+test('new task and run diagrams retain fixed bounds and valid dependency edges', () => {
+  for (const Animation of [ParallelMergeSortAnimation, ParallelQuickSortAnimation, ExternalMergeSortAnimation, PolyphaseMergeSortAnimation, NaturalMergeSortAnimation]) {
+    const plan = new Animation(new FixedArray([8, 3, 7, 2, 6, 1, 5, 0, 4, 3]))
+    for (const step of plan.steps) {
+      const ids = new Set(step.scene.nodes.map((node) => node.id))
+      assert.equal(ids.size, step.scene.nodes.length)
+      assert.equal(step.scene.width, plan.steps[0].scene.width)
+      assert.equal(step.scene.height, plan.steps[0].scene.height)
+      for (const edge of step.scene.edges) assert.ok(ids.has(edge.from) && ids.has(edge.to))
+      for (const node of step.scene.nodes) assert.ok(node.x + 40 <= step.scene.width && node.y + 70 <= step.scene.height)
+    }
+    assert.ok(plan.steps.at(-1).scene.nodes.every((node) => node.status === 'SORTED'))
+  }
+  assert.equal(ParallelQuickSortAnimation.describe(10).memory.best, 'O(1)')
+  assert.equal(NaturalMergeSortAnimation.describe(10).memory.worst, 'O(n)')
+})
 
 const accepted = (method, values) => method !== 'countingSort' || values.length < 2 || BigInt(Math.max(...values)) - BigInt(Math.min(...values)) + 1n <= BigInt(FixedArray.maximumCountingRange)
 

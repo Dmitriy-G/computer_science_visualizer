@@ -123,6 +123,16 @@ import PairwiseSortingNetwork from '../DataStructures/Linear/Array/PairwiseSorti
 import { PairwiseSortingNetworkAnimation } from '../DataStructures/Linear/Array/PairwiseSortingNetwork/PairwiseSortingNetworkAnimation.ts'
 import SampleSort from '../DataStructures/Linear/Array/SampleSort/SampleSort.tsx'
 import { SampleSortAnimation } from '../DataStructures/Linear/Array/SampleSort/SampleSortAnimation.ts'
+import ParallelMergeSort from '../DataStructures/Linear/Array/ParallelMergeSort/ParallelMergeSort.tsx'
+import { ParallelMergeSortAnimation } from '../DataStructures/Linear/Array/ParallelMergeSort/ParallelMergeSortAnimation.ts'
+import ParallelQuickSort from '../DataStructures/Linear/Array/ParallelQuickSort/ParallelQuickSort.tsx'
+import { ParallelQuickSortAnimation } from '../DataStructures/Linear/Array/ParallelQuickSort/ParallelQuickSortAnimation.ts'
+import ExternalMergeSort from '../DataStructures/Linear/Array/ExternalMergeSort/ExternalMergeSort.tsx'
+import { ExternalMergeSortAnimation } from '../DataStructures/Linear/Array/ExternalMergeSort/ExternalMergeSortAnimation.ts'
+import PolyphaseMergeSort from '../DataStructures/Linear/Array/PolyphaseMergeSort/PolyphaseMergeSort.tsx'
+import { PolyphaseMergeSortAnimation } from '../DataStructures/Linear/Array/PolyphaseMergeSort/PolyphaseMergeSortAnimation.ts'
+import NaturalMergeSort from '../DataStructures/Linear/Array/NaturalMergeSort/NaturalMergeSort.tsx'
+import { NaturalMergeSortAnimation } from '../DataStructures/Linear/Array/NaturalMergeSort/NaturalMergeSortAnimation.ts'
 import { ClearAnimation as ArrayClearSequence } from '../DataStructures/Linear/Array/Clear/ClearAnimation.ts'
 import LinkedListClear from '../DataStructures/Linear/LinkedList/Clear/Clear.tsx'
 import { ClearAnimation as LinkedListClearSequence } from '../DataStructures/Linear/LinkedList/Clear/ClearAnimation.ts'
@@ -685,6 +695,11 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'bitonic-sort': return BitonicSortAnimation.describe(this.array.length)
         case 'pairwise-sorting-network': return PairwiseSortingNetworkAnimation.describe(this.array.length)
         case 'sample-sort': return SampleSortAnimation.describe(this.array.length)
+        case 'parallel-merge-sort': return ParallelMergeSortAnimation.describe(this.array.length)
+        case 'parallel-quick-sort': return ParallelQuickSortAnimation.describe(this.array.length)
+        case 'external-merge-sort': return ExternalMergeSortAnimation.describe(this.array.length)
+        case 'polyphase-merge-sort': return PolyphaseMergeSortAnimation.describe(this.array.length)
+        case 'natural-merge-sort': return NaturalMergeSortAnimation.describe(this.array.length)
         case 'clear': return ArrayClearSequence.describe(this.array.length)
         case 'insert-middle': return ArrayInsertionAnimation.describe(this.array.length)
         case 'insert-start': return ArrayAddAtStartSequence.describe(this.array.length)
@@ -867,6 +882,11 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'bitonic-sort': return <BitonicSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'pairwise-sorting-network': return <PairwiseSortingNetwork key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'sample-sort': return <SampleSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'parallel-merge-sort': return <ParallelMergeSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'parallel-quick-sort': return <ParallelQuickSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'external-merge-sort': return <ExternalMergeSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'polyphase-merge-sort': return <PolyphaseMergeSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'natural-merge-sort': return <NaturalMergeSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'clear': return <ArrayClear key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'insert-middle': return <ArrayAddInTheMiddle key={this.state.actionSession} array={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'insert-start': return <ArrayAddAtStart key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />

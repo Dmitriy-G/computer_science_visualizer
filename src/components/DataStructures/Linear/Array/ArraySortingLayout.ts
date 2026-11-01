@@ -1,6 +1,6 @@
 import { ArrayLayout } from './ArrayLayout.ts'
 import type { ArrayEntry } from './FixedArray.ts'
-import type { ArraySortFrame, ArraySortTreeNode } from './ArraySortTrace.ts'
+import type { ArraySortFrame, ArraySortRun, ArraySortTreeNode } from './ArraySortTrace.ts'
 import type { Scene, SceneEdge, SceneNode, SceneSlot } from '../../../../visualization/Scene.ts'
 
 export class ArraySortingLayout {
@@ -120,6 +120,46 @@ export class ArraySortingLayout {
           if (child) edges.push({ id: `sort-edge-${node.id}-${child}`, from: id, to: `sort-tree-${child}`, directed: true, highlighted: node.active || tree.get(child)!.active, opacity: 1 })
         }
         width = Math.max(width, x + 120)
+        height = Math.max(height, y + 160)
+      }
+    }
+    if (frame.storage) {
+      for (let row = 0; row < frame.storage.length; row += 1) {
+        const storage = frame.storage[row]
+        const y = 640 + row * 180
+        let column = 2
+        nodes.push({ id: `storage-heading-${storage.id}`, value: 0, displayValue: storage.label, x: 80, y, label: storage.id === 'ram' ? '≤3 RECORDS' : storage.status, tone: 'visited', status: 'STORAGE', opacity: 1 })
+        const runs: readonly ArraySortRun[] = storage.runs.length ? storage.runs : [{ id: `${storage.id}-empty`, label: 'empty', entries: [], status: 'EMPTY' }]
+        for (const run of runs) {
+          const length = Math.max(1, run.entries.length)
+          for (let index = 0; index < length; index += 1) {
+            const entry = run.entries[index]
+            const x = 80 + column++ * 112
+            const reading = run.cursor === index || Boolean(run.activeIndices?.includes(index))
+            const status = run.dummy ? 'DUMMY' : reading ? 'READ' : index < (run.cursor ?? 0) ? 'CONSUMED' : run.status
+            nodes.push({ id: `storage-${run.id}-${entry?.id ?? 'empty'}`, value: entry?.value ?? 0, displayValue: entry ? undefined : '∅', x, y, label: '', tone: reading ? 'active' : 'visited', status, opacity: 1 })
+            slots.push({ id: `storage-slot-${storage.id}-${run.id}-${index}`, x, y, label: `${run.label} [${index}]`, empty: false, highlighted: reading, opacity: 1 })
+            width = Math.max(width, x + 140)
+          }
+          column += 1
+        }
+        height = Math.max(height, y + 170)
+      }
+    }
+    if (frame.tasks) {
+      const depths = new Map<string, number>()
+      const columns = new Map<number, number>()
+      for (const task of frame.tasks) {
+        const depth = task.parent === null ? 0 : (depths.get(task.parent) ?? 0) + 1
+        depths.set(task.id, depth)
+        const column = columns.get(depth) ?? 0
+        columns.set(depth, column + 1)
+        const x = 80 + column * 132
+        const y = 640 + depth * 150
+        const active = task.status === 'RUN'
+        nodes.push({ id: `task-${task.id}`, value: task.end - task.start, displayValue: `${task.start}:${task.end}`, x, y, label: task.kind, tone: active ? 'active' : 'visited', status: `${task.status}${active ? ` W${task.worker}` : ''}`, opacity: 1 })
+        if (task.parent !== null) edges.push({ id: `task-edge-${task.id}`, from: `task-${task.parent}`, to: `task-${task.id}`, directed: true, highlighted: active, opacity: 1 })
+        width = Math.max(width, x + 150)
         height = Math.max(height, y + 160)
       }
     }

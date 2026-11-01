@@ -15,6 +15,9 @@ import { OddEvenMergeArraySort } from './OddEvenMergeArraySort.ts'
 import { BitonicArraySort } from './BitonicArraySort.ts'
 import { PairwiseNetworkArraySort } from './PairwiseNetworkArraySort.ts'
 import { SampleArraySort } from './SampleArraySort.ts'
+import { ParallelArraySort } from './ParallelArraySort.ts'
+import { ExternalArraySort } from './ExternalArraySort.ts'
+import { NaturalMergeArraySort } from './NaturalMergeArraySort.ts'
 
 export interface ArrayEntry {
   readonly id: string
@@ -160,6 +163,26 @@ export class FixedArray {
 
   public pairwiseSortingNetwork(onStep?: ArraySortObserver): void {
     new PairwiseNetworkArraySort(this.items, onStep).sort()
+  }
+
+  public parallelMergeSort(onStep?: ArraySortObserver): void {
+    new ParallelArraySort(this.items, onStep).mergeSort()
+  }
+
+  public parallelQuickSort(onStep?: ArraySortObserver): void {
+    new ParallelArraySort(this.items, onStep).quickSort()
+  }
+
+  public externalMergeSort(onStep?: ArraySortObserver): void {
+    new ExternalArraySort(this.items, onStep).externalMergeSort()
+  }
+
+  public polyphaseMergeSort(onStep?: ArraySortObserver): void {
+    new ExternalArraySort(this.items, onStep).polyphaseMergeSort()
+  }
+
+  public naturalMergeSort(onStep?: ArraySortObserver): void {
+    new NaturalMergeArraySort(this.items, onStep).sort()
   }
 
   public sampleSort(onStep?: ArraySortObserver): void {

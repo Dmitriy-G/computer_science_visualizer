@@ -6,6 +6,31 @@ import type { AlgorithmUsage } from './AlgorithmInformation.ts'
 // Only algorithm scopes receive real-world examples. Overview operations do not.
 export class AlgorithmTechnologyCatalog {
   private static readonly uses: Readonly<Partial<Record<ActionKind, AlgorithmUsage>>> = {
+    'parallel-merge-sort': {
+      technologies: [{ name: 'OpenJDK: Arrays.parallelSort object path', url: 'https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/ArraysParallelSortHelpers.java', usage: 'OpenJDK uses fork/join sorting and merging for large object-array ranges, with TimSort leaves and parallel merges. This lesson instead uses binary singleton tasks, sequential merges, and two virtual worker lanes.' }],
+      products: [{ name: 'Java', url: 'https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/ArraysParallelSortHelpers.java', usage: 'Provides a production fork/join merge-sort family implementation for object-array parallel sorting.' }],
+      note: 'The verified use is the parallel merge-sort family. This deterministic teaching simulation does not create worker threads or reproduce OpenJDK performance guarantees.',
+    },
+    'parallel-quick-sort': {
+      technologies: [{ name: 'oneTBB: parallel_sort', url: 'https://github.com/uxlfoundation/oneTBB/blob/master/include/oneapi/tbb/parallel_sort.h', usage: 'The large-range path uses parallel quicksort partition ranges, a sampled pivot, and std::sort leaves. This lesson uses a middle-slot pivot, three-way partitioning, and a deterministic two-lane task simulation.' }],
+      products: [{ name: 'oneTBB runtime', url: 'https://github.com/uxlfoundation/oneTBB/blob/master/include/oneapi/tbb/parallel_sort.h', usage: 'Offers parallel_sort with a production parallel quicksort path for sufficiently large ranges.' }],
+      note: 'oneTBB is a production parallel runtime, not an algorithm demonstration library. Its pivot policy, cutoffs, threading, and small-range sort differ from this educational simulation.',
+    },
+    'external-merge-sort': {
+      technologies: [{ name: 'PostgreSQL: external tuplesort', url: 'https://github.com/postgres/postgres/blob/master/src/backend/utils/sort/tuplesort.c', usage: 'Large sorts write sorted runs to temporary storage and use balanced multiway merging. This lesson reduces the fan-in to two and uses four virtual tapes with three-record RAM chunks.' }],
+      products: [{ name: 'PostgreSQL', url: 'https://github.com/postgres/postgres/blob/master/src/backend/utils/sort/tuplesort.c', usage: 'Uses external run sorting and balanced merging when a sort exceeds its memory budget.' }],
+      note: 'PostgreSQL performs real temporary-file I/O and uses production buffering and multiway merging. The lesson stores all virtual tapes in RAM and reports logical per-record I/O.',
+    },
+    'polyphase-merge-sort': {
+      technologies: [{ name: 'PostgreSQL 14: historical polyphase tuplesort', url: 'https://github.com/postgres/postgres/blob/REL_14_STABLE/src/backend/utils/sort/tuplesort.c', usage: 'PostgreSQL 14 documents its polyphase external merge schedule and logical tapes. This lesson demonstrates the three-tape Fibonacci special case with explicit dummy runs.' }],
+      products: [{ name: 'PostgreSQL 14 (historical)', url: 'https://github.com/postgres/postgres/blob/REL_14_STABLE/src/backend/utils/sort/tuplesort.c', usage: 'Used polyphase external merging before PostgreSQL changed to balanced merging in version 15.' }],
+      note: 'This is a historical production use. The three virtual tapes, fixed chunk size, and simple unstable tape-order tie handling are teaching choices rather than a reproduction of PostgreSQL tuplesort.',
+    },
+    'natural-merge-sort': {
+      technologies: [{ name: 'GHC: Data.List sort', url: 'https://github.com/ghc/ghc/blob/master/libraries/ghc-internal/src/GHC/Internal/Data/OldList.hs', usage: 'The standard list sorter detects ascending and strictly descending sequences, then merges those natural runs. Its optimized multiway list merges differ from the adjacent pairwise array merges in this lesson.' }],
+      products: [{ name: 'Glasgow Haskell Compiler standard library', url: 'https://github.com/ghc/ghc/blob/master/libraries/ghc-internal/src/GHC/Internal/Data/OldList.hs', usage: 'Provides natural-run merge sorting through the standard list sort and sortBy operations.' }],
+      note: 'GHC is a production compiler and standard library. This lesson adapts natural-run detection to a fixed array with a lazy merge buffer; it does not reproduce the list allocation or multiway merge strategy.',
+    },
     'odd-even-sort': {
       technologies: [],
       products: [],
