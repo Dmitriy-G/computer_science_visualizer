@@ -1,0 +1,241 @@
+import assert from 'node:assert/strict'
+import { test } from 'node:test'
+import { FixedArray } from '../src/components/DataStructures/Linear/Array/FixedArray.ts'
+import { SelectionSortAnimation } from '../src/components/DataStructures/Linear/Array/SelectionSort/SelectionSortAnimation.ts'
+import { InsertionSortAnimation } from '../src/components/DataStructures/Linear/Array/InsertionSort/InsertionSortAnimation.ts'
+import { BinaryInsertionSortAnimation } from '../src/components/DataStructures/Linear/Array/BinaryInsertionSort/BinaryInsertionSortAnimation.ts'
+import { MergeSortAnimation } from '../src/components/DataStructures/Linear/Array/MergeSort/MergeSortAnimation.ts'
+import { QuickSortAnimation } from '../src/components/DataStructures/Linear/Array/QuickSort/QuickSortAnimation.ts'
+import { HeapSortAnimation } from '../src/components/DataStructures/Linear/Array/HeapSort/HeapSortAnimation.ts'
+import { ShellSortAnimation } from '../src/components/DataStructures/Linear/Array/ShellSort/ShellSortAnimation.ts'
+import { CountingSortAnimation } from '../src/components/DataStructures/Linear/Array/CountingSort/CountingSortAnimation.ts'
+import { RadixSortAnimation } from '../src/components/DataStructures/Linear/Array/RadixSort/RadixSortAnimation.ts'
+import { BucketSortAnimation } from '../src/components/DataStructures/Linear/Array/BucketSort/BucketSortAnimation.ts'
+import { ActionInputRequest } from '../src/visualization/ActionInputRequest.ts'
+
+const sorts = [
+  ['selectionSort', 'selection-sort', SelectionSortAnimation, false],
+  ['insertionSort', 'insertion-sort', InsertionSortAnimation, true],
+  ['binaryInsertionSort', 'binary-insertion-sort', BinaryInsertionSortAnimation, true],
+  ['mergeSort', 'merge-sort', MergeSortAnimation, true],
+  ['quickSort', 'quick-sort', QuickSortAnimation, false],
+  ['heapSort', 'heap-sort', HeapSortAnimation, false],
+  ['shellSort', 'shell-sort', ShellSortAnimation, false],
+  ['countingSort', 'counting-sort', CountingSortAnimation, true],
+  ['radixSort', 'radix-sort', RadixSortAnimation, true],
+  ['bucketSort', 'bucket-sort', BucketSortAnimation, true],
+]
+
+const cases = [[], [4], [1, 2, 3, 4], [4, 3, 2, 1], [2, 2, 2], [3, -2, 3, 0, -2], [Number.MAX_SAFE_INTEGER, 0, Number.MIN_SAFE_INTEGER], [2, 2, 1], [4, 1, 3, 1, 2]]
+
+const accepted = (method, values) => method !== 'countingSort' || values.length < 2 || BigInt(Math.max(...values)) - BigInt(Math.min(...values)) + 1n <= BigInt(FixedArray.maximumCountingRange)
+
+test('sorts preserve values, IDs, fixed length, source clones, and future IDs for accepted inputs', () => {
+  for (const [method, , , stable] of sorts) {
+    for (const values of [...cases, FixedArray.createSortingDefault().getEntries().map((entry) => entry.value)]) {
+      if (!accepted(method, values)) continue
+      const source = new FixedArray(values)
+      const before = source.getEntries()
+      const result = source.clone()
+      result[method]()
+      assert.deepEqual(result.getEntries().map((entry) => entry.value), [...values].sort((a, b) => a - b), method)
+      assert.equal(result.length, source.length)
+      assert.deepEqual(source.getEntries(), before)
+      assert.deepEqual(new Set(result.getEntries().map((entry) => entry.id)), new Set(before.map((entry) => entry.id)))
+      if (stable) {
+        for (const value of values) assert.deepEqual(result.getEntries().filter((entry) => entry.value === value), before.filter((entry) => entry.value === value), `${method} is stable`)
+      }
+      const sortedValues = result.getEntries().map((entry) => entry.value)
+      result[method]()
+      assert.deepEqual(result.getEntries().map((entry) => entry.value), sortedValues)
+      assert.equal(result.withInsertedAt(0, 99).getAt(0).id, `array-element-${values.length}`)
+    }
+  }
+})
+
+test('all permutations of five distinct values sort correctly', () => {
+  const visit = (prefix, remaining) => {
+    if (!remaining.length) {
+      for (const [method] of sorts) {
+        const model = new FixedArray(prefix)
+        model[method]()
+        assert.deepEqual(model.getEntries().map((entry) => entry.value), [-2, -1, 0, 1, 2], method)
+      }
+      return
+    }
+    for (let index = 0; index < remaining.length; index += 1) visit([...prefix, remaining[index]], [...remaining.slice(0, index), ...remaining.slice(index + 1)])
+  }
+  visit([], [-2, -1, 0, 1, 2])
+})
+
+test('trace work distinguishes selection, linear insertion, binary insertion, and last-pivot quicksort', () => {
+  for (const values of [[1, 2, 3, 4, 5], [5, 4, 3, 2, 1]]) {
+    const selection = []
+    new FixedArray(values).selectionSort((event) => selection.push(event))
+    assert.equal(selection.filter((event) => event.kind === 'compare').length, 10)
+  }
+  const linear = []
+  const binary = []
+  const values = Array.from({ length: 16 }, (_, index) => index)
+  new FixedArray(values).insertionSort((event) => linear.push(event))
+  new FixedArray(values).binaryInsertionSort((event) => binary.push(event))
+  assert.equal(linear.filter((event) => event.kind === 'compare').length, 15)
+  assert.ok(binary.filter((event) => event.kind === 'compare').length > 15)
+  assert.ok(!linear.some((event) => event.kind === 'shift'))
+  assert.ok(!binary.some((event) => event.kind === 'shift'))
+  const quick = []
+  new FixedArray([1, 2, 3, 4, 5]).quickSort((event) => quick.push(event))
+  assert.equal(quick.filter((event) => event.kind === 'compare').length, 10)
+  assert.equal(quick.filter((event) => event.kind === 'partition').length, 5)
+})
+
+test('all sort animations have deterministic independent scenes, correct final slots, and no source mutation', () => {
+  for (const [method, action, Animation] of sorts) {
+    for (const values of cases) {
+      if (!accepted(method, values)) continue
+      const source = new FixedArray(values)
+      const before = source.getEntries()
+      const plan = new Animation(source)
+      assert.deepEqual(source.getEntries(), before)
+      assert.deepEqual(new Animation(source).steps, plan.steps)
+      assert.equal(ActionInputRequest.create('array', action, source.length), null)
+      const final = plan.steps.at(-1).scene
+      assert.deepEqual(final.nodes.map((node) => node.value), [...values].sort((a, b) => a - b))
+      assert.deepEqual(final.nodes.map((node) => node.id), plan.result.getEntries().map((entry) => entry.id))
+      assert.ok(final.nodes.every((node) => node.status === 'SORTED'))
+      for (const step of plan.steps) {
+        assert.equal(step.scene.count, values.length)
+        assert.equal(step.scene.kind, 'array')
+        assert.ok(step.title && step.description && step.code && step.duration > 0)
+        assert.ok(step.phase >= 1 && step.phase <= 5)
+        const ids = new Set(step.scene.nodes.map((node) => node.id))
+        assert.equal(ids.size, step.scene.nodes.length, `${method} has no duplicate scene IDs`)
+        assert.ok(step.scene.focusId === null || ids.has(step.scene.focusId))
+        assert.equal(new Set(step.scene.slots.map((slot) => slot.id)).size, step.scene.slots.length)
+        for (let index = 0; index < values.length; index += 1) {
+          const slot = step.scene.slots[index]
+          assert.equal(slot.id, final.slots[index].id)
+          assert.equal(slot.x, final.slots[index].x)
+          assert.equal(slot.y, final.slots[index].y)
+        }
+        for (const node of step.scene.nodes) assert.ok(Number.isFinite(node.x) && Number.isFinite(node.y))
+      }
+      const snapshots = JSON.stringify(plan.steps)
+      plan.result[method]()
+      assert.equal(JSON.stringify(plan.steps), snapshots)
+      if (values.length) {
+        const finalValue = final.nodes[0].value
+        plan.steps[0].scene.nodes[0].value = 12345
+        assert.equal(final.nodes[0].value, finalValue)
+        assert.deepEqual(source.getEntries(), before)
+      }
+    }
+  }
+})
+
+test('insertion scenes retain the held entry while merge scenes distinguish auxiliary copies', () => {
+  for (const Animation of [InsertionSortAnimation, BinaryInsertionSortAnimation]) {
+    const source = new FixedArray([3, 2, 1])
+    const ids = new Set(source.getEntries().map((entry) => entry.id))
+    const plan = new Animation(source)
+    assert.ok(plan.steps.some((step) => step.scene.nodes.some((node) => node.status === 'HELD')))
+    assert.ok(plan.steps.some((step) => step.scene.nodes.some((node) => node.status === 'SHIFT')))
+    for (const step of plan.steps) {
+      assert.deepEqual(new Set(step.scene.nodes.map((node) => node.id)), ids)
+      assert.equal(step.scene.nodes.length, 3)
+    }
+  }
+  const merged = new MergeSortAnimation(new FixedArray([3, 1, 2]))
+  assert.ok(merged.steps.some((step) => step.scene.nodes.some((node) => node.id.startsWith('buffer-'))))
+  assert.ok(merged.steps.some((step) => step.scene.nodes.filter((node) => node.id.startsWith('buffer-') && node.status === 'READ').length === 2))
+  assert.ok(merged.steps.at(-1).scene.nodes.every((node) => !node.id.startsWith('buffer-')))
+})
+
+test('Counting Sort accepts its exact range limit and rejects wider input without mutation', () => {
+  const limit = FixedArray.maximumCountingRange
+  for (const values of [[limit - 1, 0, limit - 1, 1], [Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER - 1], [Number.MIN_SAFE_INTEGER + 1, Number.MIN_SAFE_INTEGER]]) {
+    const model = new FixedArray(values)
+    const before = model.getEntries()
+    assert.equal(model.countingSort(), true)
+    assert.deepEqual(model.getEntries().map((entry) => entry.value), [...values].sort((a, b) => a - b))
+    for (const value of values) assert.deepEqual(model.getEntries().filter((entry) => entry.value === value), before.filter((entry) => entry.value === value))
+  }
+  for (const values of [[limit, 0], [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER]]) {
+    const model = new FixedArray(values)
+    const before = model.getEntries()
+    const events = []
+    assert.equal(model.countingSort((event) => events.push(event)), false)
+    assert.deepEqual(model.getEntries(), before)
+    assert.deepEqual(events.map((event) => event.kind), ['reject'])
+    const plan = new CountingSortAnimation(model)
+    assert.deepEqual(plan.result.getEntries(), before)
+    assert.equal(plan.steps.at(-1).title, 'Array unchanged')
+    assert.deepEqual(plan.steps.at(-1).scene.nodes.map((node) => node.value), values)
+    assert.ok(!plan.steps.at(-1).scene.nodes.some((node) => node.status === 'SORTED'))
+    assert.equal(plan.result.withInsertedAt(0, 9).getAt(0).id, `array-element-${values.length}`)
+  }
+})
+
+test('distribution scenes expose stable output, digit buckets, and comparisons inside buckets', () => {
+  const counted = new CountingSortAnimation(new FixedArray([2, -1, 2, 0, -1]))
+  assert.ok(counted.steps.some((step) => step.scene.nodes.some((node) => node.id.startsWith('output-'))))
+  assert.ok(counted.steps.some((step) => step.scene.nodes.some((node) => node.status === 'NEXT')))
+  assert.ok(counted.steps.some((step) => step.scene.hint?.description.includes('observed keys')))
+  const radix = new RadixSortAnimation(new FixedArray([91, -1, 10, 91]))
+  assert.ok(radix.steps.some((step) => step.scene.nodes.some((node) => node.id.startsWith('bucket-'))))
+  assert.ok(radix.steps.some((step) => step.scene.slots.filter((slot) => slot.id.startsWith('counter-slot-')).length === 10))
+  const bucket = new BucketSortAnimation(new FixedArray([4, 3, 2, 1, 1000, 0]))
+  assert.ok(bucket.steps.some((step) => step.scene.nodes.some((node) => node.id.startsWith('bucket-') && node.status === 'COMPARE')))
+  assert.ok(bucket.steps.some((step) => step.scene.nodes.some((node) => node.id.startsWith('bucket-') && node.status === 'SWAP')))
+  for (const plan of [counted, radix, bucket]) {
+    assert.ok(plan.steps.every((step) => step.scene.height === plan.steps[0].scene.height && step.scene.width === plan.steps[0].scene.width))
+    assert.ok(plan.steps.at(-1).scene.nodes.every((node) => node.status === 'SORTED' && node.id.startsWith('array-element-')))
+  }
+})
+
+test('radix keys and bucket mapping remain exact over the full signed safe-integer span', () => {
+  const values = [Number.MAX_SAFE_INTEGER, -1, Number.MIN_SAFE_INTEGER, 0, Number.MAX_SAFE_INTEGER - 1, -1]
+  const radix = new FixedArray(values)
+  const digits = []
+  radix.radixSort((event) => { if (event.kind === 'digit') digits.push(event.label) })
+  assert.equal(digits.length, 17)
+  assert.equal(digits[0], '1')
+  assert.equal(digits.at(-1), '10000000000000000')
+  const equal = []
+  new FixedArray([-5, -5]).radixSort((event) => { if (event.kind === 'digit') equal.push(event.label) })
+  assert.deepEqual(equal, ['1'])
+  const bucket = new FixedArray(values)
+  const distributed = []
+  bucket.bucketSort((event) => { if (event.kind === 'distribute') distributed.push(event.other) })
+  const minimum = BigInt(Number.MIN_SAFE_INTEGER)
+  const span = BigInt(Number.MAX_SAFE_INTEGER) - minimum + 1n
+  assert.deepEqual(distributed, values.map((value) => Number((BigInt(value) - minimum) * BigInt(values.length) / span)))
+  assert.deepEqual(bucket.getEntries().map((entry) => entry.value), radix.getEntries().map((entry) => entry.value))
+})
+
+test('heap extraction finalizes a growing suffix and Shell Sort uses descending Knuth gaps', () => {
+  const heap = new FixedArray([3, 1, 4, 2, 0])
+  const suffixes = []
+  heap.heapSort((event) => {
+    if (event.kind !== 'extract') return
+    const values = heap.getEntries().map((entry) => entry.value)
+    const suffix = values.slice(event.index)
+    assert.deepEqual(suffix, [...suffix].sort((a, b) => a - b))
+    assert.ok(values.slice(0, event.index).every((value) => value <= suffix[0]))
+    assert.equal(event.frame.sortedFrom, event.index)
+    suffixes.push(event.index)
+  })
+  assert.deepEqual(suffixes, [4, 3, 2, 1])
+  const shell = new FixedArray([9, 8, 7, 6, 5, 4, 3, 2, 1, 0])
+  const gaps = []
+  shell.shellSort((event) => {
+    if (event.kind === 'gap') gaps.push(event.amount)
+    if (event.kind !== 'pass') return
+    const values = shell.getEntries().map((entry) => entry.value)
+    for (let index = event.amount; index < values.length; index += 1) assert.ok(values[index - event.amount] <= values[index])
+  })
+  assert.deepEqual(gaps, [4, 1])
+  const information = ShellSortAnimation.describe(10)
+  assert.equal(information.time.average, 'Not established')
+  assert.ok(!information.terms.some((term) => term.symbol === 'Not established'))
+})

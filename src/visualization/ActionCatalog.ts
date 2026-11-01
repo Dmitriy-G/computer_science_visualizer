@@ -3,7 +3,9 @@ import type { StructureKind } from './Scene.ts'
 
 export type ActionScope = 'overview' | 'graph-traversal' | 'sorting'
 
-export type ActionKind = 'insert-middle' | 'insert-start' | 'insert-end' | 'insert' | 'search-value' | 'search-index' | 'delete-value' | 'push' | 'pop' | 'peek' | 'clear' | 'enqueue' | 'dequeue' | 'push-front' | 'push-back' | 'pop-front' | 'pop-back' | 'peek-front' | 'peek-back' | 'delete-start' | 'delete-end' | 'range-from-value' | 'starts-with' | 'extract-min' | 'update-index' | 'add-index' | 'prefix-sum' | 'range-sum' | 'search-overlap' | 'flush' | 'compact' | 'build-expression' | 'evaluate' | 'traverse-preorder' | 'traverse-inorder' | 'traverse-postorder' | 'add-vertex' | 'add-edge' | 'remove-edge' | 'breadth-first' | 'depth-first' | 'shortest-path' | 'topological-sort' | 'update-weight' | 'bubble-sorting'
+export type ActionKind = ArraySortingActionKind | 'insert-middle' | 'insert-start' | 'insert-end' | 'insert' | 'search-value' | 'search-index' | 'delete-value' | 'push' | 'pop' | 'peek' | 'clear' | 'enqueue' | 'dequeue' | 'push-front' | 'push-back' | 'pop-front' | 'pop-back' | 'peek-front' | 'peek-back' | 'delete-start' | 'delete-end' | 'range-from-value' | 'starts-with' | 'extract-min' | 'update-index' | 'add-index' | 'prefix-sum' | 'range-sum' | 'search-overlap' | 'flush' | 'compact' | 'build-expression' | 'evaluate' | 'traverse-preorder' | 'traverse-inorder' | 'traverse-postorder' | 'add-vertex' | 'add-edge' | 'remove-edge' | 'breadth-first' | 'depth-first' | 'shortest-path' | 'topological-sort' | 'update-weight' | 'bubble-sorting'
+
+export type ArraySortingActionKind = 'selection-sort' | 'insertion-sort' | 'binary-insertion-sort' | 'merge-sort' | 'quick-sort' | 'heap-sort' | 'shell-sort' | 'counting-sort' | 'radix-sort' | 'bucket-sort'
 
 export interface ActionChoice {
   readonly kind: ActionKind
@@ -14,7 +16,19 @@ export interface ActionChoice {
 export class ActionCatalog {
   public static getScopedActions(structure: StructureKind, scope: ActionScope): readonly ActionChoice[] {
     if (scope === 'sorting') return structure === 'array'
-      ? [{ kind: 'bubble-sorting', title: 'BubbleSorting', description: 'Compare adjacent values and swap them into ascending order.' }]
+      ? [
+        { kind: 'bubble-sorting', title: 'BubbleSorting', description: 'Compare adjacent values and swap them into ascending order.' },
+        { kind: 'selection-sort', title: 'Selection Sort', description: 'Find each remaining minimum and swap it into the sorted prefix.' },
+        { kind: 'insertion-sort', title: 'Insertion Sort', description: 'Scan backward and shift larger entries to insert the next value.' },
+        { kind: 'binary-insertion-sort', title: 'Binary Insertion Sort', description: 'Binary-search the insertion position, then shift entries right.' },
+        { kind: 'merge-sort', title: 'Merge Sort', description: 'Split the array and stably merge sorted halves through a buffer.' },
+        { kind: 'quick-sort', title: 'Quick Sort', description: 'Partition around the last-entry pivot and sort both sides.' },
+        { kind: 'heap-sort', title: 'Heap Sort', description: 'Build a max-heap and extract maxima into a sorted suffix.' },
+        { kind: 'shell-sort', title: 'Shell Sort', description: 'Sort gap-separated subsequences with decreasing Knuth gaps.' },
+        { kind: 'counting-sort', title: 'Counting Sort', description: 'Count integer keys in a limited range and distribute stably.' },
+        { kind: 'radix-sort', title: 'Radix Sort', description: 'Distribute and gather stable decimal digit buckets.' },
+        { kind: 'bucket-sort', title: 'Bucket Sort', description: 'Distribute into equal-width buckets, sort each, and concatenate.' },
+      ]
       : []
     const actions = this.getActions(structure)
     if (!GraphCatalog.supports(structure)) return scope === 'overview' ? actions : []

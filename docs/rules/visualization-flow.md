@@ -5,7 +5,7 @@
 1. Start with an empty renderer and a clickable menu icon in the top left.
 2. Open the menu to see **Data Structures Overview** and **Data Structures Algorithms**.
    Overview contains the existing structure groups. Algorithms contains
-   **Sorting** (Array with BubbleSorting) and **Graphs Traversal** (all five graph
+   **Sorting** (Array with six sorting actions) and **Graphs Traversal** (all five graph
    variants). Its graph action cards offer BFS and DFS, plus Dijkstra for Weighted
    Graph and topological sorting for DAG. These four algorithm actions move out
    of Overview; graph editing and value search remain there. Browsing either
@@ -633,7 +633,7 @@ edge IDs through ActionInputRequest in the shared dialog.
 ## Algorithm navigation
 
 Keep algorithm groups separate from the Overview structure groups in
-MenuNavigation. Sorting lists Array and exposes only BubbleSorting; Graphs Traversal
+MenuNavigation. Sorting lists Array and exposes its eleven sorting actions; Graphs Traversal
 lists the existing five graphs and reuses their model, input, sequence, renderer,
 and info implementations. ActionCatalog.getScopedActions controls the visible
 choices and App validates action selection against the selected scope. Keep the
@@ -656,3 +656,55 @@ array preserves its last committed values. Best time is O(n) for an already
 sorted array; average and worst time are O(n²), assuming uniformly random distinct
 permutations for the average. Algorithm auxiliary memory is O(1), excluding
 playback clones and snapshots.
+
+Also provide Selection Sort, Insertion Sort, Binary Insertion Sort, Merge Sort,
+Quick Sort, Heap Sort, Shell Sort, Counting Sort, Radix Sort, and Bucket Sort.
+Each action owns its component, CSS, sequence, and complexity
+information. Keep sorting algorithms and optional synchronous trace callbacks in
+FixedArray. Reuse ArraySortingLayout and ArraySortingAnimation for independent
+snapshots and fixed slot positions. None of these actions collects a value.
+
+Selection sort scans the complete unsorted suffix for each minimum, then swaps it
+into place: all time cases are O(n²), auxiliary memory O(1), and it is unstable.
+Insertion sort holds an entry above its empty slot, scans backward, shifts larger
+entries right, and inserts stably. Best time is O(n), average/worst O(n²), with
+O(1) extra memory. Binary insertion always binary-searches the prefix for the
+position after equal values, then shifts entries. Its best time is O(n log n),
+average/worst O(n²), and extra memory O(1); fewer comparisons do not remove shifts.
+
+Merge sort splits recursively, copies sorted halves into one shared O(n) buffer,
+and merges stably back into the existing allocation, taking O(n log n) time in
+all cases. Distinguish auxiliary copies by their scene IDs; show empty unwritten
+output slots and both compared buffer heads. Quicksort uses a deterministic
+last-entry Lomuto pivot with <= on the left and > on the right. Show pivot choice,
+comparisons, swaps, and finalized pivot positions; it is unstable. Best/average
+time is O(n log n), worst O(n²). Recursive stack space is O(log n) best/average
+and O(n) worst. Sorted, reverse-sorted, and all-equal values trigger its worst
+case. Average assumptions use uniformly random permutations of distinct values.
+Explain empty/singleton constant-time cases separately. All sorts preserve stable
+entry IDs, fixed length, the source model, and the final-frame commit/reset flow.
+
+Heap Sort builds a max-heap bottom up and iteratively sifts after extracting each
+maximum into the sorted suffix. It is unstable, with O(1) extra storage, O(n)
+best time for all-equal keys, and O(n log n) average/worst time. Shell Sort uses
+decreasing Knuth gaps and gapped insertion by exchanges. It is unstable, uses
+O(1) extra space, and takes O(n log n) best and O(n^(3/2)) worst time. Do not assert
+a tight average bound for these gaps; display that it is not established.
+
+Counting Sort uses a stable output array and key-relative counts and offsets.
+Limit its inclusive max - min + 1 range to 4,096 before allocation; reject wider
+inputs unchanged with a visible explanation. Accepted runs cost O(n + k) time
+and space. Draw observed count cells only, explain omitted zero-frequency cells,
+and distinguish COUNT, NEXT, and OUTPUT states. Radix Sort uses stable decimal
+LSD buckets and takes O(d(n + b)) time and O(n + b) space, with b = 10 and at most
+17 passes for safe integers. Bucket Sort uses b = n equal-width buckets and stable
+insertion exchanges within each bucket. Best/average time is O(n + b), with an
+independent uniform-key assumption for the average; worst time is O(n² + b).
+Extra space is O(n + b). Use exact BigInt arithmetic for range normalization,
+digit extraction, and bucket scaling, including negative and extreme safe integers.
+Distribution scenes reserve consistent space for buckets/output and counters;
+auxiliary copies use separate stable IDs. Empty/singleton runs take O(1).
+
+Keep action panels bounded to the viewport and scroll only their action lists.
+Keep their heading and back/info controls visible; contain overscroll and allow
+keyboard scrolling with visible focus.

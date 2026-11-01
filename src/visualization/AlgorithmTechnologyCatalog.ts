@@ -6,6 +6,106 @@ import type { AlgorithmUsage } from './AlgorithmInformation.ts'
 // Only algorithm scopes receive real-world examples. Overview operations do not.
 export class AlgorithmTechnologyCatalog {
   private static readonly uses: Readonly<Partial<Record<ActionKind, AlgorithmUsage>>> = {
+    'heap-sort': {
+      technologies: [
+        { name: 'Linux: sort_r', url: 'https://github.com/torvalds/linux/blob/master/lib/sort.c', usage: 'Implements a nonrecursive heapsort for kernel arrays. Its optimized sifting differs from the direct parent/child swaps shown here.' },
+        { name: 'OpenJDK: DualPivotQuicksort.heapSort', url: 'https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/DualPivotQuicksort.java', usage: 'Falls back to heapsort when primitive-array quicksort exceeds its recursion-depth limit, preventing quadratic partition behavior.' },
+      ],
+      products: [
+        { name: 'Linux', url: 'https://github.com/torvalds/linux/blob/master/lib/sort.c', usage: 'The kernel array sort uses heapsort.' },
+        { name: 'Java', url: 'https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/DualPivotQuicksort.java', usage: 'Primitive-array sorting includes a heapsort fallback.' },
+      ],
+      note: 'These are production heapsort variants; this lesson uses iterative max-heap sifting by swaps.',
+    },
+    'shell-sort': {
+      technologies: [{ name: 'Linux 4.4: groups_sort', url: 'https://github.com/torvalds/linux/blob/v4.4/kernel/groups.c', usage: 'Historically sorted supplementary group IDs using Shell Sort with 3h + 1 gaps. Linux 4.4 uses shifts within each gapped insertion; this lesson uses exchanges and starts with a smaller maximum gap.' }],
+      products: [{ name: 'Linux', url: 'https://github.com/torvalds/linux/blob/v4.4/kernel/groups.c', usage: 'Linux 4.4 used Shell Sort for supplementary group IDs; this is a historical example.' }],
+      note: 'This is a version-specific historical use, not a claim about current Linux group sorting.',
+    },
+    'counting-sort': {
+      technologies: [{ name: 'OpenJDK: DualPivotQuicksort.countingSort', url: 'https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/DualPivotQuicksort.java', usage: 'Uses counting sort for sufficiently large byte, short, and char arrays. Those primitive-only routines reconstruct values from frequencies; this lesson instead distributes entry references stably to preserve equal-key identity.' }],
+      products: [{ name: 'Java', url: 'https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/DualPivotQuicksort.java', usage: 'Primitive-array sorting includes counting sort for bounded key types.' }],
+      note: 'The visualizer supports signed safe integers but limits the inclusive key range to 4,096 values.',
+    },
+    'radix-sort': {
+      technologies: [{ name: 'DuckDB: table sorting', url: 'https://duckdb.org/2021/08/27/external-sorting', usage: 'The 2021 engineering article describes radix-sorting encoded byte keys into sorted blocks, then merging the blocks for SQL ordering. This is a byte-key variant; the lesson uses decimal least-significant-digit passes.' }],
+      products: [{ name: 'DuckDB', url: 'https://duckdb.org/2021/08/27/external-sorting', usage: 'Documents radix sorting in its table-sorting implementation in 2021.' }],
+      note: 'The linked article documents a particular production implementation, rather than this decimal teaching variant.',
+    },
+    'bucket-sort': {
+      technologies: [],
+      products: [],
+      note: 'This equal-width Bucket Sort with insertion-sorted buckets is presented as an educational example. No production use of this exact variant has been verified; this does not mean bucket sorting is only academic.',
+    },
+    'selection-sort': {
+      technologies: [],
+      products: [],
+      note: 'Selection Sort is presented here as an educational example. No production use of this exact minimum-scan-and-swap variant has been verified.',
+    },
+    'insertion-sort': {
+      technologies: [{
+        name: 'OpenJDK: DualPivotQuicksort.insertionSort',
+        url: 'https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/DualPivotQuicksort.java',
+        usage: 'Uses ordinary insertion sort for small primitive-array partitions inside its hybrid sorting engine. This lesson runs insertion sort across the whole array.',
+      }],
+      products: [{
+        name: 'Java',
+        url: 'https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/DualPivotQuicksort.java',
+        usage: 'OpenJDK uses insertion sort as a small-partition stage of its primitive-array sorting implementation.',
+      }],
+      note: 'The production sorter is a hybrid; its overall complexity is not the complexity of standalone insertion sort.',
+    },
+    'binary-insertion-sort': {
+      technologies: [
+        {
+          name: 'CPython: list sorting binarysort',
+          url: 'https://github.com/python/cpython/blob/main/Objects/listsort.txt',
+          usage: 'Extends short natural runs with stable binary insertion before merging them. Binary search locates the position after equal entries; shifting remains linear per insertion.',
+        },
+        {
+          name: 'OpenJDK: TimSort.binarySort',
+          url: 'https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/TimSort.java',
+          usage: 'Sorts small object-array ranges and extends short runs with binary insertion inside an adaptive merge-sort implementation.',
+        },
+      ],
+      products: [
+        { name: 'Python', url: 'https://github.com/python/cpython/blob/main/Objects/listsort.txt', usage: 'CPython list sorting uses binary insertion to extend short runs before merging.' },
+        { name: 'Java', url: 'https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/TimSort.java', usage: 'OpenJDK TimSort uses binary insertion for small object-array ranges and short runs.' },
+      ],
+      note: 'Both runtimes use binary insertion as part of a hybrid, not as their sole general-purpose sorting algorithm.',
+    },
+    'merge-sort': {
+      technologies: [
+        {
+          name: 'CPython: adaptive list mergesort',
+          url: 'https://github.com/python/cpython/blob/main/Objects/listsort.txt',
+          usage: 'Stably merges ordered runs in list.sort. It detects natural runs and uses adaptive merge scheduling; this lesson splits ranges evenly from the top down.',
+        },
+        {
+          name: 'Linux: list_sort',
+          url: 'https://github.com/torvalds/linux/blob/master/lib/list_sort.c',
+          usage: 'Uses a stable bottom-up mergesort for kernel linked lists. This is a linked-list variant that relinks nodes instead of using this lesson’s array buffer.',
+        },
+      ],
+      products: [
+        { name: 'Python', url: 'https://github.com/python/cpython/blob/main/Objects/listsort.txt', usage: 'CPython sorts lists with an adaptive stable merging algorithm.' },
+        { name: 'Linux', url: 'https://github.com/torvalds/linux/blob/master/lib/list_sort.c', usage: 'The kernel list_sort function implements a linked-list mergesort variant.' },
+      ],
+      note: 'Adaptive and linked-list merge variants differ from this buffered top-down array implementation.',
+    },
+    'quick-sort': {
+      technologies: [{
+        name: 'Java: Arrays.sort for primitive arrays',
+        url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Arrays.html#sort(int%5B%5D)',
+        usage: 'Documents a dual-pivot quicksort implementation for primitive arrays. The production implementation is a hybrid; this lesson demonstrates last-entry, single-pivot Lomuto partitioning without its extra protections.',
+      }],
+      products: [{
+        name: 'Java',
+        url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Arrays.html#sort(int%5B%5D)',
+        usage: 'Java primitive-array sorting uses a dual-pivot quicksort variant rather than this lesson’s basic partition scheme.',
+      }],
+      note: 'Do not transfer the production hybrid’s performance guarantees to this simple last-pivot implementation.',
+    },
     'bubble-sorting': {
       technologies: [{
         name: 'Linux NFS server: sort_pacl_range',

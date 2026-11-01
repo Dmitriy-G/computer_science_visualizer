@@ -67,6 +67,26 @@ import { RangeAnimation as BPlusTreeRangeFromKeySequence } from '../DataStructur
 import ArrayClear from '../DataStructures/Linear/Array/Clear/Clear.tsx'
 import BubbleSorting from '../DataStructures/Linear/Array/BubbleSorting/BubbleSorting.tsx'
 import { BubbleSortingAnimation } from '../DataStructures/Linear/Array/BubbleSorting/BubbleSortingAnimation.ts'
+import SelectionSort from '../DataStructures/Linear/Array/SelectionSort/SelectionSort.tsx'
+import { SelectionSortAnimation } from '../DataStructures/Linear/Array/SelectionSort/SelectionSortAnimation.ts'
+import InsertionSort from '../DataStructures/Linear/Array/InsertionSort/InsertionSort.tsx'
+import { InsertionSortAnimation } from '../DataStructures/Linear/Array/InsertionSort/InsertionSortAnimation.ts'
+import BinaryInsertionSort from '../DataStructures/Linear/Array/BinaryInsertionSort/BinaryInsertionSort.tsx'
+import { BinaryInsertionSortAnimation } from '../DataStructures/Linear/Array/BinaryInsertionSort/BinaryInsertionSortAnimation.ts'
+import MergeSort from '../DataStructures/Linear/Array/MergeSort/MergeSort.tsx'
+import { MergeSortAnimation } from '../DataStructures/Linear/Array/MergeSort/MergeSortAnimation.ts'
+import QuickSort from '../DataStructures/Linear/Array/QuickSort/QuickSort.tsx'
+import { QuickSortAnimation } from '../DataStructures/Linear/Array/QuickSort/QuickSortAnimation.ts'
+import HeapSort from '../DataStructures/Linear/Array/HeapSort/HeapSort.tsx'
+import { HeapSortAnimation } from '../DataStructures/Linear/Array/HeapSort/HeapSortAnimation.ts'
+import ShellSort from '../DataStructures/Linear/Array/ShellSort/ShellSort.tsx'
+import { ShellSortAnimation } from '../DataStructures/Linear/Array/ShellSort/ShellSortAnimation.ts'
+import CountingSort from '../DataStructures/Linear/Array/CountingSort/CountingSort.tsx'
+import { CountingSortAnimation } from '../DataStructures/Linear/Array/CountingSort/CountingSortAnimation.ts'
+import RadixSort from '../DataStructures/Linear/Array/RadixSort/RadixSort.tsx'
+import { RadixSortAnimation } from '../DataStructures/Linear/Array/RadixSort/RadixSortAnimation.ts'
+import BucketSort from '../DataStructures/Linear/Array/BucketSort/BucketSort.tsx'
+import { BucketSortAnimation } from '../DataStructures/Linear/Array/BucketSort/BucketSortAnimation.ts'
 import { ClearAnimation as ArrayClearSequence } from '../DataStructures/Linear/Array/Clear/ClearAnimation.ts'
 import LinkedListClear from '../DataStructures/Linear/LinkedList/Clear/Clear.tsx'
 import { ClearAnimation as LinkedListClearSequence } from '../DataStructures/Linear/LinkedList/Clear/ClearAnimation.ts'
@@ -601,6 +621,16 @@ export default class App extends Component<Record<string, never>, AppState> {
     if (this.state.selected === 'array') {
       switch (action) {
         case 'bubble-sorting': return BubbleSortingAnimation.describe(this.array.length)
+        case 'selection-sort': return SelectionSortAnimation.describe(this.array.length)
+        case 'insertion-sort': return InsertionSortAnimation.describe(this.array.length)
+        case 'binary-insertion-sort': return BinaryInsertionSortAnimation.describe(this.array.length)
+        case 'merge-sort': return MergeSortAnimation.describe(this.array.length)
+        case 'quick-sort': return QuickSortAnimation.describe(this.array.length)
+        case 'heap-sort': return HeapSortAnimation.describe(this.array.length)
+        case 'shell-sort': return ShellSortAnimation.describe(this.array.length)
+        case 'counting-sort': return CountingSortAnimation.describe(this.array.length)
+        case 'radix-sort': return RadixSortAnimation.describe(this.array.length)
+        case 'bucket-sort': return BucketSortAnimation.describe(this.array.length)
         case 'clear': return ArrayClearSequence.describe(this.array.length)
         case 'insert-middle': return ArrayInsertionAnimation.describe(this.array.length)
         case 'insert-start': return ArrayAddAtStartSequence.describe(this.array.length)
@@ -755,6 +785,16 @@ export default class App extends Component<Record<string, never>, AppState> {
     if (this.state.selected === 'array') {
       switch (this.state.selectedAction) {
         case 'bubble-sorting': return <BubbleSorting key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'selection-sort': return <SelectionSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'insertion-sort': return <InsertionSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'binary-insertion-sort': return <BinaryInsertionSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'merge-sort': return <MergeSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'quick-sort': return <QuickSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'heap-sort': return <HeapSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'shell-sort': return <ShellSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'counting-sort': return <CountingSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'radix-sort': return <RadixSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'bucket-sort': return <BucketSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'clear': return <ArrayClear key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'insert-middle': return <ArrayAddInTheMiddle key={this.state.actionSession} array={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'insert-start': return <ArrayAddAtStart key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />

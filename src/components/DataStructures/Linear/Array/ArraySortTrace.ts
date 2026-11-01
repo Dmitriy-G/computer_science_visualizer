@@ -1,0 +1,47 @@
+import type { ArrayEntry } from './FixedArray.ts'
+
+export interface ArraySortCounter {
+  readonly label: string
+  readonly count: number
+  readonly active: boolean
+  readonly status: string
+}
+
+export interface ArraySortFrame {
+  readonly activeIndices?: readonly number[]
+  readonly roles?: Readonly<Record<number, string>>
+  readonly sortedPrefix?: number
+  readonly sortedFrom?: number
+  readonly sortedIndices?: readonly number[]
+  readonly held?: ArrayEntry
+  readonly hole?: number
+  readonly buffer?: readonly ArrayEntry[]
+  readonly bufferStart?: number
+  readonly writeIndex?: number
+  readonly rangeEnd?: number
+  readonly activeBufferIndex?: number
+  readonly otherBufferIndex?: number
+  readonly distribution?: boolean
+  readonly buckets?: readonly (readonly ArrayEntry[])[]
+  readonly activeBucket?: number
+  readonly activeBucketIndices?: readonly number[]
+  readonly bucketStatus?: string
+  readonly output?: readonly (ArrayEntry | null)[]
+  readonly counters?: readonly ArraySortCounter[]
+  readonly counterHint?: string
+}
+
+export interface ArraySortEvent {
+  readonly kind: 'compare' | 'select' | 'swap' | 'pass' | 'hold' | 'shift' | 'place' | 'bounds' | 'split' | 'buffer' | 'write' | 'merge' | 'pivot' | 'partition' | 'heap' | 'extract' | 'gap' | 'count' | 'prefix' | 'distribute' | 'gather' | 'digit' | 'reject' | 'bucket-sort'
+  readonly index: number
+  readonly other?: number
+  readonly left?: number
+  readonly right?: number
+  readonly middle?: number
+  readonly amount?: number
+  readonly label?: string
+  readonly detail?: string
+  readonly frame: ArraySortFrame
+}
+
+export type ArraySortObserver = (event: ArraySortEvent) => void

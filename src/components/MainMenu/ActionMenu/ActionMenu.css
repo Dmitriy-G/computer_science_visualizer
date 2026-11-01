@@ -3,11 +3,17 @@
   max-width: 100%;
   min-width: 0;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - 128px);
   padding: 22px;
   border: 1px solid #dce5f0;
   border-radius: 14px;
   background: #ffffffed;
   box-shadow: 0 4px 18px #25374c08;
+}
+.action-menu > :not(nav) {
+  flex-shrink: 0;
 }
 .action-menu h2 {
   margin: 10px 0 8px;
@@ -35,7 +41,18 @@
 .action-menu nav {
   display: flex;
   flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #b8c9db transparent;
+  scrollbar-gutter: stable;
+  padding: 6px;
+  margin: -6px;
   gap: 8px;
+}
+.canvas-action-row {
+  flex-shrink: 0;
 }
 .canvas-action {
   width: 100%;
@@ -99,5 +116,10 @@
   .action-menu {
     width: 100%;
     padding: 18px;
+  }
+}
+@media (max-width: 700px) {
+  .action-menu {
+    max-height: calc(100dvh - 188px);
   }
 }

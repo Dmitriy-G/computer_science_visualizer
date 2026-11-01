@@ -36,10 +36,17 @@ export class AnimationSequence {
     const symbols = new Set([...time, ...memoryCases])
     const terms: AlgorithmTerm[] = [{ symbol: 'n', meaning: `Original number of elements for this run: n = ${size}.` }]
     for (const symbol of symbols) {
+      if (!symbol.startsWith('O(')) continue
       let meaning = 'Constant work or storage, independent of input size.'
       if (symbol === 'O(n)') meaning = 'Linear work or storage, proportional to the number of elements.'
       if (symbol === 'O(n²)') meaning = 'Quadratic work, proportional to the square of the number of elements.'
       if (symbol === 'O(log n)') meaning = 'Logarithmic work or storage, proportional to the logarithm of the number of elements.'
+      if (symbol === 'O(n log n)') meaning = 'Work proportional to the number of elements times its logarithm.'
+      if (symbol === 'O(n + k)') meaning = 'Work or storage proportional to entries plus the inclusive integer key range.'
+      if (symbol === 'O(n + b)') meaning = 'Work or storage proportional to entries plus buckets.'
+      if (symbol === 'O(d(n + b))') meaning = 'One linear distribution and collection over entries and buckets for each digit pass.'
+      if (symbol === 'O(n² + b)') meaning = 'Quadratic insertion work within buckets plus bucket initialization.'
+      if (symbol === 'O(n^(3/2))') meaning = 'Work bounded by the number of entries raised to the power three halves.'
       if (symbol === 'O(n + e)') meaning = 'Work or storage proportional to vertices plus edges.'
       if (symbol === 'O(log n + k)') meaning = 'Logarithmic descent plus work proportional to the number of reported records.'
       if (symbol === 'O(k + 1)') meaning = 'Storage for the reported records and a fixed number of references; constant when no records match.'

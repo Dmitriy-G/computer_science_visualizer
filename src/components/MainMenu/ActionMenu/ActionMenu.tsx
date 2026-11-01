@@ -121,7 +121,7 @@ export default class ActionMenu extends PureComponent<
         </div>
         <h2 id="action-menu-title">{StructureCatalog.getName(this.props.structure)}</h2>
         <p className="action-menu-summary">{sorting ? 'Choose a sorting algorithm to explore step by step.' : traversal ? 'Choose a graph algorithm to explore step by step.' : 'Choose an action to explore step by step.'}</p>
-        <nav aria-label={sorting ? 'Array sorting examples' : traversal ? 'Graph traversal examples' : 'Data structure actions'} aria-busy={Boolean(this.props.actionsDisabled)}>{this.renderActions()}</nav>
+        <nav tabIndex={0} aria-label={sorting ? 'Array sorting examples' : traversal ? 'Graph traversal examples' : 'Data structure actions'} aria-busy={Boolean(this.props.actionsDisabled)}>{this.renderActions()}</nav>
       </aside>
     )
   }

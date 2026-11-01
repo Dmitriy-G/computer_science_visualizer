@@ -10,8 +10,17 @@ Repository: [Dmitriy-G/computer_science_visualizer](https://github.com/Dmitriy-G
 
 The root menu offers **Data Structures Overview** and **Data Structures Algorithms**.
 Algorithms contains **Sorting** and **Graphs Traversal**. Sorting contains
-**Array**, with a **BubbleSorting** action that animates adjacent comparisons,
-stable swaps, sorted suffixes, and early exit after a pass without swaps.
+**Array**, with **BubbleSorting**, **Selection Sort**, **Insertion Sort**,
+**Binary Insertion Sort**, **Merge Sort**, **Quick Sort**, **Heap Sort**, **Shell Sort**,
+**Counting Sort**, **Radix Sort**, and **Bucket Sort**. The action list scrolls inside
+its panel with the heading and navigation kept visible. Animations show
+comparisons, swaps, held insertion values, binary-search bounds, merge-buffer
+copies, pivot partitions, heap repairs, gap passes, count tables, and distribution
+buckets as appropriate. Insertion, binary insertion, merge, bubble, counting, radix,
+and bucket sorts are stable; selection, quicksort, heap, and Shell sorts are not.
+Counting Sort accepts an inclusive integer key range of at most 4,096 values;
+wider inputs are rejected unchanged. Radix and Bucket Sort support negative safe
+integers and their full span using exact integer arithmetic.
 Its ten-element example starts shuffled; Reset restores that example.
 Graphs Traversal lists all five graph types with BFS and DFS, plus Dijkstra for
 Weighted Graph and topological sorting for DAG. These algorithm actions live in

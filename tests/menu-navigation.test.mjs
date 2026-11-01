@@ -59,9 +59,10 @@ test('algorithm subcategories provide sorting and graph examples with reversible
   assert.equal(algorithms.screen, 'algorithms')
 })
 
-test('Sorting exposes only BubbleSorting for Array and keeps Overview actions separate', () => {
-  assert.deepEqual(ActionCatalog.getScopedActions('array', 'sorting').map((action) => action.title), ['BubbleSorting'])
-  assert.ok(!ActionCatalog.getScopedActions('array', 'overview').some((action) => action.kind === 'bubble-sorting'))
+test('Sorting exposes eleven Array algorithms and keeps Overview actions separate', () => {
+  const sorting = ActionCatalog.getScopedActions('array', 'sorting')
+  assert.deepEqual(sorting.map((action) => action.title), ['BubbleSorting', 'Selection Sort', 'Insertion Sort', 'Binary Insertion Sort', 'Merge Sort', 'Quick Sort', 'Heap Sort', 'Shell Sort', 'Counting Sort', 'Radix Sort', 'Bucket Sort'])
+  for (const action of sorting) assert.ok(!ActionCatalog.getScopedActions('array', 'overview').some((choice) => choice.kind === action.kind))
   for (const structure of StructureCatalog.structures) {
     if (structure.kind !== 'array') assert.deepEqual(ActionCatalog.getScopedActions(structure.kind, 'sorting'), [])
   }
