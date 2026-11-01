@@ -90,6 +90,8 @@ export interface ArraySortFrame {
   readonly tasks?: readonly ArraySortTask[]
   readonly trie?: readonly ArraySortTrieNode[]
   readonly trieDepth?: number
+  readonly shelf?: readonly (ArrayEntry | null)[]
+  readonly shelfActiveIndices?: readonly number[]
 }
 
 export interface ArraySortEvent {

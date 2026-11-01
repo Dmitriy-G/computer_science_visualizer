@@ -23,6 +23,15 @@ import { AmericanFlagArraySort } from './AmericanFlagArraySort.ts'
 import { SpreadArraySort } from './SpreadArraySort.ts'
 import { BurstArraySort } from './BurstArraySort.ts'
 import { PigeonholeArraySort } from './PigeonholeArraySort.ts'
+import { InterpolationArraySort } from './InterpolationArraySort.ts'
+import { LibraryArraySort } from './LibraryArraySort.ts'
+import { SplayArraySort } from './SplayArraySort.ts'
+import { StrandArraySort } from './StrandArraySort.ts'
+import { PancakeArraySort } from './PancakeArraySort.ts'
+import { StoogeArraySort } from './StoogeArraySort.ts'
+import { SlowArraySort } from './SlowArraySort.ts'
+import { BogoArraySort } from './BogoArraySort.ts'
+import { SleepArraySort } from './SleepArraySort.ts'
 
 export interface ArrayEntry {
   readonly id: string
@@ -39,6 +48,9 @@ export interface BubbleSortEvent {
 export class FixedArray {
   public static readonly maximumCountingRange = 4096
   public static readonly maximumPigeonholeRange = 4096
+  public static readonly maximumStoogeSortLength = 12
+  public static readonly maximumSlowSortLength = 12
+  public static readonly maximumBogoShuffles = 24
   private items: ArrayEntry[]
   private nextId: number
 
@@ -201,6 +213,42 @@ export class FixedArray {
 
   public burstSort(onStep?: ArraySortObserver): void {
     new BurstArraySort(this.items, onStep).sort()
+  }
+
+  public interpolationSort(onStep?: ArraySortObserver): void {
+    new InterpolationArraySort(this.items, onStep).sort()
+  }
+
+  public librarySort(onStep?: ArraySortObserver): void {
+    new LibraryArraySort(this.items, onStep).sort()
+  }
+
+  public splaySort(onStep?: ArraySortObserver): void {
+    new SplayArraySort(this.items, onStep).sort()
+  }
+
+  public strandSort(onStep?: ArraySortObserver): void {
+    new StrandArraySort(this.items, onStep).sort()
+  }
+
+  public pancakeSort(onStep?: ArraySortObserver): void {
+    new PancakeArraySort(this.items, onStep).sort()
+  }
+
+  public stoogeSort(onStep?: ArraySortObserver): boolean {
+    return new StoogeArraySort(this.items, onStep).sort(FixedArray.maximumStoogeSortLength)
+  }
+
+  public slowSort(onStep?: ArraySortObserver): boolean {
+    return new SlowArraySort(this.items, onStep).sort(FixedArray.maximumSlowSortLength)
+  }
+
+  public bogoSort(onStep?: ArraySortObserver): boolean {
+    return new BogoArraySort(this.items, onStep).sort(FixedArray.maximumBogoShuffles)
+  }
+
+  public sleepSort(onStep?: ArraySortObserver): void {
+    new SleepArraySort(this.items, onStep).sort()
   }
 
   public pigeonholeSort(onStep?: ArraySortObserver): boolean {

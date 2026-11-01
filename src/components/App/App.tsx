@@ -143,6 +143,24 @@ import Burstsort from '../DataStructures/Linear/Array/Burstsort/Burstsort.tsx'
 import { BurstsortAnimation } from '../DataStructures/Linear/Array/Burstsort/BurstsortAnimation.ts'
 import PigeonholeSort from '../DataStructures/Linear/Array/PigeonholeSort/PigeonholeSort.tsx'
 import { PigeonholeSortAnimation } from '../DataStructures/Linear/Array/PigeonholeSort/PigeonholeSortAnimation.ts'
+import InterpolationSort from '../DataStructures/Linear/Array/InterpolationSort/InterpolationSort.tsx'
+import { InterpolationSortAnimation } from '../DataStructures/Linear/Array/InterpolationSort/InterpolationSortAnimation.ts'
+import LibrarySort from '../DataStructures/Linear/Array/LibrarySort/LibrarySort.tsx'
+import { LibrarySortAnimation } from '../DataStructures/Linear/Array/LibrarySort/LibrarySortAnimation.ts'
+import SplaySort from '../DataStructures/Linear/Array/SplaySort/SplaySort.tsx'
+import { SplaySortAnimation } from '../DataStructures/Linear/Array/SplaySort/SplaySortAnimation.ts'
+import StrandSort from '../DataStructures/Linear/Array/StrandSort/StrandSort.tsx'
+import { StrandSortAnimation } from '../DataStructures/Linear/Array/StrandSort/StrandSortAnimation.ts'
+import PancakeSort from '../DataStructures/Linear/Array/PancakeSort/PancakeSort.tsx'
+import { PancakeSortAnimation } from '../DataStructures/Linear/Array/PancakeSort/PancakeSortAnimation.ts'
+import StoogeSort from '../DataStructures/Linear/Array/StoogeSort/StoogeSort.tsx'
+import { StoogeSortAnimation } from '../DataStructures/Linear/Array/StoogeSort/StoogeSortAnimation.ts'
+import SlowSort from '../DataStructures/Linear/Array/SlowSort/SlowSort.tsx'
+import { SlowSortAnimation } from '../DataStructures/Linear/Array/SlowSort/SlowSortAnimation.ts'
+import BogoSort from '../DataStructures/Linear/Array/BogoSort/BogoSort.tsx'
+import { BogoSortAnimation } from '../DataStructures/Linear/Array/BogoSort/BogoSortAnimation.ts'
+import SleepSort from '../DataStructures/Linear/Array/SleepSort/SleepSort.tsx'
+import { SleepSortAnimation } from '../DataStructures/Linear/Array/SleepSort/SleepSortAnimation.ts'
 import { ClearAnimation as ArrayClearSequence } from '../DataStructures/Linear/Array/Clear/ClearAnimation.ts'
 import LinkedListClear from '../DataStructures/Linear/LinkedList/Clear/Clear.tsx'
 import { ClearAnimation as LinkedListClearSequence } from '../DataStructures/Linear/LinkedList/Clear/ClearAnimation.ts'
@@ -715,6 +733,15 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'spread-sort': return SpreadsortAnimation.describe(this.array.length)
         case 'burst-sort': return BurstsortAnimation.describe(this.array.length)
         case 'pigeonhole-sort': return PigeonholeSortAnimation.describe(this.array.length)
+        case 'interpolation-sort': return InterpolationSortAnimation.describe(this.array.length)
+        case 'library-sort': return LibrarySortAnimation.describe(this.array.length)
+        case 'splay-sort': return SplaySortAnimation.describe(this.array.length)
+        case 'strand-sort': return StrandSortAnimation.describe(this.array.length)
+        case 'pancake-sort': return PancakeSortAnimation.describe(this.array.length)
+        case 'stooge-sort': return StoogeSortAnimation.describe(this.array.length)
+        case 'slow-sort': return SlowSortAnimation.describe(this.array.length)
+        case 'bogo-sort': return BogoSortAnimation.describe(this.array.length)
+        case 'sleep-sort': return SleepSortAnimation.describe(this.array.length)
         case 'clear': return ArrayClearSequence.describe(this.array.length)
         case 'insert-middle': return ArrayInsertionAnimation.describe(this.array.length)
         case 'insert-start': return ArrayAddAtStartSequence.describe(this.array.length)
@@ -907,6 +934,15 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'spread-sort': return <Spreadsort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'burst-sort': return <Burstsort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'pigeonhole-sort': return <PigeonholeSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'interpolation-sort': return <InterpolationSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'library-sort': return <LibrarySort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'splay-sort': return <SplaySort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'strand-sort': return <StrandSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'pancake-sort': return <PancakeSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'stooge-sort': return <StoogeSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'slow-sort': return <SlowSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'bogo-sort': return <BogoSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'sleep-sort': return <SleepSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'clear': return <ArrayClear key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'insert-middle': return <ArrayAddInTheMiddle key={this.state.actionSession} array={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'insert-start': return <ArrayAddAtStart key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />

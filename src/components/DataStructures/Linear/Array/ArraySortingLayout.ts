@@ -27,6 +27,16 @@ export class ArraySortingLayout {
       })
       slots.push({ ...sourceSlots[index], empty, highlighted })
     }
+    if (frame.shelf) {
+      for (let index = 0; index < frame.shelf.length; index += 1) {
+        const entry = frame.shelf[index]
+        const x = 80 + index * 92
+        const active = Boolean(frame.shelfActiveIndices?.includes(index))
+        if (entry) nodes.push({ ...entry, id: `shelf-${entry.id}`, x, y: 440, label: '', tone: active ? 'active' : 'visited', status: active ? 'SELECTED' : 'BOOK', opacity: 1 })
+        slots.push({ id: `shelf-slot-${index}`, x, y: 440, label: `shelf [${index}]`, empty: entry === null, highlighted: active, opacity: 1 })
+        width = Math.max(width, x + 120)
+      }
+    }
     if (frame.output) {
       const y = frame.sampleSort ? 980 : 440
       for (let index = 0; index < frame.output.length; index += 1) {

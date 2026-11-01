@@ -5,7 +5,7 @@
 1. Start with an empty renderer and a clickable menu icon in the top left.
 2. Open the menu to see **Data Structures Overview** and **Data Structures Algorithms**.
    Overview contains the existing structure groups. Algorithms contains
-   **Sorting** (Array with thirty-nine sorting actions) and **Graphs Traversal** (all five graph
+   **Sorting** (Array with forty-eight sorting actions) and **Graphs Traversal** (all five graph
    variants). Its graph action cards offer BFS and DFS, plus Dijkstra for Weighted
    Graph and topological sorting for DAG. These four algorithm actions move out
    of Overview; graph editing and value search remain there. Browsing either
@@ -637,7 +637,7 @@ edge IDs through ActionInputRequest in the shared dialog.
 ## Algorithm navigation
 
 Keep algorithm groups separate from the Overview structure groups in
-MenuNavigation. Sorting lists Array and exposes its thirty-nine sorting actions; Graphs Traversal
+MenuNavigation. Sorting lists Array and exposes its forty-eight sorting actions; Graphs Traversal
 lists the existing five graphs and reuses their model, input, sequence, renderer,
 and info implementations. ActionCatalog.getScopedActions controls the visible
 choices and App validates action selection against the selected scope. Keep the
@@ -671,6 +671,8 @@ Network, and Sample Sort.
 Also include Parallel Merge Sort, Parallel QuickSort, External Merge Sort,
 Polyphase Merge Sort, and Natural Merge Sort.
 Also include Flashsort, American Flag Sort, Spreadsort, Burstsort, and Pigeonhole Sort.
+Also include Interpolation Sort, Library Sort, Splay Sort, Strand Sort, Pancake
+Sort, Stooge Sort, Slow Sort, Bogo Sort, and Sleep Sort.
 Each action owns its component, CSS, sequence, and complexity
 information. Keep model entry points and optional synchronous trace callbacks in
 FixedArray, with array-specific algorithm helpers beside it. Reuse ArraySortingLayout and ArraySortingAnimation for independent
@@ -1001,3 +1003,94 @@ dependency edge attached to an existing scene node. The Burstsort diagram
 places containers below the deepest possible key level. Rejected Pigeonhole
 Sort ends with an unchanged array, without sorted badges. Show educational-use
 notices wherever concrete product use has not been verified.
+
+Interpolation Sort uses n estimated-rank intervals with
+floor((key - min) * (n - 1) / (max - min)), evaluated exactly using BigInt.
+Count intervals, prefix-sum their output positions, place entries in source
+order, then insertion-sort the interpolated arrangement. This buffered stable
+histogram variant differs from Flashsort class-end cycles. All-equal input
+takes O(n) time and O(1) memory before allocation. Independent uniform keys
+give O(n) expected work; clustered collisions can need O(n²) cleanup. Otherwise
+histogram and output storage use O(n) memory. Strict exchanges preserve ties.
+
+Library Sort uses a separate auxiliary shelf, never gaps or spare capacity in
+the fixed numeric model. Precheck for ordered input in O(n) time and O(1)
+memory. Otherwise allocate 2n + 1 auxiliary slots. Double insertion-round
+targets, redistribute existing books evenly, upper-bound search the gapped
+shelf, and shift toward a nearby gap while retaining shelf order. Equal keys
+insert after previous arrivals, making the variant stable. Gapped-insertion
+average O(n log n) assumes uniformly random distinct arrival order; the app
+preserves input order. Adversarial arrivals can require O(n²) gap shifts.
+Shelf, rebalance, and gather storage use O(n) space. Keep shelf slot IDs stable
+as gaps move, and reserve the largest shelf width for the full playback.
+
+Splay Sort inserts original entries into an auxiliary splay tree and brings
+every inserted leaf to the root using zig, zig-zig, or zig-zag rotations.
+Publish only complete rotations with every parent/child link consistent.
+Read the tree in order through parent links into separate output before
+copying back. New equal entries descend right and rotations preserve inorder
+entry order, so ties are stable. Monotone insertion gives O(n) best time;
+amortized insertion bounds total average/worst time by O(n log n) without a
+random-input assumption, even though a single insertion can be linear.
+Tree and output use O(n) memory. Do not present general splay-tree applications
+as proof that a product uses this complete sorting pipeline.
+
+Strand Sort uses linked auxiliary nodes to preserve constant-time unlinking.
+Scan the remaining list and extract a nondecreasing strand; stably merge it
+into the accumulated sorted list, then repeat. Resolve merge ties in favor of
+the older accumulated list. Relink nodes without losing or duplicating original
+IDs, and keep all remaining/strand/sorted/merged records visible in separate
+rows. Ordered input forms one strand in O(n); reverse input needs O(n²).
+O(n²) is also a conservative average upper bound for every distribution.
+Auxiliary linked nodes use O(n) memory. The fixed array changes only at gathering.
+
+Pancake Sort prechecks ordered input in O(n). Otherwise scan each active prefix
+for its maximum, flip that maximum to the front if needed, then flip it to the
+prefix end. The sorted suffix must never be touched. Reverse prefixes by
+pairwise exchanges without temporary reversed arrays. At most 2n - 3
+nontrivial flips and full maximum scans give O(n²) average/worst time and
+O(1) space. Prefix flips can reorder equal keys, so this variant is unstable.
+
+Stooge Sort compares endpoints, then sorts the first two-thirds, last
+two-thirds, and first two-thirds again. Its three overlapping recursive calls
+give exponent log base 1.5 of 3, about 2.7095; display O(n^2.71) as a rounded
+upper bound for every input order. Space is O(log n). Slow Sort sorts both
+halves, compares their maxima to fix the final slot, then sorts the prefix of
+length n - 1. Its data-independent recurrence gives superpolynomial work;
+display O(n^(log₂ n)) as a conservative quasipolynomial upper bound, not a
+tight rate. Its prefix recursion uses O(n) stack space. Both sorts are unstable.
+Accept at most 12 entries (the respective FixedArray constants); reject larger
+inputs unchanged before recursion. Execute the actual recurrence completely
+for accepted input, recording at most 64 detailed operation frames and an
+explicit summary of omitted comparisons/exchanges. Do not substitute a faster
+sorting algorithm or claim summarized work did not occur.
+
+Bogo Sort first checks sortedness, then tries at most 24 fixed-seed Fisher-Yates
+shuffles (FixedArray.maximumBogoShuffles). Record each whole shuffle and its
+sortedness result. On exhaustion restore the original order and end with an
+unchanged, unfinished result without sorted badges. Never silently use a
+fallback sort. Explain that ideal independent uniform shuffles of distinct
+keys have O(n · n!) expected work, O(n) best-case checks, and no finite worst
+termination bound. These ideal rows are separate from the capped simulation,
+whose fixed number of attempts takes O(n) work and is not guaranteed to succeed.
+Sorted input uses O(1) memory; attempted input keeps O(n) rollback references.
+Actual seeded attempts are deterministic rather than independent ideal draws.
+
+Sleep Sort is explicitly a simulation with no real timers, sleeping, or
+threads. Normalize virtual deadlines as BigInt(key) - min so negative and
+extreme safe integers are supported without overflow. Maintain a min-heap
+ordered by deadline then original input position, and jump virtual time to
+the next event instead of waiting. Heap scheduling gives O(n log n) time upper
+bounds for every distribution and O(n) event/output storage. Stable equal-time
+ordering is a choice of this simulation, not a promise about OS timer ordering.
+Explain that real Sleep Sort depends on key range, timer precision, and
+scheduling; launching n timers does not prove a correct O(n) sort.
+
+All nine actions use no-input shared playback, independent snapshots, fixed
+main-array slots, stable entry IDs, and final clone commit/reset behavior.
+Empty/singleton inputs take O(1). Distinguish original records from auxiliary
+copies, keep rotations and list moves structurally valid in every scene, and
+reserve maximum auxiliary dimensions for the entire session. Rejected or
+unfinished demonstrations leave the committed array unchanged. Use explicit
+educational-example notices until practical use of the actual sorting variant
+has been verified; algorithm collections and related structures do not qualify.

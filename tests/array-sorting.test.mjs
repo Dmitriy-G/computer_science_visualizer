@@ -39,6 +39,16 @@ import { AmericanFlagSortAnimation } from '../src/components/DataStructures/Line
 import { SpreadsortAnimation } from '../src/components/DataStructures/Linear/Array/Spreadsort/SpreadsortAnimation.ts'
 import { BurstsortAnimation } from '../src/components/DataStructures/Linear/Array/Burstsort/BurstsortAnimation.ts'
 import { PigeonholeSortAnimation } from '../src/components/DataStructures/Linear/Array/PigeonholeSort/PigeonholeSortAnimation.ts'
+import { InterpolationSortAnimation } from '../src/components/DataStructures/Linear/Array/InterpolationSort/InterpolationSortAnimation.ts'
+import { LibrarySortAnimation } from '../src/components/DataStructures/Linear/Array/LibrarySort/LibrarySortAnimation.ts'
+import { SplaySortAnimation } from '../src/components/DataStructures/Linear/Array/SplaySort/SplaySortAnimation.ts'
+import { StrandSortAnimation } from '../src/components/DataStructures/Linear/Array/StrandSort/StrandSortAnimation.ts'
+import { PancakeSortAnimation } from '../src/components/DataStructures/Linear/Array/PancakeSort/PancakeSortAnimation.ts'
+import { StoogeSortAnimation } from '../src/components/DataStructures/Linear/Array/StoogeSort/StoogeSortAnimation.ts'
+import { SlowSortAnimation } from '../src/components/DataStructures/Linear/Array/SlowSort/SlowSortAnimation.ts'
+import { BogoSortAnimation } from '../src/components/DataStructures/Linear/Array/BogoSort/BogoSortAnimation.ts'
+import { SleepSortAnimation } from '../src/components/DataStructures/Linear/Array/SleepSort/SleepSortAnimation.ts'
+import { BogoArraySort } from '../src/components/DataStructures/Linear/Array/BogoArraySort.ts'
 import { ActionInputRequest } from '../src/visualization/ActionInputRequest.ts'
 
 const sorts = [
@@ -80,9 +90,221 @@ const sorts = [
   ['spreadSort', 'spread-sort', SpreadsortAnimation, false],
   ['burstSort', 'burst-sort', BurstsortAnimation, true],
   ['pigeonholeSort', 'pigeonhole-sort', PigeonholeSortAnimation, true],
+  ['interpolationSort', 'interpolation-sort', InterpolationSortAnimation, true],
+  ['librarySort', 'library-sort', LibrarySortAnimation, true],
+  ['splaySort', 'splay-sort', SplaySortAnimation, true],
+  ['strandSort', 'strand-sort', StrandSortAnimation, true],
+  ['pancakeSort', 'pancake-sort', PancakeSortAnimation, false],
+  ['stoogeSort', 'stooge-sort', StoogeSortAnimation, false],
+  ['slowSort', 'slow-sort', SlowSortAnimation, false],
+  ['sleepSort', 'sleep-sort', SleepSortAnimation, true],
 ]
 
 const cases = [[], [4], [1, 2, 3, 4], [4, 3, 2, 1], [2, 2, 2], [3, -2, 3, 0, -2], [Number.MAX_SAFE_INTEGER, 0, Number.MIN_SAFE_INTEGER], [2, 2, 1], [4, 1, 3, 1, 2]]
+
+test('Interpolation Sort stably places estimated ranks before collision cleanup', () => {
+  const model = new FixedArray([0, 100, 2, 1])
+  let arrangement
+  const events = []
+  model.interpolationSort((event) => {
+    events.push(event)
+    if (event.kind === 'gather') arrangement = model.getEntries().map((entry) => entry.value)
+  })
+  assert.deepEqual(arrangement, [0, 2, 1, 100])
+  assert.deepEqual(model.getEntries().map((entry) => entry.value), [0, 1, 2, 100])
+  assert.equal(events.filter((event) => event.kind === 'distribute').length, 4)
+  assert.equal(events.find((event) => event.kind === 'prefix').frame.counters.length, 4)
+  assert.ok(events.some((event) => event.kind === 'compare'))
+})
+
+test('Library Sort preserves ordered shelf records and rebalances separate gaps', () => {
+  const model = new FixedArray([10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
+  const original = model.getEntries()
+  const events = []
+  model.librarySort((event) => {
+    events.push(event)
+    if (event.kind === 'gather') return
+    assert.deepEqual(model.getEntries(), original)
+    const shelf = event.frame.shelf
+    assert.ok(shelf.some((entry) => entry === null))
+    const books = shelf.filter(Boolean)
+    assert.equal(new Set(books.map((entry) => entry.id)).size, books.length)
+    assert.deepEqual(books, [...books].sort((a, b) => a.value - b.value))
+    assert.ok(books.every((entry) => original.some((record) => record.id === entry.id)))
+  })
+  assert.deepEqual(events.filter((event) => event.kind === 'gap').map((event) => event.frame.shelf.length), [5, 9, 17, 21])
+  assert.ok(events.some((event) => event.kind === 'shift'))
+  assert.deepEqual(model.getEntries(), [...original].reverse())
+  const ordered = []
+  new FixedArray([1, 2, 3, 4]).librarySort((event) => ordered.push(event))
+  assert.deepEqual(ordered.map((event) => event.kind), ['pass'])
+  assert.equal(ordered[0].frame.shelf, undefined)
+})
+
+test('Splay Sort rotations retain a complete ordered tree and splay each insertion to the root', () => {
+  const model = new FixedArray([30, 10, 20, 40, 20, 5])
+  const original = model.getEntries()
+  let inserted = 0
+  const events = []
+  model.splaySort((event) => {
+    events.push(event)
+    if (event.kind === 'gather') return
+    assert.deepEqual(model.getEntries(), original)
+    const nodes = new Map(event.frame.tree.map((node) => [node.id, node]))
+    const visited = new Set()
+    const inorder = []
+    const visit = (id) => {
+      if (id === null) return
+      assert.ok(nodes.has(id) && !visited.has(id))
+      visited.add(id)
+      const node = nodes.get(id)
+      visit(node.left)
+      inorder.push(node.entry)
+      visit(node.right)
+    }
+    visit(event.frame.treeRoot)
+    assert.equal(visited.size, nodes.size)
+    assert.deepEqual(inorder, [...inorder].sort((a, b) => a.value - b.value))
+    if (event.label === 'The inserted node is now the root') assert.equal(event.frame.treeRoot, original[inserted++].id)
+  })
+  assert.equal(inserted, original.length)
+  assert.ok(events.some((event) => event.label.startsWith('Zig-zag')))
+  assert.deepEqual(model.getEntries(), [...original].sort((a, b) => a.value - b.value))
+})
+
+test('Strand Sort extracts actual nondecreasing strands and relinks every record once', () => {
+  const model = new FixedArray([4, 1, 3, 2, 5])
+  const original = model.getEntries()
+  const strands = []
+  model.strandSort((event) => {
+    if (event.kind === 'gather') return
+    assert.deepEqual(model.getEntries(), original)
+    const rows = event.frame.storage
+    const records = rows.flatMap((row) => row.runs.flatMap((run) => run.entries))
+    assert.equal(new Set(records.map((entry) => entry.id)).size, original.length)
+    assert.equal(records.length, original.length)
+    if (event.kind === 'run') strands.push(rows.find((row) => row.id === 'strand').runs[0].entries.map((entry) => entry.value))
+  })
+  assert.deepEqual(strands, [[4, 5], [1, 3], [2]])
+  assert.deepEqual(model.getEntries().map((entry) => entry.value), [1, 2, 3, 4, 5])
+})
+
+test('Pancake Sort exchanges only symmetric positions within its declared prefix flips', () => {
+  const model = new FixedArray([3, 6, 1, 5, 2, 4])
+  let flipEnd = -1
+  let flips = 0
+  model.pancakeSort((event) => {
+    if (event.kind === 'reverse') {
+      assert.equal(event.index, 0)
+      flipEnd = event.other
+      flips += 1
+    }
+    if (event.kind === 'swap') {
+      assert.ok(flipEnd >= 1)
+      assert.equal(event.index + event.other, flipEnd)
+      assert.ok(event.index >= 0 && event.other <= flipEnd)
+    }
+  })
+  assert.ok(flips > 0 && flips <= 2 * model.length - 3)
+  assert.deepEqual(model.getEntries().map((entry) => entry.value), [1, 2, 3, 4, 5, 6])
+})
+
+test('Stooge and Slow Sort execute distinct recurrences and reject oversized input unchanged', () => {
+  for (const [method, Animation, limit, comparisons] of [
+    ['stoogeSort', StoogeSortAnimation, FixedArray.maximumStoogeSortLength, 4],
+    ['slowSort', SlowSortAnimation, FixedArray.maximumSlowSortLength, 3],
+  ]) {
+    for (const values of [[1, 2, 3], [3, 2, 1]]) {
+      const events = []
+      const model = new FixedArray(values)
+      assert.equal(model[method]((event) => events.push(event)), true)
+      assert.equal(events.filter((event) => event.kind === 'compare').length, comparisons)
+      assert.deepEqual(model.getEntries().map((entry) => entry.value), [1, 2, 3])
+    }
+    const events = []
+    const small = new FixedArray(Array.from({ length: limit }, (_, index) => limit - index))
+    assert.equal(small[method]((event) => events.push(event)), true)
+    assert.ok(events.length <= 65)
+    assert.match(events.at(-1).detail, /Executed \d+ endpoint comparisons/)
+    assert.deepEqual(small.getEntries().map((entry) => entry.value), Array.from({ length: limit }, (_, index) => index + 1))
+    const large = new FixedArray(Array.from({ length: limit + 1 }, (_, index) => limit - index))
+    const before = large.getEntries()
+    const rejected = []
+    assert.equal(large[method]((event) => rejected.push(event)), false)
+    assert.deepEqual(rejected.map((event) => event.kind), ['reject'])
+    assert.deepEqual(large.getEntries(), before)
+    const plan = new Animation(large)
+    assert.equal(plan.steps.at(-1).title, 'Array unchanged')
+    assert.ok(plan.steps.at(-1).scene.nodes.every((node) => node.status !== 'SORTED'))
+  }
+})
+
+test('bounded Bogo Sort is deterministic, preserves IDs, and restores input when unfinished', () => {
+  const trial = new FixedArray([2, 1]).getEntries()
+  const before = [...trial]
+  assert.equal(new BogoArraySort(trial).sort(0), false)
+  assert.deepEqual(trial, before)
+  for (const values of [...cases, [9, 7, 5, 3, 1, 8, 6, 4, 2, 0]]) {
+    const source = new FixedArray(values)
+    const original = source.getEntries()
+    const first = source.clone()
+    const second = source.clone()
+    const accepted = first.bogoSort()
+    assert.equal(second.bogoSort(), accepted)
+    assert.deepEqual(second.getEntries(), first.getEntries())
+    if (accepted) assert.deepEqual(first.getEntries().map((entry) => entry.value), [...values].sort((a, b) => a - b))
+    else assert.deepEqual(first.getEntries(), original)
+    assert.deepEqual(new Set(first.getEntries().map((entry) => entry.id)), new Set(original.map((entry) => entry.id)))
+    const plan = new BogoSortAnimation(source)
+    assert.deepEqual(new BogoSortAnimation(source).steps, plan.steps)
+    assert.deepEqual(source.getEntries(), original)
+    assert.ok(plan.steps.length <= 2 * FixedArray.maximumBogoShuffles + 5)
+    assert.equal(ActionInputRequest.create('array', 'bogo-sort', source.length), null)
+    for (const step of plan.steps) {
+      assert.equal(step.scene.count, values.length)
+      assert.equal(new Set(step.scene.nodes.map((node) => node.id)).size, values.length)
+      assert.deepEqual(new Set(step.scene.nodes.map((node) => node.id)), new Set(original.map((entry) => entry.id)))
+    }
+    if (!accepted) {
+      assert.equal(plan.steps.at(-1).title, 'Array unchanged')
+      assert.deepEqual(plan.steps.at(-1).scene.nodes.map((node) => node.value), values)
+      assert.ok(plan.steps.at(-1).scene.nodes.every((node) => node.status !== 'SORTED'))
+    }
+  }
+  assert.equal(BogoSortAnimation.describe(10).time.worst, 'Unbounded')
+})
+
+test('Sleep Sort uses exact virtual deadlines and a stable heap instead of real waits', () => {
+  const values = [Number.MAX_SAFE_INTEGER, -2, Number.MIN_SAFE_INTEGER, -2, 0]
+  const model = new FixedArray(values)
+  const original = model.getEntries()
+  const times = []
+  model.sleepSort((event) => {
+    if (event.kind === 'gather') return
+    assert.deepEqual(model.getEntries(), original)
+    const heap = event.frame.storage[0].runs[0].entries
+    for (let child = 1; child < heap.length; child += 1) assert.ok(heap[Math.floor((child - 1) / 2)].value <= heap[child].value)
+    const records = [...heap, ...event.frame.output.filter(Boolean)]
+    assert.equal(new Set(records.map((entry) => entry.id)).size, records.length)
+    if (event.kind === 'write') times.push(BigInt(event.detail.match(/virtual time (\d+)/)[1]))
+  })
+  assert.deepEqual(times, [0n, 9007199254740989n, 9007199254740989n, 9007199254740991n, 18014398509481982n])
+  assert.deepEqual(model.getEntries(), [...original].sort((a, b) => a.value - b.value))
+})
+
+test('new sorting diagrams keep fixed bounds and resolve all tree edges', () => {
+  for (const Animation of [InterpolationSortAnimation, LibrarySortAnimation, SplaySortAnimation, StrandSortAnimation, PancakeSortAnimation, StoogeSortAnimation, SlowSortAnimation, BogoSortAnimation, SleepSortAnimation]) {
+    const plan = new Animation(new FixedArray([4, 1, 3, 1, 2]))
+    for (const step of plan.steps) {
+      const ids = new Set(step.scene.nodes.map((node) => node.id))
+      assert.equal(ids.size, step.scene.nodes.length)
+      assert.equal(step.scene.width, plan.steps[0].scene.width)
+      assert.equal(step.scene.height, plan.steps[0].scene.height)
+      for (const edge of step.scene.edges) assert.ok(ids.has(edge.from) && ids.has(edge.to))
+      for (const node of step.scene.nodes) assert.ok(node.x + 40 <= step.scene.width && node.y + 70 <= step.scene.height)
+    }
+  }
+})
 
 test('Flashsort forms contiguous value classes before insertion cleanup and retains held IDs', () => {
   const values = [80, 5, 60, 25, 95, 0, 50, 30, 100, 20, 75, 45]
@@ -330,7 +552,11 @@ test('new task and run diagrams retain fixed bounds and valid dependency edges',
   assert.equal(NaturalMergeSortAnimation.describe(10).memory.worst, 'O(n)')
 })
 
-const accepted = (method, values) => !['countingSort', 'pigeonholeSort'].includes(method) || values.length < 2 || BigInt(Math.max(...values)) - BigInt(Math.min(...values)) + 1n <= BigInt(method === 'pigeonholeSort' ? FixedArray.maximumPigeonholeRange : FixedArray.maximumCountingRange)
+const accepted = (method, values) => {
+  if (method === 'stoogeSort') return values.length <= FixedArray.maximumStoogeSortLength
+  if (method === 'slowSort') return values.length <= FixedArray.maximumSlowSortLength
+  return !['countingSort', 'pigeonholeSort'].includes(method) || values.length < 2 || BigInt(Math.max(...values)) - BigInt(Math.min(...values)) + 1n <= BigInt(method === 'pigeonholeSort' ? FixedArray.maximumPigeonholeRange : FixedArray.maximumCountingRange)
+}
 
 test('sorts preserve values, IDs, fixed length, source clones, and future IDs for accepted inputs', () => {
   for (const [method, , , stable] of sorts) {
@@ -563,6 +789,7 @@ test('hybrid, block, and additional sorts handle run boundaries, partial blocks,
     ]
     for (const values of valuesList) {
       for (const [method, , , stable] of sorts.slice(10)) {
+        if (!accepted(method, values)) continue
         const source = new FixedArray(values)
         const original = source.getEntries()
         const model = source.clone()

@@ -6,6 +6,51 @@ import type { AlgorithmUsage } from './AlgorithmInformation.ts'
 // Only algorithm scopes receive real-world examples. Overview operations do not.
 export class AlgorithmTechnologyCatalog {
   private static readonly uses: Readonly<Partial<Record<ActionKind, AlgorithmUsage>>> = {
+    'interpolation-sort': {
+      technologies: [],
+      products: [],
+      note: 'This Interpolation Sort variant is an educational example. No production use of this exact variant has been verified. Research examples, related data structures, and algorithm demonstration collections alone do not establish practical product use.',
+    },
+    'library-sort': {
+      technologies: [],
+      products: [],
+      note: 'This Library Sort variant is an educational example. No production use of this exact variant has been verified. Research examples, related data structures, and algorithm demonstration collections alone do not establish practical product use.',
+    },
+    'splay-sort': {
+      technologies: [],
+      products: [],
+      note: 'This Splay Sort variant is an educational example. No production use of this exact variant has been verified. Research examples, related data structures, and algorithm demonstration collections alone do not establish practical product use.',
+    },
+    'strand-sort': {
+      technologies: [],
+      products: [],
+      note: 'This Strand Sort variant is an educational example. No production use of this exact variant has been verified. Research examples, related data structures, and algorithm demonstration collections alone do not establish practical product use.',
+    },
+    'pancake-sort': {
+      technologies: [],
+      products: [],
+      note: 'This Pancake Sort variant is an educational example. No production use of this exact variant has been verified. Research examples, related data structures, and algorithm demonstration collections alone do not establish practical product use.',
+    },
+    'stooge-sort': {
+      technologies: [],
+      products: [],
+      note: 'This size-limited Stooge Sort demonstration is an educational example. No production use of this exact variant has been verified. Research examples, related data structures, and algorithm demonstration collections alone do not establish practical product use.',
+    },
+    'slow-sort': {
+      technologies: [],
+      products: [],
+      note: 'This size-limited Slow Sort demonstration is an educational example. No production use of this exact variant has been verified. Research examples, related data structures, and algorithm demonstration collections alone do not establish practical product use.',
+    },
+    'bogo-sort': {
+      technologies: [],
+      products: [],
+      note: 'This bounded, fixed-seed Bogo Sort demonstration is an educational example. No production use of this exact variant has been verified. Research examples, related data structures, and algorithm demonstration collections alone do not establish practical product use.',
+    },
+    'sleep-sort': {
+      technologies: [],
+      products: [],
+      note: 'This heap-based virtual Sleep Sort simulation is an educational example. No production use of this exact variant has been verified. Research examples, related data structures, and algorithm demonstration collections alone do not establish practical product use.',
+    },
     'flash-sort': {
       technologies: [],
       products: [],

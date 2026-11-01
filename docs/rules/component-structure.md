@@ -184,7 +184,9 @@ WikiSort, Smoothsort, TreeSort, TournamentSort, PatienceSort, CycleSort, CombSor
 CocktailShakerSort, GnomeSort, OddEvenSort, OddEvenMergeSort, BitonicSort,
 PairwiseSortingNetwork, SampleSort, ParallelMergeSort, ParallelQuickSort,
 ExternalMergeSort, PolyphaseMergeSort, NaturalMergeSort, Flashsort,
-AmericanFlagSort, Spreadsort, Burstsort, and PigeonholeSort.
+AmericanFlagSort, Spreadsort, Burstsort, PigeonholeSort, InterpolationSort,
+LibrarySort, SplaySort, StrandSort, PancakeSort, StoogeSort, SlowSort, BogoSort,
+and SleepSort.
 Each action owns its component,
 CSS, and sequence folder under Linear/Array. Keep the model entry points in FixedArray,
 with shared array-specific algorithms, trace, layout, and snapshot helpers beside it.
@@ -218,6 +220,15 @@ owns adaptive range splits and the comparison-sort fallback. BurstArraySort
 keeps its encoded integer keys and bursting prefix containers beside FixedArray;
 ArraySortTrace and ArraySortingLayout describe its trie and leaf records.
 PigeonholeArraySort owns guarded full-record hole lists and stable gathering.
+InterpolationArraySort owns stable histogram placement and collision cleanup.
+LibraryArraySort owns the separate sparse shelf, gap-aware upper-bound search,
+nearest-gap shifts, and doubling insertion rounds. SplayArraySort keeps mutable
+parent links and rotations beside the array model; StrandArraySort owns linked
+remaining/strand/merged lists. PancakeArraySort performs only prefix reversals.
+RecursiveDemoSort bounds recorded detail and rejects oversized demonstrations;
+StoogeArraySort and SlowArraySort retain their distinct exact recurrences.
+BogoArraySort owns seeded shuffles, the attempt budget, and rollback on failure.
+SleepArraySort owns the virtual deadline heap and never creates real timers.
 ActionMenu receives an explicit
 ActionScope, and App preserves the selected scope independently of menu browsing.
 Algorithm structure buttons show at most two example names in one truncated line;

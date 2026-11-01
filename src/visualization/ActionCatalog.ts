@@ -5,7 +5,7 @@ export type ActionScope = 'overview' | 'graph-traversal' | 'sorting'
 
 export type ActionKind = ArraySortingActionKind | 'insert-middle' | 'insert-start' | 'insert-end' | 'insert' | 'search-value' | 'search-index' | 'delete-value' | 'push' | 'pop' | 'peek' | 'clear' | 'enqueue' | 'dequeue' | 'push-front' | 'push-back' | 'pop-front' | 'pop-back' | 'peek-front' | 'peek-back' | 'delete-start' | 'delete-end' | 'range-from-value' | 'starts-with' | 'extract-min' | 'update-index' | 'add-index' | 'prefix-sum' | 'range-sum' | 'search-overlap' | 'flush' | 'compact' | 'build-expression' | 'evaluate' | 'traverse-preorder' | 'traverse-inorder' | 'traverse-postorder' | 'add-vertex' | 'add-edge' | 'remove-edge' | 'breadth-first' | 'depth-first' | 'shortest-path' | 'topological-sort' | 'update-weight' | 'bubble-sorting'
 
-export type ArraySortingActionKind = 'selection-sort' | 'insertion-sort' | 'binary-insertion-sort' | 'merge-sort' | 'quick-sort' | 'heap-sort' | 'shell-sort' | 'counting-sort' | 'radix-sort' | 'bucket-sort' | 'tim-sort' | 'intro-sort' | 'dual-pivot-quick-sort' | 'block-merge-sort' | 'wiki-sort' | 'smooth-sort' | 'tree-sort' | 'tournament-sort' | 'patience-sort' | 'cycle-sort' | 'comb-sort' | 'cocktail-shaker-sort' | 'gnome-sort' | 'odd-even-sort' | 'odd-even-merge-sort' | 'bitonic-sort' | 'pairwise-sorting-network' | 'sample-sort' | 'parallel-merge-sort' | 'parallel-quick-sort' | 'external-merge-sort' | 'polyphase-merge-sort' | 'natural-merge-sort' | 'flash-sort' | 'american-flag-sort' | 'spread-sort' | 'burst-sort' | 'pigeonhole-sort'
+export type ArraySortingActionKind = 'selection-sort' | 'insertion-sort' | 'binary-insertion-sort' | 'merge-sort' | 'quick-sort' | 'heap-sort' | 'shell-sort' | 'counting-sort' | 'radix-sort' | 'bucket-sort' | 'tim-sort' | 'intro-sort' | 'dual-pivot-quick-sort' | 'block-merge-sort' | 'wiki-sort' | 'smooth-sort' | 'tree-sort' | 'tournament-sort' | 'patience-sort' | 'cycle-sort' | 'comb-sort' | 'cocktail-shaker-sort' | 'gnome-sort' | 'odd-even-sort' | 'odd-even-merge-sort' | 'bitonic-sort' | 'pairwise-sorting-network' | 'sample-sort' | 'parallel-merge-sort' | 'parallel-quick-sort' | 'external-merge-sort' | 'polyphase-merge-sort' | 'natural-merge-sort' | 'flash-sort' | 'american-flag-sort' | 'spread-sort' | 'burst-sort' | 'pigeonhole-sort' | 'interpolation-sort' | 'library-sort' | 'splay-sort' | 'strand-sort' | 'pancake-sort' | 'stooge-sort' | 'slow-sort' | 'bogo-sort' | 'sleep-sort'
 
 export interface ActionChoice {
   readonly kind: ActionKind
@@ -56,6 +56,15 @@ export class ActionCatalog {
         { kind: 'spread-sort', title: 'Spreadsort', description: 'Choose adaptive integer-range bins, permute in place, and switch to comparison sorting for small or deep ranges.' },
         { kind: 'burst-sort', title: 'Burstsort', description: 'Encode integer keys as equal-width hexadecimal strings, burst overflowing prefix containers into a trie, and sort leaf suffixes.' },
         { kind: 'pigeonhole-sort', title: 'Pigeonhole Sort', description: 'Put whole entries in one hole per possible integer key, then gather holes in key order with stable ties.' },
+        { kind: 'interpolation-sort', title: 'Interpolation Sort', description: 'Estimate ranks with exact interpolation, place stable histogram intervals into output, and insertion-sort collisions.' },
+        { kind: 'library-sort', title: 'Library Sort', description: 'Binary-search a separate gapped shelf, shift toward nearby gaps, and rebalance between doubling insertion rounds.' },
+        { kind: 'splay-sort', title: 'Splay Sort', description: 'Insert entries into a splay tree, rotate each insertion to the root, and read the tree in order.' },
+        { kind: 'strand-sort', title: 'Strand Sort', description: 'Extract nondecreasing strands from a linked remaining list and stably merge them into accumulated output.' },
+        { kind: 'pancake-sort', title: 'Pancake Sort', description: 'Find each remaining maximum and move it into a sorted suffix using at most two prefix flips.' },
+        { kind: 'stooge-sort', title: 'Stooge Sort', description: 'Compare range endpoints, then recursively sort the first two-thirds, last two-thirds, and first two-thirds again.' },
+        { kind: 'slow-sort', title: 'Slow Sort', description: 'Sort both halves, put their larger maximum at the end, and recursively sort the remaining prefix again.' },
+        { kind: 'bogo-sort', title: 'Bogo Sort', description: 'Check sortedness and try up to 24 seeded Fisher-Yates shuffles; report unfinished and restore input if none succeeds.' },
+        { kind: 'sleep-sort', title: 'Sleep Sort', description: 'Schedule exact virtual wake-up deadlines in a heap and emit events in deadline order without real waiting.' },
       ]
       : []
     const actions = this.getActions(structure)

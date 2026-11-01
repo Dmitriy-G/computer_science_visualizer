@@ -11,7 +11,7 @@ test('every algorithm has verified sources or an explicit no-verified-use notice
       for (const action of ActionCatalog.getScopedActions(structure.kind, scope)) {
         const usage = AlgorithmTechnologyCatalog.get(structure.kind, action.kind, scope)
         assert.ok(usage, `${structure.kind} / ${action.kind} has real-world information`)
-        if (['selection-sort', 'bucket-sort', 'block-merge-sort', 'wiki-sort', 'smooth-sort', 'tree-sort', 'patience-sort', 'cycle-sort', 'comb-sort', 'cocktail-shaker-sort', 'gnome-sort', 'odd-even-sort', 'odd-even-merge-sort', 'pairwise-sorting-network', 'sample-sort', 'flash-sort', 'american-flag-sort', 'burst-sort', 'pigeonhole-sort'].includes(action.kind)) {
+        if (['selection-sort', 'bucket-sort', 'block-merge-sort', 'wiki-sort', 'smooth-sort', 'tree-sort', 'patience-sort', 'cycle-sort', 'comb-sort', 'cocktail-shaker-sort', 'gnome-sort', 'odd-even-sort', 'odd-even-merge-sort', 'pairwise-sorting-network', 'sample-sort', 'flash-sort', 'american-flag-sort', 'burst-sort', 'pigeonhole-sort', 'interpolation-sort', 'library-sort', 'splay-sort', 'strand-sort', 'pancake-sort', 'stooge-sort', 'slow-sort', 'bogo-sort', 'sleep-sort'].includes(action.kind)) {
           assert.deepEqual(usage.technologies, [])
           assert.deepEqual(usage.products, [])
           assert.match(usage.note, /No production use.*verified/)
@@ -33,7 +33,7 @@ test('every algorithm has verified sources or an explicit no-verified-use notice
       }
     }
   }
-  assert.deepEqual([...algorithms].sort(), ['american-flag-sort', 'binary-insertion-sort', 'bitonic-sort', 'block-merge-sort', 'breadth-first', 'bubble-sorting', 'bucket-sort', 'burst-sort', 'cocktail-shaker-sort', 'comb-sort', 'counting-sort', 'cycle-sort', 'depth-first', 'dual-pivot-quick-sort', 'external-merge-sort', 'flash-sort', 'gnome-sort', 'heap-sort', 'insertion-sort', 'intro-sort', 'merge-sort', 'natural-merge-sort', 'odd-even-merge-sort', 'odd-even-sort', 'pairwise-sorting-network', 'parallel-merge-sort', 'parallel-quick-sort', 'patience-sort', 'pigeonhole-sort', 'polyphase-merge-sort', 'quick-sort', 'radix-sort', 'sample-sort', 'selection-sort', 'shell-sort', 'shortest-path', 'smooth-sort', 'spread-sort', 'tim-sort', 'topological-sort', 'tournament-sort', 'tree-sort', 'wiki-sort'])
+  assert.deepEqual([...algorithms].sort(), ['american-flag-sort', 'binary-insertion-sort', 'bitonic-sort', 'block-merge-sort', 'bogo-sort', 'breadth-first', 'bubble-sorting', 'bucket-sort', 'burst-sort', 'cocktail-shaker-sort', 'comb-sort', 'counting-sort', 'cycle-sort', 'depth-first', 'dual-pivot-quick-sort', 'external-merge-sort', 'flash-sort', 'gnome-sort', 'heap-sort', 'insertion-sort', 'interpolation-sort', 'intro-sort', 'library-sort', 'merge-sort', 'natural-merge-sort', 'odd-even-merge-sort', 'odd-even-sort', 'pairwise-sorting-network', 'pancake-sort', 'parallel-merge-sort', 'parallel-quick-sort', 'patience-sort', 'pigeonhole-sort', 'polyphase-merge-sort', 'quick-sort', 'radix-sort', 'sample-sort', 'selection-sort', 'shell-sort', 'shortest-path', 'sleep-sort', 'slow-sort', 'smooth-sort', 'splay-sort', 'spread-sort', 'stooge-sort', 'strand-sort', 'tim-sort', 'topological-sort', 'tournament-sort', 'tree-sort', 'wiki-sort'])
 })
 
 test('Overview operations never receive algorithm technology examples', () => {
