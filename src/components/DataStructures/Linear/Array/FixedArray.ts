@@ -1,4 +1,6 @@
 import type { ArraySortCounter, ArraySortObserver } from './ArraySortTrace.ts'
+import { HybridArraySort } from './HybridArraySort.ts'
+import { BlockMergeArraySort } from './BlockMergeArraySort.ts'
 
 export interface ArrayEntry {
   readonly id: string
@@ -76,6 +78,22 @@ export class FixedArray {
       }
       onStep?.({ kind: 'pass', index: start, frame: { sortedPrefix: start + 1 } })
     }
+  }
+
+  public timSort(onStep?: ArraySortObserver): void {
+    new HybridArraySort(this.items, onStep).timSort()
+  }
+
+  public introSort(onStep?: ArraySortObserver): void {
+    new HybridArraySort(this.items, onStep).introSort()
+  }
+
+  public dualPivotQuickSort(onStep?: ArraySortObserver): void {
+    new HybridArraySort(this.items, onStep).dualPivotQuickSort()
+  }
+
+  public blockMergeSort(onStep?: ArraySortObserver): void {
+    new BlockMergeArraySort(this.items, onStep).sort()
   }
 
   public insertionSort(onStep?: ArraySortObserver): void {

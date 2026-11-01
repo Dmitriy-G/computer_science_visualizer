@@ -26,4 +26,10 @@ export class ArraySortingAnimation extends AnimationSequence {
       : `The array is sorted in ascending order. ${stable ? 'Equal values retain their original relative order.' : 'This algorithm does not guarantee the relative order of equal values.'}`
     this.add(5, 'Sorting complete', description, 'commit array', this.layout.create(this.result.getEntries(), { ...this.baseFrame, sortedPrefix: this.result.length }))
   }
+
+  protected recordTrace(event: ArraySortEvent): void {
+    const phase = event.kind === 'compare' || event.kind === 'run' || event.kind === 'block' || event.kind === 'fallback' || event.kind === 'stage' ? 2
+      : event.kind === 'merge' || event.kind === 'partition' || event.kind === 'collapse' || event.kind === 'pass' ? 4 : 3
+    this.record(event, phase, event.label!, event.detail!, event.code!)
+  }
 }

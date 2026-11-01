@@ -10,14 +10,23 @@ Repository: [Dmitriy-G/computer_science_visualizer](https://github.com/Dmitriy-G
 
 The root menu offers **Data Structures Overview** and **Data Structures Algorithms**.
 Algorithms contains **Sorting** and **Graphs Traversal**. Sorting contains
-**Array**, with **BubbleSorting**, **Selection Sort**, **Insertion Sort**,
+**Array**, with **Bubble Sort**, **Selection Sort**, **Insertion Sort**,
 **Binary Insertion Sort**, **Merge Sort**, **Quick Sort**, **Heap Sort**, **Shell Sort**,
-**Counting Sort**, **Radix Sort**, and **Bucket Sort**. The action list scrolls inside
+**Counting Sort**, **Radix Sort**, **Bucket Sort**, **TimSort**, **IntroSort**,
+**Dual-Pivot QuickSort**, and **Block Merge Sort**. The action list scrolls inside
 its panel with the heading and navigation kept visible. Animations show
 comparisons, swaps, held insertion values, binary-search bounds, merge-buffer
 copies, pivot partitions, heap repairs, gap passes, count tables, and distribution
 buckets as appropriate. Insertion, binary insertion, merge, bubble, counting, radix,
-and bucket sorts are stable; selection, quicksort, heap, and Shell sorts are not.
+and bucket sorts are stable, as are TimSort and Block Merge Sort.
+Selection, quicksort, heap, Shell, IntroSort, and Dual-Pivot QuickSort are unstable.
+TimSort shows natural runs, binary insertion, run-stack collapse, and galloping.
+IntroSort shows a partition-depth budget and heap fallback. Dual-Pivot QuickSort
+uses endpoint pivots; it omits the sampling and worst-case protections of the
+OpenJDK production hybrid. Block Merge Sort demonstrates a locally implemented
+buffered block-wise multiway merge variant: sort square-root-sized blocks,
+then merge their heads through a min-heap into stable output. It uses O(n)
+working storage and does not implement constant-space internal-buffer block sorting.
 Counting Sort accepts an inclusive integer key range of at most 4,096 values;
 wider inputs are rejected unchanged. Radix and Bucket Sort support negative safe
 integers and their full span using exact integer arithmetic.

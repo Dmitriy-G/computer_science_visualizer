@@ -4,6 +4,10 @@ import { FixedArray } from '../src/components/DataStructures/Linear/Array/FixedA
 import { BubbleSortingAnimation } from '../src/components/DataStructures/Linear/Array/BubbleSorting/BubbleSortingAnimation.ts'
 import { ActionInputRequest } from '../src/visualization/ActionInputRequest.ts'
 
+test('the algorithm information uses the common Bubble Sort display name', () => {
+  assert.equal(BubbleSortingAnimation.describe(10).name, 'Bubble Sort')
+})
+
 test('bubble sort handles boundaries, reverse order, duplicates, and safe integer extremes without resizing', () => {
   const cases = [
     [[], []],

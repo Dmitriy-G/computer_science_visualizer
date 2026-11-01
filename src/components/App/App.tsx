@@ -87,6 +87,14 @@ import RadixSort from '../DataStructures/Linear/Array/RadixSort/RadixSort.tsx'
 import { RadixSortAnimation } from '../DataStructures/Linear/Array/RadixSort/RadixSortAnimation.ts'
 import BucketSort from '../DataStructures/Linear/Array/BucketSort/BucketSort.tsx'
 import { BucketSortAnimation } from '../DataStructures/Linear/Array/BucketSort/BucketSortAnimation.ts'
+import TimSort from '../DataStructures/Linear/Array/TimSort/TimSort.tsx'
+import { TimSortAnimation } from '../DataStructures/Linear/Array/TimSort/TimSortAnimation.ts'
+import IntroSort from '../DataStructures/Linear/Array/IntroSort/IntroSort.tsx'
+import { IntroSortAnimation } from '../DataStructures/Linear/Array/IntroSort/IntroSortAnimation.ts'
+import DualPivotQuickSort from '../DataStructures/Linear/Array/DualPivotQuickSort/DualPivotQuickSort.tsx'
+import { DualPivotQuickSortAnimation } from '../DataStructures/Linear/Array/DualPivotQuickSort/DualPivotQuickSortAnimation.ts'
+import BlockMergeSort from '../DataStructures/Linear/Array/BlockMergeSort/BlockMergeSort.tsx'
+import { BlockMergeSortAnimation } from '../DataStructures/Linear/Array/BlockMergeSort/BlockMergeSortAnimation.ts'
 import { ClearAnimation as ArrayClearSequence } from '../DataStructures/Linear/Array/Clear/ClearAnimation.ts'
 import LinkedListClear from '../DataStructures/Linear/LinkedList/Clear/Clear.tsx'
 import { ClearAnimation as LinkedListClearSequence } from '../DataStructures/Linear/LinkedList/Clear/ClearAnimation.ts'
@@ -631,6 +639,10 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'counting-sort': return CountingSortAnimation.describe(this.array.length)
         case 'radix-sort': return RadixSortAnimation.describe(this.array.length)
         case 'bucket-sort': return BucketSortAnimation.describe(this.array.length)
+        case 'tim-sort': return TimSortAnimation.describe(this.array.length)
+        case 'intro-sort': return IntroSortAnimation.describe(this.array.length)
+        case 'dual-pivot-quick-sort': return DualPivotQuickSortAnimation.describe(this.array.length)
+        case 'block-merge-sort': return BlockMergeSortAnimation.describe(this.array.length)
         case 'clear': return ArrayClearSequence.describe(this.array.length)
         case 'insert-middle': return ArrayInsertionAnimation.describe(this.array.length)
         case 'insert-start': return ArrayAddAtStartSequence.describe(this.array.length)
@@ -795,6 +807,10 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'counting-sort': return <CountingSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'radix-sort': return <RadixSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'bucket-sort': return <BucketSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'tim-sort': return <TimSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'intro-sort': return <IntroSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'dual-pivot-quick-sort': return <DualPivotQuickSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'block-merge-sort': return <BlockMergeSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'clear': return <ArrayClear key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'insert-middle': return <ArrayAddInTheMiddle key={this.state.actionSession} array={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'insert-start': return <ArrayAddAtStart key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />

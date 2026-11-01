@@ -7,7 +7,7 @@ export class BubbleSortingAnimation extends AnimationSequence {
 
   public static describe(size: number) {
     return AnimationSequence.information(
-      'BubbleSorting',
+      'Bubble Sort',
       'Compare neighboring values, swap only when the left value is larger, and stop after a pass without swaps. Equal values retain their relative order.',
       size,
       ['O(n)', 'O(n²)', 'O(n²)'],

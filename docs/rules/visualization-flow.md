@@ -5,7 +5,7 @@
 1. Start with an empty renderer and a clickable menu icon in the top left.
 2. Open the menu to see **Data Structures Overview** and **Data Structures Algorithms**.
    Overview contains the existing structure groups. Algorithms contains
-   **Sorting** (Array with six sorting actions) and **Graphs Traversal** (all five graph
+   **Sorting** (Array with fifteen sorting actions) and **Graphs Traversal** (all five graph
    variants). Its graph action cards offer BFS and DFS, plus Dijkstra for Weighted
    Graph and topological sorting for DAG. These four algorithm actions move out
    of Overview; graph editing and value search remain there. Browsing either
@@ -633,7 +633,7 @@ edge IDs through ActionInputRequest in the shared dialog.
 ## Algorithm navigation
 
 Keep algorithm groups separate from the Overview structure groups in
-MenuNavigation. Sorting lists Array and exposes its eleven sorting actions; Graphs Traversal
+MenuNavigation. Sorting lists Array and exposes its fifteen sorting actions; Graphs Traversal
 lists the existing five graphs and reuses their model, input, sequence, renderer,
 and info implementations. ActionCatalog.getScopedActions controls the visible
 choices and App validates action selection against the selected scope. Keep the
@@ -645,7 +645,7 @@ playback, preserves its last committed model, and opens the new action card.
 Reset restores the default example within the selected scope.
 
 Sorting reuses the fixed array model, shared renderer, and automatic playback.
-Start its ten-element example in a deterministic shuffled order. BubbleSorting
+Start its ten-element example in a deterministic shuffled order. Bubble Sort
 compares adjacent values, swaps only when the left value is greater, and shortens
 the unsorted prefix after each pass. Stop early after a pass without swaps.
 Show both compared entries and label the sorted suffix. Keep stable element IDs
@@ -659,9 +659,10 @@ playback clones and snapshots.
 
 Also provide Selection Sort, Insertion Sort, Binary Insertion Sort, Merge Sort,
 Quick Sort, Heap Sort, Shell Sort, Counting Sort, Radix Sort, and Bucket Sort.
+Also include TimSort, IntroSort, Dual-Pivot QuickSort, and Block Merge Sort.
 Each action owns its component, CSS, sequence, and complexity
-information. Keep sorting algorithms and optional synchronous trace callbacks in
-FixedArray. Reuse ArraySortingLayout and ArraySortingAnimation for independent
+information. Keep model entry points and optional synchronous trace callbacks in
+FixedArray, with array-specific algorithm helpers beside it. Reuse ArraySortingLayout and ArraySortingAnimation for independent
 snapshots and fixed slot positions. None of these actions collects a value.
 
 Selection sort scans the complete unsorted suffix for each minimum, then swaps it
@@ -708,3 +709,35 @@ auxiliary copies use separate stable IDs. Empty/singleton runs take O(1).
 Keep action panels bounded to the viewport and scroll only their action lists.
 Keep their heading and back/info controls visible; contain overscroll and allow
 keyboard scrolling with visible focus.
+
+TimSort detects nondecreasing or strictly decreasing natural runs; reverse only
+strict runs to preserve equal-key order. Extend short runs by stable binary
+insertion. Use minrun threshold eight for the teaching array, the corrected
+four-run collapse condition, and exponential/binary galloping after seven wins.
+This variant uses a fixed gallop trigger and copies both adjacent runs into a
+buffer. State those differences from the optimized OpenJDK implementation.
+Best time is O(n), average/worst O(n log n); best space is O(1), average/worst
+O(n). Run-stack and output scenes must retain unread entries and stable IDs.
+
+IntroSort uses median-of-three quicksort with a 2 floor(log2 n) path budget,
+heap-sorts a remaining range when the budget expires, and insertion-sorts ranges
+of up to four entries. Recurse on the smaller partition and loop over the larger.
+All time bounds are O(n log n); stack space is O(1) best and O(log n)
+average/worst. The hybrid is unstable. Dual-Pivot QuickSort orders its endpoint
+pivots, divides into three ranges, and skips the middle for equal pivots. Recurse
+only into the two smaller ranges and loop over the largest to bound stack space.
+It is unstable: time is O(n) best for all-equal keys, O(n log n) average for random
+distinct permutations, and O(n²) worst for ordered distinct inputs. Extra space
+is O(1) best and O(log n) average/worst. Do not claim the production OpenJDK
+hybrid's guarantees for this unsampled endpoint-pivot variant.
+
+Block Merge Sort demonstrates a locally implemented buffered block-wise multiway
+merge variant. Sort blocks of ceil(sqrt(n)) entries by stable bottom-up merging,
+then merge all block heads through a min-heap into a separate output array.
+The final block may be shorter. Resolve equal head keys by original block order
+to preserve stability across blocks. An initial ordered-input scan gives O(n)
+best time with O(1) extra memory. Other inputs take O(n log n) time and O(n)
+extra memory, including output; head cursors and the heap use O(√n). This is
+distinct from constant-space internal-buffer block sorting. Show block pieces,
+buffer reads, heap-head comparisons, and growing output with independent scene
+IDs. Copy output back into the fixed allocation before the final commit.

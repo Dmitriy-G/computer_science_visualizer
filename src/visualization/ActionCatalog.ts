@@ -5,7 +5,7 @@ export type ActionScope = 'overview' | 'graph-traversal' | 'sorting'
 
 export type ActionKind = ArraySortingActionKind | 'insert-middle' | 'insert-start' | 'insert-end' | 'insert' | 'search-value' | 'search-index' | 'delete-value' | 'push' | 'pop' | 'peek' | 'clear' | 'enqueue' | 'dequeue' | 'push-front' | 'push-back' | 'pop-front' | 'pop-back' | 'peek-front' | 'peek-back' | 'delete-start' | 'delete-end' | 'range-from-value' | 'starts-with' | 'extract-min' | 'update-index' | 'add-index' | 'prefix-sum' | 'range-sum' | 'search-overlap' | 'flush' | 'compact' | 'build-expression' | 'evaluate' | 'traverse-preorder' | 'traverse-inorder' | 'traverse-postorder' | 'add-vertex' | 'add-edge' | 'remove-edge' | 'breadth-first' | 'depth-first' | 'shortest-path' | 'topological-sort' | 'update-weight' | 'bubble-sorting'
 
-export type ArraySortingActionKind = 'selection-sort' | 'insertion-sort' | 'binary-insertion-sort' | 'merge-sort' | 'quick-sort' | 'heap-sort' | 'shell-sort' | 'counting-sort' | 'radix-sort' | 'bucket-sort'
+export type ArraySortingActionKind = 'selection-sort' | 'insertion-sort' | 'binary-insertion-sort' | 'merge-sort' | 'quick-sort' | 'heap-sort' | 'shell-sort' | 'counting-sort' | 'radix-sort' | 'bucket-sort' | 'tim-sort' | 'intro-sort' | 'dual-pivot-quick-sort' | 'block-merge-sort'
 
 export interface ActionChoice {
   readonly kind: ActionKind
@@ -17,7 +17,7 @@ export class ActionCatalog {
   public static getScopedActions(structure: StructureKind, scope: ActionScope): readonly ActionChoice[] {
     if (scope === 'sorting') return structure === 'array'
       ? [
-        { kind: 'bubble-sorting', title: 'BubbleSorting', description: 'Compare adjacent values and swap them into ascending order.' },
+        { kind: 'bubble-sorting', title: 'Bubble Sort', description: 'Compare adjacent values and swap them into ascending order.' },
         { kind: 'selection-sort', title: 'Selection Sort', description: 'Find each remaining minimum and swap it into the sorted prefix.' },
         { kind: 'insertion-sort', title: 'Insertion Sort', description: 'Scan backward and shift larger entries to insert the next value.' },
         { kind: 'binary-insertion-sort', title: 'Binary Insertion Sort', description: 'Binary-search the insertion position, then shift entries right.' },
@@ -28,6 +28,10 @@ export class ActionCatalog {
         { kind: 'counting-sort', title: 'Counting Sort', description: 'Count integer keys in a limited range and distribute stably.' },
         { kind: 'radix-sort', title: 'Radix Sort', description: 'Distribute and gather stable decimal digit buckets.' },
         { kind: 'bucket-sort', title: 'Bucket Sort', description: 'Distribute into equal-width buckets, sort each, and concatenate.' },
+        { kind: 'tim-sort', title: 'TimSort', description: 'Detect natural runs, extend short runs, and stably merge with galloping.' },
+        { kind: 'intro-sort', title: 'IntroSort', description: 'Partition with quicksort, falling back to heap and insertion sorting.' },
+        { kind: 'dual-pivot-quick-sort', title: 'Dual-Pivot QuickSort', description: 'Partition into three ranges using two ordered pivots.' },
+        { kind: 'block-merge-sort', title: 'Block Merge Sort', description: 'Sort blocks and stably merge their heads through a heap into buffered output.' },
       ]
       : []
     const actions = this.getActions(structure)

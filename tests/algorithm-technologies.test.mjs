@@ -11,7 +11,7 @@ test('every algorithm has verified sources or an explicit no-verified-use notice
       for (const action of ActionCatalog.getScopedActions(structure.kind, scope)) {
         const usage = AlgorithmTechnologyCatalog.get(structure.kind, action.kind, scope)
         assert.ok(usage, `${structure.kind} / ${action.kind} has real-world information`)
-        if (action.kind === 'selection-sort' || action.kind === 'bucket-sort') {
+        if (action.kind === 'selection-sort' || action.kind === 'bucket-sort' || action.kind === 'block-merge-sort') {
           assert.deepEqual(usage.technologies, [])
           assert.deepEqual(usage.products, [])
           assert.match(usage.note, /No production use.*verified/)
@@ -33,7 +33,7 @@ test('every algorithm has verified sources or an explicit no-verified-use notice
       }
     }
   }
-  assert.deepEqual([...algorithms].sort(), ['binary-insertion-sort', 'breadth-first', 'bubble-sorting', 'bucket-sort', 'counting-sort', 'depth-first', 'heap-sort', 'insertion-sort', 'merge-sort', 'quick-sort', 'radix-sort', 'selection-sort', 'shell-sort', 'shortest-path', 'topological-sort'])
+  assert.deepEqual([...algorithms].sort(), ['binary-insertion-sort', 'block-merge-sort', 'breadth-first', 'bubble-sorting', 'bucket-sort', 'counting-sort', 'depth-first', 'dual-pivot-quick-sort', 'heap-sort', 'insertion-sort', 'intro-sort', 'merge-sort', 'quick-sort', 'radix-sort', 'selection-sort', 'shell-sort', 'shortest-path', 'tim-sort', 'topological-sort'])
 })
 
 test('Overview operations never receive algorithm technology examples', () => {

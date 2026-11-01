@@ -308,14 +308,20 @@ export default class MainMenu extends Component<
     const buttons: ReactNode[] = []
     for (const structure of this.props.navigation.getStructures()) {
       let description = structure.description
-      if (this.props.navigation.actionScope !== 'overview') {
+      const examples = this.props.navigation.actionScope !== 'overview'
+      if (examples) {
         const titles: string[] = []
-        for (const action of ActionCatalog.getScopedActions(structure.kind, this.props.navigation.actionScope)) titles.push(action.title)
+        const actions = ActionCatalog.getScopedActions(structure.kind, this.props.navigation.actionScope)
+        for (const action of actions) {
+          if (titles.length === 2) break
+          titles.push(action.title)
+        }
         description = titles.join(', ')
+        if (actions.length > titles.length) description += ', …'
       }
       buttons.push(
         <button
-          className="structure-choice"
+          className={examples ? 'structure-choice structure-choice-examples' : 'structure-choice'}
           key={structure.kind}
           data-kind={structure.kind}
           onClick={this.handleSelection}

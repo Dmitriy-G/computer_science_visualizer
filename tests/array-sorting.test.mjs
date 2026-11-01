@@ -11,6 +11,10 @@ import { ShellSortAnimation } from '../src/components/DataStructures/Linear/Arra
 import { CountingSortAnimation } from '../src/components/DataStructures/Linear/Array/CountingSort/CountingSortAnimation.ts'
 import { RadixSortAnimation } from '../src/components/DataStructures/Linear/Array/RadixSort/RadixSortAnimation.ts'
 import { BucketSortAnimation } from '../src/components/DataStructures/Linear/Array/BucketSort/BucketSortAnimation.ts'
+import { TimSortAnimation } from '../src/components/DataStructures/Linear/Array/TimSort/TimSortAnimation.ts'
+import { IntroSortAnimation } from '../src/components/DataStructures/Linear/Array/IntroSort/IntroSortAnimation.ts'
+import { DualPivotQuickSortAnimation } from '../src/components/DataStructures/Linear/Array/DualPivotQuickSort/DualPivotQuickSortAnimation.ts'
+import { BlockMergeSortAnimation } from '../src/components/DataStructures/Linear/Array/BlockMergeSort/BlockMergeSortAnimation.ts'
 import { ActionInputRequest } from '../src/visualization/ActionInputRequest.ts'
 
 const sorts = [
@@ -24,6 +28,10 @@ const sorts = [
   ['countingSort', 'counting-sort', CountingSortAnimation, true],
   ['radixSort', 'radix-sort', RadixSortAnimation, true],
   ['bucketSort', 'bucket-sort', BucketSortAnimation, true],
+  ['timSort', 'tim-sort', TimSortAnimation, true],
+  ['introSort', 'intro-sort', IntroSortAnimation, false],
+  ['dualPivotQuickSort', 'dual-pivot-quick-sort', DualPivotQuickSortAnimation, false],
+  ['blockMergeSort', 'block-merge-sort', BlockMergeSortAnimation, true],
 ]
 
 const cases = [[], [4], [1, 2, 3, 4], [4, 3, 2, 1], [2, 2, 2], [3, -2, 3, 0, -2], [Number.MAX_SAFE_INTEGER, 0, Number.MIN_SAFE_INTEGER], [2, 2, 1], [4, 1, 3, 1, 2]]
@@ -238,4 +246,105 @@ test('heap extraction finalizes a growing suffix and Shell Sort uses descending 
   const information = ShellSortAnimation.describe(10)
   assert.equal(information.time.average, 'Not established')
   assert.ok(!information.terms.some((term) => term.symbol === 'Not established'))
+})
+
+test('hybrid and block sorts handle run boundaries, partial blocks, and few distinct keys stably', () => {
+  let seed = 0x7a31
+  const shuffle = (values) => {
+    for (let index = values.length - 1; index > 0; index -= 1) {
+      seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0
+      const other = seed % (index + 1)
+      const temporary = values[index]
+      values[index] = values[other]
+      values[other] = temporary
+    }
+    return values
+  }
+  for (const length of [8, 9, 10, 11, 12, 13, 15, 16, 17, 23, 31, 32, 33, 47, 63, 64, 65, 127, 128, 129, 257]) {
+    const valuesList = [
+      shuffle(Array.from({ length }, (_, index) => index - 10)),
+      Array.from({ length }, (_, index) => length - index),
+      Array.from({ length }, (_, index) => index % 2 ? index : length - index),
+      ...[2, 3, 4, 5, 8].map((keys) => shuffle(Array.from({ length }, (_, index) => index % keys - 2))),
+    ]
+    for (const values of valuesList) {
+      for (const [method, , , stable] of sorts.slice(-4)) {
+        const source = new FixedArray(values)
+        const original = source.getEntries()
+        const model = source.clone()
+        model[method]()
+        assert.deepEqual(model.getEntries().map((entry) => entry.value), [...values].sort((a, b) => a - b), `${method}, n=${length}`)
+        assert.equal(model.length, length)
+        assert.deepEqual(new Set(model.getEntries().map((entry) => entry.id)), new Set(original.map((entry) => entry.id)))
+        assert.deepEqual(source.getEntries(), original)
+        if (stable) {
+          for (const value of new Set(values)) assert.deepEqual(model.getEntries().filter((entry) => entry.value === value), original.filter((entry) => entry.value === value), `${method} preserves ties, n=${length}`)
+        }
+      }
+    }
+  }
+})
+
+test('TimSort traces natural runs, strict reversals, stable extension, and galloping', () => {
+  const events = []
+  const values = [...Array.from({ length: 32 }, (_, index) => index + 32), ...Array.from({ length: 32 }, (_, index) => index)]
+  const model = new FixedArray(values)
+  model.timSort((event) => events.push(event))
+  assert.equal(events.filter((event) => event.kind === 'run').length, 2)
+  assert.ok(events.some((event) => event.kind === 'collapse'))
+  assert.ok(events.some((event) => event.kind === 'gallop'))
+  assert.deepEqual(model.getEntries().map((entry) => entry.value), Array.from({ length: 64 }, (_, index) => index))
+  const descending = []
+  new FixedArray([5, 4, 4, 3, 2, 2, 1, 0]).timSort((event) => descending.push(event))
+  assert.ok(descending.some((event) => event.kind === 'reverse'))
+  assert.ok(descending.some((event) => event.kind === 'extend'))
+})
+
+test('IntroSort reaches heap fallback and Dual-Pivot QuickSort skips equal-pivot middles', () => {
+  const intro = []
+  new FixedArray(new Array(128).fill(7)).introSort((event) => intro.push(event))
+  assert.ok(intro.some((event) => event.kind === 'fallback' && event.label === 'Switch to Heap Sort'))
+  const dual = []
+  new FixedArray(new Array(128).fill(7)).dualPivotQuickSort((event) => dual.push(event))
+  assert.equal(dual.filter((event) => event.kind === 'partition').length, 1)
+  const partition = dual.find((event) => event.kind === 'partition')
+  assert.equal(partition.index, 0)
+  assert.equal(partition.other, 127)
+})
+
+test('block merging sorts partial blocks and consumes each head once into stable output', () => {
+  const values = Array.from({ length: 33 }, (_, index) => 32 - index)
+  const events = []
+  const model = new FixedArray(values)
+  model.blockMergeSort((event) => events.push(event))
+  assert.equal(events.filter((event) => event.kind === 'block').length, Math.ceil(values.length / Math.ceil(Math.sqrt(values.length))))
+  assert.ok(events.some((event) => event.label === 'Compare block heads'))
+  const writes = events.filter((event) => event.kind === 'distribute')
+  assert.equal(writes.length, values.length)
+  assert.equal(new Set(writes.map((event) => event.index)).size, values.length)
+  assert.deepEqual(writes.at(-1).frame.output.map((entry) => entry.value), [...values].sort((a, b) => a - b))
+  const ordered = []
+  new FixedArray([1, 2, 3, 4]).blockMergeSort((event) => ordered.push(event))
+  assert.ok(!ordered.some((event) => event.kind === 'block' || event.frame.output || event.frame.buffer))
+})
+
+test('buffered merge scenes preserve unique IDs and publish an intact final array', () => {
+  const values = Array.from({ length: 17 }, (_, index) => 16 - index)
+  for (const Animation of [TimSortAnimation, BlockMergeSortAnimation]) {
+    const model = new FixedArray(values)
+    const before = model.getEntries()
+    const plan = new Animation(model)
+    assert.deepEqual(model.getEntries(), before)
+    assert.deepEqual(plan.result.getEntries().map((entry) => entry.value), [...values].sort((a, b) => a - b))
+    assert.deepEqual(new Animation(model).steps, plan.steps)
+    for (const step of plan.steps) {
+      assert.equal(new Set(step.scene.nodes.map((node) => node.id)).size, step.scene.nodes.length)
+      assert.equal(new Set(step.scene.slots.map((slot) => slot.id)).size, step.scene.slots.length)
+      assert.equal(step.scene.count, values.length)
+      assert.ok(step.scene.focusId === null || step.scene.nodes.some((node) => node.id === step.scene.focusId))
+      assert.ok(step.title && step.description && step.code)
+    }
+    assert.deepEqual(plan.steps.at(-1).scene.nodes.map((node) => node.id), plan.result.getEntries().map((entry) => entry.id))
+    assert.ok(plan.steps.at(-1).scene.nodes.every((node) => node.status === 'SORTED'))
+  }
 })

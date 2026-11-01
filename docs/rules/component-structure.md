@@ -169,12 +169,18 @@ technology examples with primary links and explain differences from this model.
 
 Algorithm menu groups stay in MainMenu/MenuNavigation alongside root-category
 navigation. Reuse MainMenu to list graphs under Algorithms > Graphs Traversal;
-list Array under Sorting with BubbleSorting, SelectionSort, InsertionSort,
+list Array under Sorting with Bubble Sort, SelectionSort, InsertionSort,
 BinaryInsertionSort, MergeSort, QuickSort, HeapSort, ShellSort, CountingSort,
-RadixSort, and BucketSort. Each action owns its component,
-CSS, and sequence folder under Linear/Array. Keep the algorithms in FixedArray,
-with shared array-specific trace, layout, and snapshot helpers beside it.
+RadixSort, BucketSort, TimSort, IntroSort, DualPivotQuickSort, and BlockMergeSort.
+Each action owns its component,
+CSS, and sequence folder under Linear/Array. Keep the model entry points in FixedArray,
+with shared array-specific algorithms, trace, layout, and snapshot helpers beside it.
+HybridArraySort implements TimSort, IntroSort, and Dual-Pivot QuickSort on the
+existing allocation. BlockMergeArraySort implements buffered block-wise multiway
+merging with stable ties and O(n) working storage.
 ActionMenu receives an explicit
 ActionScope, and App preserves the selected scope independently of menu browsing.
+Algorithm structure buttons show at most two example names in one truncated line;
+keep the complete list in the independently scrolling action panel.
 Do not duplicate graph models or sequence classes to expose traversal examples
 in the Algorithms branch.

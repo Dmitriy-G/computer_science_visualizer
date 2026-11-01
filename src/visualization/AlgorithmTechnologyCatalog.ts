@@ -6,6 +6,32 @@ import type { AlgorithmUsage } from './AlgorithmInformation.ts'
 // Only algorithm scopes receive real-world examples. Overview operations do not.
 export class AlgorithmTechnologyCatalog {
   private static readonly uses: Readonly<Partial<Record<ActionKind, AlgorithmUsage>>> = {
+    'tim-sort': {
+      technologies: [
+        { name: 'OpenJDK: TimSort', url: 'https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/TimSort.java', usage: 'Stably sorts object-array ranges using natural runs, binary insertion, a run stack, and galloping merges. This lesson reduces the minrun threshold and uses a fixed galloping trigger for readable small-array steps.' },
+        { name: 'cpp-sort: tim_sorter', url: 'https://github.com/Morwenn/cpp-sort/wiki/Sorters#tim_sorter', usage: 'Exposes a stable TimSort implementation for random-access iterators, documenting linear best-case and O(n log n) worst-case time.' },
+      ],
+      products: [
+        { name: 'Java', url: 'https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/TimSort.java', usage: 'OpenJDK provides TimSort for object-array sorting.' },
+        { name: 'cpp-sort', url: 'https://github.com/Morwenn/cpp-sort/wiki/Sorters#tim_sorter', usage: 'Provides TimSort as a reusable stable sorter.' },
+      ],
+      note: 'Current CPython uses a different run-merge scheduling policy; it is not claimed to implement this exact TimSort variant.',
+    },
+    'intro-sort': {
+      technologies: [{ name: 'GNU libstdc++ 14.2: std::sort', url: 'https://github.com/gcc-mirror/gcc/blob/releases/gcc-14.2.0/libstdc%2B%2B-v3/include/bits/stl_algo.h', usage: 'Its introsort loop starts with quicksort partitions, switches to heap-based partial_sort at the depth limit, and finishes with insertion sorting. This lesson uses median-of-three Lomuto partitioning and a smaller insertion cutoff.' }],
+      products: [{ name: 'GCC', url: 'https://github.com/gcc-mirror/gcc/blob/releases/gcc-14.2.0/libstdc%2B%2B-v3/include/bits/stl_algo.h', usage: 'The libstdc++ standard library in GCC 14.2 implements an introspective std::sort hybrid.' }],
+      note: 'This is evidence for a specific standard-library implementation, not a requirement that every C++ std::sort use introsort.',
+    },
+    'dual-pivot-quick-sort': {
+      technologies: [{ name: 'OpenJDK: DualPivotQuicksort', url: 'https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/DualPivotQuicksort.java', usage: 'Partitions primitive-array ranges around two sampled pivots within an optimized hybrid. It also uses insertion, merging, and heap fallback. This lesson uses endpoint pivots and three-way range division without those worst-case protections.' }],
+      products: [{ name: 'Java', url: 'https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/DualPivotQuicksort.java', usage: 'OpenJDK uses dual-pivot partitioning in its primitive-array sorting hybrid.' }],
+      note: 'The quadratic worst case shown here belongs to this endpoint-pivot teaching variant, not the production hybrid.',
+    },
+    'block-merge-sort': {
+      technologies: [],
+      products: [],
+      note: 'This buffered block-wise multiway merge variant is an educational implementation. No production use of this exact variant has been verified. It uses O(n) extra storage rather than constant-space internal-buffer block sorting.',
+    },
     'heap-sort': {
       technologies: [
         { name: 'Linux: sort_r', url: 'https://github.com/torvalds/linux/blob/master/lib/sort.c', usage: 'Implements a nonrecursive heapsort for kernel arrays. Its optimized sifting differs from the direct parent/child swaps shown here.' },

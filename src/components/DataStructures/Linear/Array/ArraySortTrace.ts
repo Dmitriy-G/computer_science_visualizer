@@ -32,7 +32,7 @@ export interface ArraySortFrame {
 }
 
 export interface ArraySortEvent {
-  readonly kind: 'compare' | 'select' | 'swap' | 'pass' | 'hold' | 'shift' | 'place' | 'bounds' | 'split' | 'buffer' | 'write' | 'merge' | 'pivot' | 'partition' | 'heap' | 'extract' | 'gap' | 'count' | 'prefix' | 'distribute' | 'gather' | 'digit' | 'reject' | 'bucket-sort'
+  readonly kind: 'compare' | 'select' | 'swap' | 'pass' | 'hold' | 'shift' | 'place' | 'bounds' | 'split' | 'buffer' | 'write' | 'merge' | 'pivot' | 'partition' | 'heap' | 'extract' | 'gap' | 'count' | 'prefix' | 'distribute' | 'gather' | 'digit' | 'reject' | 'bucket-sort' | 'run' | 'reverse' | 'extend' | 'collapse' | 'gallop' | 'fallback' | 'block' | 'stage'
   readonly index: number
   readonly other?: number
   readonly left?: number
@@ -41,6 +41,7 @@ export interface ArraySortEvent {
   readonly amount?: number
   readonly label?: string
   readonly detail?: string
+  readonly code?: string
   readonly frame: ArraySortFrame
 }
 

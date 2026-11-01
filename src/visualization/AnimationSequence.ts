@@ -41,6 +41,7 @@ export class AnimationSequence {
       if (symbol === 'O(n)') meaning = 'Linear work or storage, proportional to the number of elements.'
       if (symbol === 'O(n²)') meaning = 'Quadratic work, proportional to the square of the number of elements.'
       if (symbol === 'O(log n)') meaning = 'Logarithmic work or storage, proportional to the logarithm of the number of elements.'
+      if (symbol === 'O(√n)') meaning = 'Storage proportional to the square root of the number of entries.'
       if (symbol === 'O(n log n)') meaning = 'Work proportional to the number of elements times its logarithm.'
       if (symbol === 'O(n + k)') meaning = 'Work or storage proportional to entries plus the inclusive integer key range.'
       if (symbol === 'O(n + b)') meaning = 'Work or storage proportional to entries plus buckets.'
