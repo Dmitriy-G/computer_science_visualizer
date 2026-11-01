@@ -5,7 +5,7 @@ export type ActionScope = 'overview' | 'graph-traversal' | 'sorting'
 
 export type ActionKind = ArraySortingActionKind | 'insert-middle' | 'insert-start' | 'insert-end' | 'insert' | 'search-value' | 'search-index' | 'delete-value' | 'push' | 'pop' | 'peek' | 'clear' | 'enqueue' | 'dequeue' | 'push-front' | 'push-back' | 'pop-front' | 'pop-back' | 'peek-front' | 'peek-back' | 'delete-start' | 'delete-end' | 'range-from-value' | 'starts-with' | 'extract-min' | 'update-index' | 'add-index' | 'prefix-sum' | 'range-sum' | 'search-overlap' | 'flush' | 'compact' | 'build-expression' | 'evaluate' | 'traverse-preorder' | 'traverse-inorder' | 'traverse-postorder' | 'add-vertex' | 'add-edge' | 'remove-edge' | 'breadth-first' | 'depth-first' | 'shortest-path' | 'topological-sort' | 'update-weight' | 'bubble-sorting'
 
-export type ArraySortingActionKind = 'selection-sort' | 'insertion-sort' | 'binary-insertion-sort' | 'merge-sort' | 'quick-sort' | 'heap-sort' | 'shell-sort' | 'counting-sort' | 'radix-sort' | 'bucket-sort' | 'tim-sort' | 'intro-sort' | 'dual-pivot-quick-sort' | 'block-merge-sort' | 'wiki-sort' | 'smooth-sort' | 'tree-sort' | 'tournament-sort' | 'patience-sort'
+export type ArraySortingActionKind = 'selection-sort' | 'insertion-sort' | 'binary-insertion-sort' | 'merge-sort' | 'quick-sort' | 'heap-sort' | 'shell-sort' | 'counting-sort' | 'radix-sort' | 'bucket-sort' | 'tim-sort' | 'intro-sort' | 'dual-pivot-quick-sort' | 'block-merge-sort' | 'wiki-sort' | 'smooth-sort' | 'tree-sort' | 'tournament-sort' | 'patience-sort' | 'cycle-sort' | 'comb-sort' | 'cocktail-shaker-sort' | 'gnome-sort'
 
 export interface ActionChoice {
   readonly kind: ActionKind
@@ -37,6 +37,10 @@ export class ActionCatalog {
         { kind: 'tree-sort', title: 'Tree Sort', description: 'Insert entries into a binary search tree and read them in order.' },
         { kind: 'tournament-sort', title: 'Tournament Sort', description: 'Replay winner-tree matches to repeatedly select the smallest entry.' },
         { kind: 'patience-sort', title: 'Patience Sort', description: 'Deal entries into decreasing piles and heap-merge their tops.' },
+        { kind: 'cycle-sort', title: 'Cycle Sort', description: 'Count smaller keys and rotate cycles with few array writes.' },
+        { kind: 'comb-sort', title: 'Comb Sort', description: 'Exchange entries across shrinking gaps, then clean up adjacent pairs.' },
+        { kind: 'cocktail-shaker-sort', title: 'Cocktail Shaker Sort', description: 'Sweep adjacent pairs forward and backward to fix both boundaries.' },
+        { kind: 'gnome-sort', title: 'Gnome Sort', description: 'Walk forward over ordered neighbors and backtrack after an exchange.' },
       ]
       : []
     const actions = this.getActions(structure)

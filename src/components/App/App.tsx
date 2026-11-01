@@ -105,6 +105,14 @@ import TournamentSort from '../DataStructures/Linear/Array/TournamentSort/Tourna
 import { TournamentSortAnimation } from '../DataStructures/Linear/Array/TournamentSort/TournamentSortAnimation.ts'
 import PatienceSort from '../DataStructures/Linear/Array/PatienceSort/PatienceSort.tsx'
 import { PatienceSortAnimation } from '../DataStructures/Linear/Array/PatienceSort/PatienceSortAnimation.ts'
+import CycleSort from '../DataStructures/Linear/Array/CycleSort/CycleSort.tsx'
+import { CycleSortAnimation } from '../DataStructures/Linear/Array/CycleSort/CycleSortAnimation.ts'
+import CombSort from '../DataStructures/Linear/Array/CombSort/CombSort.tsx'
+import { CombSortAnimation } from '../DataStructures/Linear/Array/CombSort/CombSortAnimation.ts'
+import CocktailShakerSort from '../DataStructures/Linear/Array/CocktailShakerSort/CocktailShakerSort.tsx'
+import { CocktailShakerSortAnimation } from '../DataStructures/Linear/Array/CocktailShakerSort/CocktailShakerSortAnimation.ts'
+import GnomeSort from '../DataStructures/Linear/Array/GnomeSort/GnomeSort.tsx'
+import { GnomeSortAnimation } from '../DataStructures/Linear/Array/GnomeSort/GnomeSortAnimation.ts'
 import { ClearAnimation as ArrayClearSequence } from '../DataStructures/Linear/Array/Clear/ClearAnimation.ts'
 import LinkedListClear from '../DataStructures/Linear/LinkedList/Clear/Clear.tsx'
 import { ClearAnimation as LinkedListClearSequence } from '../DataStructures/Linear/LinkedList/Clear/ClearAnimation.ts'
@@ -658,6 +666,10 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'tree-sort': return TreeSortAnimation.describe(this.array.length)
         case 'tournament-sort': return TournamentSortAnimation.describe(this.array.length)
         case 'patience-sort': return PatienceSortAnimation.describe(this.array.length)
+        case 'cycle-sort': return CycleSortAnimation.describe(this.array.length)
+        case 'comb-sort': return CombSortAnimation.describe(this.array.length)
+        case 'cocktail-shaker-sort': return CocktailShakerSortAnimation.describe(this.array.length)
+        case 'gnome-sort': return GnomeSortAnimation.describe(this.array.length)
         case 'clear': return ArrayClearSequence.describe(this.array.length)
         case 'insert-middle': return ArrayInsertionAnimation.describe(this.array.length)
         case 'insert-start': return ArrayAddAtStartSequence.describe(this.array.length)
@@ -831,6 +843,10 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'tree-sort': return <TreeSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'tournament-sort': return <TournamentSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'patience-sort': return <PatienceSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'cycle-sort': return <CycleSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'comb-sort': return <CombSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'cocktail-shaker-sort': return <CocktailShakerSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'gnome-sort': return <GnomeSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'clear': return <ArrayClear key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'insert-middle': return <ArrayAddInTheMiddle key={this.state.actionSession} array={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'insert-start': return <ArrayAddAtStart key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />

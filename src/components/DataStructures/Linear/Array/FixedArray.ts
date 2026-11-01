@@ -6,6 +6,10 @@ import { SmoothArraySort } from './SmoothArraySort.ts'
 import { TreeArraySort } from './TreeArraySort.ts'
 import { TournamentArraySort } from './TournamentArraySort.ts'
 import { PatienceArraySort } from './PatienceArraySort.ts'
+import { CycleArraySort } from './CycleArraySort.ts'
+import { CombArraySort } from './CombArraySort.ts'
+import { CocktailShakerArraySort } from './CocktailShakerArraySort.ts'
+import { GnomeArraySort } from './GnomeArraySort.ts'
 
 export interface ArrayEntry {
   readonly id: string
@@ -119,6 +123,22 @@ export class FixedArray {
 
   public patienceSort(onStep?: ArraySortObserver): void {
     new PatienceArraySort(this.items, onStep).sort()
+  }
+
+  public cycleSort(onStep?: ArraySortObserver): void {
+    new CycleArraySort(this.items, onStep).sort()
+  }
+
+  public combSort(onStep?: ArraySortObserver): void {
+    new CombArraySort(this.items, onStep).sort()
+  }
+
+  public cocktailShakerSort(onStep?: ArraySortObserver): void {
+    new CocktailShakerArraySort(this.items, onStep).sort()
+  }
+
+  public gnomeSort(onStep?: ArraySortObserver): void {
+    new GnomeArraySort(this.items, onStep).sort()
   }
 
   public insertionSort(onStep?: ArraySortObserver): void {

@@ -5,7 +5,7 @@
 1. Start with an empty renderer and a clickable menu icon in the top left.
 2. Open the menu to see **Data Structures Overview** and **Data Structures Algorithms**.
    Overview contains the existing structure groups. Algorithms contains
-   **Sorting** (Array with twenty sorting actions) and **Graphs Traversal** (all five graph
+   **Sorting** (Array with twenty-four sorting actions) and **Graphs Traversal** (all five graph
    variants). Its graph action cards offer BFS and DFS, plus Dijkstra for Weighted
    Graph and topological sorting for DAG. These four algorithm actions move out
    of Overview; graph editing and value search remain there. Browsing either
@@ -637,7 +637,7 @@ edge IDs through ActionInputRequest in the shared dialog.
 ## Algorithm navigation
 
 Keep algorithm groups separate from the Overview structure groups in
-MenuNavigation. Sorting lists Array and exposes its twenty sorting actions; Graphs Traversal
+MenuNavigation. Sorting lists Array and exposes its twenty-four sorting actions; Graphs Traversal
 lists the existing five graphs and reuses their model, input, sequence, renderer,
 and info implementations. ActionCatalog.getScopedActions controls the visible
 choices and App validates action selection against the selected scope. Keep the
@@ -665,6 +665,7 @@ Also provide Selection Sort, Insertion Sort, Binary Insertion Sort, Merge Sort,
 Quick Sort, Heap Sort, Shell Sort, Counting Sort, Radix Sort, and Bucket Sort.
 Also include TimSort, IntroSort, Dual-Pivot QuickSort, and Block Merge Sort.
 Also include WikiSort, Smoothsort, Tree Sort, Tournament Sort, and Patience Sort.
+Also include Cycle Sort, Comb Sort, Cocktail Shaker Sort, and Gnome Sort.
 Each action owns its component, CSS, sequence, and complexity
 information. Keep model entry points and optional synchronous trace callbacks in
 FixedArray, with array-specific algorithm helpers beside it. Reuse ArraySortingLayout and ArraySortingAnimation for independent
@@ -793,3 +794,50 @@ entry IDs, sort only the playback clone, and commit on the final frame. Reserve
 consistent viewport bounds for growing auxiliary trees and piles throughout
 each animation. Auxiliary copies have separate scene IDs and are removed from
 the final frame; source element counts remain unchanged throughout playback.
+
+Cycle Sort uses the comparison-based variant: count strictly smaller suffix keys
+to locate a held entry's destination, skip equal keys already occupying that
+destination, then write the entry and continue with the displaced entry until
+the cycle closes. Show the held entry above the empty cycle-start slot; retain
+all entry IDs exactly once in every scene. Array writes leave already correct
+values untouched. All time cases are O(n²), including sorted input, because
+every suffix is scanned; average assumes random distinct permutations. Extra
+memory is O(1), and the algorithm is unstable. Do not claim the linear-time
+bound of variants with precomputed destinations for this comparison variant.
+
+Comb Sort uses gap = max(1, floor(gap * 10 / 13)), starting from the array length.
+Do not apply the optional CombSort11 gap adjustment. Make one forward exchange
+pass at each gap, and stop only after a gap-one pass without swaps. Show the
+current gap and both compared entries. Sorted input still requires all shrinking
+gaps, giving O(n log n) best time. Display O(n²) for the average case, assuming
+uniformly random distinct permutations, and explain that it is a conservative
+upper bound rather than a tight growth rate. At most n full gap-one passes give
+O(n²) total work. Retain O(n²) as the worst-case upper bound. Extra memory is
+O(1); distant exchanges make the algorithm unstable.
+Do not show an unqualified "Not established" label or turn a published lower
+bound into a tight average-time claim. For example, Section 5 of
+[Vitányi's survey](https://arxiv.org/pdf/0905.4452) gives Ω(n² / 2^p) for a related
+Dobosiewicz variant with p prescribed passes and an insertion-sort cleanup.
+This lesson uses repeated gap-one bubble passes; its displayed bounds follow
+directly from its own loops rather than assuming that related variant is identical.
+
+Cocktail Shaker Sort alternates forward and backward adjacent sweeps. Each
+forward sweep fixes a maximum at the right boundary; each backward sweep fixes
+a minimum at the left boundary. Shrink the active range and stop after a sweep
+without swaps. Show the direction and finalized prefix/suffix. Ordered input
+takes O(n), random distinct permutations take O(n²) on average, and reverse
+order takes O(n²) in the worst case. Use O(1) extra memory and exchange strictly
+inverted neighbors only, preserving stable ties.
+
+Gnome Sort walks one slot forward when neighboring entries are ordered, or
+exchanges a strictly inverted pair and steps backward. At index zero, turn
+forward. Show forward steps and backtracking without labeling a tentative
+prefix as globally final. Best time is O(n) for ordered input; average assumes
+random distinct permutations and takes O(n²), as does reverse-order worst time.
+Extra memory is O(1), and adjacent strict exchanges preserve stability.
+
+These four actions require no value input, complete empty/singleton arrays in
+O(1), keep fixed slots and entry IDs, and reuse automatic playback with a final
+commit of the sorted clone. Their usage catalogs show educational-example
+notices until practical product use has been verified; do not cite algorithm
+demonstration collections as real products.

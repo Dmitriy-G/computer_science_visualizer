@@ -6,6 +6,26 @@ import type { AlgorithmUsage } from './AlgorithmInformation.ts'
 // Only algorithm scopes receive real-world examples. Overview operations do not.
 export class AlgorithmTechnologyCatalog {
   private static readonly uses: Readonly<Partial<Record<ActionKind, AlgorithmUsage>>> = {
+    'cycle-sort': {
+      technologies: [],
+      products: [],
+      note: 'Cycle Sort is presented here as an educational sorting example. No production use has been verified.',
+    },
+    'comb-sort': {
+      technologies: [],
+      products: [],
+      note: 'Comb Sort is presented here as an educational sorting example. No production use has been verified.',
+    },
+    'cocktail-shaker-sort': {
+      technologies: [],
+      products: [],
+      note: 'Cocktail Shaker Sort is presented here as an educational sorting example. No production use has been verified.',
+    },
+    'gnome-sort': {
+      technologies: [],
+      products: [],
+      note: 'Gnome Sort is presented here as an educational sorting example. No production use has been verified.',
+    },
     'wiki-sort': {
       technologies: [],
       products: [],

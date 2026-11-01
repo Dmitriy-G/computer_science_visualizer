@@ -11,7 +11,7 @@ test('every algorithm has verified sources or an explicit no-verified-use notice
       for (const action of ActionCatalog.getScopedActions(structure.kind, scope)) {
         const usage = AlgorithmTechnologyCatalog.get(structure.kind, action.kind, scope)
         assert.ok(usage, `${structure.kind} / ${action.kind} has real-world information`)
-        if (['selection-sort', 'bucket-sort', 'block-merge-sort', 'wiki-sort', 'smooth-sort', 'tree-sort', 'patience-sort'].includes(action.kind)) {
+        if (['selection-sort', 'bucket-sort', 'block-merge-sort', 'wiki-sort', 'smooth-sort', 'tree-sort', 'patience-sort', 'cycle-sort', 'comb-sort', 'cocktail-shaker-sort', 'gnome-sort'].includes(action.kind)) {
           assert.deepEqual(usage.technologies, [])
           assert.deepEqual(usage.products, [])
           assert.match(usage.note, /No production use.*verified/)
@@ -33,7 +33,7 @@ test('every algorithm has verified sources or an explicit no-verified-use notice
       }
     }
   }
-  assert.deepEqual([...algorithms].sort(), ['binary-insertion-sort', 'block-merge-sort', 'breadth-first', 'bubble-sorting', 'bucket-sort', 'counting-sort', 'depth-first', 'dual-pivot-quick-sort', 'heap-sort', 'insertion-sort', 'intro-sort', 'merge-sort', 'patience-sort', 'quick-sort', 'radix-sort', 'selection-sort', 'shell-sort', 'shortest-path', 'smooth-sort', 'tim-sort', 'topological-sort', 'tournament-sort', 'tree-sort', 'wiki-sort'])
+  assert.deepEqual([...algorithms].sort(), ['binary-insertion-sort', 'block-merge-sort', 'breadth-first', 'bubble-sorting', 'bucket-sort', 'cocktail-shaker-sort', 'comb-sort', 'counting-sort', 'cycle-sort', 'depth-first', 'dual-pivot-quick-sort', 'gnome-sort', 'heap-sort', 'insertion-sort', 'intro-sort', 'merge-sort', 'patience-sort', 'quick-sort', 'radix-sort', 'selection-sort', 'shell-sort', 'shortest-path', 'smooth-sort', 'tim-sort', 'topological-sort', 'tournament-sort', 'tree-sort', 'wiki-sort'])
 })
 
 test('Overview operations never receive algorithm technology examples', () => {

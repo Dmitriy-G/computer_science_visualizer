@@ -20,6 +20,10 @@ import { SmoothsortAnimation } from '../src/components/DataStructures/Linear/Arr
 import { TreeSortAnimation } from '../src/components/DataStructures/Linear/Array/TreeSort/TreeSortAnimation.ts'
 import { TournamentSortAnimation } from '../src/components/DataStructures/Linear/Array/TournamentSort/TournamentSortAnimation.ts'
 import { PatienceSortAnimation } from '../src/components/DataStructures/Linear/Array/PatienceSort/PatienceSortAnimation.ts'
+import { CycleSortAnimation } from '../src/components/DataStructures/Linear/Array/CycleSort/CycleSortAnimation.ts'
+import { CombSortAnimation } from '../src/components/DataStructures/Linear/Array/CombSort/CombSortAnimation.ts'
+import { CocktailShakerSortAnimation } from '../src/components/DataStructures/Linear/Array/CocktailShakerSort/CocktailShakerSortAnimation.ts'
+import { GnomeSortAnimation } from '../src/components/DataStructures/Linear/Array/GnomeSort/GnomeSortAnimation.ts'
 import { ActionInputRequest } from '../src/visualization/ActionInputRequest.ts'
 
 const sorts = [
@@ -42,6 +46,10 @@ const sorts = [
   ['treeSort', 'tree-sort', TreeSortAnimation, true],
   ['tournamentSort', 'tournament-sort', TournamentSortAnimation, true],
   ['patienceSort', 'patience-sort', PatienceSortAnimation, false],
+  ['cycleSort', 'cycle-sort', CycleSortAnimation, false],
+  ['combSort', 'comb-sort', CombSortAnimation, false],
+  ['cocktailShakerSort', 'cocktail-shaker-sort', CocktailShakerSortAnimation, true],
+  ['gnomeSort', 'gnome-sort', GnomeSortAnimation, true],
 ]
 
 const cases = [[], [4], [1, 2, 3, 4], [4, 3, 2, 1], [2, 2, 2], [3, -2, 3, 0, -2], [Number.MAX_SAFE_INTEGER, 0, Number.MIN_SAFE_INTEGER], [2, 2, 1], [4, 1, 3, 1, 2]]
@@ -445,6 +453,99 @@ test('Patience Sort preserves decreasing pile order and exposes its unstable equ
   const originalIds = equal.getEntries().map((entry) => entry.id)
   equal.patienceSort()
   assert.deepEqual(equal.getEntries().map((entry) => entry.id), originalIds.reverse())
+})
+
+test('Cycle Sort minimizes value writes and terminates across duplicate-heavy inputs', () => {
+  for (let encoded = 0; encoded < 3 ** 6; encoded += 1) {
+    let digits = encoded
+    const values = []
+    for (let index = 0; index < 6; index += 1) {
+      values.push(digits % 3 - 1)
+      digits = Math.floor(digits / 3)
+    }
+    const expected = [...values].sort((a, b) => a - b)
+    const model = new FixedArray(values)
+    const ids = new Set(model.getEntries().map((entry) => entry.id))
+    let writes = 0
+    model.cycleSort((event) => { if (event.kind === 'write') writes += 1 })
+    assert.deepEqual(model.getEntries().map((entry) => entry.value), expected)
+    assert.deepEqual(new Set(model.getEntries().map((entry) => entry.id)), ids)
+    assert.equal(writes, values.filter((value, index) => value !== expected[index]).length)
+  }
+  const events = []
+  new FixedArray([2, 2, 1]).cycleSort((event) => events.push(event))
+  assert.ok(events.some((event) => event.label === 'Skip an equal-key destination'))
+  const ordered = []
+  new FixedArray([1, 2, 3, 4, 5]).cycleSort((event) => ordered.push(event))
+  assert.equal(ordered.filter((event) => event.kind === 'compare').length, 10)
+  assert.ok(!ordered.some((event) => event.kind === 'write' || event.kind === 'hold'))
+})
+
+test('Cycle Sort scenes keep the held entry and one empty start slot until a cycle closes', () => {
+  const source = new FixedArray([3, 1, 2, 1])
+  const ids = new Set(source.getEntries().map((entry) => entry.id))
+  const plan = new CycleSortAnimation(source)
+  assert.ok(plan.steps.some((step) => step.scene.nodes.some((node) => node.status === 'HELD')))
+  for (const step of plan.steps) {
+    assert.deepEqual(new Set(step.scene.nodes.map((node) => node.id)), ids)
+    assert.equal(step.scene.nodes.length, source.length)
+    const held = step.scene.nodes.find((node) => node.status === 'HELD')
+    assert.equal(step.scene.slots.filter((slot) => slot.empty).length, held ? 1 : 0)
+  }
+  assert.ok(!plan.steps.at(-1).scene.slots.some((slot) => slot.empty))
+})
+
+test('Comb Sort shrinks past clean wide-gap passes and requires a clean adjacent pass', () => {
+  for (const [length, expected] of [[20, [15, 11, 8, 6, 4, 3, 2, 1]], [14, [10, 7, 5, 3, 2, 1]]]) {
+    const events = []
+    new FixedArray(Array.from({ length }, (_, index) => index)).combSort((event) => events.push(event))
+    assert.deepEqual(events.filter((event) => event.kind === 'gap').map((event) => event.amount), expected)
+    assert.ok(!events.some((event) => event.kind === 'swap'))
+    assert.equal(events.at(-1).label, 'Adjacent pass confirms the order')
+    assert.equal(events.at(-1).frame.sortedPrefix, length)
+  }
+  const information = CombSortAnimation.describe(20)
+  assert.equal(information.time.best, 'O(n log n)')
+  assert.equal(information.time.average, 'O(n²)')
+  assert.equal(information.time.worst, 'O(n²)')
+  assert.match(information.time.explanation, /uniformly random distinct permutations/)
+  assert.match(information.time.explanation, /conservative upper bound/)
+})
+
+test('Cocktail Shaker Sort fixes both boundaries and stops early on ordered input', () => {
+  const values = [5, 4, 3, 2, 1, 0]
+  const expected = [...values].sort((a, b) => a - b)
+  const model = new FixedArray(values)
+  const events = []
+  model.cocktailShakerSort((event) => {
+    events.push(event)
+    if (event.kind !== 'pass') return
+    const current = model.getEntries().map((entry) => entry.value)
+    const prefix = event.frame.sortedPrefix ?? 0
+    const suffix = event.frame.sortedFrom ?? model.length
+    assert.deepEqual(current.slice(0, prefix), expected.slice(0, prefix))
+    assert.deepEqual(current.slice(suffix), expected.slice(suffix))
+  })
+  assert.ok(events.some((event) => event.label === 'Sweep forward'))
+  assert.ok(events.some((event) => event.label === 'Sweep backward'))
+  const ordered = []
+  new FixedArray(expected).cocktailShakerSort((event) => ordered.push(event))
+  assert.equal(ordered.filter((event) => event.kind === 'compare').length, values.length - 1)
+  assert.ok(!ordered.some((event) => event.kind === 'swap' || event.label === 'Sweep backward'))
+})
+
+test('Gnome Sort backtracks to the front and accepts equal neighbors without swaps', () => {
+  const reversed = []
+  new FixedArray([4, 3, 2, 1, 0]).gnomeSort((event) => reversed.push(event))
+  assert.equal(reversed.filter((event) => event.kind === 'swap').length, 10)
+  assert.ok(reversed.some((event) => event.label === 'Step backward'))
+  assert.ok(reversed.some((event) => event.label === 'Turn around at the first slot'))
+  for (const values of [[0, 1, 2, 3, 4], [2, 2, 2, 2, 2]]) {
+    const events = []
+    new FixedArray(values).gnomeSort((event) => events.push(event))
+    assert.equal(events.filter((event) => event.kind === 'compare').length, values.length - 1)
+    assert.ok(!events.some((event) => event.kind === 'swap'))
+  }
 })
 
 test('auxiliary sorting diagrams reserve stable bounds and finish with only array nodes', () => {
