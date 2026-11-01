@@ -4,8 +4,8 @@ import { FixedArray } from '../FixedArray.ts'
 export class ShellSortAnimation extends ArraySortingAnimation {
   public static describe(size: number) {
     return this.information('Shell Sort', 'Perform insertion by exchanges on gap-separated subsequences using Knuth gaps 1, 4, 13, ... in decreasing order, ending at gap one. This variant is unstable.', size,
-      ['O(n log n)', 'Not established', 'O(n^(3/2))'],
-      'Best: sorted input needs a linear scan per gap across a logarithmic number of Knuth gaps. A tight average-order bound for this gap sequence is not established; no average bound is asserted. Worst-case comparisons and exchanges are O(n^(3/2)). Empty and singleton inputs finish in O(1).',
+      ['O(n log n)', 'O(n^(3/2))', 'O(n^(3/2))'],
+      'Best: sorted input needs a linear scan per gap across a logarithmic number of Knuth gaps. Average: O(n^(3/2)) is a conservative upper bound for any input distribution, inherited from the proven worst-case bound for Knuth gaps. A tight expected growth rate remains unknown; this is not a claim that the average equals the worst case. Worst-case comparisons and exchanges are O(n^(3/2)). Empty and singleton inputs finish in O(1).',
       'O(1)', 'Only the current gap, indices, and one swap entry. Gapped subsequences share the original fixed allocation.')
   }
 

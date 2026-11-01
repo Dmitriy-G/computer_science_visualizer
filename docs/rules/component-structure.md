@@ -231,6 +231,10 @@ BogoArraySort owns seeded shuffles, the attempt budget, and rollback on failure.
 SleepArraySort owns the virtual deadline heap and never creates real timers.
 ActionMenu receives an explicit
 ActionScope, and App preserves the selected scope independently of menu browsing.
+ActionOrdering belongs beside ActionMenu. It sorts copies of algorithm action
+choices alphabetically or by average time/memory growth using action-owned
+AlgorithmInformation supplied by App. Keep catalog order and Overview actions
+unchanged; sort selection is local menu state and does not affect playback.
 Algorithm structure buttons show at most two example names in one truncated line;
 keep the complete list in the independently scrolling action panel.
 Do not duplicate graph models or sequence classes to expose traversal examples

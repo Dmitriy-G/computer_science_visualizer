@@ -378,7 +378,9 @@ export default class MainMenu extends Component<
               aria-label="Close menu"
               onClick={this.props.onClose}
             >
-              ×
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="m5 5 14 14M19 5 5 19" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+              </svg>
             </button>
           </div>
           <h2 id="menu-title" ref={this.title} tabIndex={-1}>

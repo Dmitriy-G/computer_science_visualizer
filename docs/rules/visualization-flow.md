@@ -32,6 +32,17 @@
    not execution mode or actual threads in this visualizer. Preserve button
    width and the existing 112px height, leaving space for two-line titles and
    descriptions. Overview operation buttons do not receive algorithm-use tags.
+   Only algorithm action lists have a sorting icon immediately left of the
+   large structure-info button. Offer exactly three choices: Alphabetical
+   (A–Z, default), Average time (fast to slow), and Average memory (less to more).
+   Read average bounds from the same action information used by the info dialog;
+   never instantiate an animation to obtain ordering data. Compare asymptotic
+   growth families with bounded digit/radix/range parameters held fixed, use A–Z
+   for ties, and put unestablished or unavailable bounds after known finite
+   bounds. Explain these conventions in the control tooltip. Keep action sizes,
+   selected action, playback, and Overview catalog order unchanged. Use a
+   keyboard-accessible picker with visible focus; selecting an order does not
+   start an algorithm.
 5. Selecting a supported value/index action on a linear structure, tree, graph, or
    hash-based structure opens its input dialog.
    Confirming valid input starts its animation. Actions without an argument run
@@ -709,8 +720,12 @@ Heap Sort builds a max-heap bottom up and iteratively sifts after extracting eac
 maximum into the sorted suffix. It is unstable, with O(1) extra storage, O(n)
 best time for all-equal keys, and O(n log n) average/worst time. Shell Sort uses
 decreasing Knuth gaps and gapped insertion by exchanges. It is unstable, uses
-O(1) extra space, and takes O(n log n) best and O(n^(3/2)) worst time. Do not assert
-a tight average bound for these gaps; display that it is not established.
+O(1) extra space, and takes O(n log n) best and O(n^(3/2)) worst time. Display
+O(n^(3/2)) for the average as a conservative upper bound valid for every input
+distribution. Explain that it follows from the proven worst-case bound and
+that a tight expected growth rate remains unknown. Do not label this upper
+bound as a tight average rate. The action-ordering control uses this same value.
+Primary reference: [Princeton Shellsort documentation](https://algs4.cs.princeton.edu/code/javadoc/edu/princeton/cs/algs4/Shell.html).
 
 Counting Sort uses a stable output array and key-relative counts and offsets.
 Limit its inclusive max - min + 1 range to 4,096 before allocation; reject wider

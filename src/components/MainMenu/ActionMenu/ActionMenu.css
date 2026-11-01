@@ -34,6 +34,46 @@
   font-size: 12px;
   line-height: 1.6;
 }
+.action-menu-topline {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.action-menu-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.action-sort-control {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #dce5f0;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--accent);
+}
+.action-sort-control:hover {
+  border-color: #9bbde8;
+  background: #ecf3ff;
+}
+.action-sort-control:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.action-sort-select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  opacity: 0;
+  cursor: pointer;
+}
 .action-menu-back-button {
   justify-self: start;
   text-align: left;

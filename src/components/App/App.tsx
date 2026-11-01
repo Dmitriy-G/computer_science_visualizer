@@ -568,7 +568,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     return realWorldUsage ? { ...information, realWorldUsage } : information
   }
 
-  private describeActionDetails(action: ActionKind): AlgorithmInformation | null {
+  private describeActionDetails = (action: ActionKind): AlgorithmInformation | null => {
     const graph = this.state.selected ? this.graphModels.get(this.state.selected) : undefined
     if (graph) return GraphFeatures.describe(action, graph)
     const additional = this.state.selected ? this.additionalTrees.get(this.state.selected) : undefined
@@ -1217,6 +1217,7 @@ export default class App extends Component<Record<string, never>, AppState> {
                 onActionSelected={this.selectAction}
                 onActionInformationRequested={this.showActionInformation}
                 onStructureInformationRequested={this.showStructureInformation}
+                informationForAction={this.describeActionDetails}
               />
             )}
           </Renderer>

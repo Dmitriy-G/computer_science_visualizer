@@ -1,11 +1,14 @@
 import { PureComponent, createRef } from 'react'
-import type { MouseEvent, ReactNode } from 'react'
+import type { ChangeEvent, MouseEvent, ReactNode } from 'react'
 import { ActionCatalog } from '../../../visualization/ActionCatalog.ts'
 import { ActionInputRequest } from '../../../visualization/ActionInputRequest.ts'
 import { AlgorithmTechnologyCatalog } from '../../../visualization/AlgorithmTechnologyCatalog.ts'
 import type { ActionKind, ActionScope } from '../../../visualization/ActionCatalog.ts'
 import { StructureCatalog } from '../../../visualization/StructureCatalog.ts'
 import type { StructureKind } from '../../../visualization/Scene.ts'
+import type { AlgorithmInformation } from '../../../visualization/AlgorithmInformation.ts'
+import { ActionOrdering } from './ActionOrdering.ts'
+import type { ActionOrder } from './ActionOrdering.ts'
 import './ActionMenu.css'
 
 interface ActionMenuProps {
@@ -17,12 +20,18 @@ interface ActionMenuProps {
   readonly onActionSelected: (action: ActionKind) => void
   readonly onActionInformationRequested: (action: ActionKind) => void
   readonly onStructureInformationRequested: () => void
+  readonly informationForAction: (action: ActionKind) => AlgorithmInformation | null
+}
+
+interface ActionMenuState {
+  readonly order: ActionOrder
 }
 
 export default class ActionMenu extends PureComponent<
   ActionMenuProps,
-  Record<string, never>
+  ActionMenuState
 > {
+  public state: ActionMenuState = { order: 'alphabetical' }
   private readonly firstAction = createRef<HTMLButtonElement>()
 
   public focusFirstAction(): void {
@@ -40,7 +49,9 @@ export default class ActionMenu extends PureComponent<
 
   private renderActions(): ReactNode[] {
     const buttons: ReactNode[] = []
-    for (const action of ActionCatalog.getScopedActions(this.props.structure, this.props.scope)) {
+    const choices = ActionCatalog.getScopedActions(this.props.structure, this.props.scope)
+    const actions = this.props.scope === 'overview' ? choices : ActionOrdering.arrange(choices, this.state.order, this.props.informationForAction)
+    for (const action of actions) {
       const selected = action.kind === this.props.selectedAction
       const requiresInput = ActionInputRequest.requiresInput(this.props.structure, action.kind)
       const usageLabel = AlgorithmTechnologyCatalog.getLabel(this.props.structure, action.kind, this.props.scope)
@@ -95,6 +106,11 @@ export default class ActionMenu extends PureComponent<
     }
   }
 
+  private changeOrder = (event: ChangeEvent<HTMLSelectElement>): void => {
+    const order = event.currentTarget.value
+    if (order === 'alphabetical' || order === 'average-time' || order === 'average-memory') this.setState({ order })
+  }
+
   public render() {
     const group = StructureCatalog.getGroup(StructureCatalog.getGroupForStructure(this.props.structure))
     const traversal = this.props.scope === 'graph-traversal'
@@ -112,19 +128,33 @@ export default class ActionMenu extends PureComponent<
           >
             <span aria-hidden="true">←</span> {backTitle}
           </button>
-          <button
-            className="action-info-button structure-info-button"
-            onClick={this.props.onStructureInformationRequested}
-            aria-label={`About ${StructureCatalog.getName(this.props.structure)}`}
-            aria-haspopup="dialog"
-            aria-controls="structure-overview"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-              <circle cx="12" cy="12" r="9" />
-              <path d="M12 11v6" strokeLinecap="round" />
-              <circle cx="12" cy="7.5" r="0.8" fill="currentColor" />
-            </svg>
-          </button>
+          <div className="action-menu-tools">
+            {(sorting || traversal) && (
+              <label className="action-sort-control" title={`Sort algorithm actions: ${ActionOrdering.labels[this.state.order]}. ${ActionOrdering.complexityHint}`}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M3 6h10M3 12h7M3 18h4M18 5v14m-3-3 3 3 3-3" />
+                </svg>
+                <select className="action-sort-select" aria-label="Sort algorithm actions" value={this.state.order} onChange={this.changeOrder}>
+                  <option value="alphabetical">{ActionOrdering.labels.alphabetical}</option>
+                  <option value="average-time">{ActionOrdering.labels['average-time']}</option>
+                  <option value="average-memory">{ActionOrdering.labels['average-memory']}</option>
+                </select>
+              </label>
+            )}
+            <button
+              className="action-info-button structure-info-button"
+              onClick={this.props.onStructureInformationRequested}
+              aria-label={`About ${StructureCatalog.getName(this.props.structure)}`}
+              aria-haspopup="dialog"
+              aria-controls="structure-overview"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 11v6" strokeLinecap="round" />
+                <circle cx="12" cy="7.5" r="0.8" fill="currentColor" />
+              </svg>
+            </button>
+          </div>
         </div>
         <h2 id="action-menu-title">{StructureCatalog.getName(this.props.structure)}</h2>
         <p className="action-menu-summary">{sorting ? 'Choose a sorting algorithm to explore step by step.' : traversal ? 'Choose a graph algorithm to explore step by step.' : 'Choose an action to explore step by step.'}</p>

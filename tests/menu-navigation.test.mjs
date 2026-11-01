@@ -3,6 +3,68 @@ import { test } from 'node:test'
 import { MenuNavigation } from '../src/components/MainMenu/MenuNavigation.ts'
 import { StructureCatalog } from '../src/visualization/StructureCatalog.ts'
 import { ActionCatalog } from '../src/visualization/ActionCatalog.ts'
+import { ActionOrdering } from '../src/components/MainMenu/ActionMenu/ActionOrdering.ts'
+import { ShellSortAnimation } from '../src/components/DataStructures/Linear/Array/ShellSort/ShellSortAnimation.ts'
+
+test('algorithm action ordering is alphabetical by default without changing catalog order', () => {
+  const actions = ActionCatalog.getScopedActions('array', 'sorting')
+  const original = [...actions]
+  const ordered = ActionOrdering.arrange(actions, 'alphabetical', () => { throw new Error('Alphabetical order must not need complexity information') })
+  assert.equal(ordered[0].title, 'American Flag Sort')
+  assert.equal(ordered.at(-1).title, 'WikiSort')
+  assert.ok(ordered.findIndex((action) => action.title === 'Binary Insertion Sort') < ordered.findIndex((action) => action.title === 'Bitonic Sort'))
+  assert.deepEqual(actions, original)
+  assert.notEqual(ordered, actions)
+})
+
+test('average time and memory use separate growth orders with alphabetical ties', () => {
+  const actions = [
+    { kind: 'shell-sort', title: 'Shell Sort' },
+    { kind: 'quick-sort', title: 'Quick Sort' },
+    { kind: 'cycle-sort', title: 'Cycle Sort' },
+    { kind: 'counting-sort', title: 'Counting Sort' },
+    { kind: 'bogo-sort', title: 'Bogo Sort' },
+    { kind: 'american-flag-sort', title: 'American Flag Sort' },
+  ]
+  const costs = new Map([
+    ['shell-sort', [ShellSortAnimation.describe(12).time.average, ShellSortAnimation.describe(12).memory.average]],
+    ['quick-sort', ['O(n log n)', 'O(log n)']],
+    ['cycle-sort', ['O(n²)', 'O(1)']],
+    ['counting-sort', ['O(n + k)', 'O(n + k)']],
+    ['bogo-sort', ['O(n · n!)', 'O(n)']],
+    ['american-flag-sort', ['O(nd)', 'O(d)']],
+  ])
+  const calls = new Map()
+  const describe = (action) => {
+    calls.set(action, (calls.get(action) ?? 0) + 1)
+    const [time, memory] = costs.get(action)
+    return { time: { average: time }, memory: { average: memory } }
+  }
+  const original = [...actions]
+  assert.deepEqual(ActionOrdering.arrange(actions, 'average-time', describe).map((action) => action.title), ['American Flag Sort', 'Counting Sort', 'Quick Sort', 'Shell Sort', 'Cycle Sort', 'Bogo Sort'])
+  assert.ok([...calls.values()].every((count) => count === 1))
+  calls.clear()
+  assert.deepEqual(ActionOrdering.arrange(actions, 'average-memory', describe).map((action) => action.title), ['American Flag Sort', 'Cycle Sort', 'Shell Sort', 'Quick Sort', 'Bogo Sort', 'Counting Sort'])
+  assert.ok([...calls.values()].every((count) => count === 1))
+  assert.deepEqual(actions, original)
+})
+
+test('recursive, factorial, graph, and unavailable bounds receive explicit ordering', () => {
+  const fixtures = [
+    ['bogo-sort', 'Bogo Sort', 'O(n · n!)'],
+    ['slow-sort', 'Slow Sort', 'O(n^(log₂ n))'],
+    ['stooge-sort', 'Stooge Sort', 'O(n^2.71)'],
+    ['bitonic-sort', 'Bitonic Sort', 'O(n log² n)'],
+    ['quick-sort', 'Quick Sort', 'O(n log n)'],
+    ['heap-sort', 'Heap Sort', null],
+  ]
+  const actions = fixtures.map(([kind, title]) => ({ kind, title }))
+  const costs = new Map(fixtures.map(([kind, , cost]) => [kind, cost]))
+  const describe = (action) => costs.get(action) ? { time: { average: costs.get(action) } } : null
+  assert.deepEqual(ActionOrdering.arrange(actions, 'average-time', describe).map((action) => action.kind), ['quick-sort', 'bitonic-sort', 'stooge-sort', 'slow-sort', 'bogo-sort', 'heap-sort'])
+  const graph = [{ kind: 'shortest-path', title: 'Dijkstra shortest path' }, { kind: 'depth-first', title: 'Depth-first traversal' }, { kind: 'breadth-first', title: 'Breadth-first traversal' }]
+  assert.deepEqual(ActionOrdering.arrange(graph, 'average-time', (action) => ({ time: { average: action === 'shortest-path' ? 'O(V^2 + E)' : 'O(V + E)' } })).map((action) => action.kind), ['breadth-first', 'depth-first', 'shortest-path'])
+})
 
 test('Overview contains exactly the requested structure groups', () => {
   assert.deepEqual(StructureCatalog.groups.map((group) => group.name), ['Linear', 'Trees', 'Graphs', 'Hash-based'])

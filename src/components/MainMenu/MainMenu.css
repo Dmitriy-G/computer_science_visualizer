@@ -29,8 +29,12 @@
   gap: 16px;
 }
 .menu-topline .icon-button {
-  font-size: 24px;
-  font-weight: 300;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.menu-topline .icon-button svg {
+  display: block;
 }
 .main-menu h2 {
   font-size: 30px;
