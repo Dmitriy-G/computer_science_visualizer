@@ -24,6 +24,11 @@ import { CycleSortAnimation } from '../src/components/DataStructures/Linear/Arra
 import { CombSortAnimation } from '../src/components/DataStructures/Linear/Array/CombSort/CombSortAnimation.ts'
 import { CocktailShakerSortAnimation } from '../src/components/DataStructures/Linear/Array/CocktailShakerSort/CocktailShakerSortAnimation.ts'
 import { GnomeSortAnimation } from '../src/components/DataStructures/Linear/Array/GnomeSort/GnomeSortAnimation.ts'
+import { OddEvenSortAnimation } from '../src/components/DataStructures/Linear/Array/OddEvenSort/OddEvenSortAnimation.ts'
+import { OddEvenMergeSortAnimation } from '../src/components/DataStructures/Linear/Array/OddEvenMergeSort/OddEvenMergeSortAnimation.ts'
+import { BitonicSortAnimation } from '../src/components/DataStructures/Linear/Array/BitonicSort/BitonicSortAnimation.ts'
+import { PairwiseSortingNetworkAnimation } from '../src/components/DataStructures/Linear/Array/PairwiseSortingNetwork/PairwiseSortingNetworkAnimation.ts'
+import { SampleSortAnimation } from '../src/components/DataStructures/Linear/Array/SampleSort/SampleSortAnimation.ts'
 import { ActionInputRequest } from '../src/visualization/ActionInputRequest.ts'
 
 const sorts = [
@@ -50,6 +55,11 @@ const sorts = [
   ['combSort', 'comb-sort', CombSortAnimation, false],
   ['cocktailShakerSort', 'cocktail-shaker-sort', CocktailShakerSortAnimation, true],
   ['gnomeSort', 'gnome-sort', GnomeSortAnimation, true],
+  ['oddEvenSort', 'odd-even-sort', OddEvenSortAnimation, true],
+  ['oddEvenMergeSort', 'odd-even-merge-sort', OddEvenMergeSortAnimation, false],
+  ['bitonicSort', 'bitonic-sort', BitonicSortAnimation, false],
+  ['pairwiseSortingNetwork', 'pairwise-sorting-network', PairwiseSortingNetworkAnimation, false],
+  ['sampleSort', 'sample-sort', SampleSortAnimation, true],
 ]
 
 const cases = [[], [4], [1, 2, 3, 4], [4, 3, 2, 1], [2, 2, 2], [3, -2, 3, 0, -2], [Number.MAX_SAFE_INTEGER, 0, Number.MIN_SAFE_INTEGER], [2, 2, 1], [4, 1, 3, 1, 2]]
@@ -546,6 +556,128 @@ test('Gnome Sort backtracks to the front and accepts equal neighbors without swa
     assert.equal(events.filter((event) => event.kind === 'compare').length, values.length - 1)
     assert.ok(!events.some((event) => event.kind === 'swap'))
   }
+})
+
+test('Odd-Even Sort checks both parities before stopping', () => {
+  const model = new FixedArray([1, 3, 2, 4])
+  const events = []
+  model.oddEvenSort((event) => events.push(event))
+  assert.deepEqual(model.getEntries().map((entry) => entry.value), [1, 2, 3, 4])
+  assert.ok(events.filter((event) => event.kind === 'stage').length >= 4)
+  assert.equal(events.at(-1).label, 'Both parities are ordered')
+  for (const values of [[1, 2, 3, 4], [2, 2, 2, 2]]) {
+    const trace = []
+    new FixedArray(values).oddEvenSort((event) => trace.push(event))
+    assert.equal(trace.filter((event) => event.kind === 'compare').length, values.length - 1)
+    assert.ok(!trace.some((event) => event.kind === 'swap'))
+  }
+})
+
+test('sorting networks sort every binary input through ten wires, including non-power-of-two lengths', () => {
+  for (let length = 0; length <= 10; length += 1) {
+    for (let mask = 0; mask < 2 ** length; mask += 1) {
+      const values = Array.from({ length }, (_, index) => Math.floor(mask / 2 ** index) % 2)
+      const expected = [...values].sort((a, b) => a - b)
+      for (const method of ['oddEvenMergeSort', 'bitonicSort', 'pairwiseSortingNetwork']) {
+        const model = new FixedArray(values)
+        model[method]()
+        assert.deepEqual(model.getEntries().map((entry) => entry.value), expected, `${method}: n=${length}, bits=${mask}`)
+      }
+    }
+  }
+})
+
+test('network comparator schedules depend only on length and stay on real wires', () => {
+  for (const method of ['oddEvenMergeSort', 'bitonicSort', 'pairwiseSortingNetwork']) {
+    let expected
+    for (const values of [Array.from({ length: 10 }, (_, index) => index), Array.from({ length: 10 }, (_, index) => 9 - index), new Array(10).fill(7)]) {
+      const trace = []
+      new FixedArray(values)[method]((event) => trace.push(event))
+      const schedule = trace.filter((event) => event.kind === 'compare').map((event) => event.frame.comparator)
+      if (!expected) expected = schedule
+      else assert.deepEqual(schedule, expected, method)
+      for (const comparator of schedule) {
+        assert.ok(comparator.first >= 0 && comparator.first < comparator.second)
+        assert.ok(comparator.second < values.length)
+      }
+    }
+  }
+  const comparisons = (method) => {
+    const trace = []
+    new FixedArray([7, 6, 5, 4, 3, 2, 1, 0])[method]((event) => { if (event.kind === 'compare') trace.push([event.index, event.other]) })
+    return trace
+  }
+  const oddEven = comparisons('oddEvenMergeSort')
+  const pairwise = comparisons('pairwiseSortingNetwork')
+  assert.equal(oddEven.length, 19)
+  assert.equal(pairwise.length, 19)
+  assert.equal(comparisons('bitonicSort').length, 24)
+  assert.deepEqual(pairwise.slice(0, 4), [[0, 1], [2, 3], [4, 5], [6, 7]])
+  assert.notDeepEqual(pairwise, oddEven)
+})
+
+test('network scenes show active comparator links, preserve real slots, and clear links on commit', () => {
+  for (const Animation of [OddEvenSortAnimation, OddEvenMergeSortAnimation, BitonicSortAnimation, PairwiseSortingNetworkAnimation]) {
+    const source = new FixedArray([5, 2, 8, 0, 3, 1, 9, 4, 7, 6])
+    const ids = new Set(source.getEntries().map((entry) => entry.id))
+    const plan = new Animation(source)
+    assert.ok(plan.steps.some((step) => step.scene.edges.some((edge) => edge.id === 'array-comparator')))
+    for (const step of plan.steps) {
+      assert.equal(step.scene.slots.length, source.length)
+      assert.deepEqual(new Set(step.scene.nodes.map((node) => node.id)), ids)
+      for (const edge of step.scene.edges) assert.ok(ids.has(edge.from) && ids.has(edge.to))
+    }
+    if (Animation === BitonicSortAnimation) assert.ok(plan.steps.some((step) => step.scene.edges.some((edge) => edge.label === 'DESC')))
+    assert.equal(plan.steps.at(-1).scene.edges.length, 0)
+  }
+})
+
+test('Sample Sort distributes by sampled key ranges and stably handles skewed and equal buckets', () => {
+  for (const values of [[9, 0, 8, 1, 7, 2, 6, 3, 5, 4], new Array(17).fill(3), [Number.MAX_SAFE_INTEGER, -1, Number.MIN_SAFE_INTEGER, -1, 0], [...new Array(20).fill(0), -1, 1]]) {
+    const model = new FixedArray(values)
+    const original = model.getEntries()
+    const events = []
+    model.sampleSort((event) => {
+      events.push(event)
+      if (event.kind !== 'gather') assert.deepEqual(model.getEntries(), original)
+      if (event.kind !== 'distribute') return
+      const { buckets, splitters } = event.frame
+      assert.ok(buckets.length >= 2 && buckets.length <= 4)
+      for (let bucket = 0; bucket < buckets.length; bucket += 1) {
+        for (const entry of buckets[bucket]) {
+          if (bucket > 0) assert.ok(entry.value >= splitters[bucket - 1].value)
+          if (bucket < splitters.length) assert.ok(entry.value < splitters[bucket].value)
+        }
+      }
+    })
+    assert.equal(events.filter((event) => event.kind === 'distribute').length, values.length)
+    assert.equal(new Set(events.filter((event) => event.kind === 'distribute').map((event) => event.index)).size, values.length)
+    assert.deepEqual(model.getEntries(), [...original].sort((a, b) => a.value - b.value))
+    const output = events.findLast((event) => event.kind === 'write').frame.output
+    assert.deepEqual(output, model.getEntries())
+  }
+})
+
+test('Sample Sort scenes separate samples, splitters, buckets, and output with independent stable IDs', () => {
+  const plan = new SampleSortAnimation(FixedArray.createSortingDefault())
+  for (const prefix of ['sample-', 'splitter-', 'bucket-', 'output-']) {
+    assert.ok(plan.steps.some((step) => step.scene.nodes.some((node) => node.id.startsWith(prefix))))
+  }
+  for (const step of plan.steps) {
+    assert.equal(step.scene.width, plan.steps[0].scene.width)
+    assert.equal(step.scene.height, plan.steps[0].scene.height)
+    assert.equal(new Set(step.scene.nodes.map((node) => node.id)).size, step.scene.nodes.length)
+    const rows = new Map()
+    for (const node of step.scene.nodes) {
+      const prefix = node.id.split('-')[0]
+      if (prefix !== 'array') rows.set(prefix, node.y)
+    }
+    assert.equal(new Set(rows.values()).size, rows.size)
+  }
+  const before = JSON.stringify(plan.steps)
+  plan.result.sampleSort()
+  assert.equal(JSON.stringify(plan.steps), before)
+  assert.ok(plan.steps.at(-1).scene.nodes.every((node) => node.id.startsWith('array-element-')))
 })
 
 test('auxiliary sorting diagrams reserve stable bounds and finish with only array nodes', () => {

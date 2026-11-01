@@ -5,7 +5,7 @@ export type ActionScope = 'overview' | 'graph-traversal' | 'sorting'
 
 export type ActionKind = ArraySortingActionKind | 'insert-middle' | 'insert-start' | 'insert-end' | 'insert' | 'search-value' | 'search-index' | 'delete-value' | 'push' | 'pop' | 'peek' | 'clear' | 'enqueue' | 'dequeue' | 'push-front' | 'push-back' | 'pop-front' | 'pop-back' | 'peek-front' | 'peek-back' | 'delete-start' | 'delete-end' | 'range-from-value' | 'starts-with' | 'extract-min' | 'update-index' | 'add-index' | 'prefix-sum' | 'range-sum' | 'search-overlap' | 'flush' | 'compact' | 'build-expression' | 'evaluate' | 'traverse-preorder' | 'traverse-inorder' | 'traverse-postorder' | 'add-vertex' | 'add-edge' | 'remove-edge' | 'breadth-first' | 'depth-first' | 'shortest-path' | 'topological-sort' | 'update-weight' | 'bubble-sorting'
 
-export type ArraySortingActionKind = 'selection-sort' | 'insertion-sort' | 'binary-insertion-sort' | 'merge-sort' | 'quick-sort' | 'heap-sort' | 'shell-sort' | 'counting-sort' | 'radix-sort' | 'bucket-sort' | 'tim-sort' | 'intro-sort' | 'dual-pivot-quick-sort' | 'block-merge-sort' | 'wiki-sort' | 'smooth-sort' | 'tree-sort' | 'tournament-sort' | 'patience-sort' | 'cycle-sort' | 'comb-sort' | 'cocktail-shaker-sort' | 'gnome-sort'
+export type ArraySortingActionKind = 'selection-sort' | 'insertion-sort' | 'binary-insertion-sort' | 'merge-sort' | 'quick-sort' | 'heap-sort' | 'shell-sort' | 'counting-sort' | 'radix-sort' | 'bucket-sort' | 'tim-sort' | 'intro-sort' | 'dual-pivot-quick-sort' | 'block-merge-sort' | 'wiki-sort' | 'smooth-sort' | 'tree-sort' | 'tournament-sort' | 'patience-sort' | 'cycle-sort' | 'comb-sort' | 'cocktail-shaker-sort' | 'gnome-sort' | 'odd-even-sort' | 'odd-even-merge-sort' | 'bitonic-sort' | 'pairwise-sorting-network' | 'sample-sort'
 
 export interface ActionChoice {
   readonly kind: ActionKind
@@ -41,6 +41,11 @@ export class ActionCatalog {
         { kind: 'comb-sort', title: 'Comb Sort', description: 'Exchange entries across shrinking gaps, then clean up adjacent pairs.' },
         { kind: 'cocktail-shaker-sort', title: 'Cocktail Shaker Sort', description: 'Sweep adjacent pairs forward and backward to fix both boundaries.' },
         { kind: 'gnome-sort', title: 'Gnome Sort', description: 'Walk forward over ordered neighbors and backtrack after an exchange.' },
+        { kind: 'odd-even-sort', title: 'Odd-Even Sort', description: 'Alternate even and odd adjacent pairs until both phases are ordered.' },
+        { kind: 'odd-even-merge-sort', title: 'Odd-Even Merge Sort', description: 'Sort halves and combine them through Batcher’s odd-even merge network.' },
+        { kind: 'bitonic-sort', title: 'Bitonic Sort', description: 'Build opposite-direction ranges and merge them with a comparator network.' },
+        { kind: 'pairwise-sorting-network', title: 'Pairwise Sorting Network', description: 'Order pairs and combine their lower and upper members through fixed comparisons.' },
+        { kind: 'sample-sort', title: 'Sample Sort', description: 'Sample splitters, distribute into buckets, sort locally, and concatenate.' },
       ]
       : []
     const actions = this.getActions(structure)

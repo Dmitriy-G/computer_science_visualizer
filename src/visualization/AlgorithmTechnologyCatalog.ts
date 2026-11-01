@@ -6,6 +6,31 @@ import type { AlgorithmUsage } from './AlgorithmInformation.ts'
 // Only algorithm scopes receive real-world examples. Overview operations do not.
 export class AlgorithmTechnologyCatalog {
   private static readonly uses: Readonly<Partial<Record<ActionKind, AlgorithmUsage>>> = {
+    'odd-even-sort': {
+      technologies: [],
+      products: [],
+      note: 'This Odd-Even Sort with early termination is an educational example. No production use of this exact variant has been verified.',
+    },
+    'odd-even-merge-sort': {
+      technologies: [],
+      products: [],
+      note: 'This sequential Odd-Even Merge Sort is an educational example. No production use of this exact variant has been verified. GPU tutorial implementations alone do not establish product use.',
+    },
+    'bitonic-sort': {
+      technologies: [{ name: 'PyTorch: SmallBitonicSort CUDA path', url: 'https://github.com/pytorch/pytorch/blob/main/aten/src/ATen/native/cuda/Sort.cu', usage: 'PyTorch dispatches very small unstable tensor-slice sorts to its bitonic CUDA kernel. That parallel kernel uses power-of-two shared storage and validity flags; this lesson uses a sequential arbitrary-length construction without padding.' }],
+      products: [{ name: 'PyTorch', url: 'https://github.com/pytorch/pytorch/blob/main/aten/src/ATen/native/cuda/Sort.cu', usage: 'Uses bitonic sorting for its small unstable CUDA tensor-sorting path.' }],
+      note: 'The verified use is PyTorch’s small CUDA sort path, not a claim that every tensor sort uses Bitonic Sort. The diagram uses Lang’s arbitrary-length variant: https://www.hwlang.de/algorithmen/sortieren/bitonic/oddn.htm.',
+    },
+    'pairwise-sorting-network': {
+      technologies: [],
+      products: [],
+      note: 'Parberry’s Pairwise Sorting Network is presented here as an educational example. No production use of this exact recursive teaching variant has been verified.',
+    },
+    'sample-sort': {
+      technologies: [],
+      products: [],
+      note: 'This stable sequential Sample Sort with bounded fan-out is an educational example. No production use of this exact variant has been verified. Production parallel sample sorts can use different sampling, partitioning, and local-sorting strategies.',
+    },
     'cycle-sort': {
       technologies: [],
       products: [],

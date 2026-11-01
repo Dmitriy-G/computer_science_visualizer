@@ -59,9 +59,9 @@ test('algorithm subcategories provide sorting and graph examples with reversible
   assert.equal(algorithms.screen, 'algorithms')
 })
 
-test('Sorting exposes twenty-four Array algorithms and keeps Overview actions separate', () => {
+test('Sorting exposes twenty-nine Array algorithms and keeps Overview actions separate', () => {
   const sorting = ActionCatalog.getScopedActions('array', 'sorting')
-  assert.deepEqual(sorting.map((action) => action.title), ['Bubble Sort', 'Selection Sort', 'Insertion Sort', 'Binary Insertion Sort', 'Merge Sort', 'Quick Sort', 'Heap Sort', 'Shell Sort', 'Counting Sort', 'Radix Sort', 'Bucket Sort', 'TimSort', 'IntroSort', 'Dual-Pivot QuickSort', 'Block Merge Sort', 'WikiSort', 'Smoothsort', 'Tree Sort', 'Tournament Sort', 'Patience Sort', 'Cycle Sort', 'Comb Sort', 'Cocktail Shaker Sort', 'Gnome Sort'])
+  assert.deepEqual(sorting.map((action) => action.title), ['Bubble Sort', 'Selection Sort', 'Insertion Sort', 'Binary Insertion Sort', 'Merge Sort', 'Quick Sort', 'Heap Sort', 'Shell Sort', 'Counting Sort', 'Radix Sort', 'Bucket Sort', 'TimSort', 'IntroSort', 'Dual-Pivot QuickSort', 'Block Merge Sort', 'WikiSort', 'Smoothsort', 'Tree Sort', 'Tournament Sort', 'Patience Sort', 'Cycle Sort', 'Comb Sort', 'Cocktail Shaker Sort', 'Gnome Sort', 'Odd-Even Sort', 'Odd-Even Merge Sort', 'Bitonic Sort', 'Pairwise Sorting Network', 'Sample Sort'])
   for (const action of sorting) assert.ok(!ActionCatalog.getScopedActions('array', 'overview').some((choice) => choice.kind === action.kind))
   for (const structure of StructureCatalog.structures) {
     if (structure.kind !== 'array') assert.deepEqual(ActionCatalog.getScopedActions(structure.kind, 'sorting'), [])

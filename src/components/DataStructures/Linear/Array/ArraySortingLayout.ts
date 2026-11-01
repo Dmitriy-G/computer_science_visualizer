@@ -10,7 +10,7 @@ export class ArraySortingLayout {
     const slots: SceneSlot[] = []
     const edges: SceneEdge[] = []
     let width = scene.width
-    let height = frame.distribution ? 780 : 600
+    let height = frame.sampleSort ? 1140 : frame.distribution ? 780 : 600
     const active = new Set(frame.activeIndices ?? [])
     const sorted = new Set(frame.sortedIndices ?? [])
     const sourceSlots = scene.slots ?? []
@@ -28,10 +28,24 @@ export class ArraySortingLayout {
       slots.push({ ...sourceSlots[index], empty, highlighted })
     }
     if (frame.output) {
+      const y = frame.sampleSort ? 980 : 440
       for (let index = 0; index < frame.output.length; index += 1) {
         const entry = frame.output[index]
-        if (entry) nodes.push({ ...entry, id: `output-${entry.id}`, x: 80 + index * 92, y: 440, label: '', tone: 'visited', status: 'OUTPUT', opacity: 1 })
-        slots.push({ id: `output-slot-${index}`, x: 80 + index * 92, y: 440, label: `output [${index}]`, empty: entry === null, highlighted: false, opacity: 1 })
+        if (entry) nodes.push({ ...entry, id: `output-${entry.id}`, x: 80 + index * 92, y, label: '', tone: 'visited', status: 'OUTPUT', opacity: 1 })
+        slots.push({ id: `output-slot-${index}`, x: 80 + index * 92, y, label: `output [${index}]`, empty: entry === null, highlighted: false, opacity: 1 })
+      }
+    }
+    for (const auxiliary of ['samples', 'splitters'] as const) {
+      const values = frame[auxiliary] ?? []
+      const sample = auxiliary === 'samples'
+      const y = sample ? 440 : 620
+      for (let index = 0; index < values.length; index += 1) {
+        const entry = values[index]
+        const highlighted = sample ? Boolean(frame.activeSampleIndices?.includes(index)) : frame.activeSplitter === index
+        const x = 80 + index * 112
+        nodes.push({ ...entry, id: sample ? `sample-${entry.id}` : `splitter-${index}-${entry.id}`, x, y, label: '', tone: highlighted ? 'active' : 'visited', status: highlighted && sample ? 'COMPARE' : sample ? 'SAMPLE' : 'SPLITTER', opacity: 1 })
+        slots.push({ id: `${auxiliary}-slot-${index}`, x, y, label: `${sample ? 'sample' : 'splitter'} [${index}]`, empty: false, highlighted, opacity: 1 })
+        width = Math.max(width, x + 120)
       }
     }
     if (frame.buckets) {
@@ -40,7 +54,7 @@ export class ArraySortingLayout {
         for (let index = 0; index < frame.buckets[bucket].length; index += 1) {
           const entry = frame.buckets[bucket][index]
           const x = frame.piles ? 80 + bucket * 112 : 80 + position * 92 + bucket * 20
-          const y = frame.piles ? 620 + (frame.buckets[bucket].length - 1 - index) * 140 : 440
+          const y = frame.piles ? 620 + (frame.buckets[bucket].length - 1 - index) * 140 : frame.sampleSort ? 800 : 440
           const top = index === frame.buckets[bucket].length - 1
           const highlighted = bucket === frame.activeBucket && Boolean(frame.activeBucketIndices?.includes(index)) || Boolean(frame.activePileTops?.includes(bucket)) && top
           const status = frame.piles ? top ? 'TOP' : 'PILE' : 'BUCKET'
@@ -108,6 +122,10 @@ export class ArraySortingLayout {
         width = Math.max(width, x + 120)
         height = Math.max(height, y + 160)
       }
+    }
+    if (frame.comparator) {
+      const { first, second, ascending } = frame.comparator
+      edges.push({ id: 'array-comparator', from: entries[first].id, to: entries[second].id, directed: false, highlighted: true, opacity: 1, bend: 88, label: ascending ? 'ASC' : 'DESC' })
     }
     let focusId: string | null = frame.held?.id ?? null
     for (const node of nodes) {

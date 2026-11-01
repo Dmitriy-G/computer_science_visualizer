@@ -43,6 +43,12 @@ export interface ArraySortFrame {
   readonly piles?: boolean
   readonly activePileTops?: readonly number[]
   readonly unwrittenFrom?: number
+  readonly comparator?: { readonly first: number, readonly second: number, readonly ascending: boolean }
+  readonly sampleSort?: boolean
+  readonly samples?: readonly ArrayEntry[]
+  readonly activeSampleIndices?: readonly number[]
+  readonly splitters?: readonly ArrayEntry[]
+  readonly activeSplitter?: number
 }
 
 export interface ArraySortEvent {

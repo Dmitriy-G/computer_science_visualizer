@@ -5,7 +5,7 @@
 1. Start with an empty renderer and a clickable menu icon in the top left.
 2. Open the menu to see **Data Structures Overview** and **Data Structures Algorithms**.
    Overview contains the existing structure groups. Algorithms contains
-   **Sorting** (Array with twenty-four sorting actions) and **Graphs Traversal** (all five graph
+   **Sorting** (Array with twenty-nine sorting actions) and **Graphs Traversal** (all five graph
    variants). Its graph action cards offer BFS and DFS, plus Dijkstra for Weighted
    Graph and topological sorting for DAG. These four algorithm actions move out
    of Overview; graph editing and value search remain there. Browsing either
@@ -637,7 +637,7 @@ edge IDs through ActionInputRequest in the shared dialog.
 ## Algorithm navigation
 
 Keep algorithm groups separate from the Overview structure groups in
-MenuNavigation. Sorting lists Array and exposes its twenty-four sorting actions; Graphs Traversal
+MenuNavigation. Sorting lists Array and exposes its twenty-nine sorting actions; Graphs Traversal
 lists the existing five graphs and reuses their model, input, sequence, renderer,
 and info implementations. ActionCatalog.getScopedActions controls the visible
 choices and App validates action selection against the selected scope. Keep the
@@ -666,6 +666,8 @@ Quick Sort, Heap Sort, Shell Sort, Counting Sort, Radix Sort, and Bucket Sort.
 Also include TimSort, IntroSort, Dual-Pivot QuickSort, and Block Merge Sort.
 Also include WikiSort, Smoothsort, Tree Sort, Tournament Sort, and Patience Sort.
 Also include Cycle Sort, Comb Sort, Cocktail Shaker Sort, and Gnome Sort.
+Also include Odd-Even Sort, Odd-Even Merge Sort, Bitonic Sort, Pairwise Sorting
+Network, and Sample Sort.
 Each action owns its component, CSS, sequence, and complexity
 information. Keep model entry points and optional synchronous trace callbacks in
 FixedArray, with array-specific algorithm helpers beside it. Reuse ArraySortingLayout and ArraySortingAnimation for independent
@@ -841,3 +843,54 @@ O(1), keep fixed slots and entry IDs, and reuse automatic playback with a final
 commit of the sorted clone. Their usage catalogs show educational-example
 notices until practical product use has been verified; do not cite algorithm
 demonstration collections as real products.
+
+Odd-Even Sort alternates adjacent pairs starting at even and odd zero-based
+indices. Stop only after a complete two-phase round without swaps. One clean
+parity phase is insufficient. Strict adjacent exchanges preserve stable ties.
+Best time is O(n) for ordered input, average time O(n²) for random distinct
+permutations, and worst time O(n²) for reverse order. Extra memory is O(1).
+
+Odd-Even Merge Sort uses Batcher's construction: recursively sort halves, merge
+the even and odd wires, then repair neighboring outputs. Pairwise Sorting
+Network uses Parberry's distinct recursive construction: compare pairs, sort
+their lower and upper members in strided subnetworks, then combine ordered
+pairs at decreasing pair distances. For arbitrary lengths, generate the next
+power-of-two schedule and prune comparisons touching conceptual trailing
+infinity wires. Do not allocate actual sentinels or additional model slots.
+Do not implement either action by renaming another sorting algorithm.
+
+Bitonic Sort uses Lang's arbitrary-length construction: sort the first half in
+the opposite direction, sort the remainder in the requested direction, then
+merge at the greatest power of two strictly below the range length. Preserve
+ascending and descending comparator directions. Simply skipping out-of-range
+comparators in the usual padded bitonic network is insufficient.
+
+These three recursive networks take O(n log² n) sequential comparator work in
+every case, since their schedules depend only on length. The average bound
+holds for any input distribution. The generators use O(log n) stack memory;
+comparators are executed on demand instead of stored as a network. All three
+are unstable. Describe sequential work separately from parallel network depth.
+The shared layout draws the active comparator between real array slots, labels
+its direction, and removes the link on the final frame. All entry IDs and fixed
+slot positions remain intact. The verified Bitonic Sort product example is
+PyTorch's small unstable CUDA tensor-sort path; identify its padded parallel
+implementation as a different variant from this sequential lesson.
+
+Sample Sort is a stable sequential teaching variant with two to four buckets.
+Choose at most seven regularly spaced entries, stably sort this sample, and
+select sample quantiles as splitters. Binary-search the splitter array for each
+source key; ties go to the right bucket. Preserve arrival order, allow repeated
+splitters and empty buckets, stably bottom-up merge-sort each bucket, then
+concatenate into separate output before copying back to the fixed allocation.
+Skewed and all-equal inputs finish through local merge sorting without recursive
+repartitioning. This bounded-fan-out variant takes O(n log n) sequential work
+in all cases and O(n) auxiliary memory, including buckets, buffers, and output.
+Its average bound holds for any input distribution. Display independent sample,
+splitter, bucket, and output rows with stable auxiliary IDs and consistent scene
+bounds. Local buffered merges publish complete merged pieces so partial writes
+never create duplicate scene IDs. Do not claim this variant has the memory or
+parallel-time guarantees of production in-place parallel sample sorts.
+
+All five actions use the shared no-input playback and final-frame commit/reset
+flow. Empty and singleton inputs take O(1). Use educational-example notices when
+practical product use of the demonstrated variant has not been verified.

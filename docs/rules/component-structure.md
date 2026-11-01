@@ -181,7 +181,8 @@ list Array under Sorting with Bubble Sort, SelectionSort, InsertionSort,
 BinaryInsertionSort, MergeSort, QuickSort, HeapSort, ShellSort, CountingSort,
 RadixSort, BucketSort, TimSort, IntroSort, DualPivotQuickSort, BlockMergeSort,
 WikiSort, Smoothsort, TreeSort, TournamentSort, PatienceSort, CycleSort, CombSort,
-CocktailShakerSort, and GnomeSort.
+CocktailShakerSort, GnomeSort, OddEvenSort, OddEvenMergeSort, BitonicSort,
+PairwiseSortingNetwork, and SampleSort.
 Each action owns its component,
 CSS, and sequence folder under Linear/Array. Keep the model entry points in FixedArray,
 with shared array-specific algorithms, trace, layout, and snapshot helpers beside it.
@@ -195,6 +196,12 @@ ArraySortOperations shares only comparison, exchange, and trace primitives.
 CycleArraySort, CombArraySort, CocktailShakerArraySort, and GnomeArraySort keep
 their cycle writes, shrinking gaps, alternating sweeps, and backtracking beside
 the array model, reusing the existing trace and playback classes.
+ArrayNetworkSort executes shared comparators; OddEvenArraySort,
+OddEvenMergeArraySort, BitonicArraySort, and PairwiseNetworkArraySort own their
+stage schedules. SampleArraySort owns regular sampling, splitter selection,
+bucket classification, stable local merge sorting, and concatenation. Keep all
+these helpers beside FixedArray; use the shared layout for comparator links and
+separate sample/splitter/bucket/output rows.
 ActionMenu receives an explicit
 ActionScope, and App preserves the selected scope independently of menu browsing.
 Algorithm structure buttons show at most two example names in one truncated line;

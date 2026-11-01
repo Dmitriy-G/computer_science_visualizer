@@ -113,6 +113,16 @@ import CocktailShakerSort from '../DataStructures/Linear/Array/CocktailShakerSor
 import { CocktailShakerSortAnimation } from '../DataStructures/Linear/Array/CocktailShakerSort/CocktailShakerSortAnimation.ts'
 import GnomeSort from '../DataStructures/Linear/Array/GnomeSort/GnomeSort.tsx'
 import { GnomeSortAnimation } from '../DataStructures/Linear/Array/GnomeSort/GnomeSortAnimation.ts'
+import OddEvenSort from '../DataStructures/Linear/Array/OddEvenSort/OddEvenSort.tsx'
+import { OddEvenSortAnimation } from '../DataStructures/Linear/Array/OddEvenSort/OddEvenSortAnimation.ts'
+import OddEvenMergeSort from '../DataStructures/Linear/Array/OddEvenMergeSort/OddEvenMergeSort.tsx'
+import { OddEvenMergeSortAnimation } from '../DataStructures/Linear/Array/OddEvenMergeSort/OddEvenMergeSortAnimation.ts'
+import BitonicSort from '../DataStructures/Linear/Array/BitonicSort/BitonicSort.tsx'
+import { BitonicSortAnimation } from '../DataStructures/Linear/Array/BitonicSort/BitonicSortAnimation.ts'
+import PairwiseSortingNetwork from '../DataStructures/Linear/Array/PairwiseSortingNetwork/PairwiseSortingNetwork.tsx'
+import { PairwiseSortingNetworkAnimation } from '../DataStructures/Linear/Array/PairwiseSortingNetwork/PairwiseSortingNetworkAnimation.ts'
+import SampleSort from '../DataStructures/Linear/Array/SampleSort/SampleSort.tsx'
+import { SampleSortAnimation } from '../DataStructures/Linear/Array/SampleSort/SampleSortAnimation.ts'
 import { ClearAnimation as ArrayClearSequence } from '../DataStructures/Linear/Array/Clear/ClearAnimation.ts'
 import LinkedListClear from '../DataStructures/Linear/LinkedList/Clear/Clear.tsx'
 import { ClearAnimation as LinkedListClearSequence } from '../DataStructures/Linear/LinkedList/Clear/ClearAnimation.ts'
@@ -670,6 +680,11 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'comb-sort': return CombSortAnimation.describe(this.array.length)
         case 'cocktail-shaker-sort': return CocktailShakerSortAnimation.describe(this.array.length)
         case 'gnome-sort': return GnomeSortAnimation.describe(this.array.length)
+        case 'odd-even-sort': return OddEvenSortAnimation.describe(this.array.length)
+        case 'odd-even-merge-sort': return OddEvenMergeSortAnimation.describe(this.array.length)
+        case 'bitonic-sort': return BitonicSortAnimation.describe(this.array.length)
+        case 'pairwise-sorting-network': return PairwiseSortingNetworkAnimation.describe(this.array.length)
+        case 'sample-sort': return SampleSortAnimation.describe(this.array.length)
         case 'clear': return ArrayClearSequence.describe(this.array.length)
         case 'insert-middle': return ArrayInsertionAnimation.describe(this.array.length)
         case 'insert-start': return ArrayAddAtStartSequence.describe(this.array.length)
@@ -847,6 +862,11 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'comb-sort': return <CombSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'cocktail-shaker-sort': return <CocktailShakerSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'gnome-sort': return <GnomeSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'odd-even-sort': return <OddEvenSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'odd-even-merge-sort': return <OddEvenMergeSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'bitonic-sort': return <BitonicSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'pairwise-sorting-network': return <PairwiseSortingNetwork key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
+        case 'sample-sort': return <SampleSort key={this.state.actionSession} model={this.array} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'clear': return <ArrayClear key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'insert-middle': return <ArrayAddInTheMiddle key={this.state.actionSession} array={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />
         case 'insert-start': return <ArrayAddAtStart key={this.state.actionSession} model={this.array} value={this.state.actionValue} onSceneChange={this.updateArrayScene} onComplete={this.completeAction} />

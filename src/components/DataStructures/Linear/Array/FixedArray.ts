@@ -10,6 +10,11 @@ import { CycleArraySort } from './CycleArraySort.ts'
 import { CombArraySort } from './CombArraySort.ts'
 import { CocktailShakerArraySort } from './CocktailShakerArraySort.ts'
 import { GnomeArraySort } from './GnomeArraySort.ts'
+import { OddEvenArraySort } from './OddEvenArraySort.ts'
+import { OddEvenMergeArraySort } from './OddEvenMergeArraySort.ts'
+import { BitonicArraySort } from './BitonicArraySort.ts'
+import { PairwiseNetworkArraySort } from './PairwiseNetworkArraySort.ts'
+import { SampleArraySort } from './SampleArraySort.ts'
 
 export interface ArrayEntry {
   readonly id: string
@@ -139,6 +144,26 @@ export class FixedArray {
 
   public gnomeSort(onStep?: ArraySortObserver): void {
     new GnomeArraySort(this.items, onStep).sort()
+  }
+
+  public oddEvenSort(onStep?: ArraySortObserver): void {
+    new OddEvenArraySort(this.items, onStep).sort()
+  }
+
+  public oddEvenMergeSort(onStep?: ArraySortObserver): void {
+    new OddEvenMergeArraySort(this.items, onStep).sort()
+  }
+
+  public bitonicSort(onStep?: ArraySortObserver): void {
+    new BitonicArraySort(this.items, onStep).sort()
+  }
+
+  public pairwiseSortingNetwork(onStep?: ArraySortObserver): void {
+    new PairwiseNetworkArraySort(this.items, onStep).sort()
+  }
+
+  public sampleSort(onStep?: ArraySortObserver): void {
+    new SampleArraySort(this.items, onStep).sort()
   }
 
   public insertionSort(onStep?: ArraySortObserver): void {
