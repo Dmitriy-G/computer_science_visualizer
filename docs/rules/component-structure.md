@@ -10,7 +10,7 @@ categories, with consistent PascalCase spelling.
 
 Use `src/components/DataStructuresOverview/<Group>/<Structure>/` for canonical
 models, structure layouts, and Overview actions. Overview groups map to `Linear`,
-`QueuePriority`, `Trees`, `Graphs`, `HashBased`, and `Probabilistic`. Queue, Deque, CircularBuffer,
+`QueuePriority`, `Trees`, `StringText`, `Graphs`, `HashBased`, and `Probabilistic`. Queue, Deque, CircularBuffer,
 and Heap belong under `DataStructuresOverview/QueuePriority/`.
 
 PriorityQueue, BinaryMaxHeap, BinomialHeap, FibonacciHeap, PairingHeap,
@@ -218,7 +218,7 @@ defines the required organization; it does not mean those features already exist
 
 ## Extended linear structures
 
-Keep SkipList, UnrolledLinkedList, XORLinkedList, GapBuffer, BitSet,
+Keep SkipList, UnrolledLinkedList, XORLinkedList, BitSet,
 SparseArray, and FreeList under `DataStructuresOverview/Linear/`. Each owns its model,
 layout, and action folders. `LinearFeatures` connects their class components and
 action-owned information to App; shared contracts, catalog, input validation,
@@ -226,10 +226,31 @@ scene helpers, and trace recording live in `src/visualization/Linear*.ts` and
 `StructuredLinearInput.ts`. Reuse `StructuredLinearAction` and `ActionPlayback`.
 Do not reuse a tree model or tree layout to stand in for these linear structures.
 
-Rope belongs under `DataStructuresOverview/Trees/Rope/`, with `RopeFeatures`
-beside the other tree dispatchers. Its immutable AVL model still uses the shared
-trace/input/playback contracts and is retained in the shared trace-model catalog;
-menu membership comes from StructureCatalog rather than the adapter's name.
+## String / Text structures
+
+Keep GapBuffer, Rope, Trie, RadixTree, TernarySearchTree, and SuffixTree under
+`DataStructuresOverview/StringText/`, including their canonical models, layouts,
+and action folders. Keep `RopeFeatures` beside Rope in this group. Reuse the
+existing linear/tree model contracts, catalogs, structured inputs, action
+dispatchers, and playback adapters; their names describe shared implementation
+contracts rather than menu membership. Cross-group imports of shared tree
+primitives are allowed. StructureCatalog assigns these six entries exclusively
+to String / Text, with stable structure keys and existing operation behavior.
+AST remains under Trees because it models expression nodes and evaluation.
+
+SuffixArray, SuffixAutomaton, AhoCorasickAutomaton, DAWG, and FMIndex also live
+under `DataStructuresOverview/StringText/`, each with a canonical model, layout,
+and action component/CSS/animation folders. `StringTextFeatures` owns dispatch;
+`StringTextStructureDefinitions`, `StringTextActionCatalog`,
+`StringTextStructureCatalog`, and `StructuredStringTextInput` connect menus,
+models, and dialogs. Reuse the existing LinearStructureCatalog/LinearFeatures
+storage and routing adapters in App, `LinearAnimation`, `StructuredLinearAction`,
+and `ActionPlayback`; do not duplicate session or timer logic. `StringTextModel`
+shares validation and rejection contracts, `SuffixOrder` shares real suffix-range
+merge sorting for SuffixArray and FMIndex, and `StringTextScene` shares geometry.
+Each model owns its actual array, automaton, or rank/sampling representation.
+Keep dictionary DAWG semantics separate from the suffix automaton and disclose
+construction variants, retained storage, input limits, and actual complexity.
 
 Numeric lists allow up to 64 values, text models up to 256 ASCII characters,
 and each text input up to 32 characters. Record at most 96 detailed trace frames
@@ -364,7 +385,8 @@ in the Algorithms branch.
 ## Extended tree structures
 
 The 24 extended tree models and their layouts live in individual folders under
-`DataStructuresOverview/Trees/`. `UnorderedBinaryTree` is the ordinary Binary Tree;
+`DataStructuresOverview/Trees/`, except RadixTree, TernarySearchTree, and SuffixTree
+under `DataStructuresOverview/StringText/`. `UnorderedBinaryTree` is the ordinary Binary Tree;
 the existing `BinaryTree` and `binary-tree` key remain the BST. Use
 `ExtendedTreeFeatures` for their action components and action-owned information,
 `ExtendedTreeDefinitions` / `ExtendedTreeActionCatalog` for menu entries, and

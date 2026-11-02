@@ -48,9 +48,10 @@ Choose **Data Structures Overview**, then a group:
 
 | Group | Structures |
 | --- | --- |
-| Linear | Array, Linked list, Stack, Doubly linked list, Skip List, Unrolled Linked List, XOR Linked List, Gap Buffer, Bit Array / BitSet, Sparse Array, Free List |
+| Linear | Array, Linked list, Stack, Doubly linked list, Skip List, Unrolled Linked List, XOR Linked List, Bit Array / BitSet, Sparse Array, Free List |
 | Queue / Priority | Queue, Deque, Circular buffer, Heap (min-heap), Priority Queue, Binary Max-Heap, Binomial Heap, Fibonacci Heap, Pairing Heap, Leftist Heap, Skew Heap, Indexed Priority Queue, Monotonic Queue |
-| Trees | Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, B+ Tree, Trie, Rope, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, Abstract Syntax Tree (AST), General Tree (N-ary Tree), Binary Tree, Complete Binary Tree, Threaded Binary Tree, Splay Tree, Treap, Cartesian Tree, Scapegoat Tree, AA Tree, 2-3 Tree, 2-3-4 Tree, Radix Tree (Patricia Trie), Ternary Search Tree, Suffix Tree, Interval Tree, Order Statistic Tree, Persistent Segment Tree, Sparse Table, KD-Tree, Quadtree, Octree, Bounding Volume Hierarchy (BVH), Merkle Tree, Van Emde Boas Tree |
+| Trees | Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, B+ Tree, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, Abstract Syntax Tree (AST), General Tree (N-ary Tree), Binary Tree, Complete Binary Tree, Threaded Binary Tree, Splay Tree, Treap, Cartesian Tree, Scapegoat Tree, AA Tree, 2-3 Tree, 2-3-4 Tree, Interval Tree, Order Statistic Tree, Persistent Segment Tree, Sparse Table, KD-Tree, Quadtree, Octree, Bounding Volume Hierarchy (BVH), Merkle Tree, Van Emde Boas Tree |
+| String / Text | Gap Buffer, Rope, Trie, Radix Tree (Patricia Trie), Ternary Search Tree, Suffix Tree, Suffix Array, Suffix Automaton, Aho-Corasick Automaton, Directed Acyclic Word Graph (DAWG), FM-Index |
 | Graphs | Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph, Bipartite Graph, Complete Graph, Tree Graph, Hypergraph, Flow Network, Functional Graph, Adjacency Matrix, Adjacency List, Edge List, Compressed Sparse Row (CSR) |
 | Hash-based | Hash Table / Hash Map, Hash Set, Open Addressing Hash Table, Separate Chaining Hash Table, Robin Hood Hash Table, Cuckoo Hash Table, Hopscotch Hashing, Extendible Hashing, Linear Hashing, Perfect Hash Table, Consistent Hashing Ring |
 | Probabilistic | Bloom Filter, Counting Bloom Filter, Cuckoo Filter, Quotient Filter, Count-Min Sketch, HyperLogLog, Reservoir Sampling Buffer |
@@ -237,8 +238,37 @@ cost in its complexity information. Playback keeps at most 96 detailed frames,
 executes the complete operation, and reports any omitted events. Amortized bounds
 are identified explicitly in action information.
 
-Rope belongs to **Trees**, with its model and actions under
-`DataStructuresOverview/Trees/Rope/`.
+Gap Buffer, Rope, Trie, Radix Tree (Patricia Trie), Ternary Search Tree, and
+Suffix Tree belong to **String / Text**, with their models and actions under
+`DataStructuresOverview/StringText/`.
+
+The five additional text indexes have their own models, layouts, and actions:
+
+| Structure | Allowed actions |
+| --- | --- |
+| Suffix Array | Build from text, Find substring positions, Clear |
+| Suffix Automaton | Build from text, Append text, Contains substring, Clear |
+| Aho-Corasick Automaton | Build pattern dictionary, Scan text for all patterns, Clear |
+| Directed Acyclic Word Graph (DAWG) | Build word dictionary, Contains complete word, Clear |
+| FM-Index | Build text index, Find substring positions, Clear |
+
+Suffix Array, Suffix Automaton, and FM-Index start with ten source characters;
+Aho-Corasick and DAWG start with ten dictionary words. Build and pattern input
+accepts 1–32 lowercase letters. Dictionaries accept 1–16 distinct comma-separated
+words and at most 128 total letters. Aho-Corasick scans up to 128 letters and
+reports all overlaps using zero-based `[start, end)` ranges. Suffix Automaton
+supports online append up to 64 source characters, with actual clone states and
+suffix links. The dictionary DAWG merges equivalent right languages through
+bottom-up trie minimization; it is distinct from the single-text suffix automaton.
+
+Suffix Array uses comparison merge sort and adjacent LCP scans, with construction
+bounds shown in its info dialog. Its searches and FM-Index searches return all
+zero-based positions in suffix order. FM-Index shows BWT, cumulative counts, dense
+exclusive-prefix Occ counters, and suffix samples selected by position modulo four.
+It locates unsampled positions through LF steps and discards the full source and
+suffix array after construction. Dense Occ is an uncompressed teaching choice,
+not a claim of production FM-index compression. All actions reuse automatic
+playback, immutable snapshots, final-frame commits, and full Reset.
 
 The additional tree structures offer these actions:
 

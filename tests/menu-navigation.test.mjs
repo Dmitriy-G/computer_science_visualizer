@@ -67,20 +67,21 @@ test('recursive, factorial, graph, and unavailable bounds receive explicit order
 })
 
 test('Overview contains exactly the requested structure groups', () => {
-  assert.deepEqual(StructureCatalog.groups.map((group) => group.name), ['Linear', 'Queue / Priority', 'Trees', 'Graphs', 'Hash-based', 'Probabilistic'])
+  assert.deepEqual(StructureCatalog.groups.map((group) => group.name), ['Linear', 'Queue / Priority', 'Trees', 'String / Text', 'Graphs', 'Hash-based', 'Probabilistic'])
   const expected = {
-    linear: ['array', 'bit-set', 'doubly-linked-list', 'free-list', 'gap-buffer', 'linked-list', 'skip-list', 'sparse-array', 'stack', 'unrolled-linked-list', 'xor-linked-list'],
+    linear: ['array', 'bit-set', 'doubly-linked-list', 'free-list', 'linked-list', 'skip-list', 'sparse-array', 'stack', 'unrolled-linked-list', 'xor-linked-list'],
     'queue-priority': ['binary-max-heap', 'binomial-heap', 'circular-buffer', 'deque', 'fibonacci-heap', 'heap', 'indexed-priority-queue', 'leftist-heap', 'monotonic-queue', 'pairing-heap', 'priority-queue', 'queue', 'skew-heap'],
     trees: [
       'aa-tree', 'ast', 'avl-tree', 'b-plus-tree', 'b-tree', 'binary-tree', 'bvh',
       'cartesian-tree', 'complete-binary-tree', 'fenwick-tree', 'general-tree',
       'interval-tree', 'kd-tree', 'lsm-tree', 'merkle-tree', 'octree',
       'order-statistic-tree', 'persistent-segment-tree', 'quadtree', 'r-tree',
-      'radix-tree', 'red-black-tree', 'rope', 'scapegoat-tree', 'segment-tree',
-      'sparse-table', 'splay-tree', 'suffix-tree', 'ternary-search-tree',
-      'threaded-binary-tree', 'treap', 'trie', 'two-three-four-tree',
+      'red-black-tree', 'scapegoat-tree', 'segment-tree',
+      'sparse-table', 'splay-tree',
+      'threaded-binary-tree', 'treap', 'two-three-four-tree',
       'two-three-tree', 'unordered-binary-tree', 'van-emde-boas-tree',
     ],
+    'string-text': ['aho-corasick-automaton', 'dawg', 'fm-index', 'gap-buffer', 'radix-tree', 'rope', 'suffix-array', 'suffix-automaton', 'suffix-tree', 'ternary-search-tree', 'trie'],
     graphs: ['adjacency-list', 'adjacency-matrix', 'bipartite-graph', 'complete-graph', 'compressed-sparse-row', 'dag', 'directed-graph', 'edge-list', 'flow-network', 'functional-graph', 'graph', 'hypergraph', 'multigraph', 'tree-graph', 'weighted-graph'],
     'hash-based': ['consistent-hashing-ring', 'cuckoo-hash-table', 'extendible-hashing', 'hash-map', 'hash-set', 'hopscotch-hashing', 'linear-hashing', 'open-addressing-hash-table', 'perfect-hash-table', 'robin-hood-hash-table', 'separate-chaining-hash-table'],
     probabilistic: ['bloom-filter', 'count-min-sketch', 'counting-bloom-filter', 'cuckoo-filter', 'hyperloglog', 'quotient-filter', 'reservoir-sampling-buffer'],

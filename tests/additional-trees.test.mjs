@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { Trie } from '../src/components/DataStructuresOverview/Trees/Trie/Trie.ts'
+import { Trie } from '../src/components/DataStructuresOverview/StringText/Trie/Trie.ts'
 import { Heap } from '../src/components/DataStructuresOverview/QueuePriority/Heap/Heap.ts'
 import { SegmentTree } from '../src/components/DataStructuresOverview/Trees/SegmentTree/SegmentTree.ts'
 import { FenwickTree } from '../src/components/DataStructuresOverview/Trees/FenwickTree/FenwickTree.ts'
@@ -247,7 +247,7 @@ for (const [kind, className, actions, input] of features) {
         assert.deepEqual(request.structured.validate(drafts), {})
       }
       const payload = request ? request.structured.parse(drafts) : {}
-      const group = className === 'Heap' ? 'QueuePriority' : 'Trees'
+      const group = className === 'Heap' ? 'QueuePriority' : className === 'Trie' ? 'StringText' : 'Trees'
       const { [folder + 'Animation']: Sequence } = await import(`../src/components/DataStructuresOverview/${group}/${className}/${folder}/${folder}Animation.ts`)
       const plan = new Sequence(source, payload)
       const storedFirst = structuredClone(plan.steps[0].scene)

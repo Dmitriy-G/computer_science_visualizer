@@ -12,14 +12,17 @@
    branch preserves the current visualization and playback.
    Selecting Overview shows **Linear** (Array, Linked list, Stack,
    Doubly linked list, Skip List, Unrolled Linked
-   List, XOR Linked List, Gap Buffer, Bit Array / BitSet, Sparse Array,
+   List, XOR Linked List, Bit Array / BitSet, Sparse Array,
    and Free List),
    **Queue / Priority** (Queue, Deque, Circular buffer, Heap (min-heap),
    Priority Queue, Binary Max-Heap, Binomial Heap, Fibonacci Heap, Pairing Heap,
    Leftist Heap, Skew Heap, Indexed Priority Queue, and Monotonic Queue),
    **Trees** (Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, and
-   B+ Tree, Trie, Rope, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, and
-   Abstract Syntax Tree (AST), and the 24 extended entries listed below),
+   B+ Tree, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, and
+   Abstract Syntax Tree (AST), plus the non-text extended entries listed below),
+   **String / Text** (Gap Buffer, Rope, Trie, Radix Tree (Patricia Trie),
+   Ternary Search Tree, Suffix Tree, Suffix Array, Suffix Automaton,
+   Aho-Corasick Automaton, Directed Acyclic Word Graph (DAWG), FM-Index),
    **Graphs** (Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph, Bipartite Graph, Complete Graph, Tree Graph, Hypergraph, Flow Network, Functional Graph, Adjacency Matrix, Adjacency List, Edge List, Compressed Sparse Row (CSR)), **Hash-based** (Hash Table / Hash Map,
    Hash Set and the nine additional hash entries listed below), and
    **Probabilistic** (Bloom Filter, Counting Bloom Filter, Cuckoo Filter,
@@ -563,11 +566,11 @@ indices, links, roles, and statuses in the diagram; put results in the timeline.
   and clear. Store `previous XOR next` as BigInt, decode links while carrying
   the previous address, and repair both neighbors when deleting. Label address
   and XOR fields and explicitly identify the simulation.
-- **Gap Buffer:** ten ASCII characters around a movable gap. Insert text at an
+- **Gap Buffer (under String / Text):** ten ASCII characters around a movable gap. Insert text at an
   index, move the gap, delete an indexed span, search for text, and clear. Show
   physical indices and logical text indices separately. Grow gap storage only
   when needed; retain a nonzero gap so cursor movement remains valid.
-- **Rope (under Trees):** ten ASCII characters in immutable AVL-balanced chunks of at most
+- **Rope (under String / Text):** ten ASCII characters in immutable AVL-balanced chunks of at most
   four characters. Insert, concatenate, read by index, delete a span, and clear.
   Show left-subtree weights and leaf text. Split/join edits share unchanged
   subtrees and update weights and heights; do not flatten and rebuild all text.
@@ -1325,14 +1328,83 @@ unfinished demonstrations leave the committed array unchanged. Use explicit
 educational-example notices until practical use of the actual sorting variant
 has been verified; algorithm collections and related structures do not qualify.
 
+## Additional String / Text operations
+
+Add Suffix Array, Suffix Automaton, Aho-Corasick Automaton, Directed Acyclic Word
+Graph (DAWG), and FM-Index only once under String / Text. The first, second, and
+fifth default to ten source characters; the dictionary automata default to ten
+distinct words. Count labels distinguish source characters, dictionary patterns,
+and dictionary words from allocated storage cells or states. Preserve the six
+existing text structures and their keys.
+
+All five support replacement Build, exact search, and Clear. Suffix Automaton also
+supports online Append. Reuse shared structured input, automatic playback,
+immutable scene snapshots, final-frame commit, fixed maximum sequence bounds,
+96 detailed frames plus initial/final frames, and full Reset. Execute complete
+operations even when recording is capped, disclosing omitted events. Query final
+frames return results and retain visited states. Invalid rebuild input is checked
+before storage changes; oversized appends reject without consuming IDs.
+
+- **Suffix Array:** build source + a unique `$` terminator, merge-sort suffix start
+  positions using direct source-range comparisons, and compute adjacent LCP by
+  direct scans. Show source characters, SA positions, and LCP metadata. Do not
+  claim SA-IS, prefix doubling, Kasai LCP, or linear-time construction. Search uses
+  lower and upper binary bounds and reports all zero-based starts in suffix order.
+- **Suffix Automaton:** store maximum lengths, character transitions, suffix
+  links, and clone flags. Extend online with true clone-state splitting and
+  transition redirection; retain source characters in an appendable array.
+  Mark complete suffixes by the final state's suffix-link chain. Substring search
+  accepts any reachable state, independent of suffix-final marks. Builds accept
+  32 letters; appends accept 32 letters per request up to 64 total. Keep stable IDs
+  across clear, with a persistent root role.
+- **Aho-Corasick Automaton:** build a pattern trie and assign failure links breadth
+  first with explicit fallback walks. Store own terminal pattern IDs and a link
+  to the nearest terminal failure state; do not copy inherited output sets into
+  every node. Show character, failure, and output links. Scan text once, report
+  all overlapping matches and terminal suffix patterns, and return pattern/start/
+  end records using zero-based half-open ranges. Scans preserve the dictionary.
+  Preprocessing bounds must reflect sparse fallback walks rather than claiming
+  the completed-transition-table linear bound.
+- **Dictionary DAWG:** build a temporary trie, then minimize it bottom up using
+  accepting flags and sorted labeled transitions to canonical child states.
+  Equivalent right languages share one state with multiple incoming edges;
+  display the actual acyclic graph. A lookup accepts only a complete word ending
+  at a final state. This is a finite-dictionary minimal acyclic DFA, distinct from
+  the suffix automaton entry. Do not claim incremental dictionary insertion.
+- **FM-Index:** derive BWT from temporary suffix order, then keep cumulative
+  counts C, dense exclusive-prefix Occ arrays, and sampled SA positions whose
+  source positions are divisible by four. Discard temporary source and complete
+  SA after construction. Backward search processes pattern characters right to
+  left with `[l,r) = [C[c]+Occ(c,l), C[c]+Occ(c,r))`. Locate matching rows using
+  LF steps to a stored sample, then add the number of steps modulo index length.
+  Every row is within three LF steps of a sample. Expose actual rank counters;
+  explain that dense Occ is an uncompressed teaching representation.
+
+Use 1–32 lowercase a-z letters for source, append, substring, and word inputs.
+Reserve `$` internally; reject uppercase, spaces in text, punctuation, and empty
+patterns. Dictionary builds accept 1–16 distinct CSV words, at most 32 letters each
+and 128 letters total; trim whitespace around words. Scan text accepts 1–128
+letters. Clear runs without input, including on empty models. Empty searches
+return no positions, no pattern matches, or false, as appropriate. Report results
+in descriptions/pseudocode rather than standalone diagram annotations. Give
+captions and status markers enough space between rows.
+
+Structure information includes verified primary-source technology examples and
+variant notes; the suffix automaton currently has no verified production example.
+Algorithm references include the [dictionary-automata paper](https://aclanthology.org/J00-1002/),
+[Aho-Corasick definition](https://xlinux.nist.gov/dads/HTML/ahoCorasick.html),
+[suffix-automaton definition](https://xlinux.nist.gov/dads/HTML/suffixautmtn.html), and
+[FM-index author's description](https://pages.di.unipi.it/ferragina/Libraries/fmindexV2/index.html).
+
 ## Extended tree operations
 
 Trees also contains General Tree (N-ary Tree), Binary Tree, Complete Binary Tree,
 Threaded Binary Tree, Splay Tree, Treap, Cartesian Tree, Scapegoat Tree, AA Tree,
-2-3 Tree, 2-3-4 Tree, Radix Tree (Patricia Trie), Ternary Search Tree, Suffix Tree,
+2-3 Tree, 2-3-4 Tree,
 Interval Tree, Order Statistic Tree, Persistent Segment Tree, Sparse Table,
 KD-Tree, Quadtree, Octree, Bounding Volume Hierarchy (BVH), Merkle Tree, and
-Van Emde Boas Tree. Preserve the original BST and its key. Every entry starts
+Van Emde Boas Tree. Radix Tree (Patricia Trie), Ternary Search Tree, and Suffix Tree
+belong to String / Text alongside Trie, Rope, and Gap Buffer. Preserve the original BST and its key. Every entry starts
 with ten elements and has working animated operations, structured inputs, and
 structure information. Only offer the operations listed in README; do not imply
 unimplemented deletion or balancing policies.

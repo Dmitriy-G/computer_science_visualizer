@@ -1,3 +1,5 @@
+import { StringTextStructureCatalog } from './StringTextStructureCatalog.ts'
+import { StringTextModel } from '../components/DataStructuresOverview/StringText/StringTextModel.ts'
 import type { LinearModel } from './LinearModel.ts'
 import type { LinearFrame } from './LinearModel.ts'
 import type { Scene, StructureKind } from './Scene.ts'
@@ -7,10 +9,10 @@ import { UnrolledLinkedList } from '../components/DataStructuresOverview/Linear/
 import { UnrolledLinkedListLayout } from '../components/DataStructuresOverview/Linear/UnrolledLinkedList/UnrolledLinkedListLayout.ts'
 import { XORLinkedList } from '../components/DataStructuresOverview/Linear/XORLinkedList/XORLinkedList.ts'
 import { XORLinkedListLayout } from '../components/DataStructuresOverview/Linear/XORLinkedList/XORLinkedListLayout.ts'
-import { GapBuffer } from '../components/DataStructuresOverview/Linear/GapBuffer/GapBuffer.ts'
-import { GapBufferLayout } from '../components/DataStructuresOverview/Linear/GapBuffer/GapBufferLayout.ts'
-import { Rope } from '../components/DataStructuresOverview/Trees/Rope/Rope.ts'
-import { RopeLayout } from '../components/DataStructuresOverview/Trees/Rope/RopeLayout.ts'
+import { GapBuffer } from '../components/DataStructuresOverview/StringText/GapBuffer/GapBuffer.ts'
+import { GapBufferLayout } from '../components/DataStructuresOverview/StringText/GapBuffer/GapBufferLayout.ts'
+import { Rope } from '../components/DataStructuresOverview/StringText/Rope/Rope.ts'
+import { RopeLayout } from '../components/DataStructuresOverview/StringText/Rope/RopeLayout.ts'
 import { BitSet } from '../components/DataStructuresOverview/Linear/BitSet/BitSet.ts'
 import { BitSetLayout } from '../components/DataStructuresOverview/Linear/BitSet/BitSetLayout.ts'
 import { SparseArray } from '../components/DataStructuresOverview/Linear/SparseArray/SparseArray.ts'
@@ -20,7 +22,7 @@ import { FreeListLayout } from '../components/DataStructuresOverview/Linear/Free
 
 export class LinearStructureCatalog {
   public static createModels(): Map<StructureKind, LinearModel> {
-    return new Map<StructureKind, LinearModel>([
+    const models = new Map<StructureKind, LinearModel>([
       ['skip-list', SkipList.createDefault()],
       ['unrolled-linked-list', UnrolledLinkedList.createDefault()],
       ['xor-linked-list', XORLinkedList.createDefault()],
@@ -30,9 +32,13 @@ export class LinearStructureCatalog {
       ['sparse-array', SparseArray.createDefault()],
       ['free-list', FreeList.createDefault()],
     ])
+    for (const [kind, model] of StringTextStructureCatalog.createModels()) models.set(kind, model)
+    return models
   }
 
   public static createDefault(kind: StructureKind): LinearModel | null {
+    const stringText = StringTextStructureCatalog.createDefault(kind)
+    if (stringText) return stringText
     switch (kind) {
       case 'skip-list': return SkipList.createDefault()
       case 'unrolled-linked-list': return UnrolledLinkedList.createDefault()
@@ -47,6 +53,7 @@ export class LinearStructureCatalog {
   }
 
   public static createScene(model: LinearModel, frame: LinearFrame = {}): Scene {
+    if (model instanceof StringTextModel) return StringTextStructureCatalog.createScene(model, frame)
     switch (model.kind) {
       case 'skip-list': return new SkipListLayout().create(model, frame)
       case 'unrolled-linked-list': return new UnrolledLinkedListLayout().create(model, frame)

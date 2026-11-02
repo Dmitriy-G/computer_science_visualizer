@@ -43,7 +43,7 @@ test('all 24 new trees have ten-element previews, Overview actions, input routin
     const value = stored.get(definition.kind)
     assert.ok(value)
     assert.equal(value.length, 10, definition.name)
-    assert.equal(StructureCatalog.getGroupForStructure(definition.kind), 'trees')
+    assert.equal(StructureCatalog.getGroupForStructure(definition.kind), ['radix-tree', 'ternary-search-tree', 'suffix-tree'].includes(definition.kind) ? 'string-text' : 'trees')
     assert.equal(StructureCatalog.getName(definition.kind), definition.name)
     assert.equal(ActionInputRequest.supportsStructure(definition.kind), true)
     const actions = ExtendedTreeActionCatalog.getActions(definition.kind)
@@ -364,11 +364,12 @@ test('new tree playback bounds traces, preserves originals, and rolls back rejec
 })
 
 test('every new action owns its component, stylesheet, sequence, and complexity description', () => {
-  const features = readFileSync(new URL('../src/components/DataStructuresOverview/Trees/ExtendedTreeFeatures.tsx', import.meta.url), 'utf8')
-  const imports = [...features.matchAll(/import \{ (\w+)Animation as \w+Sequence \} from '\.\/(.*?)'/g)]
+  const featuresUrl = new URL('../src/components/DataStructuresOverview/Trees/ExtendedTreeFeatures.tsx', import.meta.url)
+  const features = readFileSync(featuresUrl, 'utf8')
+  const imports = [...features.matchAll(/import \{ (\w+)Animation as \w+Sequence \} from '([^']+)'/g)]
   assert.equal(imports.length, 89)
   for (const [, name, relative] of imports) {
-    const base = new URL(`../src/components/DataStructuresOverview/Trees/${relative}`, import.meta.url)
+    const base = new URL(relative, featuresUrl)
     const source = readFileSync(base, 'utf8')
     assert.match(source, /static describe\(size: number\)/)
     assert.match(source, /time: \{ best: .*average: .*worst:/)
@@ -379,15 +380,16 @@ test('every new action owns its component, stylesheet, sequence, and complexity 
 })
 
 test('all 89 action sequences accept their dialogs, snapshot independently, and commit only the final result', async () => {
-  const features = readFileSync(new URL('../src/components/DataStructuresOverview/Trees/ExtendedTreeFeatures.tsx', import.meta.url), 'utf8')
-  const imports = [...features.matchAll(/import \{ (\w+)Animation as \w+Sequence \} from '\.\/(.*?)'/g)]
+  const featuresUrl = new URL('../src/components/DataStructuresOverview/Trees/ExtendedTreeFeatures.tsx', import.meta.url)
+  const features = readFileSync(featuresUrl, 'utf8')
+  const imports = [...features.matchAll(/import \{ (\w+)Animation as \w+Sequence \} from '([^']+)'/g)]
   let inspected = 0
   for (const [, folder, relative] of imports) {
-    const className = relative.split('/')[0]
-    const source = readFileSync(new URL(`../src/components/DataStructuresOverview/Trees/${className}/${className}.ts`, import.meta.url), 'utf8')
+    const moduleUrl = new URL(relative, featuresUrl)
+    const className = moduleUrl.pathname.split('/').at(-3)
+    const source = readFileSync(new URL(`../${className}.ts`, moduleUrl), 'utf8')
     const kind = /readonly kind = '([^']+)'/.exec(source)[1]
     const tree = model(kind)
-    const moduleUrl = new URL(`../src/components/DataStructuresOverview/Trees/${relative}`, import.meta.url)
     const { [folder + 'Animation']: Sequence } = await import(moduleUrl.href)
     const sequenceSource = readFileSync(moduleUrl, 'utf8')
     const action = /super\(model, new \w+Layout\(\), '([^']+)'/.exec(sequenceSource)[1]

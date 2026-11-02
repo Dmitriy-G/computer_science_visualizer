@@ -298,7 +298,7 @@ import { LinearFeatures } from '../DataStructuresOverview/Linear/LinearFeatures.
 import { PriorityStructureCatalog } from '../../visualization/PriorityStructureCatalog.ts'
 import { PriorityModel } from '../DataStructuresOverview/QueuePriority/PriorityModel.ts'
 import { PriorityFeatures } from '../DataStructuresOverview/QueuePriority/PriorityFeatures.tsx'
-import { RopeFeatures } from '../DataStructuresOverview/Trees/RopeFeatures.tsx'
+import { RopeFeatures } from '../DataStructuresOverview/StringText/RopeFeatures.tsx'
 import { ProbabilisticStructureCatalog } from '../../visualization/ProbabilisticStructureCatalog.ts'
 import { ProbabilisticModel } from '../DataStructuresOverview/Probabilistic/ProbabilisticModel.ts'
 import { ProbabilisticFeatures } from '../DataStructuresOverview/Probabilistic/ProbabilisticFeatures.tsx'

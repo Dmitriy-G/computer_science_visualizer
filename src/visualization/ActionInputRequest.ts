@@ -1,3 +1,4 @@
+import { StructuredStringTextInput } from './StructuredStringTextInput.ts'
 import { StructuredProbabilisticInput } from './StructuredProbabilisticInput.ts'
 import { StructuredHashInput } from './StructuredHashInput.ts'
 import { ExtendedGraphInput } from './ExtendedGraphInput.ts'
@@ -30,7 +31,7 @@ export class ActionInputRequest {
 
   private constructor(structure: StructureKind, action: ActionKind, title: string, description: string, size: number, context?: GraphInputContext) {
     this.structure = structure
-    this.structured = StructuredProbabilisticInput.create(structure, action) ?? StructuredHashInput.create(structure, action) ?? ExtendedGraphInput.create(structure, action, size, context) ?? StructuredPriorityInput.create(structure, action) ?? StructuredLinearInput.create(structure, action, size) ?? GraphActionInput.create(structure, action, size, context) ?? StructuredTreeInput.create(structure, action, size)
+    this.structured = StructuredStringTextInput.create(structure, action) ?? StructuredProbabilisticInput.create(structure, action) ?? StructuredHashInput.create(structure, action) ?? ExtendedGraphInput.create(structure, action, size, context) ?? StructuredPriorityInput.create(structure, action) ?? StructuredLinearInput.create(structure, action, size) ?? GraphActionInput.create(structure, action, size, context) ?? StructuredTreeInput.create(structure, action, size)
     this.action = action
     this.title = title
     this.rangeInput = action === 'range-from-value'
@@ -58,7 +59,7 @@ export class ActionInputRequest {
   }
 
   public static supportsStructure(structure: StructureKind): boolean {
-    if (StructuredProbabilisticInput.supports(structure) || StructuredHashInput.supports(structure) || ExtendedGraphInput.supports(structure) || StructuredPriorityInput.supports(structure) || StructuredLinearInput.supports(structure) || GraphCatalog.supports(structure) || StructuredTreeInput.supports(structure)) return true
+    if (StructuredStringTextInput.supports(structure) || StructuredProbabilisticInput.supports(structure) || StructuredHashInput.supports(structure) || ExtendedGraphInput.supports(structure) || StructuredPriorityInput.supports(structure) || StructuredLinearInput.supports(structure) || GraphCatalog.supports(structure) || StructuredTreeInput.supports(structure)) return true
     switch (structure) {
       case 'hash-map':
       case 'hash-set':
@@ -83,6 +84,7 @@ export class ActionInputRequest {
 
   public static requiresInput(structure: StructureKind, action: ActionKind): boolean {
     if (!this.supportsStructure(structure)) return false
+    if (StructuredStringTextInput.supports(structure)) return StructuredStringTextInput.create(structure, action) !== null
     if (StructuredProbabilisticInput.supports(structure)) return StructuredProbabilisticInput.create(structure, action) !== null
     if (StructuredHashInput.supports(structure)) return StructuredHashInput.create(structure, action) !== null
     if (ExtendedGraphInput.supports(structure)) return ExtendedGraphInput.create(structure, action, 0) !== null

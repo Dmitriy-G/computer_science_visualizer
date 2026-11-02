@@ -1,3 +1,4 @@
+import { StringTextStructureDefinitions } from './StringTextStructureDefinitions.ts'
 import { ProbabilisticStructureDefinitions } from './ProbabilisticStructureDefinitions.ts'
 import { ProbabilisticStructureCatalog } from './ProbabilisticStructureCatalog.ts'
 import type { ProbabilisticModel } from '../components/DataStructuresOverview/Probabilistic/ProbabilisticModel.ts'
@@ -49,7 +50,7 @@ import { HashSetLayout } from '../components/DataStructuresOverview/HashBased/Ha
 import { BloomFilter } from '../components/DataStructuresOverview/Probabilistic/BloomFilter/BloomFilter.ts'
 import { BloomFilterLayout } from '../components/DataStructuresOverview/Probabilistic/BloomFilter/BloomFilterLayout.ts'
 
-export type StructureGroupKind = 'linear' | 'queue-priority' | 'trees' | 'graphs' | 'hash-based' | 'probabilistic'
+export type StructureGroupKind = 'linear' | 'queue-priority' | 'trees' | 'string-text' | 'graphs' | 'hash-based' | 'probabilistic'
 
 export interface StructureGroupDefinition {
   readonly kind: StructureGroupKind
@@ -68,9 +69,10 @@ export interface StructureDefinition {
 
 export class StructureCatalog {
   public static readonly groups: readonly StructureGroupDefinition[] = [
-    { kind: 'linear', name: 'Linear', description: 'Arrays, linked blocks, text buffers, packed bits, and allocation pools', symbol: '[]' },
+    { kind: 'linear', name: 'Linear', description: 'Arrays, linked blocks, packed bits, and allocation pools', symbol: '[]' },
     { kind: 'queue-priority', name: 'Queue / Priority', description: 'Queues, binary and meldable heaps, indexed priorities, and sliding windows', symbol: '⇥' },
-    { kind: 'trees', name: 'Trees', description: 'Search trees, tries, range indexes, spatial indexes, and LSM storage', symbol: '⋔' },
+    { kind: 'trees', name: 'Trees', description: 'Search trees, range indexes, spatial indexes, and LSM storage', symbol: '⋔' },
+    { kind: 'string-text', name: 'String / Text', description: 'Text buffers, dictionaries, suffix indexes, and pattern-matching automata', symbol: 'Aa' },
     { kind: 'graphs', name: 'Graphs', description: 'Constrained graphs, hyperedges, flow networks, and storage representations', symbol: '◇' },
     { kind: 'hash-based', name: 'Hash-based', description: 'Probing, chained and dynamic hash indexes, perfect tables, and rings', symbol: '#' },
     { kind: 'probabilistic', name: 'Probabilistic', description: 'Approximate membership, frequency and distinct counts, and stream sampling', symbol: '≈' },
@@ -80,6 +82,7 @@ export class StructureCatalog {
     ...ExtendedTreeDefinitions.structures,
     ...HashStructureDefinitions.structures,
     ...ProbabilisticStructureDefinitions.structures,
+    ...StringTextStructureDefinitions.structures,
     { kind: 'hash-map', group: 'hash-based', name: 'Hash Table / Hash Map', description: 'Key-value buckets with collision chains and automatic rehashing', symbol: '#' },
     { kind: 'hash-set', group: 'hash-based', name: 'Hash Set', description: 'Unique values located through hash buckets', symbol: '{}' },
     { kind: 'bloom-filter', group: 'probabilistic', name: 'Bloom Filter', description: 'A bit array for probabilistic membership checks', symbol: '01' },
@@ -111,8 +114,8 @@ export class StructureCatalog {
     { kind: 'skip-list', group: 'linear', name: 'Skip List', description: 'Sorted keys with linked express levels and seeded tower heights', symbol: '⇉' },
     { kind: 'unrolled-linked-list', group: 'linear', name: 'Unrolled Linked List', description: 'Linked blocks of values with local shifts and block splitting', symbol: '▤' },
     { kind: 'xor-linked-list', group: 'linear', name: 'XOR Linked List', description: 'Bidirectional traversal with simulated address XOR links', symbol: '⊕' },
-    { kind: 'gap-buffer', group: 'linear', name: 'Gap Buffer', description: 'Editable text around a movable gap in backing storage', symbol: '[]' },
-    { kind: 'rope', group: 'trees', name: 'Rope', description: 'Balanced text chunks with cached left-subtree weights', symbol: 'R' },
+    { kind: 'gap-buffer', group: 'string-text', name: 'Gap Buffer', description: 'Editable text around a movable gap in backing storage', symbol: '[]' },
+    { kind: 'rope', group: 'string-text', name: 'Rope', description: 'Balanced text chunks with cached left-subtree weights', symbol: 'R' },
     { kind: 'bit-set', group: 'linear', name: 'Bit Array / BitSet', description: 'Indexed bits packed into unsigned 32-bit words', symbol: '01' },
     { kind: 'sparse-array', group: 'linear', name: 'Sparse Array', description: 'Explicit indexed entries with implicit zero-valued holes', symbol: '⋯' },
     { kind: 'free-list', group: 'linear', name: 'Free List', description: 'Fixed pool slots linked for allocation and reuse', symbol: '↺' },
@@ -127,7 +130,7 @@ export class StructureCatalog {
     { kind: 'red-black-tree', group: 'trees', name: 'Red-Black tree', description: 'Balanced search using red/black colors and rotations', symbol: '+' },
     { kind: 'b-tree', group: 'trees', name: 'B-Tree', description: 'Multi-key order-4 pages with splitting, borrowing, and merging', symbol: '+' },
     { kind: 'b-plus-tree', group: 'trees', name: 'B+ Tree', description: 'Order-4 routing pages and linked leaves containing all records', symbol: '+' },
-    { kind: 'trie', group: 'trees', name: 'Trie', description: 'Shared character prefixes with explicit word ends', symbol: 'abc' },
+    { kind: 'trie', group: 'string-text', name: 'Trie', description: 'Shared character prefixes with explicit word ends', symbol: 'abc' },
     { kind: 'heap', group: 'queue-priority', name: 'Heap (min-heap)', description: 'Complete binary min-heap with sift-up and sift-down', symbol: 'min' },
     { kind: 'priority-queue', group: 'queue-priority', name: 'Priority Queue', description: 'Value/priority pairs with FIFO ties and a binary min-heap', symbol: 'PQ' },
     { kind: 'binary-max-heap', group: 'queue-priority', name: 'Binary Max-Heap', description: 'Complete binary heap with the largest value at the root', symbol: 'max' },

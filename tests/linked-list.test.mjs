@@ -168,6 +168,9 @@ test('every structure preview has ten elements and valid edge endpoints', () => 
       const expectedCells = { 'counting-bloom-filter': 32, 'cuckoo-filter': 16, 'quotient-filter': 16, 'count-min-sketch': 24, hyperloglog: 16, 'reservoir-sampling-buffer': 6 }
       assert.equal(scene.nodes.length, expectedCells[structure.kind], 'Probabilistic previews show their allocated storage, not one node per input')
       assert.ok(scene.countLabel)
+    } else if (['suffix-array', 'suffix-automaton', 'aho-corasick-automaton', 'dawg', 'fm-index'].includes(structure.kind)) {
+      assert.ok(scene.nodes.length > 0, 'Text indexes show allocated cells or automaton states, rather than one node per input character or word')
+      assert.ok(scene.countLabel)
     } else if (structure.kind === 'bloom-filter') {
       assert.equal(scene.nodes.length, 32, 'Bloom filter nodes represent bits, not stored members')
       assert.equal(scene.countLabel, 'add operations recorded')

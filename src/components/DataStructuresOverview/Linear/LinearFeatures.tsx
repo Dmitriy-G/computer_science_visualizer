@@ -1,3 +1,5 @@
+import { StringTextFeatures } from '../StringText/StringTextFeatures.tsx'
+import { StringTextStructureCatalog } from '../../../visualization/StringTextStructureCatalog.ts'
 import type { ReactNode } from 'react'
 import type { ActionKind } from '../../../visualization/ActionCatalog.ts'
 import type { AlgorithmInformation } from '../../../visualization/AlgorithmInformation.ts'
@@ -27,16 +29,16 @@ import XORLinkedListDeleteByValue from './XORLinkedList/DeleteByValue/DeleteByVa
 import { DeleteByValueAnimation as XORLinkedListDeleteByValueSequence } from './XORLinkedList/DeleteByValue/DeleteByValueAnimation.ts'
 import XORLinkedListClear from './XORLinkedList/Clear/Clear.tsx'
 import { ClearAnimation as XORLinkedListClearSequence } from './XORLinkedList/Clear/ClearAnimation.ts'
-import GapBufferInsert from './GapBuffer/Insert/Insert.tsx'
-import { InsertAnimation as GapBufferInsertSequence } from './GapBuffer/Insert/InsertAnimation.ts'
-import GapBufferMoveGap from './GapBuffer/MoveGap/MoveGap.tsx'
-import { MoveGapAnimation as GapBufferMoveGapSequence } from './GapBuffer/MoveGap/MoveGapAnimation.ts'
-import GapBufferDelete from './GapBuffer/Delete/Delete.tsx'
-import { DeleteAnimation as GapBufferDeleteSequence } from './GapBuffer/Delete/DeleteAnimation.ts'
-import GapBufferSearch from './GapBuffer/Search/Search.tsx'
-import { SearchAnimation as GapBufferSearchSequence } from './GapBuffer/Search/SearchAnimation.ts'
-import GapBufferClear from './GapBuffer/Clear/Clear.tsx'
-import { ClearAnimation as GapBufferClearSequence } from './GapBuffer/Clear/ClearAnimation.ts'
+import GapBufferInsert from '../StringText/GapBuffer/Insert/Insert.tsx'
+import { InsertAnimation as GapBufferInsertSequence } from '../StringText/GapBuffer/Insert/InsertAnimation.ts'
+import GapBufferMoveGap from '../StringText/GapBuffer/MoveGap/MoveGap.tsx'
+import { MoveGapAnimation as GapBufferMoveGapSequence } from '../StringText/GapBuffer/MoveGap/MoveGapAnimation.ts'
+import GapBufferDelete from '../StringText/GapBuffer/Delete/Delete.tsx'
+import { DeleteAnimation as GapBufferDeleteSequence } from '../StringText/GapBuffer/Delete/DeleteAnimation.ts'
+import GapBufferSearch from '../StringText/GapBuffer/Search/Search.tsx'
+import { SearchAnimation as GapBufferSearchSequence } from '../StringText/GapBuffer/Search/SearchAnimation.ts'
+import GapBufferClear from '../StringText/GapBuffer/Clear/Clear.tsx'
+import { ClearAnimation as GapBufferClearSequence } from '../StringText/GapBuffer/Clear/ClearAnimation.ts'
 import BitSetSetBit from './BitSet/SetBit/SetBit.tsx'
 import { SetBitAnimation as BitSetSetBitSequence } from './BitSet/SetBit/SetBitAnimation.ts'
 import BitSetClearBit from './BitSet/ClearBit/ClearBit.tsx'
@@ -64,6 +66,7 @@ import { ClearAnimation as FreeListClearSequence } from './FreeList/Clear/ClearA
 
 export class LinearFeatures {
   public static render(action: ActionKind, props: StructuredLinearActionProps, session: number): ReactNode {
+    if (StringTextStructureCatalog.supports(props.model.kind)) return StringTextFeatures.render(action, props, session)
     switch (props.model.kind) {
       case 'skip-list':
         switch (action) {
@@ -127,6 +130,7 @@ export class LinearFeatures {
   }
 
   public static describe(action: ActionKind, model: LinearModel): AlgorithmInformation | null {
+    if (StringTextStructureCatalog.supports(model.kind)) return StringTextFeatures.describe(action, model)
     switch (model.kind) {
       case 'skip-list':
         switch (action) {

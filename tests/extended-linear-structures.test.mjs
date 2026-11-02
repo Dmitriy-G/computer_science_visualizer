@@ -3,8 +3,8 @@ import { test } from 'node:test'
 import { SkipList } from '../src/components/DataStructuresOverview/Linear/SkipList/SkipList.ts'
 import { UnrolledLinkedList } from '../src/components/DataStructuresOverview/Linear/UnrolledLinkedList/UnrolledLinkedList.ts'
 import { XORLinkedList } from '../src/components/DataStructuresOverview/Linear/XORLinkedList/XORLinkedList.ts'
-import { GapBuffer } from '../src/components/DataStructuresOverview/Linear/GapBuffer/GapBuffer.ts'
-import { Rope } from '../src/components/DataStructuresOverview/Trees/Rope/Rope.ts'
+import { GapBuffer } from '../src/components/DataStructuresOverview/StringText/GapBuffer/GapBuffer.ts'
+import { Rope } from '../src/components/DataStructuresOverview/StringText/Rope/Rope.ts'
 import { BitSet } from '../src/components/DataStructuresOverview/Linear/BitSet/BitSet.ts'
 import { SparseArray } from '../src/components/DataStructuresOverview/Linear/SparseArray/SparseArray.ts'
 import { FreeList } from '../src/components/DataStructuresOverview/Linear/FreeList/FreeList.ts'
@@ -292,7 +292,7 @@ for (const [kind, folder, actions, input] of features) {
   test(`${kind}: menu, input, info, immutable sequences, and scene integrity`, async () => {
     const model = LinearStructureCatalog.createDefault(kind)
     const sourceScene = structuredClone(LinearStructureCatalog.createScene(model))
-    assert.equal(StructureCatalog.getGroupForStructure(kind), kind === 'rope' ? 'trees' : 'linear')
+    assert.equal(StructureCatalog.getGroupForStructure(kind), kind === 'rope' || kind === 'gap-buffer' ? 'string-text' : 'linear')
     assert.deepEqual(ActionCatalog.getScopedActions(kind, 'overview').map((choice) => choice.kind), Object.keys(actions))
     assert.ok(StructureInformation.get(kind).useCases.length >= 4)
     for (const [action, actionFolder] of Object.entries(actions)) {
@@ -304,7 +304,7 @@ for (const [kind, folder, actions, input] of features) {
         assert.deepEqual(request.structured.validate(drafts), {})
         assert.ok(Object.keys(request.structured.validate({})).length > 0)
       }
-      const group = kind === 'rope' ? 'Trees' : 'Linear'
+      const group = kind === 'rope' || kind === 'gap-buffer' ? 'StringText' : 'Linear'
       const module = await import(`../src/components/DataStructuresOverview/${group}/${folder}/${actionFolder}/${actionFolder}Animation.ts`)
       const Sequence = module[`${actionFolder}Animation`]
       const animation = new Sequence(model, input)
@@ -381,7 +381,7 @@ test('teaching limits reject additions without partial mutation', () => {
 test('trace limits bound snapshots while still completing every mutation', async () => {
   const model = new GapBuffer()
   for (let count = 0; count < 8; count += 1) model.execute('insert', { index: model.length, text: 'x'.repeat(32) })
-  const { ClearAnimation } = await import('../src/components/DataStructuresOverview/Linear/GapBuffer/Clear/ClearAnimation.ts')
+  const { ClearAnimation } = await import('../src/components/DataStructuresOverview/StringText/GapBuffer/Clear/ClearAnimation.ts')
   const animation = new ClearAnimation(model)
   assert.equal(animation.result.getText(), '')
   assert.equal(model.length, 256)

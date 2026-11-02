@@ -1,4 +1,4 @@
-import { ExtendedTreeModel } from '../ExtendedTreeModel.ts'
+import { ExtendedTreeModel } from '../../Trees/ExtendedTreeModel.ts'
 import type { TreeDiagramEntry, TreeInputValues, TreeOperationResult } from '../../../../visualization/AdditionalTreeModel.ts'
 import type { ActionKind } from '../../../../visualization/ActionCatalog.ts'
 import type { TreeTraceObserver } from '../../../../visualization/TreeTrace.ts'
