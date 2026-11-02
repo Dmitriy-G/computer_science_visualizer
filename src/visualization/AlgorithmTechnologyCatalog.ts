@@ -24,6 +24,12 @@ export class AlgorithmTechnologyCatalog {
   }
 
   private static readonly uses: Readonly<Partial<Record<ActionKind, AlgorithmUsage>>> = {
+    'max-flow': {
+      note: 'This example uses BFS-selected Edmonds–Karp augmenting paths with exact integer capacities. NetworkX supports additional capacity and residual-network conventions.',
+      products: [{ name: 'NetworkX', url: 'https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.flow.edmonds_karp.html', usage: 'Provides Edmonds–Karp maximum flow as part of its graph-analysis library.' }],
+      technologies: [{ name: 'NetworkX edmonds_karp', url: 'https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.flow.edmonds_karp.html', usage: 'Computes maximum single-commodity flow through residual-network augmenting paths selected by breadth-first search.' }],
+    },
+
     'interpolation-sort': {
       technologies: [],
       products: [],
@@ -383,7 +389,7 @@ export class AlgorithmTechnologyCatalog {
           usage: 'Uses an explicit stack to follow a graph branch before backtracking, supporting depth-first exploration of reachable nodes.',
         },
       ],
-      note: 'NetworkX emits traversal-tree edges; this example reports visited vertex values. Neighbor order can produce different valid traversal orders.',
+      note: 'NetworkX emits traversal-tree edges using an explicit stack. The new constrained graphs and storage examples use recursive DFS; original graph variants use an explicit stack. Hypergraph traversal follows shared hyperedge membership. All examples report visited vertex values, and neighbor order can change valid traversal orders.',
     },
     'shortest-path': {
       products: [

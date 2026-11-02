@@ -299,6 +299,10 @@ import { PriorityStructureCatalog } from '../../visualization/PriorityStructureC
 import { PriorityModel } from '../DataStructuresOverview/QueuePriority/PriorityModel.ts'
 import { PriorityFeatures } from '../DataStructuresOverview/QueuePriority/PriorityFeatures.tsx'
 import { RopeFeatures } from '../DataStructuresOverview/Trees/RopeFeatures.tsx'
+import { ExtendedGraphCatalog } from '../../visualization/ExtendedGraphCatalog.ts'
+import { ExtendedGraphModel } from '../DataStructuresOverview/Graphs/ExtendedGraphModel.ts'
+import { ExtendedGraphFeatures } from '../DataStructuresOverview/Graphs/ExtendedGraphFeatures.tsx'
+import { ExtendedGraphTraversalFeatures } from '../DataStructuresAlgorithms/GraphsTraversal/ExtendedGraphTraversalFeatures.tsx'
 import './App.css'
 
 interface AppState {
@@ -321,6 +325,7 @@ interface AppState {
 }
 
 export default class App extends Component<Record<string, never>, AppState> {
+  private extendedGraphs = ExtendedGraphCatalog.createModels()
   private priorityModels = PriorityStructureCatalog.createModels()
   private linearModels = LinearStructureCatalog.createModels()
   private additionalTrees = AdditionalTreeCatalog.createModels()
@@ -405,6 +410,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     const menu = this.state.menu.selectStructure(kind)
     const changingScope = this.state.selected === kind && this.state.selectedScope !== menu.actionScope
     if (!changingScope) {
+      this.extendedGraphs = ExtendedGraphCatalog.createModels()
       this.priorityModels = PriorityStructureCatalog.createModels()
       this.linearModels = LinearStructureCatalog.createModels()
       this.additionalTrees = AdditionalTreeCatalog.createModels()
@@ -451,6 +457,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         this.graphModels,
         this.linearModels,
         this.priorityModels,
+        this.extendedGraphs,
       ),
       actionOpen: false,
       selectedAction: null,
@@ -473,7 +480,11 @@ export default class App extends Component<Record<string, never>, AppState> {
     if (!ActionCatalog.getScopedActions(this.state.selected, this.state.selectedScope).some((choice) => choice.kind === action)) return
     if (ActionInputRequest.supportsStructure(this.state.selected)) {
       const graph = this.graphModels.get(this.state.selected)
-      const context = graph ? { vertices: graph.getEntries().map((entry) => entry.value), edges: graph.getEdges().map((edge) => edge.number) } : undefined
+      const extended = this.extendedGraphs.get(this.state.selected)
+      const partitions: Record<string, number> = {}
+      if (extended) for (const vertex of extended.getVertices()) if (vertex.partition !== undefined) partitions[String(vertex.value)] = vertex.partition
+      const context = extended ? { vertices: extended.getVertices().map((vertex) => vertex.value), edges: extended.getEdges().map((edge) => edge.number), partitions }
+        : graph ? { vertices: graph.getEntries().map((entry) => entry.value), edges: graph.getEdges().map((edge) => edge.number) } : undefined
       const request = ActionInputRequest.create(this.state.selected, action, this.getInputSize(this.state.selected), context)
       if (request) {
         this.setState({ inputRequest: request, overviewInformation: null, structureInformation: null })
@@ -527,6 +538,8 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private getInputSize(structure: StructureKind): number {
+    const extended = this.extendedGraphs.get(structure)
+    if (extended) return extended.length
     const priority = this.priorityModels.get(structure)
     if (priority) return priority.length
     const linear = this.linearModels.get(structure)
@@ -588,6 +601,11 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private describeActionDetails = (action: ActionKind): AlgorithmInformation | null => {
+    const extended = this.state.selected ? this.extendedGraphs.get(this.state.selected) : undefined
+    if (extended) {
+      const features = this.state.selectedScope === 'graph-traversal' ? ExtendedGraphTraversalFeatures : ExtendedGraphFeatures
+      return features.describe(action, extended)
+    }
     const priority = this.state.selected ? this.priorityModels.get(this.state.selected) : undefined
     if (priority) return PriorityFeatures.describe(action, priority)
     const linear = this.state.selected ? this.linearModels.get(this.state.selected) : undefined
@@ -790,6 +808,14 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private renderAction(): ReactNode {
     if (!this.state.actionOpen) return null
+    const extended = this.state.selected ? this.extendedGraphs.get(this.state.selected) : undefined
+    if (extended && this.state.selectedAction) {
+      const features = this.state.selectedScope === 'graph-traversal' ? ExtendedGraphTraversalFeatures : ExtendedGraphFeatures
+      return features.render(this.state.selectedAction, {
+        model: extended, input: this.state.treeInput,
+        onSceneChange: this.updateExtendedGraphScene, onComplete: this.completeAction,
+      }, this.state.actionSession)
+    }
     const priority = this.state.selected ? this.priorityModels.get(this.state.selected) : undefined
     if (priority && this.state.selectedAction) return PriorityFeatures.render(this.state.selectedAction, {
       model: priority, input: this.state.treeInput,
@@ -1010,6 +1036,7 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private resetStructure = (): void => {
     if (this.state.selected === null) return
+    this.extendedGraphs = ExtendedGraphCatalog.createModels()
     this.priorityModels = PriorityStructureCatalog.createModels()
     this.linearModels = LinearStructureCatalog.createModels()
     this.additionalTrees = AdditionalTreeCatalog.createModels()
@@ -1053,6 +1080,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         this.graphModels,
         this.linearModels,
         this.priorityModels,
+        this.extendedGraphs,
       ),
       actionOpen: false,
       selectedAction: null,
@@ -1069,6 +1097,12 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private updateScene = (scene: Scene, list: LinkedList): void => {
     this.list = list
+    this.setState({ scene })
+  }
+
+  private updateExtendedGraphScene = (scene: Scene, model: LinearModel): void => {
+    if (!(model instanceof ExtendedGraphModel)) throw new TypeError('Expected extended graph model')
+    this.extendedGraphs.set(model.kind, model)
     this.setState({ scene })
   }
 

@@ -28,7 +28,7 @@ export class MenuNavigation {
   public static readonly algorithmsCategoryName = 'Data Structures Algorithms'
   public static readonly algorithmGroups: readonly AlgorithmGroup[] = [
     { kind: 'sorting', name: 'Sorting', description: 'Sorting algorithms for data structures', symbol: '[]' },
-    { kind: 'graph-traversal', name: 'Graphs Traversal', description: 'Breadth-first, depth-first, shortest paths, and topological ordering', symbol: '→' },
+    { kind: 'graph-traversal', name: 'Graphs Traversal', description: 'Reachability, shortest paths, ordering, and maximum flow', symbol: '→' },
   ]
   public static readonly categories: readonly MenuCategory[] = [
     { kind: 'overview', name: MenuNavigation.categoryName, description: 'Explore structures and their common operations', symbol: '≡' },

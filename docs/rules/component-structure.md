@@ -31,7 +31,7 @@ canonical FixedArray model and its ordinary-operation layout under
 existing sorting entry points, which delegate to the relocated sorting helpers.
 
 Use `src/components/DataStructuresAlgorithms/GraphsTraversal/<Graph>/` for
-BreadthFirst, DepthFirst, ShortestPath, and TopologicalSort actions where supported.
+BreadthFirst, DepthFirst, ShortestPath, TopologicalSort, and MaxFlow actions where supported.
 Keep each graph's canonical model and editing/search/clear actions under
 `DataStructuresOverview/Graphs/<Graph>/`. Both branches share the same models and
 scene/playback contracts; never duplicate model classes to satisfy the hierarchy.
@@ -258,6 +258,20 @@ component, CSS, animation class, and complexity description. Reuse
 StructuredGraphAction for playback and GraphActionInput for structured dialogs;
 shared field contracts live in StructuredActionInput. Expose variant-specific real
 technology examples with primary links and explain differences from this model.
+
+BipartiteGraph, CompleteGraph, TreeGraph, Hypergraph, FlowNetwork,
+FunctionalGraph, AdjacencyMatrix, AdjacencyList, EdgeList, and
+CompressedSparseRow also own canonical models, layouts, and editing action
+folders under Overview/Graphs. Keep their BFS/DFS actions and FlowNetwork's
+MaxFlow under Algorithms/GraphsTraversal. ExtendedGraphFeatures and
+ExtendedGraphTraversalFeatures dispatch the two scopes separately.
+ExtendedGraphModel shares vertex identity, validation, traversal, and trace
+contracts; StoredEdgeGraph shares actual edge-record storage only where used.
+Matrix, adjacency rows, and CSR must retain their distinct canonical storage.
+Reuse StructuredLinearAction, LinearAnimation, LinearScene, and
+ExtendedGraphInput rather than copying playback or dialogs. ExtendedGraphCatalog
+connects their models/layouts to previews and App; ExtendedGraphActionCatalog
+owns action availability. Both scopes use the same committed model instance.
 
 Algorithm menu groups stay in MainMenu/MenuNavigation alongside root-category
 navigation. Reuse MainMenu to list graphs under Algorithms > Graphs Traversal;

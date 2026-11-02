@@ -31,8 +31,9 @@ Counting Sort accepts an inclusive integer key range of at most 4,096 values;
 wider inputs are rejected unchanged. Radix and Bucket Sort support negative safe
 integers and their full span using exact integer arithmetic.
 Its ten-element example starts shuffled; Reset restores that example.
-Graphs Traversal lists all five graph types with BFS and DFS, plus Dijkstra for
-Weighted Graph and topological sorting for DAG. These algorithm actions live in
+Graphs Traversal lists all fifteen graph entries with BFS and DFS, plus Dijkstra for
+Weighted Graph, topological sorting for DAG, and Edmonds–Karp maximum flow for
+Flow Network. These algorithm actions live in
 Algorithms; Overview retains graph editing and value search. Switching branches
 for the same graph preserves its committed vertices and edges.
 
@@ -50,7 +51,7 @@ Choose **Data Structures Overview**, then a group:
 | Linear | Array, Linked list, Stack, Doubly linked list, Skip List, Unrolled Linked List, XOR Linked List, Gap Buffer, Bit Array / BitSet, Sparse Array, Free List |
 | Queue / Priority | Queue, Deque, Circular buffer, Heap (min-heap), Priority Queue, Binary Max-Heap, Binomial Heap, Fibonacci Heap, Pairing Heap, Leftist Heap, Skew Heap, Indexed Priority Queue, Monotonic Queue |
 | Trees | Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, B+ Tree, Trie, Rope, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, Abstract Syntax Tree (AST) |
-| Graphs | Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph |
+| Graphs | Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph, Bipartite Graph, Complete Graph, Tree Graph, Hypergraph, Flow Network, Functional Graph, Adjacency Matrix, Adjacency List, Edge List, Compressed Sparse Row (CSR) |
 | Hash-based | Hash Table / Hash Map, Hash Set, Bloom Filter |
 
 Select a structure to load its example, then choose an action from the canvas
@@ -75,11 +76,24 @@ where available. Bloom Filter checks return **definitely absent** or **possibly
 present**; positive results can be false positives. Mutations commit only on the
 final frame.
 
-The original Graph is the **Undirected Graph** choice. All graphs support vertex
-and edge editing, value search, and clear in Overview. Traversal examples use
+The original Graph is the **Undirected Graph** choice. All graph entries support vertex
+editing, value search, and clear in Overview. Complete Graph maintains its edges
+automatically, Tree Graph permits leaf edits, and Functional Graph replaces
+successors instead of deleting outgoing edges. Traversal examples use
 the same models, validated input, and playback under Algorithms. Weighted Graph is undirected with nonnegative weights
 and Dijkstra shortest paths; DAG rejects cycles and supports topological sort;
 Multigraph preserves parallel edges and self-loops with visible edge IDs.
+
+The ten additional graph entries start with ten vertices and cap examples at
+16 vertices and 128 ordinary edges (32 hyperedges). Bipartite Graph fixes L/R
+partitions; Complete Graph connects every pair; Tree Graph remains connected
+and acyclic; Functional Graph preserves one successor per vertex. Hypergraph
+uses multi-member sets and incidence nodes. Flow Network accepts nonnegative
+safe-integer capacities, computes exact maximum flow, and resets flows after
+valid edits. Adjacency Matrix, Adjacency List, Edge List, and CSR use their actual
+storage representations and show storage beside topology, with Inspect storage
+actions. BFS/DFS follow the selected representation. Playback stores at most
+96 detailed events, executes the entire operation, and reports omitted detail.
 
 Small info buttons open action complexity explanations. The large info button
 opens a structure introduction, use-case table, and technology links. Dialogs

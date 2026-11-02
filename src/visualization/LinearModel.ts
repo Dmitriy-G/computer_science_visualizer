@@ -8,6 +8,7 @@ export interface LinearTraceEvent {
   readonly description: string
   readonly code: string
   readonly status?: string
+  readonly edgeIds?: readonly string[]
 }
 
 export interface LinearObserver {
@@ -18,7 +19,7 @@ export interface LinearResult {
   readonly description: string
   readonly activeId?: string | null
   readonly status?: string
-  readonly value?: number | string | boolean | null
+  readonly value?: number | string | boolean | readonly number[] | null
 }
 
 export interface LinearFrame {
@@ -26,6 +27,7 @@ export interface LinearFrame {
   readonly activeId?: string | null
   readonly status?: string
   readonly visited?: ReadonlySet<string>
+  readonly edgeIds?: readonly string[]
 }
 
 export interface LinearSceneFactory {

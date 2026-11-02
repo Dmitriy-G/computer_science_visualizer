@@ -148,6 +148,26 @@ export default class MainMenu extends Component<
   private renderStructureIcon(kind: StructureKind, fallback: string): ReactNode {
     let drawing: ReactNode
     switch (kind) {
+      case 'adjacency-matrix':
+        drawing = <><rect x="3" y="3" width="26" height="26" rx="2" /><path d="M3 12h26M3 21h26M12 3v26M21 3v26m-5-20v1m9 7v1M7 25v1" /></>
+        break
+      case 'adjacency-list':
+      case 'edge-list':
+      case 'compressed-sparse-row':
+        drawing = <><path d="M3 7h26M3 16h20M3 25h26m-19-21v6m0 3v6m0 3v6" />{kind === 'compressed-sparse-row' && <path d="M18 4v6m0 12v6m8-24v6m0 12v6" />}</>
+        break
+      case 'bipartite-graph':
+        drawing = <><path d="m7 6 18 19M7 25 25 6M7 6h18" /><circle cx="6" cy="6" r="4" /><circle cx="26" cy="6" r="4" /><circle cx="6" cy="26" r="4" /><circle cx="26" cy="26" r="4" /></>
+        break
+      case 'hypergraph':
+        drawing = <><path d="M16 14 5 5m11 9L27 5m-11 9v13" /><rect x="11" y="10" width="10" height="10" rx="1" /><circle cx="5" cy="5" r="3" /><circle cx="27" cy="5" r="3" /><circle cx="16" cy="27" r="3" /></>
+        break
+      case 'complete-graph':
+      case 'tree-graph':
+      case 'flow-network':
+      case 'functional-graph':
+        drawing = <><path d="M16 7 6 25M16 7l10 18" />{kind !== 'tree-graph' && <path d="M6 25h20" />}<circle cx="16" cy="6" r="4" /><circle cx="6" cy="26" r="4" /><circle cx="26" cy="26" r="4" />{(kind === 'flow-network' || kind === 'functional-graph') && <path d="m11 12-1 6 5-2m3 9 4 1-3 3" />}</>
+        break
       case 'priority-queue':
       case 'binary-max-heap':
       case 'binomial-heap':

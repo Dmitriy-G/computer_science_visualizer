@@ -18,7 +18,7 @@ export class LinearAnimation extends AnimationSequence implements LinearObserver
     this.layout = layout
     this.add(1, title, summary, 'inspect structure', layout.create(this.result))
     const result = this.result.execute(action, input, this)
-    const query = action === 'search-value' || action === 'search-index' || action === 'peek'
+    const query = action === 'search-value' || action === 'search-index' || action === 'peek' || action === 'breadth-first' || action === 'depth-first' || action === 'inspect-storage' || action === 'read-successor'
     const description = this.omittedFrames ? `${result.description} ${this.omittedFrames} intermediate trace events were executed but omitted from playback to bound snapshot storage.` : result.description
     this.add(5, title, description, query ? `return ${JSON.stringify(result.value ?? null)}` : 'commit completed operation',
       layout.create(this.result, { activeId: result.activeId, status: result.status, visited: query ? this.visited : undefined }))
@@ -38,7 +38,7 @@ export class LinearAnimation extends AnimationSequence implements LinearObserver
   public onLinearChange(event: LinearTraceEvent): void {
     if (this.recordedFrames < LinearAnimation.maximumDetailedFrames) {
       this.add(2, 'Follow the operation', event.description, event.code,
-        this.layout.create(this.result, { count: this.originalSize, activeId: event.activeId, status: event.status, visited: this.visited }))
+        this.layout.create(this.result, { count: this.originalSize, activeId: event.activeId, status: event.status, visited: this.visited, edgeIds: event.edgeIds }))
       this.recordedFrames += 1
     } else this.omittedFrames += 1
     if (event.activeId) this.visited.add(event.activeId)

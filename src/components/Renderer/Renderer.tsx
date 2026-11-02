@@ -226,7 +226,7 @@ export default class Renderer extends Component<
       elements.push(this.renderEdge(edge, nodeMap))
     const circular = scene.kind === 'directed-graph' || scene.kind === 'weighted-graph' || scene.kind === 'dag' || scene.kind === 'multigraph' || scene.kind === 'graph' || scene.kind === 'binary-tree' || scene.kind === 'avl-tree' || scene.kind === 'red-black-tree'
     for (const node of scene.nodes)
-      elements.push(this.renderNode(node, circular))
+      elements.push(this.renderNode(node, circular || scene.countLabel === 'vertices' && node.id.startsWith(`${scene.kind}-v`)))
     return (
       <svg
         ref={this.svg}

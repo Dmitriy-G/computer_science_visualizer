@@ -5,9 +5,9 @@
 1. Start with an empty renderer and a clickable menu icon in the top left.
 2. Open the menu to see **Data Structures Overview** and **Data Structures Algorithms**.
    Overview contains the existing structure groups. Algorithms contains
-   **Sorting** (Array with forty-eight sorting actions) and **Graphs Traversal** (all five graph
-   variants). Its graph action cards offer BFS and DFS, plus Dijkstra for Weighted
-   Graph and topological sorting for DAG. These four algorithm actions move out
+   **Sorting** (Array with forty-eight sorting actions) and **Graphs Traversal** (all fifteen graph
+   entries). Its graph action cards offer BFS and DFS, plus Dijkstra for Weighted
+   Graph, topological sorting for DAG, and maximum flow for Flow Network. These algorithm actions move out
    of Overview; graph editing and value search remain there. Browsing either
    branch preserves the current visualization and playback.
    Selecting Overview shows **Linear** (Array, Linked list, Stack,
@@ -20,7 +20,7 @@
    **Trees** (Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, and
    B+ Tree, Trie, Rope, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, and
    Abstract Syntax Tree (AST)),
-   **Graphs** (Undirected Graph, Directed Graph, Weighted Graph, DAG, and Multigraph), and **Hash-based** (Hash Table / Hash Map,
+   **Graphs** (Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph, Bipartite Graph, Complete Graph, Tree Graph, Hypergraph, Flow Network, Functional Graph, Adjacency Matrix, Adjacency List, Edge List, Compressed Sparse Row (CSR)), and **Hash-based** (Hash Table / Hash Map,
    Hash Set, Bloom Filter). Choose a group to see only
    its structures. Provide Back navigation through these levels, without a
    visible breadcrumb path or instruction text on the structure list.
@@ -106,7 +106,7 @@ dialog for these actions:
   minimum Y, maximum X, and maximum Y; Delete collects the rectangle ID.
 - **LSM Tree:** Insert / update collects Key and Value; Look up and Delete collect
   Key. Flush memtable and Compact all runs run without input.
-- **All graphs:** Add vertex collects a unique vertex value. Add edge collects existing
+- **Original five graph variants:** Add vertex collects a unique vertex value. Add edge collects existing
   source and target vertex values. Search and Delete vertex collect a value;
   BFS and DFS collect an existing starting vertex and visit only its reachable
   vertices. Search restarts at unvisited components. Remove edge collects the
@@ -123,6 +123,50 @@ dialog for these actions:
   uses Kahn's algorithm and runs without input, including on an empty graph.
 - **Multigraph:** Undirected, with parallel edges and self-loops. Stable edge IDs
   distinguish parallel edges; remove by ID rather than endpoint pair.
+- **Bipartite Graph:** Add vertex also collects its fixed partition (0 = L,
+  1 = R). Reject same-partition edges, self-loops, and duplicate pairs.
+- **Complete Graph:** Add vertex connects it to every existing vertex in one
+  atomic published step. Individual edge edits are unavailable.
+- **Tree Graph:** Attach a new leaf to an existing parent; the first vertex
+  names itself as parent. Delete only leaves, keeping the graph connected and
+  acyclic. This is a general graph tree, without search-key ordering.
+- **Hypergraph:** Add hyperedge collects 2–16 distinct existing values as CSV.
+  Show square H nodes and undirected membership links. Delete by h-number.
+  Vertex deletion shrinks sets, drops sets with fewer than two members, and
+  coalesces duplicate sets, keeping the first ID. Traversals follow vertices
+  sharing a hyperedge, without creating a stored clique.
+- **Flow Network:** Add edge collects Capacity; Update capacity collects an
+  e-number and Capacity. Capacities are nonnegative safe integers, with zero
+  allowed. Valid edits reset all flows; rejected edits preserve them. Maximum
+  flow collects different source/sink values and uses Edmonds–Karp residual BFS
+  with reverse cancellation and exact BigInt flow arithmetic. Publish each
+  augmenting path atomically so intermediate scenes conserve flow. Label source,
+  sink, and flow/capacity, and report the exact total. Traversal follows stored
+  directed edges regardless of capacity and does not change flows.
+- **Functional Graph:** Add vertex collects a successor, existing or itself.
+  Set successor replaces its one outgoing edge without changing the edge ID.
+  Read successor returns its actual target. Vertex deletion redirects surviving
+  predecessors to self-loops; direct edge deletion is unavailable.
+- **Adjacency Matrix / Adjacency List / Edge List / CSR:** Use directed binary
+  graphs with self-loops, unique endpoint pairs, and separate vertex registries.
+  Matrix stores actual square cells; adjacency list stores per-source arrays;
+  edge list stores endpoint records; CSR stores offsets[V + 1], sorted packed
+  columns[E], and parallel stable edge numbers, with implicit values of 1.
+  Keep isolates visible, and repair row/column indices and offsets after edits.
+  Show storage beside topology and offer Inspect storage without input.
+  Array-row connectors illustrate order rather than linked storage pointers.
+
+The ten additional graph entries use registry-based value search, BFS/recursive
+DFS from an existing start, and incremental clear with stable ID counters.
+Load ten vertices by default; cap these examples at 16 vertices, 128 ordinary
+edges, and 32 hyperedges. Record at most 96 detailed trace events while executing
+every operation fully, and disclose omitted events. Clone models for playback,
+commit only on the final frame, retain scene bounds across the sequence, and
+preserve committed graph state when switching Overview/Algorithms scopes.
+Action info explains costs for the actual representation, excluding playback
+clones and scene snapshots. Query final frames report actual results and retain
+visited highlights. Rejected operations leave the model and ID counters intact.
+
 - **AST:** Build from expression collects an arithmetic expression. Preorder,
   Inorder, Postorder, Evaluate, and Clear run without input, including on an empty
   tree. Validate expression syntax in the dialog before starting the build.

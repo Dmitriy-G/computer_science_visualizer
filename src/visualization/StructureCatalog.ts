@@ -1,3 +1,5 @@
+import { ExtendedGraphCatalog } from './ExtendedGraphCatalog.ts'
+import type { ExtendedGraphModel } from '../components/DataStructuresOverview/Graphs/ExtendedGraphModel.ts'
 import { PriorityStructureCatalog } from './PriorityStructureCatalog.ts'
 import type { PriorityModel } from '../components/DataStructuresOverview/QueuePriority/PriorityModel.ts'
 import { LinearStructureCatalog } from './LinearStructureCatalog.ts'
@@ -62,7 +64,7 @@ export class StructureCatalog {
     { kind: 'linear', name: 'Linear', description: 'Arrays, linked blocks, text buffers, packed bits, and allocation pools', symbol: '[]' },
     { kind: 'queue-priority', name: 'Queue / Priority', description: 'Queues, binary and meldable heaps, indexed priorities, and sliding windows', symbol: '⇥' },
     { kind: 'trees', name: 'Trees', description: 'Search trees, tries, range indexes, spatial indexes, and LSM storage', symbol: '⋔' },
-    { kind: 'graphs', name: 'Graphs', description: 'Undirected, directed, weighted, acyclic, and parallel edges', symbol: '◇' },
+    { kind: 'graphs', name: 'Graphs', description: 'Constrained graphs, hyperedges, flow networks, and storage representations', symbol: '◇' },
     { kind: 'hash-based', name: 'Hash-based', description: 'Hash maps, hash sets, and Bloom filters', symbol: '#' },
   ]
 
@@ -141,6 +143,16 @@ export class StructureCatalog {
     { kind: 'weighted-graph', group: 'graphs', name: 'Weighted Graph', description: 'Undirected edges with nonnegative weights and Dijkstra paths', symbol: 'w' },
     { kind: 'dag', group: 'graphs', name: 'DAG', description: 'A directed acyclic graph with cycle-safe insertion and topological ordering', symbol: '->' },
     { kind: 'multigraph', group: 'graphs', name: 'Multigraph', description: 'Undirected parallel edges and self-loops, each with a stable edge ID', symbol: '->' },
+    { kind: 'bipartite-graph', group: 'graphs', name: 'Bipartite Graph', description: 'Two fixed vertex partitions with edges only across L and R', symbol: 'G' },
+    { kind: 'complete-graph', group: 'graphs', name: 'Complete Graph', description: 'Every pair of distinct vertices has one undirected edge', symbol: 'G' },
+    { kind: 'tree-graph', group: 'graphs', name: 'Tree Graph', description: 'Connected acyclic graph with leaf attachment and removal', symbol: 'G' },
+    { kind: 'hypergraph', group: 'graphs', name: 'Hypergraph', description: 'Set-valued hyperedges shown through vertex incidence links', symbol: 'G' },
+    { kind: 'flow-network', group: 'graphs', name: 'Flow Network', description: 'Directed capacities, exact flows, and residual-path augmentation', symbol: 'G' },
+    { kind: 'functional-graph', group: 'graphs', name: 'Functional Graph', description: 'One outgoing successor for every vertex, including self-loops', symbol: 'G' },
+    { kind: 'adjacency-matrix', group: 'graphs', name: 'Adjacency Matrix', description: 'Directed edges stored in actual source-row / target-column cells', symbol: 'G' },
+    { kind: 'adjacency-list', group: 'graphs', name: 'Adjacency List', description: 'Directed outgoing records grouped by their source vertex', symbol: 'G' },
+    { kind: 'edge-list', group: 'graphs', name: 'Edge List', description: 'Stable source/target records in one canonical edge array', symbol: 'G' },
+    { kind: 'compressed-sparse-row', group: 'graphs', name: 'Compressed Sparse Row (CSR)', description: 'Packed target columns with per-row start and end offsets', symbol: 'G' },
   ]
 
   public static getGroup(kind: StructureGroupKind): StructureGroupDefinition {
@@ -194,7 +206,10 @@ export class StructureCatalog {
     graphModels?: ReadonlyMap<StructureKind, GraphModel>,
     linearModels?: ReadonlyMap<StructureKind, LinearModel>,
     priorityModels?: ReadonlyMap<StructureKind, PriorityModel>,
+    extendedGraphs?: ReadonlyMap<StructureKind, ExtendedGraphModel>,
   ): Scene {
+    const extended = extendedGraphs?.get(kind) ?? ExtendedGraphCatalog.createDefault(kind)
+    if (extended) return ExtendedGraphCatalog.createScene(extended)
     const priority = priorityModels?.get(kind) ?? PriorityStructureCatalog.createDefault(kind)
     if (priority) return PriorityStructureCatalog.createScene(priority)
     const linear = linearModels?.get(kind) ?? LinearStructureCatalog.createDefault(kind)

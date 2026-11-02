@@ -7,6 +7,7 @@ import { GraphCatalog } from './GraphCatalog.ts'
 export interface GraphInputContext {
   readonly vertices: readonly number[]
   readonly edges: readonly number[]
+  readonly partitions?: Readonly<Record<string, number>>
 }
 
 export class GraphActionInput implements StructuredActionInput {

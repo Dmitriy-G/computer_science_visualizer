@@ -162,7 +162,9 @@ test('every structure preview has ten elements and valid edge endpoints', () => 
       LinkedList.createDefault(),
     )
     assert.equal(scene.count, 10)
-    if (structure.kind === 'bloom-filter') {
+    if (['hypergraph', 'adjacency-matrix', 'adjacency-list', 'edge-list', 'compressed-sparse-row'].includes(structure.kind)) {
+      assert.equal(scene.nodes.filter((node) => node.id.startsWith(`${structure.kind}-v`)).length, 10, 'Graph vertices are counted independently of representation cells and hyperedge markers')
+    } else if (structure.kind === 'bloom-filter') {
       assert.equal(scene.nodes.length, 32, 'Bloom filter nodes represent bits, not stored members')
       assert.equal(scene.countLabel, 'add operations recorded')
     } else if (structure.kind === 'hash-map' || structure.kind === 'hash-set') {
