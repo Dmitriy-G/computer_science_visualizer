@@ -1,39 +1,39 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { Queue } from '../src/components/DataStructures/Linear/Queue/Queue.ts'
-import { Deque } from '../src/components/DataStructures/Linear/Deque/Deque.ts'
-import { DoublyLinkedList } from '../src/components/DataStructures/Linear/DoublyLinkedList/DoublyLinkedList.ts'
-import { CircularBuffer } from '../src/components/DataStructures/Linear/CircularBuffer/CircularBuffer.ts'
-import { InsertionAnimation as Enqueue } from '../src/components/DataStructures/Linear/Queue/Enqueue/InsertionAnimation.ts'
-import { RemovalAnimation as Dequeue } from '../src/components/DataStructures/Linear/Queue/Dequeue/RemovalAnimation.ts'
-import { PeekAnimation as QueuePeek } from '../src/components/DataStructures/Linear/Queue/Peek/PeekAnimation.ts'
-import { ClearAnimation as QueueClear } from '../src/components/DataStructures/Linear/Queue/Clear/ClearAnimation.ts'
-import { SearchAnimation as QueueSearch } from '../src/components/DataStructures/Linear/Queue/SearchByValue/SearchAnimation.ts'
-import { InsertionAnimation as PushFront } from '../src/components/DataStructures/Linear/Deque/PushFront/InsertionAnimation.ts'
-import { InsertionAnimation as PushBack } from '../src/components/DataStructures/Linear/Deque/PushBack/InsertionAnimation.ts'
-import { RemovalAnimation as PopFront } from '../src/components/DataStructures/Linear/Deque/PopFront/RemovalAnimation.ts'
-import { RemovalAnimation as PopBack } from '../src/components/DataStructures/Linear/Deque/PopBack/RemovalAnimation.ts'
-import { PeekAnimation as PeekFront } from '../src/components/DataStructures/Linear/Deque/PeekFront/PeekAnimation.ts'
-import { PeekAnimation as PeekBack } from '../src/components/DataStructures/Linear/Deque/PeekBack/PeekAnimation.ts'
-import { ClearAnimation as DequeClear } from '../src/components/DataStructures/Linear/Deque/Clear/ClearAnimation.ts'
-import { SearchAnimation as DequeSearch } from '../src/components/DataStructures/Linear/Deque/SearchByValue/SearchAnimation.ts'
-import { InsertionAnimation as ListMiddle } from '../src/components/DataStructures/Linear/DoublyLinkedList/AddInTheMiddle/InsertionAnimation.ts'
-import { InsertionAnimation as ListStart } from '../src/components/DataStructures/Linear/DoublyLinkedList/AddAtStart/InsertionAnimation.ts'
-import { InsertionAnimation as ListEnd } from '../src/components/DataStructures/Linear/DoublyLinkedList/AddAtEnd/InsertionAnimation.ts'
-import { RemovalAnimation as DeleteStart } from '../src/components/DataStructures/Linear/DoublyLinkedList/DeleteAtStart/RemovalAnimation.ts'
-import { RemovalAnimation as DeleteEnd } from '../src/components/DataStructures/Linear/DoublyLinkedList/DeleteAtEnd/RemovalAnimation.ts'
-import { RemovalAnimation as DeleteValue } from '../src/components/DataStructures/Linear/DoublyLinkedList/DeleteByValue/RemovalAnimation.ts'
-import { SearchAnimation as ListSearch } from '../src/components/DataStructures/Linear/DoublyLinkedList/SearchByValue/SearchAnimation.ts'
-import { SearchAnimation as ListIndex } from '../src/components/DataStructures/Linear/DoublyLinkedList/SearchByIndex/SearchAnimation.ts'
-import { ClearAnimation as ListClear } from '../src/components/DataStructures/Linear/DoublyLinkedList/Clear/ClearAnimation.ts'
-import { EnqueueAnimation as BufferEnqueue } from '../src/components/DataStructures/Linear/CircularBuffer/Enqueue/EnqueueAnimation.ts'
-import { DequeueAnimation as BufferDequeue } from '../src/components/DataStructures/Linear/CircularBuffer/Dequeue/DequeueAnimation.ts'
-import { PeekAnimation as BufferPeek } from '../src/components/DataStructures/Linear/CircularBuffer/Peek/PeekAnimation.ts'
-import { ClearAnimation as BufferClear } from '../src/components/DataStructures/Linear/CircularBuffer/Clear/ClearAnimation.ts'
-import { SearchAnimation as BufferSearch } from '../src/components/DataStructures/Linear/CircularBuffer/SearchByValue/SearchAnimation.ts'
+import { Queue } from '../src/components/DataStructuresOverview/QueuePriority/Queue/Queue.ts'
+import { Deque } from '../src/components/DataStructuresOverview/QueuePriority/Deque/Deque.ts'
+import { DoublyLinkedList } from '../src/components/DataStructuresOverview/Linear/DoublyLinkedList/DoublyLinkedList.ts'
+import { CircularBuffer } from '../src/components/DataStructuresOverview/QueuePriority/CircularBuffer/CircularBuffer.ts'
+import { InsertionAnimation as Enqueue } from '../src/components/DataStructuresOverview/QueuePriority/Queue/Enqueue/InsertionAnimation.ts'
+import { RemovalAnimation as Dequeue } from '../src/components/DataStructuresOverview/QueuePriority/Queue/Dequeue/RemovalAnimation.ts'
+import { PeekAnimation as QueuePeek } from '../src/components/DataStructuresOverview/QueuePriority/Queue/Peek/PeekAnimation.ts'
+import { ClearAnimation as QueueClear } from '../src/components/DataStructuresOverview/QueuePriority/Queue/Clear/ClearAnimation.ts'
+import { SearchAnimation as QueueSearch } from '../src/components/DataStructuresOverview/QueuePriority/Queue/SearchByValue/SearchAnimation.ts'
+import { InsertionAnimation as PushFront } from '../src/components/DataStructuresOverview/QueuePriority/Deque/PushFront/InsertionAnimation.ts'
+import { InsertionAnimation as PushBack } from '../src/components/DataStructuresOverview/QueuePriority/Deque/PushBack/InsertionAnimation.ts'
+import { RemovalAnimation as PopFront } from '../src/components/DataStructuresOverview/QueuePriority/Deque/PopFront/RemovalAnimation.ts'
+import { RemovalAnimation as PopBack } from '../src/components/DataStructuresOverview/QueuePriority/Deque/PopBack/RemovalAnimation.ts'
+import { PeekAnimation as PeekFront } from '../src/components/DataStructuresOverview/QueuePriority/Deque/PeekFront/PeekAnimation.ts'
+import { PeekAnimation as PeekBack } from '../src/components/DataStructuresOverview/QueuePriority/Deque/PeekBack/PeekAnimation.ts'
+import { ClearAnimation as DequeClear } from '../src/components/DataStructuresOverview/QueuePriority/Deque/Clear/ClearAnimation.ts'
+import { SearchAnimation as DequeSearch } from '../src/components/DataStructuresOverview/QueuePriority/Deque/SearchByValue/SearchAnimation.ts'
+import { InsertionAnimation as ListMiddle } from '../src/components/DataStructuresOverview/Linear/DoublyLinkedList/AddInTheMiddle/InsertionAnimation.ts'
+import { InsertionAnimation as ListStart } from '../src/components/DataStructuresOverview/Linear/DoublyLinkedList/AddAtStart/InsertionAnimation.ts'
+import { InsertionAnimation as ListEnd } from '../src/components/DataStructuresOverview/Linear/DoublyLinkedList/AddAtEnd/InsertionAnimation.ts'
+import { RemovalAnimation as DeleteStart } from '../src/components/DataStructuresOverview/Linear/DoublyLinkedList/DeleteAtStart/RemovalAnimation.ts'
+import { RemovalAnimation as DeleteEnd } from '../src/components/DataStructuresOverview/Linear/DoublyLinkedList/DeleteAtEnd/RemovalAnimation.ts'
+import { RemovalAnimation as DeleteValue } from '../src/components/DataStructuresOverview/Linear/DoublyLinkedList/DeleteByValue/RemovalAnimation.ts'
+import { SearchAnimation as ListSearch } from '../src/components/DataStructuresOverview/Linear/DoublyLinkedList/SearchByValue/SearchAnimation.ts'
+import { SearchAnimation as ListIndex } from '../src/components/DataStructuresOverview/Linear/DoublyLinkedList/SearchByIndex/SearchAnimation.ts'
+import { ClearAnimation as ListClear } from '../src/components/DataStructuresOverview/Linear/DoublyLinkedList/Clear/ClearAnimation.ts'
+import { EnqueueAnimation as BufferEnqueue } from '../src/components/DataStructuresOverview/QueuePriority/CircularBuffer/Enqueue/EnqueueAnimation.ts'
+import { DequeueAnimation as BufferDequeue } from '../src/components/DataStructuresOverview/QueuePriority/CircularBuffer/Dequeue/DequeueAnimation.ts'
+import { PeekAnimation as BufferPeek } from '../src/components/DataStructuresOverview/QueuePriority/CircularBuffer/Peek/PeekAnimation.ts'
+import { ClearAnimation as BufferClear } from '../src/components/DataStructuresOverview/QueuePriority/CircularBuffer/Clear/ClearAnimation.ts'
+import { SearchAnimation as BufferSearch } from '../src/components/DataStructuresOverview/QueuePriority/CircularBuffer/SearchByValue/SearchAnimation.ts'
 import { ActionCatalog } from '../src/visualization/ActionCatalog.ts'
 import { StructureCatalog } from '../src/visualization/StructureCatalog.ts'
-import { LinkedList } from '../src/components/DataStructures/Linear/LinkedList/LinkedList.ts'
+import { LinkedList } from '../src/components/DataStructuresOverview/Linear/LinkedList/LinkedList.ts'
 import { AnimationController } from '../src/visualization/AnimationController.ts'
 
 const features = [
@@ -387,7 +387,7 @@ test('buffer search and clear traverse occupied slots across the physical bounda
   LinearAssertions.plan(clear, buffer, 'circular-buffer')
 })
 
-test('new Linear menu entries load ten elements and offer only implemented suitable actions', () => {
+test('queue-family and doubly linked list menu entries load ten elements and offer suitable actions', () => {
   const expected = {
     queue: ['enqueue', 'dequeue', 'peek', 'clear', 'search-value'],
     deque: ['push-front', 'push-back', 'pop-front', 'pop-back', 'peek-front', 'peek-back', 'clear', 'search-value'],
@@ -395,7 +395,7 @@ test('new Linear menu entries load ten elements and offer only implemented suita
     'circular-buffer': ['enqueue', 'dequeue', 'peek', 'clear', 'search-value'],
   }
   for (const [, kind] of features) {
-    assert.equal(StructureCatalog.getGroupForStructure(kind), 'linear')
+    assert.equal(StructureCatalog.getGroupForStructure(kind), kind === 'doubly-linked-list' ? 'linear' : 'queue-priority')
     assert.deepEqual(ActionCatalog.getActions(kind).map((action) => action.kind), expected[kind])
     const preview = StructureCatalog.createPreview(kind, LinkedList.createDefault())
     assert.equal(preview.kind, kind)

@@ -1,8 +1,8 @@
-import { Graph } from '../components/DataStructures/Graphs/SimpleGraph/Graph.ts'
-import { DirectedGraph } from '../components/DataStructures/Graphs/DirectedGraph/DirectedGraph.ts'
-import { WeightedGraph } from '../components/DataStructures/Graphs/WeightedGraph/WeightedGraph.ts'
-import { DAG } from '../components/DataStructures/Graphs/DAG/DAG.ts'
-import { Multigraph } from '../components/DataStructures/Graphs/Multigraph/Multigraph.ts'
+import { Graph } from '../components/DataStructuresOverview/Graphs/SimpleGraph/Graph.ts'
+import { DirectedGraph } from '../components/DataStructuresOverview/Graphs/DirectedGraph/DirectedGraph.ts'
+import { WeightedGraph } from '../components/DataStructuresOverview/Graphs/WeightedGraph/WeightedGraph.ts'
+import { DAG } from '../components/DataStructuresOverview/Graphs/DAG/DAG.ts'
+import { Multigraph } from '../components/DataStructuresOverview/Graphs/Multigraph/Multigraph.ts'
 import type { GraphModel } from './GraphModel.ts'
 import type { StructureKind } from './Scene.ts'
 

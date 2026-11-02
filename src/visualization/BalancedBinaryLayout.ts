@@ -1,4 +1,4 @@
-import { BinaryTreeLayout } from '../components/DataStructures/Trees/BinaryTree/BinaryTreeLayout.ts'
+import { BinaryTreeLayout } from '../components/DataStructuresOverview/Trees/BinaryTree/BinaryTreeLayout.ts'
 import type { BinarySearchEntry } from './TreeTrace.ts'
 import type { Scene, SceneNode, StructureKind } from './Scene.ts'
 import type { TreeFrame } from './TreeActionAnimation.ts'

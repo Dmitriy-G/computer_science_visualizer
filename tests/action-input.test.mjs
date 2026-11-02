@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { ActionInputRequest } from '../src/visualization/ActionInputRequest.ts'
 import { ActionCatalog } from '../src/visualization/ActionCatalog.ts'
-import { LinkedList } from '../src/components/DataStructures/Linear/LinkedList/LinkedList.ts'
+import { LinkedList } from '../src/components/DataStructuresOverview/Linear/LinkedList/LinkedList.ts'
 
 test('each linear structure prompts only for its requested value and index actions', () => {
   const expected = {

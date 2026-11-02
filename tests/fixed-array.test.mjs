@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { FixedArray } from '../src/components/DataStructures/Linear/Array/FixedArray.ts'
-import { InsertionAnimation } from '../src/components/DataStructures/Linear/Array/AddInTheMiddle/InsertionAnimation.ts'
+import { FixedArray } from '../src/components/DataStructuresOverview/Linear/Array/FixedArray.ts'
+import { InsertionAnimation } from '../src/components/DataStructuresOverview/Linear/Array/AddInTheMiddle/InsertionAnimation.ts'
 import { StructureCatalog } from '../src/visualization/StructureCatalog.ts'
-import { LinkedList } from '../src/components/DataStructures/Linear/LinkedList/LinkedList.ts'
+import { LinkedList } from '../src/components/DataStructuresOverview/Linear/LinkedList/LinkedList.ts'
 
 class ArrayAssertions {
   static values(array) {

@@ -1,42 +1,44 @@
-import { AVLTree } from '../components/DataStructures/Trees/AVLTree/AVLTree.ts'
-import { AVLTreeLayout } from '../components/DataStructures/Trees/AVLTree/AVLTreeLayout.ts'
-import { RedBlackTree } from '../components/DataStructures/Trees/RedBlackTree/RedBlackTree.ts'
-import { RedBlackTreeLayout } from '../components/DataStructures/Trees/RedBlackTree/RedBlackTreeLayout.ts'
-import { BTree } from '../components/DataStructures/Trees/BTree/BTree.ts'
-import { BTreeLayout } from '../components/DataStructures/Trees/BTree/BTreeLayout.ts'
-import { BPlusTree } from '../components/DataStructures/Trees/BPlusTree/BPlusTree.ts'
-import { BPlusTreeLayout } from '../components/DataStructures/Trees/BPlusTree/BPlusTreeLayout.ts'
-import { Queue } from '../components/DataStructures/Linear/Queue/Queue.ts'
-import { QueueLayout } from '../components/DataStructures/Linear/Queue/QueueLayout.ts'
-import { Deque } from '../components/DataStructures/Linear/Deque/Deque.ts'
-import { DequeLayout } from '../components/DataStructures/Linear/Deque/DequeLayout.ts'
-import { DoublyLinkedList } from '../components/DataStructures/Linear/DoublyLinkedList/DoublyLinkedList.ts'
-import { DoublyLinkedListLayout } from '../components/DataStructures/Linear/DoublyLinkedList/DoublyLinkedListLayout.ts'
-import { CircularBuffer } from '../components/DataStructures/Linear/CircularBuffer/CircularBuffer.ts'
-import { CircularBufferLayout } from '../components/DataStructures/Linear/CircularBuffer/CircularBufferLayout.ts'
-import { LinkedList } from '../components/DataStructures/Linear/LinkedList/LinkedList.ts'
-import { LinkedListLayout } from '../components/DataStructures/Linear/LinkedList/LinkedListLayout.ts'
-import { FixedArray } from '../components/DataStructures/Linear/Array/FixedArray.ts'
-import { ArrayLayout } from '../components/DataStructures/Linear/Array/ArrayLayout.ts'
-import { BinaryTree } from '../components/DataStructures/Trees/BinaryTree/BinaryTree.ts'
-import { BinaryTreeLayout } from '../components/DataStructures/Trees/BinaryTree/BinaryTreeLayout.ts'
-import { Graph } from '../components/DataStructures/Graphs/SimpleGraph/Graph.ts'
+import { LinearStructureCatalog } from './LinearStructureCatalog.ts'
+import type { LinearModel } from './LinearModel.ts'
+import { AVLTree } from '../components/DataStructuresOverview/Trees/AVLTree/AVLTree.ts'
+import { AVLTreeLayout } from '../components/DataStructuresOverview/Trees/AVLTree/AVLTreeLayout.ts'
+import { RedBlackTree } from '../components/DataStructuresOverview/Trees/RedBlackTree/RedBlackTree.ts'
+import { RedBlackTreeLayout } from '../components/DataStructuresOverview/Trees/RedBlackTree/RedBlackTreeLayout.ts'
+import { BTree } from '../components/DataStructuresOverview/Trees/BTree/BTree.ts'
+import { BTreeLayout } from '../components/DataStructuresOverview/Trees/BTree/BTreeLayout.ts'
+import { BPlusTree } from '../components/DataStructuresOverview/Trees/BPlusTree/BPlusTree.ts'
+import { BPlusTreeLayout } from '../components/DataStructuresOverview/Trees/BPlusTree/BPlusTreeLayout.ts'
+import { Queue } from '../components/DataStructuresOverview/QueuePriority/Queue/Queue.ts'
+import { QueueLayout } from '../components/DataStructuresOverview/QueuePriority/Queue/QueueLayout.ts'
+import { Deque } from '../components/DataStructuresOverview/QueuePriority/Deque/Deque.ts'
+import { DequeLayout } from '../components/DataStructuresOverview/QueuePriority/Deque/DequeLayout.ts'
+import { DoublyLinkedList } from '../components/DataStructuresOverview/Linear/DoublyLinkedList/DoublyLinkedList.ts'
+import { DoublyLinkedListLayout } from '../components/DataStructuresOverview/Linear/DoublyLinkedList/DoublyLinkedListLayout.ts'
+import { CircularBuffer } from '../components/DataStructuresOverview/QueuePriority/CircularBuffer/CircularBuffer.ts'
+import { CircularBufferLayout } from '../components/DataStructuresOverview/QueuePriority/CircularBuffer/CircularBufferLayout.ts'
+import { LinkedList } from '../components/DataStructuresOverview/Linear/LinkedList/LinkedList.ts'
+import { LinkedListLayout } from '../components/DataStructuresOverview/Linear/LinkedList/LinkedListLayout.ts'
+import { FixedArray } from '../components/DataStructuresOverview/Linear/Array/FixedArray.ts'
+import { ArrayLayout } from '../components/DataStructuresOverview/Linear/Array/ArrayLayout.ts'
+import { BinaryTree } from '../components/DataStructuresOverview/Trees/BinaryTree/BinaryTree.ts'
+import { BinaryTreeLayout } from '../components/DataStructuresOverview/Trees/BinaryTree/BinaryTreeLayout.ts'
+import { Graph } from '../components/DataStructuresOverview/Graphs/SimpleGraph/Graph.ts'
 import { GraphSceneLayout } from './GraphSceneLayout.ts'
 import { GraphCatalog } from './GraphCatalog.ts'
 import type { GraphModel } from './GraphModel.ts'
-import { Stack } from '../components/DataStructures/Linear/Stack/Stack.ts'
-import { StackLayout } from '../components/DataStructures/Linear/Stack/StackLayout.ts'
+import { Stack } from '../components/DataStructuresOverview/Linear/Stack/Stack.ts'
+import { StackLayout } from '../components/DataStructuresOverview/Linear/Stack/StackLayout.ts'
 import type { Scene, StructureKind } from './Scene.ts'
 import { AdditionalTreeCatalog } from './AdditionalTreeCatalog.ts'
 import type { AdditionalTreeModel } from './AdditionalTreeModel.ts'
-import { HashMap } from '../components/DataStructures/HashBased/HashMap/HashMap.ts'
-import { HashMapLayout } from '../components/DataStructures/HashBased/HashMap/HashMapLayout.ts'
-import { HashSet } from '../components/DataStructures/HashBased/HashSet/HashSet.ts'
-import { HashSetLayout } from '../components/DataStructures/HashBased/HashSet/HashSetLayout.ts'
-import { BloomFilter } from '../components/DataStructures/HashBased/BloomFilter/BloomFilter.ts'
-import { BloomFilterLayout } from '../components/DataStructures/HashBased/BloomFilter/BloomFilterLayout.ts'
+import { HashMap } from '../components/DataStructuresOverview/HashBased/HashMap/HashMap.ts'
+import { HashMapLayout } from '../components/DataStructuresOverview/HashBased/HashMap/HashMapLayout.ts'
+import { HashSet } from '../components/DataStructuresOverview/HashBased/HashSet/HashSet.ts'
+import { HashSetLayout } from '../components/DataStructuresOverview/HashBased/HashSet/HashSetLayout.ts'
+import { BloomFilter } from '../components/DataStructuresOverview/HashBased/BloomFilter/BloomFilter.ts'
+import { BloomFilterLayout } from '../components/DataStructuresOverview/HashBased/BloomFilter/BloomFilterLayout.ts'
 
-export type StructureGroupKind = 'linear' | 'trees' | 'graphs' | 'hash-based'
+export type StructureGroupKind = 'linear' | 'queue-priority' | 'trees' | 'graphs' | 'hash-based'
 
 export interface StructureGroupDefinition {
   readonly kind: StructureGroupKind
@@ -55,8 +57,9 @@ export interface StructureDefinition {
 
 export class StructureCatalog {
   public static readonly groups: readonly StructureGroupDefinition[] = [
-    { kind: 'linear', name: 'Linear', description: 'Arrays, lists, stacks, queues, deques, and circular buffers', symbol: '[]' },
-    { kind: 'trees', name: 'Trees', description: 'Search trees, tries, heaps, range indexes, spatial indexes, and LSM storage', symbol: '⋔' },
+    { kind: 'linear', name: 'Linear', description: 'Arrays, linked blocks, text buffers, packed bits, and allocation pools', symbol: '[]' },
+    { kind: 'queue-priority', name: 'Queue / Priority', description: 'FIFO queues, double-ended queues, circular buffers, and min-heaps', symbol: '⇥' },
+    { kind: 'trees', name: 'Trees', description: 'Search trees, tries, range indexes, spatial indexes, and LSM storage', symbol: '⋔' },
     { kind: 'graphs', name: 'Graphs', description: 'Undirected, directed, weighted, acyclic, and parallel edges', symbol: '◇' },
     { kind: 'hash-based', name: 'Hash-based', description: 'Hash maps, hash sets, and Bloom filters', symbol: '#' },
   ]
@@ -86,10 +89,18 @@ export class StructureCatalog {
       description: 'Last in, first out: push and pop at the top',
       symbol: '≡',
     },
-    { kind: 'queue', group: 'linear', name: 'Queue', description: 'First in, first out with front and rear pointers', symbol: 'FIFO' },
-    { kind: 'deque', group: 'linear', name: 'Deque', description: 'A double-ended queue with linked front and back', symbol: '<>' },
+    { kind: 'queue', group: 'queue-priority', name: 'Queue', description: 'First in, first out with front and rear pointers', symbol: 'FIFO' },
+    { kind: 'deque', group: 'queue-priority', name: 'Deque', description: 'A double-ended queue with linked front and back', symbol: '<>' },
     { kind: 'doubly-linked-list', group: 'linear', name: 'Doubly linked list', description: 'Linked nodes with both prev and next pointers', symbol: '<->' },
-    { kind: 'circular-buffer', group: 'linear', name: 'Circular buffer', description: 'Fixed-capacity FIFO slots with read/write wraparound', symbol: '@' },
+    { kind: 'circular-buffer', group: 'queue-priority', name: 'Circular buffer', description: 'Fixed-capacity FIFO slots with read/write wraparound', symbol: '@' },
+    { kind: 'skip-list', group: 'linear', name: 'Skip List', description: 'Sorted keys with linked express levels and seeded tower heights', symbol: '⇉' },
+    { kind: 'unrolled-linked-list', group: 'linear', name: 'Unrolled Linked List', description: 'Linked blocks of values with local shifts and block splitting', symbol: '▤' },
+    { kind: 'xor-linked-list', group: 'linear', name: 'XOR Linked List', description: 'Bidirectional traversal with simulated address XOR links', symbol: '⊕' },
+    { kind: 'gap-buffer', group: 'linear', name: 'Gap Buffer', description: 'Editable text around a movable gap in backing storage', symbol: '[]' },
+    { kind: 'rope', group: 'linear', name: 'Rope', description: 'Balanced text chunks with cached left-subtree weights', symbol: 'R' },
+    { kind: 'bit-set', group: 'linear', name: 'Bit Array / BitSet', description: 'Indexed bits packed into unsigned 32-bit words', symbol: '01' },
+    { kind: 'sparse-array', group: 'linear', name: 'Sparse Array', description: 'Explicit indexed entries with implicit zero-valued holes', symbol: '⋯' },
+    { kind: 'free-list', group: 'linear', name: 'Free List', description: 'Fixed pool slots linked for allocation and reuse', symbol: '↺' },
     {
       kind: 'binary-tree',
       group: 'trees',
@@ -102,7 +113,7 @@ export class StructureCatalog {
     { kind: 'b-tree', group: 'trees', name: 'B-Tree', description: 'Multi-key order-4 pages with splitting, borrowing, and merging', symbol: '+' },
     { kind: 'b-plus-tree', group: 'trees', name: 'B+ Tree', description: 'Order-4 routing pages and linked leaves containing all records', symbol: '+' },
     { kind: 'trie', group: 'trees', name: 'Trie', description: 'Shared character prefixes with explicit word ends', symbol: 'abc' },
-    { kind: 'heap', group: 'trees', name: 'Heap (min-heap)', description: 'Complete binary min-heap with sift-up and sift-down', symbol: 'min' },
+    { kind: 'heap', group: 'queue-priority', name: 'Heap (min-heap)', description: 'Complete binary min-heap with sift-up and sift-down', symbol: 'min' },
     { kind: 'segment-tree', group: 'trees', name: 'Segment Tree', description: 'Cached interval sums with point assignment and range queries', symbol: 'sum' },
     { kind: 'fenwick-tree', group: 'trees', name: 'Fenwick Tree (BIT)', description: 'Binary indexed sums navigated by the least significant set bit', symbol: 'BIT' },
     { kind: 'r-tree', group: 'trees', name: 'R-Tree', description: 'Bounding rectangles in balanced pages with quadratic splitting', symbol: 'xy' },
@@ -170,7 +181,10 @@ export class StructureCatalog {
     bloomFilter: BloomFilter = BloomFilter.createDefault(),
     additionalModels?: ReadonlyMap<StructureKind, AdditionalTreeModel>,
     graphModels?: ReadonlyMap<StructureKind, GraphModel>,
+    linearModels?: ReadonlyMap<StructureKind, LinearModel>,
   ): Scene {
+    const linear = linearModels?.get(kind) ?? LinearStructureCatalog.createDefault(kind)
+    if (linear) return LinearStructureCatalog.createScene(linear)
     if (GraphCatalog.supports(kind)) {
       const model = graphModels?.get(kind) ?? (kind === 'graph' ? graph : GraphCatalog.createDefault(kind))
       if (model) return new GraphSceneLayout().create(model)

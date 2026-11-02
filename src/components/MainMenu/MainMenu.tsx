@@ -148,6 +148,30 @@ export default class MainMenu extends Component<
   private renderStructureIcon(kind: StructureKind, fallback: string): ReactNode {
     let drawing: ReactNode
     switch (kind) {
+      case 'skip-list':
+        drawing = <><path d="M3 8h26M3 24h26M7 8v16m9-16v16m9-16v16" /><circle cx="7" cy="24" r="3" /><circle cx="16" cy="24" r="3" /><circle cx="25" cy="24" r="3" /></>
+        break
+      case 'unrolled-linked-list':
+        drawing = <><rect x="2" y="8" width="11" height="17" rx="2" /><rect x="20" y="8" width="10" height="17" rx="2" /><path d="M2 16h11m7 0h10M13 12h7m-3-3 3 3-3 3" /></>
+        break
+      case 'xor-linked-list':
+        drawing = <><rect x="2" y="9" width="8" height="14" rx="2" /><rect x="22" y="9" width="8" height="14" rx="2" /><circle cx="16" cy="16" r="4" /><path d="m13 13 6 6m0-6-6 6M10 16h2m8 0h2" /></>
+        break
+      case 'gap-buffer':
+        drawing = <><rect x="2" y="7" width="28" height="19" rx="2" /><path d="M9 7v19m14-19v19M15 11v11m3-11v11" strokeDasharray="2 3" /></>
+        break
+      case 'rope':
+        drawing = <><path d="M16 8 7 21m9-13 9 13" /><circle cx="16" cy="7" r="4" /><rect x="1" y="21" width="12" height="8" rx="2" /><rect x="19" y="21" width="12" height="8" rx="2" /></>
+        break
+      case 'bit-set':
+        drawing = <><rect x="2" y="7" width="28" height="19" rx="2" /><path d="M9 7v19m7-19v19m7-19v19M5 12v9m14-9v9" /></>
+        break
+      case 'sparse-array':
+        drawing = <><rect x="2" y="9" width="7" height="14" rx="1" /><rect x="23" y="9" width="7" height="14" rx="1" /><path d="M13 16h1m4 0h1" /></>
+        break
+      case 'free-list':
+        drawing = <><rect x="2" y="4" width="9" height="9" rx="2" /><rect x="21" y="4" width="9" height="9" rx="2" /><rect x="12" y="21" width="9" height="9" rx="2" /><path d="M11 8h10m4 5-6 8M12 25 6 13" /></>
+        break
       case 'hash-map':
       case 'hash-set':
         drawing = (

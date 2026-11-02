@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { Trie } from '../src/components/DataStructures/Trees/Trie/Trie.ts'
-import { Heap } from '../src/components/DataStructures/Trees/Heap/Heap.ts'
-import { SegmentTree } from '../src/components/DataStructures/Trees/SegmentTree/SegmentTree.ts'
-import { FenwickTree } from '../src/components/DataStructures/Trees/FenwickTree/FenwickTree.ts'
-import { RTree, Rectangle } from '../src/components/DataStructures/Trees/RTree/RTree.ts'
-import { LSMTree } from '../src/components/DataStructures/Trees/LSMTree/LSMTree.ts'
+import { Trie } from '../src/components/DataStructuresOverview/Trees/Trie/Trie.ts'
+import { Heap } from '../src/components/DataStructuresOverview/QueuePriority/Heap/Heap.ts'
+import { SegmentTree } from '../src/components/DataStructuresOverview/Trees/SegmentTree/SegmentTree.ts'
+import { FenwickTree } from '../src/components/DataStructuresOverview/Trees/FenwickTree/FenwickTree.ts'
+import { RTree, Rectangle } from '../src/components/DataStructuresOverview/Trees/RTree/RTree.ts'
+import { LSMTree } from '../src/components/DataStructuresOverview/Trees/LSMTree/LSMTree.ts'
 import { AdditionalTreeCatalog } from '../src/visualization/AdditionalTreeCatalog.ts'
 import { ActionCatalog } from '../src/visualization/ActionCatalog.ts'
 import { ActionInputRequest } from '../src/visualization/ActionInputRequest.ts'
@@ -247,7 +247,8 @@ for (const [kind, className, actions, input] of features) {
         assert.deepEqual(request.structured.validate(drafts), {})
       }
       const payload = request ? request.structured.parse(drafts) : {}
-      const { [folder + 'Animation']: Sequence } = await import(`../src/components/DataStructures/Trees/${className}/${folder}/${folder}Animation.ts`)
+      const group = className === 'Heap' ? 'QueuePriority' : 'Trees'
+      const { [folder + 'Animation']: Sequence } = await import(`../src/components/DataStructuresOverview/${group}/${className}/${folder}/${folder}Animation.ts`)
       const plan = new Sequence(source, payload)
       const storedFirst = structuredClone(plan.steps[0].scene)
       assert.deepEqual(AdditionalTreeCatalog.createScene(source), original)

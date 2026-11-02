@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { FixedArray } from '../src/components/DataStructures/Linear/Array/FixedArray.ts'
-import { BubbleSortingAnimation } from '../src/components/DataStructures/Linear/Array/BubbleSorting/BubbleSortingAnimation.ts'
+import { FixedArray } from '../src/components/DataStructuresOverview/Linear/Array/FixedArray.ts'
+import { BubbleSortingAnimation } from '../src/components/DataStructuresAlgorithms/Sorting/Array/BubbleSorting/BubbleSortingAnimation.ts'
 import { ActionInputRequest } from '../src/visualization/ActionInputRequest.ts'
 
 test('the algorithm information uses the common Bubble Sort display name', () => {

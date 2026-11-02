@@ -1,3 +1,4 @@
+import { StructuredLinearInput } from './StructuredLinearInput.ts'
 import { GraphActionInput } from './GraphActionInput.ts'
 import type { GraphInputContext } from './GraphActionInput.ts'
 import { GraphCatalog } from './GraphCatalog.ts'
@@ -25,7 +26,7 @@ export class ActionInputRequest {
 
   private constructor(structure: StructureKind, action: ActionKind, title: string, description: string, size: number, context?: GraphInputContext) {
     this.structure = structure
-    this.structured = GraphActionInput.create(structure, action, size, context) ?? StructuredTreeInput.create(structure, action, size)
+    this.structured = StructuredLinearInput.create(structure, action, size) ?? GraphActionInput.create(structure, action, size, context) ?? StructuredTreeInput.create(structure, action, size)
     this.action = action
     this.title = title
     this.rangeInput = action === 'range-from-value'
@@ -53,7 +54,7 @@ export class ActionInputRequest {
   }
 
   public static supportsStructure(structure: StructureKind): boolean {
-    if (GraphCatalog.supports(structure) || StructuredTreeInput.supports(structure)) return true
+    if (StructuredLinearInput.supports(structure) || GraphCatalog.supports(structure) || StructuredTreeInput.supports(structure)) return true
     switch (structure) {
       case 'hash-map':
       case 'hash-set':
@@ -78,6 +79,7 @@ export class ActionInputRequest {
 
   public static requiresInput(structure: StructureKind, action: ActionKind): boolean {
     if (!this.supportsStructure(structure)) return false
+    if (StructuredLinearInput.supports(structure)) return StructuredLinearInput.create(structure, action, 0) !== null
     if (GraphCatalog.supports(structure)) {
       return ActionCatalog.getActions(structure).some((choice) => choice.kind === action) && GraphActionInput.create(structure, action, 0) !== null
     }

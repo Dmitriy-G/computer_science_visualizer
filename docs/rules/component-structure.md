@@ -1,19 +1,33 @@
 # Component structure
 
 All React components belong under `src/components/`.
-`App` is the root of Computer Science Visualizer. `DataStructures` names the
-current subject area; keep this folder and its structure-specific module names
-so future computer science subjects can be added alongside it.
+`App` is the root of Computer Science Visualizer. Feature folders follow the
+menu hierarchy: main category, subcategory, structure, then action. Use
+`DataStructuresOverview` and `DataStructuresAlgorithms` for the current main
+categories, with consistent PascalCase spelling.
 
 ## Data structures and actions
 
-Use `src/components/DataStructures/` for data structure components and related
-entities. Paths in these rules are relative to the project root. Group structures
-under `Linear`, `Trees`, `Graphs`, or `HashBased`, with a PascalCase folder for
-each structure, such as `Linear/LinkedList` or `Linear/Array`.
+Use `src/components/DataStructuresOverview/<Group>/<Structure>/` for canonical
+models, structure layouts, and Overview actions. Overview groups map to `Linear`,
+`QueuePriority`, `Trees`, `Graphs`, and `HashBased`. Queue, Deque, CircularBuffer,
+and Heap belong under `DataStructuresOverview/QueuePriority/`.
 
-Keep all entities specific to one structure together in that structure's folder:
-its model class, layout class, supporting types, and action folders. Follow the
+Use `src/components/DataStructuresAlgorithms/Sorting/Array/` for all sorting
+actions and array-specific sorting helpers, traces, and layouts. Keep the single
+canonical FixedArray model and its ordinary-operation layout under
+`DataStructuresOverview/Linear/Array/`; sorting imports that model. Retain its
+existing sorting entry points, which delegate to the relocated sorting helpers.
+
+Use `src/components/DataStructuresAlgorithms/GraphsTraversal/<Graph>/` for
+BreadthFirst, DepthFirst, ShortestPath, and TopologicalSort actions where supported.
+Keep each graph's canonical model and editing/search/clear actions under
+`DataStructuresOverview/Graphs/<Graph>/`. Both branches share the same models and
+scene/playback contracts; never duplicate model classes to satisfy the hierarchy.
+
+Keep action-specific entities together in the action's category folder. Keep a
+canonical model and its supporting entities beside its Overview actions, with
+algorithm-specific helpers beside their Algorithms actions. Follow the
 existing `LinkedList/` organization: `LinkedList.ts` and `LinkedListLayout.ts`
 sit beside `AddInTheMiddle/`. Do not split structure-specific entities into
 top-level model or visualization folders.
@@ -23,8 +37,10 @@ such as `AddInTheMiddle` or `SearchByValue`. Every action folder must contain
 a `.tsx` React component and a separate `.css` file with its styles. Name both
 files after the action and import the stylesheet from the component.
 Keep action-specific sequence classes, such as `InsertionAnimation.ts`, in the
-same action folder. Import the structure's model and layout from the parent
-folder, using relative imports and matching the exact directory casing.
+same action folder. Use relative imports with exact directory casing. Overview
+actions normally import their model and layout from the parent folder;
+Algorithms actions import the canonical model from its Overview location and
+algorithm-specific layouts from the Algorithms structure folder.
 Tree action components use key terminology: `SearchByKey`, `DeleteByKey`, and
 the B+ Tree's `RangeFromKey`. Match their class, folder, `.tsx`, and `.css` names.
 Trie uses word terminology (`SearchByWord`, `DeleteByWord`, and `StartsWith`),
@@ -36,7 +52,7 @@ for expression validation in the shared input dialog.
 
 ```text
 src/components/
-  DataStructures/
+  DataStructuresOverview/
     Linear/
       LinkedList/
         LinkedList.ts
@@ -54,6 +70,36 @@ src/components/
         SearchByValue/
           SearchByValue.tsx
           SearchByValue.css
+    QueuePriority/
+      Queue/
+        Queue.ts
+        Enqueue/
+          Enqueue.tsx
+          Enqueue.css
+          InsertionAnimation.ts
+      Heap/
+        Heap.ts
+        Insert/
+          Insert.tsx
+          Insert.css
+          InsertAnimation.ts
+    Graphs/
+      SimpleGraph/
+        Graph.ts
+  DataStructuresAlgorithms/
+    Sorting/
+      Array/
+        ArraySortingLayout.ts
+        QuickSort/
+          QuickSort.tsx
+          QuickSort.css
+          QuickSortAnimation.ts
+    GraphsTraversal/
+      SimpleGraph/
+        BreadthFirst/
+          BreadthFirst.tsx
+          BreadthFirst.css
+          BreadthFirstAnimation.ts
   Renderer/
     Renderer.tsx
     Renderer.css
@@ -102,7 +148,9 @@ second portal, using the same playback index as the scene and timeline.
 Keep contracts and infrastructure used across structures in `src/visualization/`,
 such as `Scene.ts`, `AnimationController.ts`, and `StructureCatalog.ts`.
 Structure-specific layouts belong in their structure's folder under
-`src/components/DataStructures/`, alongside the model.
+`src/components/DataStructuresOverview/`, alongside the canonical model.
+Algorithm-specific layouts stay beside their algorithm helpers under
+`DataStructuresAlgorithms/`.
 
 ## Main menu
 
@@ -157,18 +205,38 @@ both inclusive bounds through the action definition and playback to its model.
 Create these components and folders as their features are implemented. The tree
 defines the required organization; it does not mean those features already exist.
 
+## Extended linear structures
+
+Keep SkipList, UnrolledLinkedList, XORLinkedList, GapBuffer, Rope, BitSet,
+SparseArray, and FreeList under `DataStructuresOverview/Linear/`. Each owns its model,
+layout, and action folders. `LinearFeatures` connects their class components and
+action-owned information to App; shared contracts, catalog, input validation,
+scene helpers, and trace recording live in `src/visualization/Linear*.ts` and
+`StructuredLinearInput.ts`. Reuse `StructuredLinearAction` and `ActionPlayback`.
+Do not reuse a tree model or tree layout to stand in for these linear structures.
+
+Numeric lists allow up to 64 values, text models up to 256 ASCII characters,
+and each text input up to 32 characters. Record at most 96 detailed trace frames
+per action while still executing the complete operation; disclose omitted events
+in the result description. Keep scene bounds fixed throughout each playback.
+The simulated address table in XORLinkedList must be described explicitly;
+do not claim JavaScript exposes native pointers or saves memory through XOR links.
+
 ## Hash-based structures
 
 Keep Hash Map, Hash Set, and Bloom Filter under
-`src/components/DataStructures/HashBased/`, each with its model, layout, and action
+`src/components/DataStructuresOverview/HashBased/`, each with its model, layout, and action
 folders. Hash Set composes the chained Hash Map storage. Reuse shared hashing,
 bucket layout, and trace playback from `src/visualization/` where they serve more
 than one structure. Each action has its own sequence, class component, and CSS file.
 
 ## Graphs
 
-Keep the original undirected Graph under Graphs/SimpleGraph and add DirectedGraph,
-WeightedGraph, DAG, and Multigraph beside it. GraphModel, GraphSceneLayout, and
+Keep the original undirected Graph under DataStructuresOverview/Graphs/SimpleGraph
+and DirectedGraph, WeightedGraph, DAG, and Multigraph beside it. GraphFeatures
+dispatches only Overview actions; GraphTraversalFeatures belongs under
+DataStructuresAlgorithms/GraphsTraversal and dispatches graph algorithms.
+GraphModel, GraphSceneLayout, and
 GraphAnimation are shared across these variants. Each allowed action has its own
 component, CSS, animation class, and complexity description. Reuse
 StructuredGraphAction for playback and GraphActionInput for structured dialogs;
@@ -188,14 +256,15 @@ AmericanFlagSort, Spreadsort, Burstsort, PigeonholeSort, InterpolationSort,
 LibrarySort, SplaySort, StrandSort, PancakeSort, StoogeSort, SlowSort, BogoSort,
 and SleepSort.
 Each action owns its component,
-CSS, and sequence folder under Linear/Array. Keep the model entry points in FixedArray,
-with shared array-specific algorithms, trace, layout, and snapshot helpers beside it.
+CSS, and sequence folder under DataStructuresAlgorithms/Sorting/Array. Keep the
+model entry points in the canonical Overview FixedArray, with shared sorting
+algorithms, trace, layout, and snapshot helpers in the Algorithms Array folder.
 HybridArraySort implements TimSort, IntroSort, and Dual-Pivot QuickSort on the
 existing allocation. BlockMergeArraySort implements buffered block-wise multiway
 merging with stable ties and O(n) working storage.
 WikiArraySort implements cache-free internal-buffer block merging; SmoothArraySort
 implements Leonardo heaps. TreeArraySort, TournamentArraySort, and PatienceArraySort
-keep their BST, winner-tree, and pile/heap operations beside the array model.
+keep their BST, winner-tree, and pile/heap operations beside the sorting helpers.
 ArraySortOperations shares only comparison, exchange, and trace primitives.
 CycleArraySort, CombArraySort, CocktailShakerArraySort, and GnomeArraySort keep
 their cycle writes, shrinking gaps, alternating sweeps, and backtracking beside
@@ -204,7 +273,7 @@ ArrayNetworkSort executes shared comparators; OddEvenArraySort,
 OddEvenMergeArraySort, BitonicArraySort, and PairwiseNetworkArraySort own their
 stage schedules. SampleArraySort owns regular sampling, splitter selection,
 bucket classification, stable local merge sorting, and concatenation. Keep all
-these helpers beside FixedArray; use the shared layout for comparator links and
+these helpers in DataStructuresAlgorithms/Sorting/Array; use the shared layout for comparator links and
 separate sample/splitter/bucket/output rows.
 ArrayMergeOperations shares stable adjacent merging with a lazy buffer.
 NaturalMergeArraySort owns natural-run detection and pairwise merge passes.
@@ -217,13 +286,13 @@ IntegerDistributionSort shares exact bounds, histogram permutation, and small
 insertion ranges. FlashArraySort owns Flashsort class cycles and cleanup;
 AmericanFlagArraySort owns fixed hexadecimal MSD recursion; SpreadArraySort
 owns adaptive range splits and the comparison-sort fallback. BurstArraySort
-keeps its encoded integer keys and bursting prefix containers beside FixedArray;
+keeps its encoded integer keys and bursting prefix containers beside the sorting helpers;
 ArraySortTrace and ArraySortingLayout describe its trie and leaf records.
 PigeonholeArraySort owns guarded full-record hole lists and stable gathering.
 InterpolationArraySort owns stable histogram placement and collision cleanup.
 LibraryArraySort owns the separate sparse shelf, gap-aware upper-bound search,
 nearest-gap shifts, and doubling insertion rounds. SplayArraySort keeps mutable
-parent links and rotations beside the array model; StrandArraySort owns linked
+parent links and rotations beside the sorting helpers; StrandArraySort owns linked
 remaining/strand/merged lists. PancakeArraySort performs only prefix reversals.
 RecursiveDemoSort bounds recorded detail and rejects oversized demonstrations;
 StoogeArraySort and SlowArraySort retain their distinct exact recurrences.

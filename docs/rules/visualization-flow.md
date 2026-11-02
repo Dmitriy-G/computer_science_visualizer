@@ -11,9 +11,12 @@
    of Overview; graph editing and value search remain there. Browsing either
    branch preserves the current visualization and playback.
    Selecting Overview shows **Linear** (Array, Linked list, Stack,
-   Queue, Deque, Doubly linked list, and Circular buffer),
+   Doubly linked list, Skip List, Unrolled Linked
+   List, XOR Linked List, Gap Buffer, Rope, Bit Array / BitSet, Sparse Array,
+   and Free List),
+   **Queue / Priority** (Queue, Deque, Circular buffer, and Heap (min-heap)),
    **Trees** (Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, and
-   B+ Tree, Trie, Heap, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, and
+   B+ Tree, Trie, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, and
    Abstract Syntax Tree (AST)),
    **Graphs** (Undirected Graph, Directed Graph, Weighted Graph, DAG, and Multigraph), and **Hash-based** (Hash Table / Hash Map,
    Hash Set, Bloom Filter). Choose a group to see only
@@ -446,6 +449,54 @@ All four structures load 10 elements and use the shared playback session, final
 frame commits, deterministic snapshots, reduced-motion behavior, and lifecycle
 cleanup.
 
+## Extended linear structures
+
+All eight use shared automatic playback, structured input, immutable scene
+snapshots, final-frame model commits, action and structure information, and full
+Reset. Preserve the original logical count until commit. Show only values,
+indices, links, roles, and statuses in the diagram; put results in the timeline.
+
+- **Skip List:** ten unique sorted keys; seeded geometric towers capped at six
+  levels. Insert, search by key, delete by key, and clear. Draw horizontal next
+  links and vertical down links; reject duplicates without allocating an ID.
+- **Unrolled Linked List:** ten values in linked blocks of capacity four. Insert
+  at an explicit zero-based index, search/delete the first matching value, and
+  clear. Split full blocks and merge a following block after deletion when it
+  fits; show global index ranges and block occupancy.
+- **XOR Linked List:** ten linked numeric values with cached endpoints and a
+  Map of simulated addresses. Append, search/delete the first matching value,
+  and clear. Store `previous XOR next` as BigInt, decode links while carrying
+  the previous address, and repair both neighbors when deleting. Label address
+  and XOR fields and explicitly identify the simulation.
+- **Gap Buffer:** ten ASCII characters around a movable gap. Insert text at an
+  index, move the gap, delete an indexed span, search for text, and clear. Show
+  physical indices and logical text indices separately. Grow gap storage only
+  when needed; retain a nonzero gap so cursor movement remains valid.
+- **Rope:** ten ASCII characters in immutable AVL-balanced chunks of at most
+  four characters. Insert, concatenate, read by index, delete a span, and clear.
+  Show left-subtree weights and leaf text. Split/join edits share unchanged
+  subtrees and update weights and heights; do not flatten and rebuild all text.
+- **Bit Array / BitSet:** ten logical bits packed into unsigned 32-bit words.
+  Set, clear, toggle, test by index, and clear all. Show word values and expanded
+  bit positions. Clear preserves bit count; preserve unsigned bit-31 behavior.
+- **Sparse Array:** 64 logical slots and ten initially stored entries. Set/read
+  an indexed entry, delete an entry, and clear stored entries. Unstored holes
+  read as zero; explicit zero is a stored entry. Deletion never shifts indices
+  or changes logical length. Draw only stored entries and directory metadata.
+- **Free List:** ten fixed simulated pool slots, initially three allocated and
+  seven free. Allocate a value, release a slot by ID, and release all. Allocation
+  pops the free head and release pushes onto it. Reject exhaustion and double
+  release. Separate allocated and free rows while preserving physical slot IDs.
+
+Use numeric safe-integer validation and current index bounds. Text input accepts
+1–32 printable ASCII characters, preserving spaces. Validate complete deletion
+spans before mutation. List examples allow 64 values and text examples allow 256
+characters. Keep at most 96 detailed operation frames and a final result, stating
+how many additional events were executed but omitted. The cap limits recording,
+not algorithm execution. Explain fixed-height skip-list limits, Map assumptions,
+rope path-copy storage, packed-word counts, and deferred garbage collection in
+the relevant action information.
+
 ## Hash-based structures
 
 Hash Map associates unique whole-number keys with whole-number values. Use
@@ -693,8 +744,10 @@ Also include Interpolation Sort, Library Sort, Splay Sort, Strand Sort, Pancake
 Sort, Stooge Sort, Slow Sort, Bogo Sort, and Sleep Sort.
 Each action owns its component, CSS, sequence, and complexity
 information. Keep model entry points and optional synchronous trace callbacks in
-FixedArray, with array-specific algorithm helpers beside it. Reuse ArraySortingLayout and ArraySortingAnimation for independent
-snapshots and fixed slot positions. None of these actions collects a value.
+the canonical DataStructuresOverview/Linear/Array/FixedArray model, with sorting
+actions and helpers under DataStructuresAlgorithms/Sorting/Array. Reuse
+ArraySortingLayout and ArraySortingAnimation for independent snapshots and fixed
+slot positions. None of these actions collects a value.
 
 Selection sort scans the complete unsorted suffix for each minimum, then swaps it
 into place: all time cases are O(n²), auxiliary memory O(1), and it is unstable.

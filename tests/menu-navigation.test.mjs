@@ -4,7 +4,7 @@ import { MenuNavigation } from '../src/components/MainMenu/MenuNavigation.ts'
 import { StructureCatalog } from '../src/visualization/StructureCatalog.ts'
 import { ActionCatalog } from '../src/visualization/ActionCatalog.ts'
 import { ActionOrdering } from '../src/components/MainMenu/ActionMenu/ActionOrdering.ts'
-import { ShellSortAnimation } from '../src/components/DataStructures/Linear/Array/ShellSort/ShellSortAnimation.ts'
+import { ShellSortAnimation } from '../src/components/DataStructuresAlgorithms/Sorting/Array/ShellSort/ShellSortAnimation.ts'
 
 test('algorithm action ordering is alphabetical by default without changing catalog order', () => {
   const actions = ActionCatalog.getScopedActions('array', 'sorting')
@@ -67,8 +67,14 @@ test('recursive, factorial, graph, and unavailable bounds receive explicit order
 })
 
 test('Overview contains exactly the requested structure groups', () => {
-  assert.deepEqual(StructureCatalog.groups.map((group) => group.name), ['Linear', 'Trees', 'Graphs', 'Hash-based'])
-  const expected = { linear: ['array', 'circular-buffer', 'deque', 'doubly-linked-list', 'linked-list', 'queue', 'stack'], trees: ['ast', 'avl-tree', 'b-plus-tree', 'b-tree', 'binary-tree', 'fenwick-tree', 'heap', 'lsm-tree', 'r-tree', 'red-black-tree', 'segment-tree', 'trie'], graphs: ['dag', 'directed-graph', 'graph', 'multigraph', 'weighted-graph'], 'hash-based': ['bloom-filter', 'hash-map', 'hash-set'] }
+  assert.deepEqual(StructureCatalog.groups.map((group) => group.name), ['Linear', 'Queue / Priority', 'Trees', 'Graphs', 'Hash-based'])
+  const expected = {
+    linear: ['array', 'bit-set', 'doubly-linked-list', 'free-list', 'gap-buffer', 'linked-list', 'rope', 'skip-list', 'sparse-array', 'stack', 'unrolled-linked-list', 'xor-linked-list'],
+    'queue-priority': ['circular-buffer', 'deque', 'heap', 'queue'],
+    trees: ['ast', 'avl-tree', 'b-plus-tree', 'b-tree', 'binary-tree', 'fenwick-tree', 'lsm-tree', 'r-tree', 'red-black-tree', 'segment-tree', 'trie'],
+    graphs: ['dag', 'directed-graph', 'graph', 'multigraph', 'weighted-graph'],
+    'hash-based': ['bloom-filter', 'hash-map', 'hash-set'],
+  }
   const seen = new Set()
   for (const group of StructureCatalog.groups) {
     const structures = StructureCatalog.getStructures(group.kind)
