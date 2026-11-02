@@ -21,13 +21,13 @@ import HashSetRemove from '../DataStructuresOverview/HashBased/HashSet/Remove/Re
 import { RemoveAnimation as HashSetRemoveSequence } from '../DataStructuresOverview/HashBased/HashSet/Remove/RemoveAnimation.ts'
 import HashSetClear from '../DataStructuresOverview/HashBased/HashSet/Clear/Clear.tsx'
 import { ClearAnimation as HashSetClearSequence } from '../DataStructuresOverview/HashBased/HashSet/Clear/ClearAnimation.ts'
-import { BloomFilter } from '../DataStructuresOverview/HashBased/BloomFilter/BloomFilter.ts'
-import BloomFilterAdd from '../DataStructuresOverview/HashBased/BloomFilter/Add/Add.tsx'
-import { AddAnimation as BloomFilterAddSequence } from '../DataStructuresOverview/HashBased/BloomFilter/Add/AddAnimation.ts'
-import BloomFilterCheckMembership from '../DataStructuresOverview/HashBased/BloomFilter/CheckMembership/CheckMembership.tsx'
-import { CheckMembershipAnimation as BloomFilterCheckMembershipSequence } from '../DataStructuresOverview/HashBased/BloomFilter/CheckMembership/CheckMembershipAnimation.ts'
-import BloomFilterClear from '../DataStructuresOverview/HashBased/BloomFilter/Clear/Clear.tsx'
-import { ClearAnimation as BloomFilterClearSequence } from '../DataStructuresOverview/HashBased/BloomFilter/Clear/ClearAnimation.ts'
+import { BloomFilter } from '../DataStructuresOverview/Probabilistic/BloomFilter/BloomFilter.ts'
+import BloomFilterAdd from '../DataStructuresOverview/Probabilistic/BloomFilter/Add/Add.tsx'
+import { AddAnimation as BloomFilterAddSequence } from '../DataStructuresOverview/Probabilistic/BloomFilter/Add/AddAnimation.ts'
+import BloomFilterCheckMembership from '../DataStructuresOverview/Probabilistic/BloomFilter/CheckMembership/CheckMembership.tsx'
+import { CheckMembershipAnimation as BloomFilterCheckMembershipSequence } from '../DataStructuresOverview/Probabilistic/BloomFilter/CheckMembership/CheckMembershipAnimation.ts'
+import BloomFilterClear from '../DataStructuresOverview/Probabilistic/BloomFilter/Clear/Clear.tsx'
+import { ClearAnimation as BloomFilterClearSequence } from '../DataStructuresOverview/Probabilistic/BloomFilter/Clear/ClearAnimation.ts'
 import { AVLTree } from '../DataStructuresOverview/Trees/AVLTree/AVLTree.ts'
 import AVLTreeInsert from '../DataStructuresOverview/Trees/AVLTree/Insert/Insert.tsx'
 import { InsertionAnimation as AVLTreeInsertSequence } from '../DataStructuresOverview/Trees/AVLTree/Insert/InsertionAnimation.ts'
@@ -299,6 +299,9 @@ import { PriorityStructureCatalog } from '../../visualization/PriorityStructureC
 import { PriorityModel } from '../DataStructuresOverview/QueuePriority/PriorityModel.ts'
 import { PriorityFeatures } from '../DataStructuresOverview/QueuePriority/PriorityFeatures.tsx'
 import { RopeFeatures } from '../DataStructuresOverview/Trees/RopeFeatures.tsx'
+import { ProbabilisticStructureCatalog } from '../../visualization/ProbabilisticStructureCatalog.ts'
+import { ProbabilisticModel } from '../DataStructuresOverview/Probabilistic/ProbabilisticModel.ts'
+import { ProbabilisticFeatures } from '../DataStructuresOverview/Probabilistic/ProbabilisticFeatures.tsx'
 import { HashStructureCatalog } from '../../visualization/HashStructureCatalog.ts'
 import { HashTableModel } from '../DataStructuresOverview/HashBased/HashTableModel.ts'
 import { HashFeatures } from '../DataStructuresOverview/HashBased/HashFeatures.tsx'
@@ -328,6 +331,7 @@ interface AppState {
 }
 
 export default class App extends Component<Record<string, never>, AppState> {
+  private probabilisticModels = ProbabilisticStructureCatalog.createModels()
   private hashModels = HashStructureCatalog.createModels()
   private extendedGraphs = ExtendedGraphCatalog.createModels()
   private priorityModels = PriorityStructureCatalog.createModels()
@@ -414,6 +418,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     const menu = this.state.menu.selectStructure(kind)
     const changingScope = this.state.selected === kind && this.state.selectedScope !== menu.actionScope
     if (!changingScope) {
+      this.probabilisticModels = ProbabilisticStructureCatalog.createModels()
       this.hashModels = HashStructureCatalog.createModels()
       this.extendedGraphs = ExtendedGraphCatalog.createModels()
       this.priorityModels = PriorityStructureCatalog.createModels()
@@ -464,6 +469,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         this.priorityModels,
         this.extendedGraphs,
         this.hashModels,
+        this.probabilisticModels,
       ),
       actionOpen: false,
       selectedAction: null,
@@ -544,6 +550,8 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private getInputSize(structure: StructureKind): number {
+    const probabilistic = this.probabilisticModels.get(structure)
+    if (probabilistic) return probabilistic.length
     const hash = this.hashModels.get(structure)
     if (hash) return hash.length
     const extended = this.extendedGraphs.get(structure)
@@ -609,7 +617,9 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private describeActionDetails = (action: ActionKind): AlgorithmInformation | null => {
+    const probabilistic = this.state.selected ? this.probabilisticModels.get(this.state.selected) : undefined
     const hash = this.state.selected ? this.hashModels.get(this.state.selected) : undefined
+    if (probabilistic) return ProbabilisticFeatures.describe(action, probabilistic)
     if (hash) return HashFeatures.describe(action, hash)
     const extended = this.state.selected ? this.extendedGraphs.get(this.state.selected) : undefined
     if (extended) {
@@ -818,7 +828,12 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private renderAction(): ReactNode {
     if (!this.state.actionOpen) return null
+    const probabilistic = this.state.selected ? this.probabilisticModels.get(this.state.selected) : undefined
     const hash = this.state.selected ? this.hashModels.get(this.state.selected) : undefined
+    if (probabilistic && this.state.selectedAction) return ProbabilisticFeatures.render(this.state.selectedAction, {
+      model: probabilistic, input: this.state.treeInput,
+      onSceneChange: this.updateProbabilisticScene, onComplete: this.completeAction,
+    }, this.state.actionSession)
     if (hash && this.state.selectedAction) return HashFeatures.render(this.state.selectedAction, {
       model: hash, input: this.state.treeInput,
       onSceneChange: this.updateHashStructureScene, onComplete: this.completeAction,
@@ -1051,6 +1066,7 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private resetStructure = (): void => {
     if (this.state.selected === null) return
+    this.probabilisticModels = ProbabilisticStructureCatalog.createModels()
     this.hashModels = HashStructureCatalog.createModels()
     this.extendedGraphs = ExtendedGraphCatalog.createModels()
     this.priorityModels = PriorityStructureCatalog.createModels()
@@ -1098,6 +1114,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         this.priorityModels,
         this.extendedGraphs,
         this.hashModels,
+        this.probabilisticModels,
       ),
       actionOpen: false,
       selectedAction: null,
@@ -1114,6 +1131,12 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private updateScene = (scene: Scene, list: LinkedList): void => {
     this.list = list
+    this.setState({ scene })
+  }
+
+  private updateProbabilisticScene = (scene: Scene, model: LinearModel): void => {
+    if (!(model instanceof ProbabilisticModel)) throw new TypeError('Expected probabilistic structure')
+    this.probabilisticModels.set(model.kind, model)
     this.setState({ scene })
   }
 

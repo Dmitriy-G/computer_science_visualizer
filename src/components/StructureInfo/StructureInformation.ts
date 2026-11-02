@@ -1,3 +1,4 @@
+import { ProbabilisticStructureInformation } from './ProbabilisticStructureInformation.ts'
 import { HashStructureInformation } from './HashStructureInformation.ts'
 import { ExtendedTreeStructureInformation } from './ExtendedTreeStructureInformation.ts'
 import type { StructureKind } from '../../visualization/Scene.ts'
@@ -25,6 +26,7 @@ export interface StructureOverview {
 export class StructureInformation {
   private static readonly overviews: Record<StructureKind, StructureOverview> = {
     ...HashStructureInformation.overviews,
+    ...ProbabilisticStructureInformation.overviews,
     ...ExtendedTreeStructureInformation.overviews,
     ...LinearStructureInformation.overviews,
     ...PriorityStructureInformation.overviews,

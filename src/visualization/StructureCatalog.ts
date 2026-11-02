@@ -1,3 +1,6 @@
+import { ProbabilisticStructureDefinitions } from './ProbabilisticStructureDefinitions.ts'
+import { ProbabilisticStructureCatalog } from './ProbabilisticStructureCatalog.ts'
+import type { ProbabilisticModel } from '../components/DataStructuresOverview/Probabilistic/ProbabilisticModel.ts'
 import { HashStructureDefinitions } from './HashStructureDefinitions.ts'
 import { HashStructureCatalog } from './HashStructureCatalog.ts'
 import type { HashTableModel } from '../components/DataStructuresOverview/HashBased/HashTableModel.ts'
@@ -43,10 +46,10 @@ import { HashMap } from '../components/DataStructuresOverview/HashBased/HashMap/
 import { HashMapLayout } from '../components/DataStructuresOverview/HashBased/HashMap/HashMapLayout.ts'
 import { HashSet } from '../components/DataStructuresOverview/HashBased/HashSet/HashSet.ts'
 import { HashSetLayout } from '../components/DataStructuresOverview/HashBased/HashSet/HashSetLayout.ts'
-import { BloomFilter } from '../components/DataStructuresOverview/HashBased/BloomFilter/BloomFilter.ts'
-import { BloomFilterLayout } from '../components/DataStructuresOverview/HashBased/BloomFilter/BloomFilterLayout.ts'
+import { BloomFilter } from '../components/DataStructuresOverview/Probabilistic/BloomFilter/BloomFilter.ts'
+import { BloomFilterLayout } from '../components/DataStructuresOverview/Probabilistic/BloomFilter/BloomFilterLayout.ts'
 
-export type StructureGroupKind = 'linear' | 'queue-priority' | 'trees' | 'graphs' | 'hash-based'
+export type StructureGroupKind = 'linear' | 'queue-priority' | 'trees' | 'graphs' | 'hash-based' | 'probabilistic'
 
 export interface StructureGroupDefinition {
   readonly kind: StructureGroupKind
@@ -69,15 +72,17 @@ export class StructureCatalog {
     { kind: 'queue-priority', name: 'Queue / Priority', description: 'Queues, binary and meldable heaps, indexed priorities, and sliding windows', symbol: '⇥' },
     { kind: 'trees', name: 'Trees', description: 'Search trees, tries, range indexes, spatial indexes, and LSM storage', symbol: '⋔' },
     { kind: 'graphs', name: 'Graphs', description: 'Constrained graphs, hyperedges, flow networks, and storage representations', symbol: '◇' },
-    { kind: 'hash-based', name: 'Hash-based', description: 'Probing, chained and dynamic hash indexes, perfect tables, rings, and filters', symbol: '#' },
+    { kind: 'hash-based', name: 'Hash-based', description: 'Probing, chained and dynamic hash indexes, perfect tables, and rings', symbol: '#' },
+    { kind: 'probabilistic', name: 'Probabilistic', description: 'Approximate membership, frequency and distinct counts, and stream sampling', symbol: '≈' },
   ]
 
   public static readonly structures: readonly StructureDefinition[] = [
     ...ExtendedTreeDefinitions.structures,
     ...HashStructureDefinitions.structures,
+    ...ProbabilisticStructureDefinitions.structures,
     { kind: 'hash-map', group: 'hash-based', name: 'Hash Table / Hash Map', description: 'Key-value buckets with collision chains and automatic rehashing', symbol: '#' },
     { kind: 'hash-set', group: 'hash-based', name: 'Hash Set', description: 'Unique values located through hash buckets', symbol: '{}' },
-    { kind: 'bloom-filter', group: 'hash-based', name: 'Bloom Filter', description: 'A bit array for probabilistic membership checks', symbol: '01' },
+    { kind: 'bloom-filter', group: 'probabilistic', name: 'Bloom Filter', description: 'A bit array for probabilistic membership checks', symbol: '01' },
     {
       kind: 'linked-list',
       group: 'linear',
@@ -214,7 +219,10 @@ export class StructureCatalog {
     priorityModels?: ReadonlyMap<StructureKind, PriorityModel>,
     extendedGraphs?: ReadonlyMap<StructureKind, ExtendedGraphModel>,
     hashModels?: ReadonlyMap<StructureKind, HashTableModel>,
+    probabilisticModels?: ReadonlyMap<StructureKind, ProbabilisticModel>,
   ): Scene {
+    const probabilistic = probabilisticModels?.get(kind) ?? ProbabilisticStructureCatalog.createDefault(kind)
+    if (probabilistic) return ProbabilisticStructureCatalog.createScene(probabilistic)
     const hash = hashModels?.get(kind) ?? HashStructureCatalog.createDefault(kind)
     if (hash) return HashStructureCatalog.createScene(hash)
     const extended = extendedGraphs?.get(kind) ?? ExtendedGraphCatalog.createDefault(kind)

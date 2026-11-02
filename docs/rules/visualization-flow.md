@@ -20,8 +20,10 @@
    **Trees** (Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, and
    B+ Tree, Trie, Rope, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, and
    Abstract Syntax Tree (AST), and the 24 extended entries listed below),
-   **Graphs** (Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph, Bipartite Graph, Complete Graph, Tree Graph, Hypergraph, Flow Network, Functional Graph, Adjacency Matrix, Adjacency List, Edge List, Compressed Sparse Row (CSR)), and **Hash-based** (Hash Table / Hash Map,
-   Hash Set, Bloom Filter, and the nine additional hash entries listed below). Choose a group to see only
+   **Graphs** (Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph, Bipartite Graph, Complete Graph, Tree Graph, Hypergraph, Flow Network, Functional Graph, Adjacency Matrix, Adjacency List, Edge List, Compressed Sparse Row (CSR)), **Hash-based** (Hash Table / Hash Map,
+   Hash Set and the nine additional hash entries listed below), and
+   **Probabilistic** (Bloom Filter, Counting Bloom Filter, Cuckoo Filter,
+   Quotient Filter, Count-Min Sketch, HyperLogLog, Reservoir Sampling Buffer). Choose a group to see only
    its structures. Provide Back navigation through these levels, without a
    visible breadcrumb path or instruction text on the structure list.
 3. Selecting a structure loads an example containing 10 elements in the shared
@@ -49,7 +51,7 @@
    keyboard-accessible picker with visible focus; selecting an order does not
    start an algorithm.
 5. Selecting a supported value/index action on a linear structure, tree, graph, or
-   hash-based structure opens its input dialog.
+   hash-based or probabilistic structure opens its input dialog.
    Confirming valid input starts its animation. Actions without an argument run
    directly. Graph actions use the same structured input dialog. Animations
    run to completion automatically. Reduced-motion styles still suppress visual
@@ -590,7 +592,7 @@ not algorithm execution. Explain fixed-height skip-list limits, Map assumptions,
 rope path-copy storage, packed-word counts, and deferred garbage collection in
 the relevant action information.
 
-## Hash-based structures
+## Hash-based and probabilistic structures
 
 Hash Map associates unique whole-number keys with whole-number values. Use
 separate collision chains and an initial eight buckets; double the bucket count
@@ -601,7 +603,8 @@ rehashing in the shared renderer. Hash Set composes the same storage, keeps valu
 unique, and leaves duplicates unchanged. Clear releases entries one by one while
 retaining bucket capacity and the ID counter. Both default examples have ten entries.
 
-Bloom Filter uses 32 bits and three deterministic seeded hashes. Add sets bits;
+Bloom Filter belongs to Overview's Probabilistic group. It uses 32 bits and three
+deterministic seeded hashes. Add sets bits;
 membership checks stop at the first zero (**definitely absent**), otherwise report
 **possibly present**, explicitly explaining false positives. Do not offer individual
 deletion, exact enumeration, or an exact distinct-member count. Its default records
@@ -617,6 +620,65 @@ Insertion may allocate O(b) bucket references during growth; clear visits all
 n entries and b buckets. Bloom add costs O(k), membership costs O(1) best and
 O(k) average/worst, and clear costs O(m), with k = 3 hashes and m = 32 bits.
 Explain these parameters even though the example fixes their values.
+
+### Additional probabilistic structures
+
+The six additional entries have their own storage and animated operations under
+Overview > Probabilistic. Their defaults record ten insertions, weighted updates,
+or arrivals; count labels must identify that quantity rather than claiming an
+exact distinct cardinality. Display full counter labels below cells with enough
+space for active/visited statuses above the following row. Keep diagram bounds
+fixed throughout playback and retain the shared 96-detailed-frame cap.
+
+- **Counting Bloom Filter:** 32 four-bit counters, three seeded hashes, and
+  at most 64 live insertions. Aggregate repeated hash positions before overflow
+  checks; reject the complete insertion if a counter would exceed 15. Membership
+  uses counters only. Remove decrements one recorded occurrence, guarded by an
+  extra exact-key occurrence ledger. Disclose that this guard adds O(n) storage.
+- **Cuckoo Filter:** eight buckets with two nonzero eight-bit fingerprints each.
+  Alternate buckets use an involutive XOR mapping. Find a complete relocation
+  path by deterministic BFS before moving residents; reject without mutation if
+  no path reaches a hole. This is a BFS teaching variant rather than random kicks.
+  Queries inspect fingerprints only. An extra exact-key ledger guards removal;
+  false-positive membership alone never authorizes deletion. No resizing is offered.
+- **Quotient Filter:** sixteen circular slots, four quotient bits, eight remainder
+  bits, and occupied/continuation/shifted metadata. Keep one empty slot, allowing
+  fifteen fingerprint occurrences, including duplicates. Membership walks actual
+  metadata and sorted runs. Insertion decodes fingerprints and rebuilds packed
+  runs around a valid circular cut, with its higher complexity disclosed. Store no
+  full keys; individual deletion is not offered by this variant.
+- **Count-Min Sketch:** three rows of eight BigInt counters with separate fixed
+  hash seeds. Add a positive safe-integer weight to one counter per row. Estimate
+  frequency by the minimum; positive updates guarantee no underestimation, while
+  collisions can overestimate. Show total weight independently of update count.
+  Queries never mutate counters. Clear runs without input; no decrements are offered.
+- **HyperLogLog:** sixteen register maxima from a fixed 64-bit hash: four index
+  bits and sixty rank bits. Add computes leading-zero rank plus one; repeated
+  values leave their register contribution unchanged. Estimate distinct count runs
+  without input, using alpha16 = 0.673 and small-range linear counting. Empty
+  registers estimate zero. Typical standard error is about 26% under ideal hashing,
+  not a guaranteed error bound. This is classic HLL, not HLL++, without an exact set.
+- **Reservoir Sampling Buffer:** Algorithm R with five retained stream occurrences.
+  Fill initially, then draw an integer from 0 through seen - 1 and replace only
+  if it indexes a sample slot. Count skipped arrivals and keep duplicates as
+  separate occurrences. Show arrival numbers and stable item IDs. Inspect sample
+  and Clear run without input. Clone generator state; Clear restarts the fixed
+  seed but preserves the item-ID counter. Use integer rejection sampling to avoid
+  modulo bias; limit experiments to 2^32 - 1 arrivals.
+
+Use fixed seeded avalanche mixing for reproducibility, not cryptographic promises
+or proofs of hash independence. Explain that theoretical filter/sketch error and
+equal reservoir-inclusion claims assume suitable hashing or ideal uniform draws.
+Keep exact keys out of sketches and reservoir histories. The two explicit deletion
+guards are the only full-key registries in these new models and never answer queries.
+Action information describes each implemented variant and excludes trace snapshots
+from algorithmic complexity. Include only verified real-technology links; the
+Quotient Filter entry currently has no verified production example.
+
+Algorithm references: [Cuckoo Filter paper](https://www.cs.cmu.edu/~binfan/papers/conext14_cuckoofilter.pdf),
+[Quotient Filter paper](https://www3.cs.stonybrook.edu/~bender/newpub/2012-PVLDB-dont-thrash-BenderFaJo.pdf),
+[HyperLogLog paper](https://algo.inria.fr/flajolet/Publications/FlFuGaMe07.pdf), and
+[reservoir sampling](https://xlinux.nist.gov/dads/HTML/reservoirSampling.html).
 
 ## Clear for Array, LinkedList, BinaryTree, and Graph
 
@@ -1315,8 +1377,8 @@ extended entries become empty. No additional playback controls or browser checks
 
 Hash-based also includes Open Addressing Hash Table, Separate Chaining Hash Table,
 Robin Hood Hash Table, Cuckoo Hash Table, Hopscotch Hashing, Extendible Hashing,
-Linear Hashing, Perfect Hash Table, and Consistent Hashing Ring. Preserve Hash Map,
-Hash Set, and Bloom Filter. Each new entry starts with ten records, keys, or servers
+Linear Hashing, Perfect Hash Table, and Consistent Hashing Ring. Preserve Hash Map
+and Hash Set in Hash-based, with Bloom Filter in Probabilistic. Each new entry starts with ten records, keys, or servers
 as appropriate and has validated structured inputs and action/structure information.
 
 Seven mutable tables offer Insert/update (separate key and value), Lookup, Delete

@@ -67,7 +67,7 @@ test('recursive, factorial, graph, and unavailable bounds receive explicit order
 })
 
 test('Overview contains exactly the requested structure groups', () => {
-  assert.deepEqual(StructureCatalog.groups.map((group) => group.name), ['Linear', 'Queue / Priority', 'Trees', 'Graphs', 'Hash-based'])
+  assert.deepEqual(StructureCatalog.groups.map((group) => group.name), ['Linear', 'Queue / Priority', 'Trees', 'Graphs', 'Hash-based', 'Probabilistic'])
   const expected = {
     linear: ['array', 'bit-set', 'doubly-linked-list', 'free-list', 'gap-buffer', 'linked-list', 'skip-list', 'sparse-array', 'stack', 'unrolled-linked-list', 'xor-linked-list'],
     'queue-priority': ['binary-max-heap', 'binomial-heap', 'circular-buffer', 'deque', 'fibonacci-heap', 'heap', 'indexed-priority-queue', 'leftist-heap', 'monotonic-queue', 'pairing-heap', 'priority-queue', 'queue', 'skew-heap'],
@@ -82,7 +82,8 @@ test('Overview contains exactly the requested structure groups', () => {
       'two-three-tree', 'unordered-binary-tree', 'van-emde-boas-tree',
     ],
     graphs: ['adjacency-list', 'adjacency-matrix', 'bipartite-graph', 'complete-graph', 'compressed-sparse-row', 'dag', 'directed-graph', 'edge-list', 'flow-network', 'functional-graph', 'graph', 'hypergraph', 'multigraph', 'tree-graph', 'weighted-graph'],
-    'hash-based': ['bloom-filter', 'consistent-hashing-ring', 'cuckoo-hash-table', 'extendible-hashing', 'hash-map', 'hash-set', 'hopscotch-hashing', 'linear-hashing', 'open-addressing-hash-table', 'perfect-hash-table', 'robin-hood-hash-table', 'separate-chaining-hash-table'],
+    'hash-based': ['consistent-hashing-ring', 'cuckoo-hash-table', 'extendible-hashing', 'hash-map', 'hash-set', 'hopscotch-hashing', 'linear-hashing', 'open-addressing-hash-table', 'perfect-hash-table', 'robin-hood-hash-table', 'separate-chaining-hash-table'],
+    probabilistic: ['bloom-filter', 'count-min-sketch', 'counting-bloom-filter', 'cuckoo-filter', 'hyperloglog', 'quotient-filter', 'reservoir-sampling-buffer'],
   }
   const seen = new Set()
   for (const group of StructureCatalog.groups) {

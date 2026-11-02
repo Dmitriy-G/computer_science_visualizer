@@ -164,6 +164,10 @@ test('every structure preview has ten elements and valid edge endpoints', () => 
     assert.equal(scene.count, 10)
     if (['hypergraph', 'adjacency-matrix', 'adjacency-list', 'edge-list', 'compressed-sparse-row'].includes(structure.kind)) {
       assert.equal(scene.nodes.filter((node) => node.id.startsWith(`${structure.kind}-v`)).length, 10, 'Graph vertices are counted independently of representation cells and hyperedge markers')
+    } else if (['counting-bloom-filter', 'cuckoo-filter', 'quotient-filter', 'count-min-sketch', 'hyperloglog', 'reservoir-sampling-buffer'].includes(structure.kind)) {
+      const expectedCells = { 'counting-bloom-filter': 32, 'cuckoo-filter': 16, 'quotient-filter': 16, 'count-min-sketch': 24, hyperloglog: 16, 'reservoir-sampling-buffer': 6 }
+      assert.equal(scene.nodes.length, expectedCells[structure.kind], 'Probabilistic previews show their allocated storage, not one node per input')
+      assert.ok(scene.countLabel)
     } else if (structure.kind === 'bloom-filter') {
       assert.equal(scene.nodes.length, 32, 'Bloom filter nodes represent bits, not stored members')
       assert.equal(scene.countLabel, 'add operations recorded')

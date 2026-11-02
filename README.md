@@ -52,14 +52,28 @@ Choose **Data Structures Overview**, then a group:
 | Queue / Priority | Queue, Deque, Circular buffer, Heap (min-heap), Priority Queue, Binary Max-Heap, Binomial Heap, Fibonacci Heap, Pairing Heap, Leftist Heap, Skew Heap, Indexed Priority Queue, Monotonic Queue |
 | Trees | Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, B+ Tree, Trie, Rope, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, Abstract Syntax Tree (AST), General Tree (N-ary Tree), Binary Tree, Complete Binary Tree, Threaded Binary Tree, Splay Tree, Treap, Cartesian Tree, Scapegoat Tree, AA Tree, 2-3 Tree, 2-3-4 Tree, Radix Tree (Patricia Trie), Ternary Search Tree, Suffix Tree, Interval Tree, Order Statistic Tree, Persistent Segment Tree, Sparse Table, KD-Tree, Quadtree, Octree, Bounding Volume Hierarchy (BVH), Merkle Tree, Van Emde Boas Tree |
 | Graphs | Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph, Bipartite Graph, Complete Graph, Tree Graph, Hypergraph, Flow Network, Functional Graph, Adjacency Matrix, Adjacency List, Edge List, Compressed Sparse Row (CSR) |
-| Hash-based | Hash Table / Hash Map, Hash Set, Bloom Filter, Open Addressing Hash Table, Separate Chaining Hash Table, Robin Hood Hash Table, Cuckoo Hash Table, Hopscotch Hashing, Extendible Hashing, Linear Hashing, Perfect Hash Table, Consistent Hashing Ring |
+| Hash-based | Hash Table / Hash Map, Hash Set, Open Addressing Hash Table, Separate Chaining Hash Table, Robin Hood Hash Table, Cuckoo Hash Table, Hopscotch Hashing, Extendible Hashing, Linear Hashing, Perfect Hash Table, Consistent Hashing Ring |
+| Probabilistic | Bloom Filter, Counting Bloom Filter, Cuckoo Filter, Quotient Filter, Count-Min Sketch, HyperLogLog, Reservoir Sampling Buffer |
 
 Select a structure to load its example, then choose an action from the canvas
 card. Examples generally start with ten elements. Sparse Array has ten stored
 entries across 64 logical slots; Free List shows a ten-slot pool with three
 allocated slots; Bloom Filter records ten add operations rather than an exact
-distinct-member count. The back button reopens the current
+distinct-member count. The new filters show allocated counters, fingerprint buckets,
+or quotient slots. Count-Min Sketch counts weighted update operations, HyperLogLog
+counts add operations while estimating distinct values, and Reservoir Sampling Buffer
+shows five retained occurrences after ten stream arrivals. The back button reopens the current
 group's structure list.
+
+The probabilistic examples animate their actual storage. Counting Bloom Filter
+rejects four-bit counter overflow; it and Cuckoo Filter keep an extra exact-key
+ledger only to guard deletion, with that memory overhead disclosed in their info
+dialogs. Quotient Filter uses O/C/S metadata for lookup and rebuilds packed runs on
+insertion. Count-Min Sketch accepts positive weights with BigInt counters.
+HyperLogLog uses sixteen registers and small-range linear counting. Reservoir
+sampling uses Algorithm R with five slots and a reproducible seeded generator.
+These fixed seeds support replay; theoretical error and sampling claims assume
+suitable ideal hashing or uniform random draws. All six provide Clear and Reset.
 
 Actions that need input open a validated dialog. Hash Map insertion collects a
 key and a value; B+ Tree range search collects inclusive minimum and maximum
@@ -97,7 +111,7 @@ actions. BFS/DFS follow the selected representation. Playback stores at most
 
 Small info buttons open action complexity explanations. The large info button
 opens a structure introduction, use-case table, and technology links. Dialogs
-leave playback running. Hash-based structures also show their hash function
+leave playback running. Hash-based structures and Bloom Filter also show their hash function
 below the legend.
 
 The technology lists include documented uses in systems, language runtimes,

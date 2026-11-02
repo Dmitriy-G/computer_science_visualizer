@@ -10,7 +10,7 @@ categories, with consistent PascalCase spelling.
 
 Use `src/components/DataStructuresOverview/<Group>/<Structure>/` for canonical
 models, structure layouts, and Overview actions. Overview groups map to `Linear`,
-`QueuePriority`, `Trees`, `Graphs`, and `HashBased`. Queue, Deque, CircularBuffer,
+`QueuePriority`, `Trees`, `Graphs`, `HashBased`, and `Probabilistic`. Queue, Deque, CircularBuffer,
 and Heap belong under `DataStructuresOverview/QueuePriority/`.
 
 PriorityQueue, BinaryMaxHeap, BinomialHeap, FibonacciHeap, PairingHeap,
@@ -240,11 +240,33 @@ do not claim JavaScript exposes native pointers or saves memory through XOR link
 
 ## Hash-based structures
 
-Keep Hash Map, Hash Set, and Bloom Filter under
+Keep Hash Map and Hash Set under
 `src/components/DataStructuresOverview/HashBased/`, each with its model, layout, and action
 folders. Hash Set composes the chained Hash Map storage. Reuse shared hashing,
 bucket layout, and trace playback from `src/visualization/` where they serve more
 than one structure. Each action has its own sequence, class component, and CSS file.
+
+## Probabilistic structures
+
+Keep Bloom Filter under
+`src/components/DataStructuresOverview/Probabilistic/BloomFilter/`, including its
+model, layout, and Add, CheckMembership, and Clear action folders. The Probabilistic
+menu group contains approximate-answer filters and sketches as they are implemented.
+Exact lookup structures retain their representation groups even when their internal
+construction or balancing uses randomization. Keep existing structure keys and reuse
+shared hashing, input, and playback infrastructure across groups.
+
+CountingBloomFilter, CuckooFilter, QuotientFilter, CountMinSketch, HyperLogLog,
+and ReservoirSamplingBuffer also belong under `DataStructuresOverview/Probabilistic/`,
+each with its own model, layout, and action component/CSS/animation folders.
+`ProbabilisticFeatures` dispatches their actions; catalogs and structured input live
+under `src/visualization/Probabilistic*.ts` and `StructuredProbabilisticInput.ts`.
+Reuse `LinearAnimation`, `StructuredLinearAction`, and `ActionPlayback` for trace
+recording and final-frame commits. `ProbabilisticModel` shares only count/rejection
+contracts; `ProbabilisticHash` shares reproducible numeric hashing, and
+`ProbabilisticScene` shares geometry. Keep counter, fingerprint, quotient metadata,
+register, and reservoir algorithms in their own models. Document teaching variants,
+extra deletion-ledger storage, overflow/capacity rejection, and approximate semantics.
 
 ## Graphs
 

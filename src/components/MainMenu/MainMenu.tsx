@@ -227,11 +227,25 @@ export default class MainMenu extends Component<
         )
         break
       case 'bloom-filter':
+      case 'counting-bloom-filter':
+      case 'cuckoo-filter':
+      case 'quotient-filter':
+      case 'count-min-sketch':
+      case 'hyperloglog':
         drawing = (
           <>
             <rect x="3" y="4" width="26" height="24" rx="3" />
             <path d="M3 12h26M3 20h26M12 4v24M20 4v24" />
             <path d="m6 8 2 1m7 7 2 1m6 7 2 1" />
+          </>
+        )
+        break
+      case 'reservoir-sampling-buffer':
+        drawing = (
+          <>
+            <path d="M3 7h26M8 3v8m8-8v8m8-8v8M8 12l8 7 8-7" />
+            <rect x="5" y="21" width="22" height="8" rx="2" />
+            <path d="M12 21v8m8-8v8" />
           </>
         )
         break
