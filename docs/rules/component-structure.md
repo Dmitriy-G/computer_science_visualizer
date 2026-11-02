@@ -359,3 +359,25 @@ minimum-degree-two B-tree is exactly a 2-3-4 tree; 2-3 Tree owns bottom-up split
 Keep all other canonical storage distinct. Persistent roots share immutable nodes;
 draw each canonical node once with multiple incoming links. Threaded layouts draw
 threads separately from child links. Sparse Table uses rows of cached intervals.
+
+## Additional hash structures
+
+Keep OpenAddressingHashTable, SeparateChainingHashTable, RobinHoodHashTable,
+CuckooHashTable, HopscotchHashing, ExtendibleHashing, LinearHashing,
+PerfectHashTable, and ConsistentHashingRing in their own Overview/HashBased
+folders, each with a canonical model, layout, and action component/CSS/sequence
+folders. HashFeatures connects their components and action-owned information to
+App. HashStructureCatalog owns defaults and scene dispatch; HashStructureDefinitions
+and HashActionCatalog own menu entries. Store these committed models in App's
+hashModels map and pass it into shared previews and final-commit callbacks.
+
+Reuse LinearModel trace contracts, LinearAnimation, StructuredLinearAction,
+ActionPlayback, LinearScene, and shared hash grid geometry. The adapter names do
+not determine menu membership. HashTableModel shares only operation contracts and
+validation; ProbingHashTable shares actual slot-array storage and rehash primitives
+for linear probing and Robin Hood. SeparateChainingHashTable composes HashMap
+because it is the same canonical collision policy. Keep all other placement,
+neighborhood, directory, overflow, perfect-table, and token policies distinct.
+Use StructuredHashInput through ActionInputRequest for input; never coerce the
+second value into a range bound or CSV key sets through a numeric callback.
+HashTableHash provides seeded exact affine arithmetic for the variants using it.

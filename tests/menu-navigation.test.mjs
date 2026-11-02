@@ -82,7 +82,7 @@ test('Overview contains exactly the requested structure groups', () => {
       'two-three-tree', 'unordered-binary-tree', 'van-emde-boas-tree',
     ],
     graphs: ['adjacency-list', 'adjacency-matrix', 'bipartite-graph', 'complete-graph', 'compressed-sparse-row', 'dag', 'directed-graph', 'edge-list', 'flow-network', 'functional-graph', 'graph', 'hypergraph', 'multigraph', 'tree-graph', 'weighted-graph'],
-    'hash-based': ['bloom-filter', 'hash-map', 'hash-set'],
+    'hash-based': ['bloom-filter', 'consistent-hashing-ring', 'cuckoo-hash-table', 'extendible-hashing', 'hash-map', 'hash-set', 'hopscotch-hashing', 'linear-hashing', 'open-addressing-hash-table', 'perfect-hash-table', 'robin-hood-hash-table', 'separate-chaining-hash-table'],
   }
   const seen = new Set()
   for (const group of StructureCatalog.groups) {

@@ -179,6 +179,9 @@ export default class MainMenu extends Component<
       case 'indexed-priority-queue':
         drawing = <><path d="M16 7 7 22m9-15 9 15" /><circle cx="16" cy="6" r="4" /><circle cx="7" cy="25" r="4" /><circle cx="25" cy="25" r="4" />{kind === 'indexed-priority-queue' && <path d="M2 14h6m16 0h6" />}</>
         break
+      case 'consistent-hashing-ring':
+        drawing = <><circle cx="16" cy="16" r="12" /><circle cx="16" cy="4" r="3" /><circle cx="5" cy="22" r="3" /><circle cx="27" cy="22" r="3" /><path d="m27 12 2 4 2-4" /></>
+        break
       case 'monotonic-queue':
         drawing = <><path d="M3 27h26M7 10v13m9-8v8m9-3v3M3 5h25m-4-3 4 3-4 3" /></>
         break
@@ -206,6 +209,14 @@ export default class MainMenu extends Component<
       case 'free-list':
         drawing = <><rect x="2" y="4" width="9" height="9" rx="2" /><rect x="21" y="4" width="9" height="9" rx="2" /><rect x="12" y="21" width="9" height="9" rx="2" /><path d="M11 8h10m4 5-6 8M12 25 6 13" /></>
         break
+      case 'open-addressing-hash-table':
+      case 'separate-chaining-hash-table':
+      case 'robin-hood-hash-table':
+      case 'cuckoo-hash-table':
+      case 'hopscotch-hashing':
+      case 'extendible-hashing':
+      case 'linear-hashing':
+      case 'perfect-hash-table':
       case 'hash-map':
       case 'hash-set':
         drawing = (

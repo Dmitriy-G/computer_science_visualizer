@@ -21,7 +21,7 @@
    B+ Tree, Trie, Rope, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, and
    Abstract Syntax Tree (AST), and the 24 extended entries listed below),
    **Graphs** (Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph, Bipartite Graph, Complete Graph, Tree Graph, Hypergraph, Flow Network, Functional Graph, Adjacency Matrix, Adjacency List, Edge List, Compressed Sparse Row (CSR)), and **Hash-based** (Hash Table / Hash Map,
-   Hash Set, Bloom Filter). Choose a group to see only
+   Hash Set, Bloom Filter, and the nine additional hash entries listed below). Choose a group to see only
    its structures. Provide Back navigation through these levels, without a
    visible breadcrumb path or instruction text on the structure list.
 3. Selecting a structure loads an example containing 10 elements in the shared
@@ -1310,3 +1310,53 @@ Expected/amortized bounds must state their assumptions. Rejected requests retain
 the original model, structure shape, and ID counters. Clear resets the ten fixed
 values (and versions/hashes) in Persistent Segment Tree and Merkle Tree; other
 extended entries become empty. No additional playback controls or browser checks.
+
+## Additional hash operations
+
+Hash-based also includes Open Addressing Hash Table, Separate Chaining Hash Table,
+Robin Hood Hash Table, Cuckoo Hash Table, Hopscotch Hashing, Extendible Hashing,
+Linear Hashing, Perfect Hash Table, and Consistent Hashing Ring. Preserve Hash Map,
+Hash Set, and Bloom Filter. Each new entry starts with ten records, keys, or servers
+as appropriate and has validated structured inputs and action/structure information.
+
+Seven mutable tables offer Insert/update (separate key and value), Lookup, Delete
+by key, and Clear. Open addressing uses linear probes with real tombstones. Robin
+Hood stores actual displacement ordering, permits early negative lookup, and shifts
+backward on deletion. Show displaced or evicted entries in explicit holding cells
+so a swap never silently loses a record. Cuckoo has two tables and two legal hash
+positions; bound kick chains and try at most eight larger-table rebuilds. Hopscotch
+has four-slot neighborhoods, home-owned bitmaps, wrapped legal relocations, and a
+256-slot cap. A bitmap belongs to the home index, independently of its occupant.
+
+Extendible hashing uses real shared directory references and local depths; draw
+each aliased bucket only once. Three-record full buckets split on the next low hash
+bit; only equal local/global depths double the directory. Cap depth at eight and
+retain directory size on deletion. Linear hashing stores primary and linked overflow
+pages; above 0.75 primary-page load split exactly the next pointed bucket, redistribute
+with cached destination tails, and wrap the pointer after a complete round. Do not
+substitute a doubled directory or a generic map for its storage. Deletion does not
+reverse split rounds. Clear resets these two models to their initial metadata.
+
+Perfect Hash Table is a static FKS key set. Build accepts 1–64 distinct CSV safe
+integers; use n primary groups, require sum(s²) <= 4n, then allocate s² secondary
+cells per group and retry collision-free affine hashes. Try at most 128 primary
+and 128 secondary seeds per bucket; failure preserves the previous complete set.
+Display candidate buckets and key copies separately until success. Lookup must
+compare the complete stored key, including when a nonmember hashes into an occupied
+cell. Do not offer dynamic insert/delete or call this table minimal perfect hashing.
+
+Consistent Hashing Ring adds/removes server IDs, routes numeric keys, inspects ten
+sample owners, and clears. Use three deterministic virtual tokens per server,
+32-bit positions, stable tie ordering, clockwise lower-bound lookup, and wraparound.
+Cap physical servers at sixteen. Display real token positions; equally spaced sorted
+token geometry represents order, not numeric hash distance. Changes affect only
+the joining/departing servers' intervals. Routed keys are not stored; sample key
+cards show ownership only. Do not imply actual networking, replication, or threads.
+
+Other new tables allow 64 entries. Keep snapshots independent and session bounds
+fixed, record at most 96 detailed events while executing all work, disclose omissions,
+and commit the final clone only. Rejected bounded attempts preserve canonical data,
+placement metadata, capacities, seeds, and ID counters. Complexity descriptions
+must distinguish deterministic bounded-rebuild costs from ideal randomized expected
+bounds, and explain tombstone accumulation and retained allocations. Never run
+npm, equivalent builds/type checks/tests, or browser application verification.

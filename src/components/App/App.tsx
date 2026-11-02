@@ -299,6 +299,9 @@ import { PriorityStructureCatalog } from '../../visualization/PriorityStructureC
 import { PriorityModel } from '../DataStructuresOverview/QueuePriority/PriorityModel.ts'
 import { PriorityFeatures } from '../DataStructuresOverview/QueuePriority/PriorityFeatures.tsx'
 import { RopeFeatures } from '../DataStructuresOverview/Trees/RopeFeatures.tsx'
+import { HashStructureCatalog } from '../../visualization/HashStructureCatalog.ts'
+import { HashTableModel } from '../DataStructuresOverview/HashBased/HashTableModel.ts'
+import { HashFeatures } from '../DataStructuresOverview/HashBased/HashFeatures.tsx'
 import { ExtendedGraphCatalog } from '../../visualization/ExtendedGraphCatalog.ts'
 import { ExtendedGraphModel } from '../DataStructuresOverview/Graphs/ExtendedGraphModel.ts'
 import { ExtendedGraphFeatures } from '../DataStructuresOverview/Graphs/ExtendedGraphFeatures.tsx'
@@ -325,6 +328,7 @@ interface AppState {
 }
 
 export default class App extends Component<Record<string, never>, AppState> {
+  private hashModels = HashStructureCatalog.createModels()
   private extendedGraphs = ExtendedGraphCatalog.createModels()
   private priorityModels = PriorityStructureCatalog.createModels()
   private linearModels = LinearStructureCatalog.createModels()
@@ -410,6 +414,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     const menu = this.state.menu.selectStructure(kind)
     const changingScope = this.state.selected === kind && this.state.selectedScope !== menu.actionScope
     if (!changingScope) {
+      this.hashModels = HashStructureCatalog.createModels()
       this.extendedGraphs = ExtendedGraphCatalog.createModels()
       this.priorityModels = PriorityStructureCatalog.createModels()
       this.linearModels = LinearStructureCatalog.createModels()
@@ -458,6 +463,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         this.linearModels,
         this.priorityModels,
         this.extendedGraphs,
+        this.hashModels,
       ),
       actionOpen: false,
       selectedAction: null,
@@ -538,6 +544,8 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private getInputSize(structure: StructureKind): number {
+    const hash = this.hashModels.get(structure)
+    if (hash) return hash.length
     const extended = this.extendedGraphs.get(structure)
     if (extended) return extended.length
     const priority = this.priorityModels.get(structure)
@@ -601,6 +609,8 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private describeActionDetails = (action: ActionKind): AlgorithmInformation | null => {
+    const hash = this.state.selected ? this.hashModels.get(this.state.selected) : undefined
+    if (hash) return HashFeatures.describe(action, hash)
     const extended = this.state.selected ? this.extendedGraphs.get(this.state.selected) : undefined
     if (extended) {
       const features = this.state.selectedScope === 'graph-traversal' ? ExtendedGraphTraversalFeatures : ExtendedGraphFeatures
@@ -808,6 +818,11 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private renderAction(): ReactNode {
     if (!this.state.actionOpen) return null
+    const hash = this.state.selected ? this.hashModels.get(this.state.selected) : undefined
+    if (hash && this.state.selectedAction) return HashFeatures.render(this.state.selectedAction, {
+      model: hash, input: this.state.treeInput,
+      onSceneChange: this.updateHashStructureScene, onComplete: this.completeAction,
+    }, this.state.actionSession)
     const extended = this.state.selected ? this.extendedGraphs.get(this.state.selected) : undefined
     if (extended && this.state.selectedAction) {
       const features = this.state.selectedScope === 'graph-traversal' ? ExtendedGraphTraversalFeatures : ExtendedGraphFeatures
@@ -1036,6 +1051,7 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private resetStructure = (): void => {
     if (this.state.selected === null) return
+    this.hashModels = HashStructureCatalog.createModels()
     this.extendedGraphs = ExtendedGraphCatalog.createModels()
     this.priorityModels = PriorityStructureCatalog.createModels()
     this.linearModels = LinearStructureCatalog.createModels()
@@ -1081,6 +1097,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         this.linearModels,
         this.priorityModels,
         this.extendedGraphs,
+        this.hashModels,
       ),
       actionOpen: false,
       selectedAction: null,
@@ -1097,6 +1114,12 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private updateScene = (scene: Scene, list: LinkedList): void => {
     this.list = list
+    this.setState({ scene })
+  }
+
+  private updateHashStructureScene = (scene: Scene, model: LinearModel): void => {
+    if (!(model instanceof HashTableModel)) throw new TypeError('Expected hash structure')
+    this.hashModels.set(model.kind, model)
     this.setState({ scene })
   }
 

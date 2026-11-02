@@ -52,7 +52,7 @@ Choose **Data Structures Overview**, then a group:
 | Queue / Priority | Queue, Deque, Circular buffer, Heap (min-heap), Priority Queue, Binary Max-Heap, Binomial Heap, Fibonacci Heap, Pairing Heap, Leftist Heap, Skew Heap, Indexed Priority Queue, Monotonic Queue |
 | Trees | Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, B+ Tree, Trie, Rope, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, Abstract Syntax Tree (AST), General Tree (N-ary Tree), Binary Tree, Complete Binary Tree, Threaded Binary Tree, Splay Tree, Treap, Cartesian Tree, Scapegoat Tree, AA Tree, 2-3 Tree, 2-3-4 Tree, Radix Tree (Patricia Trie), Ternary Search Tree, Suffix Tree, Interval Tree, Order Statistic Tree, Persistent Segment Tree, Sparse Table, KD-Tree, Quadtree, Octree, Bounding Volume Hierarchy (BVH), Merkle Tree, Van Emde Boas Tree |
 | Graphs | Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph, Bipartite Graph, Complete Graph, Tree Graph, Hypergraph, Flow Network, Functional Graph, Adjacency Matrix, Adjacency List, Edge List, Compressed Sparse Row (CSR) |
-| Hash-based | Hash Table / Hash Map, Hash Set, Bloom Filter |
+| Hash-based | Hash Table / Hash Map, Hash Set, Bloom Filter, Open Addressing Hash Table, Separate Chaining Hash Table, Robin Hood Hash Table, Cuckoo Hash Table, Hopscotch Hashing, Extendible Hashing, Linear Hashing, Perfect Hash Table, Consistent Hashing Ring |
 
 Select a structure to load its example, then choose an action from the canvas
 card. Examples generally start with ten elements. Sparse Array has ten stored
@@ -141,6 +141,36 @@ padded shape differs from Certificate Transparency log trees.
 Tree playback records at most 96 detailed events, executes the whole operation,
 reports omitted events, reserves fixed scene bounds, and commits only its final
 clone. Rejected requests preserve the committed model and ID counters.
+
+The additional hash structures start with ten entries (ten physical servers for
+the ring), use shared automatic playback, and retain stable record IDs across
+relocation and resizing. Their action sequences cap detailed traces at 96 events,
+execute every operation fully, disclose omitted events, and commit only the final
+clone. Key/value inputs accept all whole safe integers, including negatives.
+
+| Hash structure | Operations and storage policy |
+| --- | --- |
+| Open Addressing Hash Table | Insert/update, lookup, delete, clear; linear probing and reusable tombstones |
+| Separate Chaining Hash Table | Insert/update, lookup, delete, clear; actual linked bucket chains, reusing Hash Map storage |
+| Robin Hood Hash Table | Insert/update, lookup, delete, clear; greater-distance arrivals displace residents; deletion shifts backward |
+| Cuckoo Hash Table | Insert/update, two-candidate lookup/delete, clear; held evictions, up to eight larger-table rebuilds |
+| Hopscotch Hashing | Insert/update, bitmap-guided lookup/delete, clear; four-position neighborhoods and legal hole relocation |
+| Extendible Hashing | Insert/update, lookup, delete, clear; shared directory aliases, three-record buckets, local/global depths |
+| Linear Hashing | Insert/update, lookup, delete, clear; three-record pages, overflow links, and a round split pointer |
+| Perfect Hash Table | Build a distinct static key set, exact membership lookup, clear; two-level FKS tables rather than dynamic insert/delete |
+| Consistent Hashing Ring | Add/remove server, route a key, inspect ten sample assignments, clear; three virtual nodes per physical server |
+
+Mutable hash tables are capped at 64 records. Hopscotch retries capacities up to
+256 slots; cuckoo rebuilds use up to 256 slots per table; extendible global depth
+is capped at eight. Exhausted placement attempts restore entries, capacities,
+metadata, and ID counters. Extendible deletion retains its directory; linear
+hashing deletion retains split progress. Clear restarts their initial metadata.
+Perfect construction accepts 1–64 distinct CSV keys, tries at most 128 primary
+seeds and 128 secondary seeds per bucket, and retains the old table on failure.
+Candidates are shown separately until the complete static set is constructed.
+The ring accepts at most sixteen server IDs and does not store routed keys or
+simulate a network. Tokens are equally spaced in sorted clockwise order in the
+diagram; labels show actual 32-bit positions, so angle is not hash distance.
 
 The extended linear structures offer these actions:
 

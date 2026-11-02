@@ -1,3 +1,6 @@
+import { HashStructureDefinitions } from './HashStructureDefinitions.ts'
+import { HashStructureCatalog } from './HashStructureCatalog.ts'
+import type { HashTableModel } from '../components/DataStructuresOverview/HashBased/HashTableModel.ts'
 import { ExtendedTreeDefinitions } from './ExtendedTreeDefinitions.ts'
 import { ExtendedGraphCatalog } from './ExtendedGraphCatalog.ts'
 import type { ExtendedGraphModel } from '../components/DataStructuresOverview/Graphs/ExtendedGraphModel.ts'
@@ -66,11 +69,12 @@ export class StructureCatalog {
     { kind: 'queue-priority', name: 'Queue / Priority', description: 'Queues, binary and meldable heaps, indexed priorities, and sliding windows', symbol: '⇥' },
     { kind: 'trees', name: 'Trees', description: 'Search trees, tries, range indexes, spatial indexes, and LSM storage', symbol: '⋔' },
     { kind: 'graphs', name: 'Graphs', description: 'Constrained graphs, hyperedges, flow networks, and storage representations', symbol: '◇' },
-    { kind: 'hash-based', name: 'Hash-based', description: 'Hash maps, hash sets, and Bloom filters', symbol: '#' },
+    { kind: 'hash-based', name: 'Hash-based', description: 'Probing, chained and dynamic hash indexes, perfect tables, rings, and filters', symbol: '#' },
   ]
 
   public static readonly structures: readonly StructureDefinition[] = [
     ...ExtendedTreeDefinitions.structures,
+    ...HashStructureDefinitions.structures,
     { kind: 'hash-map', group: 'hash-based', name: 'Hash Table / Hash Map', description: 'Key-value buckets with collision chains and automatic rehashing', symbol: '#' },
     { kind: 'hash-set', group: 'hash-based', name: 'Hash Set', description: 'Unique values located through hash buckets', symbol: '{}' },
     { kind: 'bloom-filter', group: 'hash-based', name: 'Bloom Filter', description: 'A bit array for probabilistic membership checks', symbol: '01' },
@@ -209,7 +213,10 @@ export class StructureCatalog {
     linearModels?: ReadonlyMap<StructureKind, LinearModel>,
     priorityModels?: ReadonlyMap<StructureKind, PriorityModel>,
     extendedGraphs?: ReadonlyMap<StructureKind, ExtendedGraphModel>,
+    hashModels?: ReadonlyMap<StructureKind, HashTableModel>,
   ): Scene {
+    const hash = hashModels?.get(kind) ?? HashStructureCatalog.createDefault(kind)
+    if (hash) return HashStructureCatalog.createScene(hash)
     const extended = extendedGraphs?.get(kind) ?? ExtendedGraphCatalog.createDefault(kind)
     if (extended) return ExtendedGraphCatalog.createScene(extended)
     const priority = priorityModels?.get(kind) ?? PriorityStructureCatalog.createDefault(kind)

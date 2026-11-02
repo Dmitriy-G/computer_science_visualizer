@@ -2,6 +2,7 @@ import { ExtendedGraphActionCatalog } from './ExtendedGraphActionCatalog.ts'
 import { PriorityActionCatalog } from './PriorityActionCatalog.ts'
 import { LinearActionCatalog } from './LinearActionCatalog.ts'
 import { GraphCatalog } from './GraphCatalog.ts'
+import { HashActionCatalog } from './HashActionCatalog.ts'
 import { ExtendedTreeActionCatalog } from './ExtendedTreeActionCatalog.ts'
 import type { StructureKind } from './Scene.ts'
 
@@ -82,6 +83,8 @@ export class ActionCatalog {
   }
 
   public static getActions(structure: StructureKind): readonly ActionChoice[] {
+    const hash = HashActionCatalog.getActions(structure)
+    if (hash) return hash
     const extendedTree = ExtendedTreeActionCatalog.getActions(structure)
     if (extendedTree) return extendedTree
     const extendedGraph = ExtendedGraphActionCatalog.getActions(structure)
