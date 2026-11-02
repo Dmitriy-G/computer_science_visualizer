@@ -1,3 +1,5 @@
+import { PriorityStructureCatalog } from './PriorityStructureCatalog.ts'
+import type { PriorityModel } from '../components/DataStructuresOverview/QueuePriority/PriorityModel.ts'
 import { LinearStructureCatalog } from './LinearStructureCatalog.ts'
 import type { LinearModel } from './LinearModel.ts'
 import { AVLTree } from '../components/DataStructuresOverview/Trees/AVLTree/AVLTree.ts'
@@ -58,7 +60,7 @@ export interface StructureDefinition {
 export class StructureCatalog {
   public static readonly groups: readonly StructureGroupDefinition[] = [
     { kind: 'linear', name: 'Linear', description: 'Arrays, linked blocks, text buffers, packed bits, and allocation pools', symbol: '[]' },
-    { kind: 'queue-priority', name: 'Queue / Priority', description: 'FIFO queues, double-ended queues, circular buffers, and min-heaps', symbol: '⇥' },
+    { kind: 'queue-priority', name: 'Queue / Priority', description: 'Queues, binary and meldable heaps, indexed priorities, and sliding windows', symbol: '⇥' },
     { kind: 'trees', name: 'Trees', description: 'Search trees, tries, range indexes, spatial indexes, and LSM storage', symbol: '⋔' },
     { kind: 'graphs', name: 'Graphs', description: 'Undirected, directed, weighted, acyclic, and parallel edges', symbol: '◇' },
     { kind: 'hash-based', name: 'Hash-based', description: 'Hash maps, hash sets, and Bloom filters', symbol: '#' },
@@ -97,7 +99,7 @@ export class StructureCatalog {
     { kind: 'unrolled-linked-list', group: 'linear', name: 'Unrolled Linked List', description: 'Linked blocks of values with local shifts and block splitting', symbol: '▤' },
     { kind: 'xor-linked-list', group: 'linear', name: 'XOR Linked List', description: 'Bidirectional traversal with simulated address XOR links', symbol: '⊕' },
     { kind: 'gap-buffer', group: 'linear', name: 'Gap Buffer', description: 'Editable text around a movable gap in backing storage', symbol: '[]' },
-    { kind: 'rope', group: 'linear', name: 'Rope', description: 'Balanced text chunks with cached left-subtree weights', symbol: 'R' },
+    { kind: 'rope', group: 'trees', name: 'Rope', description: 'Balanced text chunks with cached left-subtree weights', symbol: 'R' },
     { kind: 'bit-set', group: 'linear', name: 'Bit Array / BitSet', description: 'Indexed bits packed into unsigned 32-bit words', symbol: '01' },
     { kind: 'sparse-array', group: 'linear', name: 'Sparse Array', description: 'Explicit indexed entries with implicit zero-valued holes', symbol: '⋯' },
     { kind: 'free-list', group: 'linear', name: 'Free List', description: 'Fixed pool slots linked for allocation and reuse', symbol: '↺' },
@@ -114,6 +116,15 @@ export class StructureCatalog {
     { kind: 'b-plus-tree', group: 'trees', name: 'B+ Tree', description: 'Order-4 routing pages and linked leaves containing all records', symbol: '+' },
     { kind: 'trie', group: 'trees', name: 'Trie', description: 'Shared character prefixes with explicit word ends', symbol: 'abc' },
     { kind: 'heap', group: 'queue-priority', name: 'Heap (min-heap)', description: 'Complete binary min-heap with sift-up and sift-down', symbol: 'min' },
+    { kind: 'priority-queue', group: 'queue-priority', name: 'Priority Queue', description: 'Value/priority pairs with FIFO ties and a binary min-heap', symbol: 'PQ' },
+    { kind: 'binary-max-heap', group: 'queue-priority', name: 'Binary Max-Heap', description: 'Complete binary heap with the largest value at the root', symbol: 'max' },
+    { kind: 'binomial-heap', group: 'queue-priority', name: 'Binomial Heap', description: 'A forest of unique-degree binomial trees linked during meld', symbol: 'B' },
+    { kind: 'fibonacci-heap', group: 'queue-priority', name: 'Fibonacci Heap', description: 'Lazy circular root lists, consolidation, marks, and cascading cuts', symbol: 'F' },
+    { kind: 'pairing-heap', group: 'queue-priority', name: 'Pairing Heap', description: 'Child/sibling links with two-pass pairing after extraction', symbol: 'P' },
+    { kind: 'leftist-heap', group: 'queue-priority', name: 'Leftist Heap', description: 'Meld along short right spines using null-path ranks', symbol: 'L' },
+    { kind: 'skew-heap', group: 'queue-priority', name: 'Skew Heap', description: 'Self-adjusting meld with unconditional child exchanges', symbol: 'S' },
+    { kind: 'indexed-priority-queue', group: 'queue-priority', name: 'Indexed Priority Queue', description: 'Unique keys with an inverse map for priority changes and deletion', symbol: 'IPQ' },
+    { kind: 'monotonic-queue', group: 'queue-priority', name: 'Monotonic Queue', description: 'A decreasing deque for maxima over the latest ten arrivals', symbol: 'MQ' },
     { kind: 'segment-tree', group: 'trees', name: 'Segment Tree', description: 'Cached interval sums with point assignment and range queries', symbol: 'sum' },
     { kind: 'fenwick-tree', group: 'trees', name: 'Fenwick Tree (BIT)', description: 'Binary indexed sums navigated by the least significant set bit', symbol: 'BIT' },
     { kind: 'r-tree', group: 'trees', name: 'R-Tree', description: 'Bounding rectangles in balanced pages with quadratic splitting', symbol: 'xy' },
@@ -182,7 +193,10 @@ export class StructureCatalog {
     additionalModels?: ReadonlyMap<StructureKind, AdditionalTreeModel>,
     graphModels?: ReadonlyMap<StructureKind, GraphModel>,
     linearModels?: ReadonlyMap<StructureKind, LinearModel>,
+    priorityModels?: ReadonlyMap<StructureKind, PriorityModel>,
   ): Scene {
+    const priority = priorityModels?.get(kind) ?? PriorityStructureCatalog.createDefault(kind)
+    if (priority) return PriorityStructureCatalog.createScene(priority)
     const linear = linearModels?.get(kind) ?? LinearStructureCatalog.createDefault(kind)
     if (linear) return LinearStructureCatalog.createScene(linear)
     if (GraphCatalog.supports(kind)) {

@@ -47,9 +47,9 @@ Choose **Data Structures Overview**, then a group:
 
 | Group | Structures |
 | --- | --- |
-| Linear | Array, Linked list, Stack, Doubly linked list, Skip List, Unrolled Linked List, XOR Linked List, Gap Buffer, Rope, Bit Array / BitSet, Sparse Array, Free List |
-| Queue / Priority | Queue, Deque, Circular buffer, Heap (min-heap) |
-| Trees | Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, B+ Tree, Trie, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, Abstract Syntax Tree (AST) |
+| Linear | Array, Linked list, Stack, Doubly linked list, Skip List, Unrolled Linked List, XOR Linked List, Gap Buffer, Bit Array / BitSet, Sparse Array, Free List |
+| Queue / Priority | Queue, Deque, Circular buffer, Heap (min-heap), Priority Queue, Binary Max-Heap, Binomial Heap, Fibonacci Heap, Pairing Heap, Leftist Heap, Skew Heap, Indexed Priority Queue, Monotonic Queue |
+| Trees | Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, B+ Tree, Trie, Rope, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, Abstract Syntax Tree (AST) |
 | Graphs | Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph |
 | Hash-based | Hash Table / Hash Map, Hash Set, Bloom Filter |
 
@@ -100,7 +100,6 @@ The extended linear structures offer these actions:
 | Unrolled Linked List | Insert at index, Search by value, Delete by value, Clear |
 | XOR Linked List | Append a value, Search by value, Delete by value, Clear |
 | Gap Buffer | Insert text, Move the gap, Delete text, Search for text, Clear |
-| Rope | Insert text, Concatenate text, Read character by index, Delete text, Clear |
 | Bit Array / BitSet | Set a bit, Clear a bit, Toggle a bit, Test a bit, Clear all bits |
 | Sparse Array | Set an entry, Read an entry, Delete an entry, Clear stored entries |
 | Free List | Allocate a slot, Release a slot, Release all slots |
@@ -117,11 +116,42 @@ The new numeric lists allow at most 64 values. Their shared trace recorder keeps
 at most 96 detailed operation frames, executes every operation event, and reports
 omitted frames in the result. Snapshots preserve stable bounds during playback.
 
+The additional priority structures offer these actions:
+
+| Structure | Allowed actions |
+| --- | --- |
+| Priority Queue | Enqueue with priority, Dequeue highest priority, Peek, Clear |
+| Binary Max-Heap | Insert, Extract maximum, Peek maximum, Clear |
+| Binomial Heap | Insert, Extract minimum, Peek, Meld a donor, Clear |
+| Fibonacci Heap | Insert, Extract minimum, Decrease key by visible ID, Peek, Meld a donor, Clear |
+| Pairing Heap, Leftist Heap, Skew Heap | Insert, Extract minimum, Peek, Meld a donor, Clear |
+| Indexed Priority Queue | Insert key / priority, Change priority, Delete by key, Extract minimum, Peek, Clear |
+| Monotonic Queue | Push next window value, Peek window maximum, Clear window |
+
+Priority Queue uses a binary min-heap and FIFO tie-breaking. Binomial Heap links
+equal-degree trees through child/sibling pointers. Fibonacci Heap shows circular
+root lists, consolidation, loss marks, and cascading cuts; its numeric handle Map
+adds transfer work to meld. Pairing Heap uses two-pass extraction; Leftist Heap
+repairs null-path ranks, while Skew Heap swaps children unconditionally. Indexed
+Priority Queue updates an inverse key-to-position Map after every exchange.
+Monotonic Queue maintains a decreasing deque for the latest ten arrivals and
+shows candidate nodes separately from its circular window history.
+
+The existing binary min-heap remains a separate structure. New heap examples
+allow up to 64 nodes. Meld accepts 1–16 donor values and includes donor-building
+cost in its complexity information. Playback keeps at most 96 detailed frames,
+executes the complete operation, and reports any omitted events. Amortized bounds
+are identified explicitly in action information.
+
+Rope belongs to **Trees**, with its model and actions under
+`DataStructuresOverview/Trees/Rope/`.
+
 The additional tree structures offer these actions:
 
 | Structure | Allowed actions |
 | --- | --- |
 | Trie | Insert a word, Search by word, Check a prefix, Delete a word, Clear |
+| Rope | Insert text, Concatenate text, Read character by index, Delete text, Clear |
 | Heap (min-heap) | Insert a value, Extract minimum, Peek minimum, Clear |
 | Segment Tree | Update a value, Range sum, Clear (reset to zero) |
 | Fenwick Tree (BIT) | Add to a value, Prefix sum, Range sum, Clear (reset to zero) |

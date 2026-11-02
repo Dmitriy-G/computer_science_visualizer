@@ -12,11 +12,13 @@
    branch preserves the current visualization and playback.
    Selecting Overview shows **Linear** (Array, Linked list, Stack,
    Doubly linked list, Skip List, Unrolled Linked
-   List, XOR Linked List, Gap Buffer, Rope, Bit Array / BitSet, Sparse Array,
+   List, XOR Linked List, Gap Buffer, Bit Array / BitSet, Sparse Array,
    and Free List),
-   **Queue / Priority** (Queue, Deque, Circular buffer, and Heap (min-heap)),
+   **Queue / Priority** (Queue, Deque, Circular buffer, Heap (min-heap),
+   Priority Queue, Binary Max-Heap, Binomial Heap, Fibonacci Heap, Pairing Heap,
+   Leftist Heap, Skew Heap, Indexed Priority Queue, and Monotonic Queue),
    **Trees** (Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, and
-   B+ Tree, Trie, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, and
+   B+ Tree, Trie, Rope, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, and
    Abstract Syntax Tree (AST)),
    **Graphs** (Undirected Graph, Directed Graph, Weighted Graph, DAG, and Multigraph), and **Hash-based** (Hash Table / Hash Map,
    Hash Set, Bloom Filter). Choose a group to see only
@@ -449,7 +451,54 @@ All four structures load 10 elements and use the shared playback session, final
 frame commits, deterministic snapshots, reduced-motion behavior, and lifecycle
 cleanup.
 
-## Extended linear structures
+## Additional priority structures
+
+All nine live under Overview > Queue / Priority and use class-based models,
+shared automatic playback, final-frame commits, validated structured input,
+full Reset, action-owned complexity information, and independent scene snapshots.
+Each starts with ten logical entries; Monotonic Queue starts with ten descending
+window values, and Fibonacci Heap starts with ten nodes after a demonstration
+consolidation. Keep heap examples bounded to 64 nodes and traces to 96 detailed
+events. Execute all events and disclose omitted detail in the final description.
+
+- Priority Queue stores value/priority pairs in a binary min-heap. Smaller
+  numeric priorities leave first; ties preserve FIFO insertion order.
+- Binary Max-Heap stores numeric values in a complete binary max-heap; insert
+  sifts up, extract maximum replaces the root and sifts down.
+- Binomial Heap stores a unique-degree forest of binomial min-trees. Use constant
+  pointer-work child/sibling links and a logarithmic degree table for carry
+  consolidation. Reverse the removed root's child list before union.
+- Fibonacci Heap uses circular doubly linked root and child lists, cached
+  minimum, degrees, and loss marks. Consolidate on extract-min. Decrease-key
+  addresses a visible numeric handle, cuts a violating child, marks the first
+  non-root child loss, and cascades later losses. Clear marks on promoted roots.
+  Include numeric-handle Map maintenance and donor transfer in complexity notes.
+- Pairing Heap uses child/sibling links, adjacent left-to-right pairing, then
+  right-to-left combination. Keep the working forest visible during extraction.
+- Leftist Heap maintains rank(null) = 0, rank(node) = 1 + rank(right), and
+  rank(left) >= rank(right). Recursively meld right spines and swap when needed.
+- Skew Heap has no balance ranks; unconditionally exchange children while
+  returning from recursive meld. Distinguish amortized logarithmic work from a
+  linear individual operation.
+- Indexed Priority Queue keeps unique integer keys and a key-to-position Map.
+  Update inverse positions on every exchange. Support both increases and
+  decreases, direct deletion, extraction, peek, and clear; reject duplicate keys.
+- Monotonic Queue is a decreasing linked candidate deque for the latest ten
+  arrivals. Expire front indices and remove dominated backs before appending.
+  Equal values retain the newest candidate. Display circular window history in
+  a separate lower row, with a window-value count rather than a candidate count.
+
+Priority Queue insertion collects Value and Priority; indexed insertion/update
+collects Key and Priority, and deletion collects Key. Fibonacci decrease-key
+collects visible ID and New key; reject missing IDs and increased keys unchanged.
+Meld collects 1–16 comma-separated whole safe integers, builds a separate donor,
+then melds it. Include donor construction in the action's costs and reject a
+result above 64 nodes before allocating IDs or changing links. Peek, extract,
+dequeue, and clear run without input and handle empty structures safely.
+Explain amortized rows explicitly rather than presenting them as random-input
+averages. Preserve the existing binary min-heap as a separate menu entry.
+
+## Extended linear and text structures
 
 All eight use shared automatic playback, structured input, immutable scene
 snapshots, final-frame model commits, action and structure information, and full
@@ -472,7 +521,7 @@ indices, links, roles, and statuses in the diagram; put results in the timeline.
   index, move the gap, delete an indexed span, search for text, and clear. Show
   physical indices and logical text indices separately. Grow gap storage only
   when needed; retain a nonzero gap so cursor movement remains valid.
-- **Rope:** ten ASCII characters in immutable AVL-balanced chunks of at most
+- **Rope (under Trees):** ten ASCII characters in immutable AVL-balanced chunks of at most
   four characters. Insert, concatenate, read by index, delete a span, and clear.
   Show left-subtree weights and leaf text. Split/join edits share unchanged
   subtrees and update weights and heights; do not flatten and rebuild all text.

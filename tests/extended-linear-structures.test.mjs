@@ -4,7 +4,7 @@ import { SkipList } from '../src/components/DataStructuresOverview/Linear/SkipLi
 import { UnrolledLinkedList } from '../src/components/DataStructuresOverview/Linear/UnrolledLinkedList/UnrolledLinkedList.ts'
 import { XORLinkedList } from '../src/components/DataStructuresOverview/Linear/XORLinkedList/XORLinkedList.ts'
 import { GapBuffer } from '../src/components/DataStructuresOverview/Linear/GapBuffer/GapBuffer.ts'
-import { Rope } from '../src/components/DataStructuresOverview/Linear/Rope/Rope.ts'
+import { Rope } from '../src/components/DataStructuresOverview/Trees/Rope/Rope.ts'
 import { BitSet } from '../src/components/DataStructuresOverview/Linear/BitSet/BitSet.ts'
 import { SparseArray } from '../src/components/DataStructuresOverview/Linear/SparseArray/SparseArray.ts'
 import { FreeList } from '../src/components/DataStructuresOverview/Linear/FreeList/FreeList.ts'
@@ -292,7 +292,7 @@ for (const [kind, folder, actions, input] of features) {
   test(`${kind}: menu, input, info, immutable sequences, and scene integrity`, async () => {
     const model = LinearStructureCatalog.createDefault(kind)
     const sourceScene = structuredClone(LinearStructureCatalog.createScene(model))
-    assert.equal(StructureCatalog.getGroupForStructure(kind), 'linear')
+    assert.equal(StructureCatalog.getGroupForStructure(kind), kind === 'rope' ? 'trees' : 'linear')
     assert.deepEqual(ActionCatalog.getScopedActions(kind, 'overview').map((choice) => choice.kind), Object.keys(actions))
     assert.ok(StructureInformation.get(kind).useCases.length >= 4)
     for (const [action, actionFolder] of Object.entries(actions)) {
@@ -304,7 +304,8 @@ for (const [kind, folder, actions, input] of features) {
         assert.deepEqual(request.structured.validate(drafts), {})
         assert.ok(Object.keys(request.structured.validate({})).length > 0)
       }
-      const module = await import(`../src/components/DataStructuresOverview/Linear/${folder}/${actionFolder}/${actionFolder}Animation.ts`)
+      const group = kind === 'rope' ? 'Trees' : 'Linear'
+      const module = await import(`../src/components/DataStructuresOverview/${group}/${folder}/${actionFolder}/${actionFolder}Animation.ts`)
       const Sequence = module[`${actionFolder}Animation`]
       const animation = new Sequence(model, input)
       const replay = new Sequence(model, input)

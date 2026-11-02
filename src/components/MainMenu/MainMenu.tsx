@@ -148,6 +148,19 @@ export default class MainMenu extends Component<
   private renderStructureIcon(kind: StructureKind, fallback: string): ReactNode {
     let drawing: ReactNode
     switch (kind) {
+      case 'priority-queue':
+      case 'binary-max-heap':
+      case 'binomial-heap':
+      case 'fibonacci-heap':
+      case 'pairing-heap':
+      case 'leftist-heap':
+      case 'skew-heap':
+      case 'indexed-priority-queue':
+        drawing = <><path d="M16 7 7 22m9-15 9 15" /><circle cx="16" cy="6" r="4" /><circle cx="7" cy="25" r="4" /><circle cx="25" cy="25" r="4" />{kind === 'indexed-priority-queue' && <path d="M2 14h6m16 0h6" />}</>
+        break
+      case 'monotonic-queue':
+        drawing = <><path d="M3 27h26M7 10v13m9-8v8m9-3v3M3 5h25m-4-3 4 3-4 3" /></>
+        break
       case 'skip-list':
         drawing = <><path d="M3 8h26M3 24h26M7 8v16m9-16v16m9-16v16" /><circle cx="7" cy="24" r="3" /><circle cx="16" cy="24" r="3" /><circle cx="25" cy="24" r="3" /></>
         break

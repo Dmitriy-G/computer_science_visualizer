@@ -13,6 +13,17 @@ models, structure layouts, and Overview actions. Overview groups map to `Linear`
 `QueuePriority`, `Trees`, `Graphs`, and `HashBased`. Queue, Deque, CircularBuffer,
 and Heap belong under `DataStructuresOverview/QueuePriority/`.
 
+PriorityQueue, BinaryMaxHeap, BinomialHeap, FibonacciHeap, PairingHeap,
+LeftistHeap, SkewHeap, IndexedPriorityQueue, and MonotonicQueue also live under
+`DataStructuresOverview/QueuePriority/`, each with its own model, layout, and
+action folders. `PriorityFeatures` connects the new actions to App.
+`PriorityModel`, `PriorityLayout`, `BinaryPriorityHeap`, and `MeldableBinaryHeap`
+share only contracts, scene geometry, and actual common heap primitives within
+that group. Keep each heap's distinct linking, consolidation, rank, or cut policy
+in its own model. Shared priority catalogs and input validation live under
+`src/visualization/`. Reuse the bounded `LinearAnimation` trace recorder and
+`StructuredLinearAction` playback adapter; their contract also supports heaps.
+
 Use `src/components/DataStructuresAlgorithms/Sorting/Array/` for all sorting
 actions and array-specific sorting helpers, traces, and layouts. Keep the single
 canonical FixedArray model and its ordinary-operation layout under
@@ -207,13 +218,18 @@ defines the required organization; it does not mean those features already exist
 
 ## Extended linear structures
 
-Keep SkipList, UnrolledLinkedList, XORLinkedList, GapBuffer, Rope, BitSet,
+Keep SkipList, UnrolledLinkedList, XORLinkedList, GapBuffer, BitSet,
 SparseArray, and FreeList under `DataStructuresOverview/Linear/`. Each owns its model,
 layout, and action folders. `LinearFeatures` connects their class components and
 action-owned information to App; shared contracts, catalog, input validation,
 scene helpers, and trace recording live in `src/visualization/Linear*.ts` and
 `StructuredLinearInput.ts`. Reuse `StructuredLinearAction` and `ActionPlayback`.
 Do not reuse a tree model or tree layout to stand in for these linear structures.
+
+Rope belongs under `DataStructuresOverview/Trees/Rope/`, with `RopeFeatures`
+beside the other tree dispatchers. Its immutable AVL model still uses the shared
+trace/input/playback contracts and is retained in the shared trace-model catalog;
+menu membership comes from StructureCatalog rather than the adapter's name.
 
 Numeric lists allow up to 64 values, text models up to 256 ASCII characters,
 and each text input up to 32 characters. Record at most 96 detailed trace frames

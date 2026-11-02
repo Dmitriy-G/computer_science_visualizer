@@ -295,6 +295,10 @@ import { TreeFeatures } from '../DataStructuresOverview/Trees/TreeFeatures.tsx'
 import { LinearStructureCatalog } from '../../visualization/LinearStructureCatalog.ts'
 import type { LinearModel } from '../../visualization/LinearModel.ts'
 import { LinearFeatures } from '../DataStructuresOverview/Linear/LinearFeatures.tsx'
+import { PriorityStructureCatalog } from '../../visualization/PriorityStructureCatalog.ts'
+import { PriorityModel } from '../DataStructuresOverview/QueuePriority/PriorityModel.ts'
+import { PriorityFeatures } from '../DataStructuresOverview/QueuePriority/PriorityFeatures.tsx'
+import { RopeFeatures } from '../DataStructuresOverview/Trees/RopeFeatures.tsx'
 import './App.css'
 
 interface AppState {
@@ -317,6 +321,7 @@ interface AppState {
 }
 
 export default class App extends Component<Record<string, never>, AppState> {
+  private priorityModels = PriorityStructureCatalog.createModels()
   private linearModels = LinearStructureCatalog.createModels()
   private additionalTrees = AdditionalTreeCatalog.createModels()
   private list = LinkedList.createDefault()
@@ -400,6 +405,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     const menu = this.state.menu.selectStructure(kind)
     const changingScope = this.state.selected === kind && this.state.selectedScope !== menu.actionScope
     if (!changingScope) {
+      this.priorityModels = PriorityStructureCatalog.createModels()
       this.linearModels = LinearStructureCatalog.createModels()
       this.additionalTrees = AdditionalTreeCatalog.createModels()
       this.hashMap = HashMap.createDefault()
@@ -444,6 +450,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         this.additionalTrees,
         this.graphModels,
         this.linearModels,
+        this.priorityModels,
       ),
       actionOpen: false,
       selectedAction: null,
@@ -520,6 +527,8 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private getInputSize(structure: StructureKind): number {
+    const priority = this.priorityModels.get(structure)
+    if (priority) return priority.length
     const linear = this.linearModels.get(structure)
     if (linear) return linear.length
     const graph = this.graphModels.get(structure)
@@ -579,8 +588,10 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private describeActionDetails = (action: ActionKind): AlgorithmInformation | null => {
+    const priority = this.state.selected ? this.priorityModels.get(this.state.selected) : undefined
+    if (priority) return PriorityFeatures.describe(action, priority)
     const linear = this.state.selected ? this.linearModels.get(this.state.selected) : undefined
-    if (linear) return LinearFeatures.describe(action, linear)
+    if (linear) return linear.kind === 'rope' ? RopeFeatures.describe(action, linear) : LinearFeatures.describe(action, linear)
     const graph = this.state.selected ? this.graphModels.get(this.state.selected) : undefined
     if (graph) {
       const features = this.state.selectedScope === 'graph-traversal' ? GraphTraversalFeatures : GraphFeatures
@@ -779,11 +790,19 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private renderAction(): ReactNode {
     if (!this.state.actionOpen) return null
-    const linear = this.state.selected ? this.linearModels.get(this.state.selected) : undefined
-    if (linear && this.state.selectedAction) return LinearFeatures.render(this.state.selectedAction, {
-      model: linear, input: this.state.treeInput,
-      onSceneChange: this.updateLinearScene, onComplete: this.completeAction,
+    const priority = this.state.selected ? this.priorityModels.get(this.state.selected) : undefined
+    if (priority && this.state.selectedAction) return PriorityFeatures.render(this.state.selectedAction, {
+      model: priority, input: this.state.treeInput,
+      onSceneChange: this.updatePriorityScene, onComplete: this.completeAction,
     }, this.state.actionSession)
+    const linear = this.state.selected ? this.linearModels.get(this.state.selected) : undefined
+    if (linear && this.state.selectedAction) {
+      const features = linear.kind === 'rope' ? RopeFeatures : LinearFeatures
+      return features.render(this.state.selectedAction, {
+        model: linear, input: this.state.treeInput,
+        onSceneChange: this.updateLinearScene, onComplete: this.completeAction,
+      }, this.state.actionSession)
+    }
     const graph = this.state.selected ? this.graphModels.get(this.state.selected) : undefined
     if (graph && this.state.selectedAction) {
       const features = this.state.selectedScope === 'graph-traversal' ? GraphTraversalFeatures : GraphFeatures
@@ -991,6 +1010,7 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private resetStructure = (): void => {
     if (this.state.selected === null) return
+    this.priorityModels = PriorityStructureCatalog.createModels()
     this.linearModels = LinearStructureCatalog.createModels()
     this.additionalTrees = AdditionalTreeCatalog.createModels()
     this.hashMap = HashMap.createDefault()
@@ -1032,6 +1052,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         this.additionalTrees,
         this.graphModels,
         this.linearModels,
+        this.priorityModels,
       ),
       actionOpen: false,
       selectedAction: null,
@@ -1048,6 +1069,12 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private updateScene = (scene: Scene, list: LinkedList): void => {
     this.list = list
+    this.setState({ scene })
+  }
+
+  private updatePriorityScene = (scene: Scene, model: LinearModel): void => {
+    if (!(model instanceof PriorityModel)) throw new TypeError('Expected priority model')
+    this.priorityModels.set(model.kind, model)
     this.setState({ scene })
   }
 

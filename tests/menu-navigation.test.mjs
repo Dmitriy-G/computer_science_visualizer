@@ -69,9 +69,9 @@ test('recursive, factorial, graph, and unavailable bounds receive explicit order
 test('Overview contains exactly the requested structure groups', () => {
   assert.deepEqual(StructureCatalog.groups.map((group) => group.name), ['Linear', 'Queue / Priority', 'Trees', 'Graphs', 'Hash-based'])
   const expected = {
-    linear: ['array', 'bit-set', 'doubly-linked-list', 'free-list', 'gap-buffer', 'linked-list', 'rope', 'skip-list', 'sparse-array', 'stack', 'unrolled-linked-list', 'xor-linked-list'],
-    'queue-priority': ['circular-buffer', 'deque', 'heap', 'queue'],
-    trees: ['ast', 'avl-tree', 'b-plus-tree', 'b-tree', 'binary-tree', 'fenwick-tree', 'lsm-tree', 'r-tree', 'red-black-tree', 'segment-tree', 'trie'],
+    linear: ['array', 'bit-set', 'doubly-linked-list', 'free-list', 'gap-buffer', 'linked-list', 'skip-list', 'sparse-array', 'stack', 'unrolled-linked-list', 'xor-linked-list'],
+    'queue-priority': ['binary-max-heap', 'binomial-heap', 'circular-buffer', 'deque', 'fibonacci-heap', 'heap', 'indexed-priority-queue', 'leftist-heap', 'monotonic-queue', 'pairing-heap', 'priority-queue', 'queue', 'skew-heap'],
+    trees: ['ast', 'avl-tree', 'b-plus-tree', 'b-tree', 'binary-tree', 'fenwick-tree', 'lsm-tree', 'r-tree', 'red-black-tree', 'rope', 'segment-tree', 'trie'],
     graphs: ['dag', 'directed-graph', 'graph', 'multigraph', 'weighted-graph'],
     'hash-based': ['bloom-filter', 'hash-map', 'hash-set'],
   }

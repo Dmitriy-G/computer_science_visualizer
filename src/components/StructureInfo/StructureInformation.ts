@@ -1,5 +1,6 @@
 import type { StructureKind } from '../../visualization/Scene.ts'
 import { LinearStructureInformation } from './LinearStructureInformation.ts'
+import { PriorityStructureInformation } from './PriorityStructureInformation.ts'
 
 export interface StructureUseCase {
   readonly area: string
@@ -21,6 +22,7 @@ export interface StructureOverview {
 export class StructureInformation {
   private static readonly overviews: Record<StructureKind, StructureOverview> = {
     ...LinearStructureInformation.overviews,
+    ...PriorityStructureInformation.overviews,
     'ast': {
       summary: 'An Abstract Syntax Tree represents the structure of source code with nodes for meaningful constructs rather than every punctuation mark. This arithmetic subset stores integer literals, unary signs, and binary operators; parentheses guide grouping, and the default expression has ten syntax nodes.',
       useCases: [
