@@ -1,3 +1,4 @@
+import { ExtendedTreeCatalog } from './ExtendedTreeCatalog.ts'
 import type { StructureKind, Scene } from './Scene.ts'
 import type { AdditionalTreeModel } from './AdditionalTreeModel.ts'
 import { AST } from '../components/DataStructuresOverview/Trees/AST/AST.ts'
@@ -17,7 +18,7 @@ import { LSMTreeLayout } from '../components/DataStructuresOverview/Trees/LSMTre
 
 export class AdditionalTreeCatalog {
   public static createModels(): Map<StructureKind, AdditionalTreeModel> {
-    const models = new Map<StructureKind, AdditionalTreeModel>()
+    const models = ExtendedTreeCatalog.createModels()
     models.set('ast', AST.createDefault())
     models.set('trie', Trie.createDefault())
     models.set('heap', Heap.createDefault())
@@ -29,6 +30,8 @@ export class AdditionalTreeCatalog {
   }
 
   public static createDefault(kind: StructureKind): AdditionalTreeModel | null {
+    const extended = ExtendedTreeCatalog.createDefault(kind)
+    if (extended) return extended
     switch (kind) {
       case 'ast': return AST.createDefault()
       case 'trie': return Trie.createDefault()
@@ -42,6 +45,7 @@ export class AdditionalTreeCatalog {
   }
 
   public static createScene(model: AdditionalTreeModel): Scene {
+    if (ExtendedTreeCatalog.supports(model.kind)) return ExtendedTreeCatalog.createScene(model)
     switch (model.kind) {
       case 'ast': return new ASTLayout().create(model)
       case 'trie': return new TrieLayout().create(model)

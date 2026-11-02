@@ -1,3 +1,5 @@
+import { ExtendedTreeFeatures } from './ExtendedTreeFeatures.tsx'
+import { ExtendedTreeCatalog } from '../../../visualization/ExtendedTreeCatalog.ts'
 import type { ReactNode } from 'react'
 import type { ActionKind } from '../../../visualization/ActionCatalog.ts'
 import type { AlgorithmInformation } from '../../../visualization/AlgorithmInformation.ts'
@@ -62,6 +64,7 @@ import { ClearAnimation as LSMTreeClearSequence } from './LSMTree/Clear/ClearAni
 
 export class TreeFeatures {
   public static render(action: ActionKind, props: StructuredTreeActionProps, session: number): ReactNode {
+    if (ExtendedTreeCatalog.supports(props.model.kind)) return ExtendedTreeFeatures.render(action, props, session)
     switch (props.model.kind) {
       case 'ast':
         switch (action) {
@@ -120,6 +123,7 @@ export class TreeFeatures {
   }
 
   public static describe(action: ActionKind, model: StructuredTreeActionProps['model']): AlgorithmInformation | null {
+    if (ExtendedTreeCatalog.supports(model.kind)) return ExtendedTreeFeatures.describe(action, model)
     const size = model.length
     const storage = model instanceof LSMTree ? model.storedCount : size
     const runs = model instanceof LSMTree ? model.runCount : 0

@@ -148,6 +148,7 @@ export default class MainMenu extends Component<
   private renderStructureIcon(kind: StructureKind, fallback: string): ReactNode {
     let drawing: ReactNode
     switch (kind) {
+      case 'sparse-table':
       case 'adjacency-matrix':
         drawing = <><rect x="3" y="3" width="26" height="26" rx="2" /><path d="M3 12h26M3 21h26M12 3v26M21 3v26m-5-20v1m9 7v1M7 25v1" /></>
         break
@@ -223,6 +224,9 @@ export default class MainMenu extends Component<
           </>
         )
         break
+      case 'radix-tree':
+      case 'ternary-search-tree':
+      case 'suffix-tree':
       case 'trie':
       case 'ast':
         drawing = (
@@ -258,6 +262,10 @@ export default class MainMenu extends Component<
       case 'fenwick-tree':
         drawing = <path d="M4 27V17h6v10m5 0V10h6v17m5 0V3h5v24M7 17V8h11m0 2V3h11" />
         break
+      case 'kd-tree':
+      case 'quadtree':
+      case 'octree':
+      case 'bvh':
       case 'r-tree':
         drawing = (
           <>
@@ -278,6 +286,20 @@ export default class MainMenu extends Component<
           </>
         )
         break
+      case 'general-tree':
+      case 'unordered-binary-tree':
+      case 'complete-binary-tree':
+      case 'threaded-binary-tree':
+      case 'splay-tree':
+      case 'treap':
+      case 'cartesian-tree':
+      case 'scapegoat-tree':
+      case 'aa-tree':
+      case 'interval-tree':
+      case 'order-statistic-tree':
+      case 'persistent-segment-tree':
+      case 'merkle-tree':
+      case 'van-emde-boas-tree':
       case 'binary-tree':
       case 'avl-tree':
       case 'red-black-tree':
@@ -292,6 +314,8 @@ export default class MainMenu extends Component<
         )
         break
       case 'b-tree':
+      case 'two-three-tree':
+      case 'two-three-four-tree':
       case 'b-plus-tree':
         drawing = (
           <>

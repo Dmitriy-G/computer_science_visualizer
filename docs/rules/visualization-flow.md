@@ -19,7 +19,7 @@
    Leftist Heap, Skew Heap, Indexed Priority Queue, and Monotonic Queue),
    **Trees** (Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, and
    B+ Tree, Trie, Rope, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, and
-   Abstract Syntax Tree (AST)),
+   Abstract Syntax Tree (AST), and the 24 extended entries listed below),
    **Graphs** (Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph, Bipartite Graph, Complete Graph, Tree Graph, Hypergraph, Flow Network, Functional Graph, Adjacency Matrix, Adjacency List, Edge List, Compressed Sparse Row (CSR)), and **Hash-based** (Hash Table / Hash Map,
    Hash Set, Bloom Filter). Choose a group to see only
    its structures. Provide Back navigation through these levels, without a
@@ -1262,3 +1262,51 @@ reserve maximum auxiliary dimensions for the entire session. Rejected or
 unfinished demonstrations leave the committed array unchanged. Use explicit
 educational-example notices until practical use of the actual sorting variant
 has been verified; algorithm collections and related structures do not qualify.
+
+## Extended tree operations
+
+Trees also contains General Tree (N-ary Tree), Binary Tree, Complete Binary Tree,
+Threaded Binary Tree, Splay Tree, Treap, Cartesian Tree, Scapegoat Tree, AA Tree,
+2-3 Tree, 2-3-4 Tree, Radix Tree (Patricia Trie), Ternary Search Tree, Suffix Tree,
+Interval Tree, Order Statistic Tree, Persistent Segment Tree, Sparse Table,
+KD-Tree, Quadtree, Octree, Bounding Volume Hierarchy (BVH), Merkle Tree, and
+Van Emde Boas Tree. Preserve the original BST and its key. Every entry starts
+with ten elements and has working animated operations, structured inputs, and
+structure information. Only offer the operations listed in README; do not imply
+unimplemented deletion or balancing policies.
+
+General/Binary attachment collects a unique key and parent key; Binary also
+collects side (0 left, 1 right). Empty attachment creates a root; subtree deletion
+removes descendants. Complete Binary Tree appends without heap order, permits
+duplicate values, and replaces a deleted match with the deepest rightmost value.
+Threaded inorder follows actual tagged neighbor pointers without a traversal
+stack; returned output still uses linear space. Radix/Ternary/Suffix use lowercase
+text of 1–32 letters. Suffix construction is explicitly naive and quadratic.
+Interval Tree stores inclusive endpoint pairs and returns one overlap using an
+unbalanced maximum-endpoint BST. Rank counts strictly smaller keys; selection is
+zero-based in an AVL tree augmented with subtree counts.
+
+Persistent updates collect an existing version, zero-based index, and replacement
+value; queries collect version and inclusive index bounds. Keep old immutable roots
+and share unchanged branches; allow eight versions. Sparse Table builds 1–64 CSV
+safe integers and queries two power-of-two minimum blocks in constant time; explain
+that this is a table, not a node tree. KD uses alternating 2D split axes without
+rebalancing. Quad/Oct point buckets use [-1024,1024) integer coordinates, bucket
+size two, sparse occupied children, and depth at most eleven. Queries use inclusive
+boxes; Octree also collects Z bounds. BVH uses incremental 2D rectangle leaves and
+refits AABB ancestors, without claiming balanced-query guarantees.
+
+Merkle update and proof verification collect a data-leaf index and value. Use
+SHA-256, prefix 0x00 for decimal-UTF8 data leaves and 0x01 for ordered child digests;
+ten data leaves are padded to sixteen with empty-byte leaves. Compare full digests
+and identify the padding difference from transparency-log trees. Show sibling
+hash visits during verification. Van Emde Boas uses the integer universe 0..255,
+recursive clusters and summaries, and strict successor queries. Preserve min/max
+and local-key semantics; describe lazy allocation rather than eager O(U) space.
+
+Bound traces to 96 detailed events while executing all work, report omitted detail,
+keep independent scenes and fixed session bounds, and commit only the final clone.
+Expected/amortized bounds must state their assumptions. Rejected requests retain
+the original model, structure shape, and ID counters. Clear resets the ten fixed
+values (and versions/hashes) in Persistent Segment Tree and Merkle Tree; other
+extended entries become empty. No additional playback controls or browser checks.

@@ -1,0 +1,9 @@
+import { HierarchyLayout } from '../../../../visualization/HierarchyLayout.ts'
+import type { AdditionalTreeModel } from '../../../../visualization/AdditionalTreeModel.ts'
+import type { TreeFrame } from '../../../../visualization/TreeActionAnimation.ts'
+import type { Scene } from '../../../../visualization/Scene.ts'
+export class CartesianTreeLayout extends HierarchyLayout {
+  public create(model: AdditionalTreeModel, frame: TreeFrame = {}): Scene {
+    return { ...super.create(model, frame), countLabel: 'array values', hint: { title: 'Cartesian Tree', description: 'Array order in inorder, minimum values above descendants, and a monotone spine.' } }
+  }
+}

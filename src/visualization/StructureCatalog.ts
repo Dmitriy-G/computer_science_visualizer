@@ -1,3 +1,4 @@
+import { ExtendedTreeDefinitions } from './ExtendedTreeDefinitions.ts'
 import { ExtendedGraphCatalog } from './ExtendedGraphCatalog.ts'
 import type { ExtendedGraphModel } from '../components/DataStructuresOverview/Graphs/ExtendedGraphModel.ts'
 import { PriorityStructureCatalog } from './PriorityStructureCatalog.ts'
@@ -69,6 +70,7 @@ export class StructureCatalog {
   ]
 
   public static readonly structures: readonly StructureDefinition[] = [
+    ...ExtendedTreeDefinitions.structures,
     { kind: 'hash-map', group: 'hash-based', name: 'Hash Table / Hash Map', description: 'Key-value buckets with collision chains and automatic rehashing', symbol: '#' },
     { kind: 'hash-set', group: 'hash-based', name: 'Hash Set', description: 'Unique values located through hash buckets', symbol: '{}' },
     { kind: 'bloom-filter', group: 'hash-based', name: 'Bloom Filter', description: 'A bit array for probabilistic membership checks', symbol: '01' },

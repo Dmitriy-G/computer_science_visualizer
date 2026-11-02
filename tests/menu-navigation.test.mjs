@@ -71,7 +71,16 @@ test('Overview contains exactly the requested structure groups', () => {
   const expected = {
     linear: ['array', 'bit-set', 'doubly-linked-list', 'free-list', 'gap-buffer', 'linked-list', 'skip-list', 'sparse-array', 'stack', 'unrolled-linked-list', 'xor-linked-list'],
     'queue-priority': ['binary-max-heap', 'binomial-heap', 'circular-buffer', 'deque', 'fibonacci-heap', 'heap', 'indexed-priority-queue', 'leftist-heap', 'monotonic-queue', 'pairing-heap', 'priority-queue', 'queue', 'skew-heap'],
-    trees: ['ast', 'avl-tree', 'b-plus-tree', 'b-tree', 'binary-tree', 'fenwick-tree', 'lsm-tree', 'r-tree', 'red-black-tree', 'rope', 'segment-tree', 'trie'],
+    trees: [
+      'aa-tree', 'ast', 'avl-tree', 'b-plus-tree', 'b-tree', 'binary-tree', 'bvh',
+      'cartesian-tree', 'complete-binary-tree', 'fenwick-tree', 'general-tree',
+      'interval-tree', 'kd-tree', 'lsm-tree', 'merkle-tree', 'octree',
+      'order-statistic-tree', 'persistent-segment-tree', 'quadtree', 'r-tree',
+      'radix-tree', 'red-black-tree', 'rope', 'scapegoat-tree', 'segment-tree',
+      'sparse-table', 'splay-tree', 'suffix-tree', 'ternary-search-tree',
+      'threaded-binary-tree', 'treap', 'trie', 'two-three-four-tree',
+      'two-three-tree', 'unordered-binary-tree', 'van-emde-boas-tree',
+    ],
     graphs: ['adjacency-list', 'adjacency-matrix', 'bipartite-graph', 'complete-graph', 'compressed-sparse-row', 'dag', 'directed-graph', 'edge-list', 'flow-network', 'functional-graph', 'graph', 'hypergraph', 'multigraph', 'tree-graph', 'weighted-graph'],
     'hash-based': ['bloom-filter', 'hash-map', 'hash-set'],
   }

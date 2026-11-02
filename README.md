@@ -50,7 +50,7 @@ Choose **Data Structures Overview**, then a group:
 | --- | --- |
 | Linear | Array, Linked list, Stack, Doubly linked list, Skip List, Unrolled Linked List, XOR Linked List, Gap Buffer, Bit Array / BitSet, Sparse Array, Free List |
 | Queue / Priority | Queue, Deque, Circular buffer, Heap (min-heap), Priority Queue, Binary Max-Heap, Binomial Heap, Fibonacci Heap, Pairing Heap, Leftist Heap, Skew Heap, Indexed Priority Queue, Monotonic Queue |
-| Trees | Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, B+ Tree, Trie, Rope, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, Abstract Syntax Tree (AST) |
+| Trees | Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, B+ Tree, Trie, Rope, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, Abstract Syntax Tree (AST), General Tree (N-ary Tree), Binary Tree, Complete Binary Tree, Threaded Binary Tree, Splay Tree, Treap, Cartesian Tree, Scapegoat Tree, AA Tree, 2-3 Tree, 2-3-4 Tree, Radix Tree (Patricia Trie), Ternary Search Tree, Suffix Tree, Interval Tree, Order Statistic Tree, Persistent Segment Tree, Sparse Table, KD-Tree, Quadtree, Octree, Bounding Volume Hierarchy (BVH), Merkle Tree, Van Emde Boas Tree |
 | Graphs | Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph, Bipartite Graph, Complete Graph, Tree Graph, Hypergraph, Flow Network, Functional Graph, Adjacency Matrix, Adjacency List, Edge List, Compressed Sparse Row (CSR) |
 | Hash-based | Hash Table / Hash Map, Hash Set, Bloom Filter |
 
@@ -105,6 +105,42 @@ standard libraries, and established application libraries. Each entry explains
 its purpose and links to primary documentation or source. Counts vary by
 structure; competition libraries and educational algorithm collections are not
 used to fill a quota, and implementation variants are identified explicitly.
+
+The 24 additional tree entries include separate general, unordered binary, complete,
+threaded, and ordered search trees; compressed word indexes; versioned and static
+range indexes; spatial partitions; a SHA-256 Merkle tree; and a bounded integer
+universe tree. Each has its own model and layout plus animated actions and input
+validation. The existing BST keeps its selection key and behavior.
+
+| Tree family | Operations and conventions |
+| --- | --- |
+| General Tree, Binary Tree | Attach by parent key (and left/right position for Binary Tree), search, delete a whole subtree, clear |
+| Complete Binary Tree | Append in level order, search, replace a deleted match with the last value, clear; duplicates allowed |
+| Threaded Binary Tree | Insert, search, stack-free inorder via actual predecessor/successor threads, clear |
+| Splay, Treap, Scapegoat, AA, 2-3-4 | Insert, search, delete, clear using each structure's own repair rules |
+| 2-3 Tree | Insert with bottom-up splits, search, clear |
+| Cartesian Tree | Append through a monotone spine, inclusive range minimum, clear |
+| Radix Tree, Ternary Search Tree | Insert/search/delete lowercase words and clear; Radix also checks prefixes |
+| Suffix Tree | Build text, find substring occurrence indices, clear; quadratic compressed suffix insertion |
+| Interval Tree | Insert inclusive intervals, find one overlap through maximum-endpoint augmentation, clear; unbalanced BST variant |
+| Order Statistic Tree | AVL insert/search/delete, rank (strictly smaller), zero-based selection, clear |
+| Persistent Segment Tree | Path-copy updates from any existing version, exact inclusive range sum by version, reset values to zero |
+| Sparse Table | Build static values, constant-time inclusive range minimum, clear; this requested menu entry is tabular rather than a tree |
+| KD-Tree, Quadtree, Octree | Insert points, query an inclusive box, clear; KD is 2D, Octree is 3D |
+| BVH | Insert 2D rectangles, query overlaps, clear; incremental AABB hierarchy without balancing |
+| Merkle Tree | Update a data leaf, verify a supplied value using sibling hashes, reset values to zero |
+| Van Emde Boas Tree | Insert/search/delete keys, strict successor, clear; sparse recursive universe 0..255 |
+
+Examples start with ten elements. Numeric examples allow at most 64 elements;
+word/text input accepts 1–32 lowercase letters. Persistent Segment Tree retains
+at most eight versions of ten fixed values. Quadtree/Octree coordinates are
+integers in [-1024,1024), with two-point buckets and depth at most eleven.
+Merkle Tree hashes ten data leaves and six empty-byte padding leaves with SHA-256;
+displayed digests are shortened, but comparisons use the complete digest. Its
+padded shape differs from Certificate Transparency log trees.
+Tree playback records at most 96 detailed events, executes the whole operation,
+reports omitted events, reserves fixed scene bounds, and commits only its final
+clone. Rejected requests preserve the committed model and ID counters.
 
 The extended linear structures offer these actions:
 

@@ -1,3 +1,4 @@
+import { ExtendedTreeStructureInformation } from './ExtendedTreeStructureInformation.ts'
 import type { StructureKind } from '../../visualization/Scene.ts'
 import { LinearStructureInformation } from './LinearStructureInformation.ts'
 import { PriorityStructureInformation } from './PriorityStructureInformation.ts'
@@ -22,6 +23,7 @@ export interface StructureOverview {
 
 export class StructureInformation {
   private static readonly overviews: Record<StructureKind, StructureOverview> = {
+    ...ExtendedTreeStructureInformation.overviews,
     ...LinearStructureInformation.overviews,
     ...PriorityStructureInformation.overviews,
     ...ExtendedGraphStructureInformation.overviews,

@@ -338,3 +338,24 @@ Algorithm structure buttons show at most two example names in one truncated line
 keep the complete list in the independently scrolling action panel.
 Do not duplicate graph models or sequence classes to expose traversal examples
 in the Algorithms branch.
+
+## Extended tree structures
+
+The 24 extended tree models and their layouts live in individual folders under
+`DataStructuresOverview/Trees/`. `UnorderedBinaryTree` is the ordinary Binary Tree;
+the existing `BinaryTree` and `binary-tree` key remain the BST. Use
+`ExtendedTreeFeatures` for their action components and action-owned information,
+`ExtendedTreeDefinitions` / `ExtendedTreeActionCatalog` for menu entries, and
+`ExtendedTreeCatalog` through `AdditionalTreeCatalog` for model storage and scenes.
+Keep each action's component, CSS, and animation class in its action folder.
+Reuse `StructuredTreeAction` / `ActionPlayback`, `ExtendedTreeAnimation` for bounded
+traces, and `ExtendedTreeInput` through `StructuredTreeInput` for dialogs.
+
+`SearchTreeModel` shares only actual BST links, rotations, metadata, and ordered
+operations. Concrete models own splaying, priority rotations, scapegoat rebuilding,
+AA levels, and AVL order-statistic repair. `OrthantTreeModel` shares the actual
+2D/3D midpoint subdivision algorithm. The 2-3-4 adapter reuses `BTree` because a
+minimum-degree-two B-tree is exactly a 2-3-4 tree; 2-3 Tree owns bottom-up splitting.
+Keep all other canonical storage distinct. Persistent roots share immutable nodes;
+draw each canonical node once with multiple incoming links. Threaded layouts draw
+threads separately from child links. Sparse Table uses rows of cached intervals.

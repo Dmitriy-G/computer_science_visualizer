@@ -2,6 +2,7 @@ import type { ActionKind } from './ActionCatalog.ts'
 import type { StructureKind } from './Scene.ts'
 import type { TreeInputValues } from './AdditionalTreeModel.ts'
 import { ASTParser } from '../components/DataStructuresOverview/Trees/AST/ASTParser.ts'
+import { ExtendedTreeInput } from './ExtendedTreeInput.ts'
 
 import type { ActionInputField as TreeInputField } from './StructuredActionInput.ts'
 export type { ActionInputField as TreeInputField } from './StructuredActionInput.ts'
@@ -40,10 +41,11 @@ export class StructuredTreeInput {
   }
 
   public static supports(structure: StructureKind): boolean {
-    return structure === 'trie' || structure === 'heap' || structure === 'segment-tree' || structure === 'fenwick-tree' || structure === 'r-tree' || structure === 'lsm-tree' || structure === 'ast'
+    return ExtendedTreeInput.supports(structure) || structure === 'trie' || structure === 'heap' || structure === 'segment-tree' || structure === 'fenwick-tree' || structure === 'r-tree' || structure === 'lsm-tree' || structure === 'ast'
   }
 
   public static create(structure: StructureKind, action: ActionKind, size: number): StructuredTreeInput | null {
+    if (ExtendedTreeInput.supports(structure)) return ExtendedTreeInput.create(structure, action, size)
     if (structure === 'ast' && action !== 'build-expression') return null
     if (!this.supports(structure) || action === 'clear' || action === 'peek' || action === 'extract-min' || action === 'flush' || action === 'compact') return null
     return new StructuredTreeInput(structure, action, size)
