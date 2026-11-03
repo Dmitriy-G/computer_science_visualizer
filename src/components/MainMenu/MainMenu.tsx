@@ -205,6 +205,18 @@ export default class MainMenu extends Component<
       case 'bit-set':
         drawing = <><rect x="2" y="7" width="28" height="19" rx="2" /><path d="M9 7v19m7-19v19m7-19v19M5 12v9m14-9v9" /></>
         break
+      case 'disjoint-set':
+        drawing = <><circle cx="9" cy="7" r="4" /><circle cx="24" cy="7" r="4" /><circle cx="5" cy="26" r="3" /><circle cx="15" cy="26" r="3" /><circle cx="27" cy="26" r="3" /><path d="m6 23 3-12m5 12L9 11m18 12-3-12" /></>
+        break
+      case 'ordered-set':
+        drawing = <><circle cx="16" cy="6" r="4" /><circle cx="6" cy="25" r="4" /><circle cx="26" cy="25" r="4" /><path d="M14 10 8 21m10-11 6 11M2 16h6m16 0h6" /></>
+        break
+      case 'multiset':
+        drawing = <><rect x="2" y="5" width="12" height="22" rx="2" /><rect x="18" y="5" width="12" height="22" rx="2" /><path d="M5 12h6m-6 7h6m10-7h6m-6 7h6m-3-10v6" /></>
+        break
+      case 'interval-set':
+        drawing = <><path d="M2 16h28M4 7v6m0-3h12m0-3v6m4 6v6m0-3h9m0-3v6" /></>
+        break
       case 'sparse-array':
         drawing = <><rect x="2" y="9" width="7" height="14" rx="1" /><rect x="23" y="9" width="7" height="14" rx="1" /><path d="M13 16h1m4 0h1" /></>
         break

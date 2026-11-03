@@ -48,12 +48,13 @@ Choose **Data Structures Overview**, then a group:
 
 | Group | Structures |
 | --- | --- |
-| Linear | Array, Linked list, Stack, Doubly linked list, Skip List, Unrolled Linked List, XOR Linked List, Bit Array / BitSet, Sparse Array, Free List |
+| Linear | Array, Linked list, Stack, Doubly linked list, Skip List, Unrolled Linked List, XOR Linked List, Sparse Array, Free List |
 | Queue / Priority | Queue, Deque, Circular buffer, Heap (min-heap), Priority Queue, Binary Max-Heap, Binomial Heap, Fibonacci Heap, Pairing Heap, Leftist Heap, Skew Heap, Indexed Priority Queue, Monotonic Queue |
 | Trees | Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, B+ Tree, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, Abstract Syntax Tree (AST), General Tree (N-ary Tree), Binary Tree, Complete Binary Tree, Threaded Binary Tree, Splay Tree, Treap, Cartesian Tree, Scapegoat Tree, AA Tree, 2-3 Tree, 2-3-4 Tree, Interval Tree, Order Statistic Tree, Persistent Segment Tree, Sparse Table, KD-Tree, Quadtree, Octree, Bounding Volume Hierarchy (BVH), Merkle Tree, Van Emde Boas Tree |
 | String / Text | Gap Buffer, Rope, Trie, Radix Tree (Patricia Trie), Ternary Search Tree, Suffix Tree, Suffix Array, Suffix Automaton, Aho-Corasick Automaton, Directed Acyclic Word Graph (DAWG), FM-Index |
 | Graphs | Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph, Bipartite Graph, Complete Graph, Tree Graph, Hypergraph, Flow Network, Functional Graph, Adjacency Matrix, Adjacency List, Edge List, Compressed Sparse Row (CSR) |
-| Hash-based | Hash Table / Hash Map, Hash Set, Open Addressing Hash Table, Separate Chaining Hash Table, Robin Hood Hash Table, Cuckoo Hash Table, Hopscotch Hashing, Extendible Hashing, Linear Hashing, Perfect Hash Table, Consistent Hashing Ring |
+| Set / Union | Hash Set, Bit Array / BitSet, Disjoint Set (Union-Find), Ordered Set, Multiset (Bag), Interval Set |
+| Hash-based | Hash Table / Hash Map, Open Addressing Hash Table, Separate Chaining Hash Table, Robin Hood Hash Table, Cuckoo Hash Table, Hopscotch Hashing, Extendible Hashing, Linear Hashing, Perfect Hash Table, Consistent Hashing Ring |
 | Probabilistic | Bloom Filter, Counting Bloom Filter, Cuckoo Filter, Quotient Filter, Count-Min Sketch, HyperLogLog, Reservoir Sampling Buffer |
 
 Select a structure to load its example, then choose an action from the canvas
@@ -65,6 +66,34 @@ or quotient slots. Count-Min Sketch counts weighted update operations, HyperLogL
 counts add operations while estimating distinct values, and Reservoir Sampling Buffer
 shows five retained occurrences after ten stream arrivals. The back button reopens the current
 group's structure list.
+
+The additional Set / Union structures offer these actions:
+
+| Structure | Allowed actions |
+| --- | --- |
+| Disjoint Set (Union-Find) | Make set, Find representative, Union components, Check connectivity, Clear |
+| Ordered Set | Add a key, Contains key, Lower bound, Remove a key, Clear |
+| Multiset (Bag) | Add an occurrence, Count occurrences, Remove one occurrence, Clear |
+| Interval Set | Union with interval, Subtract interval, Contains value, Intersect with interval, Clear |
+
+Union-Find starts with ten members in three components and shows ranked parent
+links. Find and connectivity compress paths; union requires two existing members.
+There is no arbitrary member deletion. Ordered Set uses the canonical AVL tree
+storage for unique keys and lower-bound search. Multiset starts with ten total
+occurrences across six distinct values and stores positive Map counters; removal
+subtracts exactly one occurrence. Interval Set starts with ten closed integer
+ranges; union merges overlaps and adjacency, subtraction may split a range, and
+intersection reports exact overlaps without changing storage. Its sorted array
+supports binary-search membership; it never enumerates covered integers.
+
+Inputs are whole safe integers. Bounds are inclusive and maximum must be at least
+minimum. Examples allow 64 members, unique keys, total bag occurrences, or stored
+intervals respectively; a split exceeding the interval limit rejects unchanged.
+All operations use automatic playback, final-frame commits, full Reset, and
+action-owned complexity information. Map-based costs disclose expected access
+assumptions; union-find amortized sequence bounds are separate from individual
+worst-case work. Structure information links to verified library examples and
+identifies their differences from these teaching variants.
 
 The probabilistic examples animate their actual storage. Counting Bloom Filter
 rejects four-bit counter overflow; it and Cuckoo Filter keep an extra exact-key

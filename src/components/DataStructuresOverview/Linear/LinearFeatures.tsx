@@ -1,3 +1,5 @@
+import { SetUnionFeatures } from '../SetUnion/SetUnionFeatures.tsx'
+import { SetUnionStructureCatalog } from '../../../visualization/SetUnionStructureCatalog.ts'
 import { StringTextFeatures } from '../StringText/StringTextFeatures.tsx'
 import { StringTextStructureCatalog } from '../../../visualization/StringTextStructureCatalog.ts'
 import type { ReactNode } from 'react'
@@ -39,16 +41,16 @@ import GapBufferSearch from '../StringText/GapBuffer/Search/Search.tsx'
 import { SearchAnimation as GapBufferSearchSequence } from '../StringText/GapBuffer/Search/SearchAnimation.ts'
 import GapBufferClear from '../StringText/GapBuffer/Clear/Clear.tsx'
 import { ClearAnimation as GapBufferClearSequence } from '../StringText/GapBuffer/Clear/ClearAnimation.ts'
-import BitSetSetBit from './BitSet/SetBit/SetBit.tsx'
-import { SetBitAnimation as BitSetSetBitSequence } from './BitSet/SetBit/SetBitAnimation.ts'
-import BitSetClearBit from './BitSet/ClearBit/ClearBit.tsx'
-import { ClearBitAnimation as BitSetClearBitSequence } from './BitSet/ClearBit/ClearBitAnimation.ts'
-import BitSetToggleBit from './BitSet/ToggleBit/ToggleBit.tsx'
-import { ToggleBitAnimation as BitSetToggleBitSequence } from './BitSet/ToggleBit/ToggleBitAnimation.ts'
-import BitSetTestBit from './BitSet/TestBit/TestBit.tsx'
-import { TestBitAnimation as BitSetTestBitSequence } from './BitSet/TestBit/TestBitAnimation.ts'
-import BitSetClear from './BitSet/Clear/Clear.tsx'
-import { ClearAnimation as BitSetClearSequence } from './BitSet/Clear/ClearAnimation.ts'
+import BitSetSetBit from '../SetUnion/BitSet/SetBit/SetBit.tsx'
+import { SetBitAnimation as BitSetSetBitSequence } from '../SetUnion/BitSet/SetBit/SetBitAnimation.ts'
+import BitSetClearBit from '../SetUnion/BitSet/ClearBit/ClearBit.tsx'
+import { ClearBitAnimation as BitSetClearBitSequence } from '../SetUnion/BitSet/ClearBit/ClearBitAnimation.ts'
+import BitSetToggleBit from '../SetUnion/BitSet/ToggleBit/ToggleBit.tsx'
+import { ToggleBitAnimation as BitSetToggleBitSequence } from '../SetUnion/BitSet/ToggleBit/ToggleBitAnimation.ts'
+import BitSetTestBit from '../SetUnion/BitSet/TestBit/TestBit.tsx'
+import { TestBitAnimation as BitSetTestBitSequence } from '../SetUnion/BitSet/TestBit/TestBitAnimation.ts'
+import BitSetClear from '../SetUnion/BitSet/Clear/Clear.tsx'
+import { ClearAnimation as BitSetClearSequence } from '../SetUnion/BitSet/Clear/ClearAnimation.ts'
 import SparseArraySet from './SparseArray/Set/Set.tsx'
 import { SetAnimation as SparseArraySetSequence } from './SparseArray/Set/SetAnimation.ts'
 import SparseArrayRead from './SparseArray/Read/Read.tsx'
@@ -66,6 +68,7 @@ import { ClearAnimation as FreeListClearSequence } from './FreeList/Clear/ClearA
 
 export class LinearFeatures {
   public static render(action: ActionKind, props: StructuredLinearActionProps, session: number): ReactNode {
+    if (SetUnionStructureCatalog.supports(props.model.kind)) return SetUnionFeatures.render(action, props, session)
     if (StringTextStructureCatalog.supports(props.model.kind)) return StringTextFeatures.render(action, props, session)
     switch (props.model.kind) {
       case 'skip-list':
@@ -130,6 +133,7 @@ export class LinearFeatures {
   }
 
   public static describe(action: ActionKind, model: LinearModel): AlgorithmInformation | null {
+    if (SetUnionStructureCatalog.supports(model.kind)) return SetUnionFeatures.describe(action, model)
     if (StringTextStructureCatalog.supports(model.kind)) return StringTextFeatures.describe(action, model)
     switch (model.kind) {
       case 'skip-list':

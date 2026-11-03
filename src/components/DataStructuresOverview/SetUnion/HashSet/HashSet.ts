@@ -1,5 +1,5 @@
-import { HashMap } from '../HashMap/HashMap.ts'
-import type { HashEntry } from '../HashMap/HashMap.ts'
+import { HashMap } from '../../HashBased/HashMap/HashMap.ts'
+import type { HashEntry } from '../../HashBased/HashMap/HashMap.ts'
 import type { HashObserver, HashOperation } from '../../../../visualization/Hashing.ts'
 
 export class HashSet {

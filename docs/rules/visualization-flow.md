@@ -12,7 +12,7 @@
    branch preserves the current visualization and playback.
    Selecting Overview shows **Linear** (Array, Linked list, Stack,
    Doubly linked list, Skip List, Unrolled Linked
-   List, XOR Linked List, Bit Array / BitSet, Sparse Array,
+   List, XOR Linked List, Sparse Array,
    and Free List),
    **Queue / Priority** (Queue, Deque, Circular buffer, Heap (min-heap),
    Priority Queue, Binary Max-Heap, Binomial Heap, Fibonacci Heap, Pairing Heap,
@@ -23,8 +23,10 @@
    **String / Text** (Gap Buffer, Rope, Trie, Radix Tree (Patricia Trie),
    Ternary Search Tree, Suffix Tree, Suffix Array, Suffix Automaton,
    Aho-Corasick Automaton, Directed Acyclic Word Graph (DAWG), FM-Index),
-   **Graphs** (Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph, Bipartite Graph, Complete Graph, Tree Graph, Hypergraph, Flow Network, Functional Graph, Adjacency Matrix, Adjacency List, Edge List, Compressed Sparse Row (CSR)), **Hash-based** (Hash Table / Hash Map,
-   Hash Set and the nine additional hash entries listed below), and
+   **Graphs** (Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph, Bipartite Graph, Complete Graph, Tree Graph, Hypergraph, Flow Network, Functional Graph, Adjacency Matrix, Adjacency List, Edge List, Compressed Sparse Row (CSR)),
+   **Set / Union** (Hash Set, Bit Array / BitSet, Disjoint Set (Union-Find),
+   Ordered Set, Multiset (Bag), and Interval Set),
+   **Hash-based** (Hash Table / Hash Map and the nine additional hash entries listed below), and
    **Probabilistic** (Bloom Filter, Counting Bloom Filter, Cuckoo Filter,
    Quotient Filter, Count-Min Sketch, HyperLogLog, Reservoir Sampling Buffer). Choose a group to see only
    its structures. Provide Back navigation through these levels, without a
@@ -574,7 +576,7 @@ indices, links, roles, and statuses in the diagram; put results in the timeline.
   four characters. Insert, concatenate, read by index, delete a span, and clear.
   Show left-subtree weights and leaf text. Split/join edits share unchanged
   subtrees and update weights and heights; do not flatten and rebuild all text.
-- **Bit Array / BitSet:** ten logical bits packed into unsigned 32-bit words.
+- **Bit Array / BitSet (under Set / Union):** ten logical bits packed into unsigned 32-bit words.
   Set, clear, toggle, test by index, and clear all. Show word values and expanded
   bit positions. Clear preserves bit count; preserve unsigned bit-31 behavior.
 - **Sparse Array:** 64 logical slots and ten initially stored entries. Set/read
@@ -595,14 +597,56 @@ not algorithm execution. Explain fixed-height skip-list limits, Map assumptions,
 rope path-copy storage, packed-word counts, and deferred garbage collection in
 the relevant action information.
 
-## Hash-based and probabilistic structures
+## Additional Set / Union operations
+
+Disjoint Set starts with ten members in three components and stores real parent
+links and ranks. Make set creates one new singleton. Find representative uses
+iterative full path compression; Union components links lower rank under higher
+rank and increases rank only on a tie. Check connectivity compares compressed
+representatives. Validate both requested members before either find changes a
+parent. Same-component union never adds a link; no arbitrary member deletion.
+Clear releases descendants before parents. Ranks remain height upper bounds
+after compression. Show actual child-to-parent arrows and root/rank roles.
+
+Ordered Set starts with ten unique keys in the canonical AVLTree storage.
+Add, Contains, Lower bound, Remove, and Clear use the real tree algorithms.
+Lower bound returns the smallest key at least the query, or null. Show AVL
+heights, balances, comparisons, and rotations. Reject duplicate keys unchanged.
+
+Multiset starts with ten occurrences across six distinct values, storing one
+positive Map count per value and a cached total. Add increments one occurrence;
+Count returns an exact count, including zero for absence. Remove one occurrence
+decrements one counter and deletes an entry only when it reaches zero. Clear
+releases distinct entries. Show value/count cards and count total occurrences;
+positions imply insertion order, without claiming visible hash-table storage.
+
+Interval Set starts with ten stored closed integer intervals. Union with interval
+coalesces overlaps and adjacency; Subtract interval keeps nonempty remainders and
+may split a range. Contains value binary-searches the sorted intervals. Intersect
+with interval returns exact overlap bounds without changing storage. Clear
+releases stored intervals. Both endpoints are included; never enumerate covered
+integers. Use exact adjacency comparisons at safe-integer limits, with guarded
+endpoint increments/decrements. Count stored intervals, not covered integers;
+equal card spacing represents sorted storage rather than numeric distance.
+
+All four use whole safe-integer inputs, structured dialogs, shared automatic
+playback, stable IDs, independent scenes, final-clone commits, and full Reset.
+Allow up to 64 members, ordered keys, total bag occurrences, or stored intervals.
+Reject a complete request before consuming IDs if its result exceeds the limit,
+including an interval split. Keep 96 detailed events and disclose omissions while
+executing all algorithm work. Queries finish on result frames with visited
+highlights; find and connectivity may commit compressed parents. Complexity
+information states Map assumptions, actual interval-array costs, output storage,
+and amortized sequence bounds without confusing them with per-operation bounds.
+
+## Hash-based, set, and probabilistic structures
 
 Hash Map associates unique whole-number keys with whole-number values. Use
 separate collision chains and an initial eight buckets; double the bucket count
 before a new entry would exceed a 0.75 load factor. Existing-key updates keep the
 node ID and count, and do not resize. Normalize negative remainders into valid
 bucket indices. Show bucket roles, key/value cells, collision comparisons, and
-rehashing in the shared renderer. Hash Set composes the same storage, keeps values
+rehashing in the shared renderer. Hash Set belongs to Set / Union, composes the same storage, keeps values
 unique, and leaves duplicates unchanged. Clear releases entries one by one while
 retaining bucket capacity and the ID counter. Both default examples have ten entries.
 
@@ -1450,7 +1494,7 @@ extended entries become empty. No additional playback controls or browser checks
 Hash-based also includes Open Addressing Hash Table, Separate Chaining Hash Table,
 Robin Hood Hash Table, Cuckoo Hash Table, Hopscotch Hashing, Extendible Hashing,
 Linear Hashing, Perfect Hash Table, and Consistent Hashing Ring. Preserve Hash Map
-and Hash Set in Hash-based, with Bloom Filter in Probabilistic. Each new entry starts with ten records, keys, or servers
+in Hash-based, Hash Set in Set / Union, and Bloom Filter in Probabilistic. Each new entry starts with ten records, keys, or servers
 as appropriate and has validated structured inputs and action/structure information.
 
 Seven mutable tables offer Insert/update (separate key and value), Lookup, Delete

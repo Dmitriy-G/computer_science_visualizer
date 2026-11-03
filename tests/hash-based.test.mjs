@@ -1,19 +1,19 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { HashMap } from '../src/components/DataStructuresOverview/HashBased/HashMap/HashMap.ts'
-import { HashSet } from '../src/components/DataStructuresOverview/HashBased/HashSet/HashSet.ts'
+import { HashSet } from '../src/components/DataStructuresOverview/SetUnion/HashSet/HashSet.ts'
 import { BloomFilter } from '../src/components/DataStructuresOverview/Probabilistic/BloomFilter/BloomFilter.ts'
 import { HashMapLayout } from '../src/components/DataStructuresOverview/HashBased/HashMap/HashMapLayout.ts'
-import { HashSetLayout } from '../src/components/DataStructuresOverview/HashBased/HashSet/HashSetLayout.ts'
+import { HashSetLayout } from '../src/components/DataStructuresOverview/SetUnion/HashSet/HashSetLayout.ts'
 import { BloomFilterLayout } from '../src/components/DataStructuresOverview/Probabilistic/BloomFilter/BloomFilterLayout.ts'
 import { InsertAnimation } from '../src/components/DataStructuresOverview/HashBased/HashMap/Insert/InsertAnimation.ts'
 import { SearchByKeyAnimation } from '../src/components/DataStructuresOverview/HashBased/HashMap/SearchByKey/SearchByKeyAnimation.ts'
 import { DeleteByKeyAnimation } from '../src/components/DataStructuresOverview/HashBased/HashMap/DeleteByKey/DeleteByKeyAnimation.ts'
 import { ClearAnimation as MapClear } from '../src/components/DataStructuresOverview/HashBased/HashMap/Clear/ClearAnimation.ts'
-import { AddAnimation as SetAdd } from '../src/components/DataStructuresOverview/HashBased/HashSet/Add/AddAnimation.ts'
-import { ContainsAnimation } from '../src/components/DataStructuresOverview/HashBased/HashSet/Contains/ContainsAnimation.ts'
-import { RemoveAnimation } from '../src/components/DataStructuresOverview/HashBased/HashSet/Remove/RemoveAnimation.ts'
-import { ClearAnimation as SetClear } from '../src/components/DataStructuresOverview/HashBased/HashSet/Clear/ClearAnimation.ts'
+import { AddAnimation as SetAdd } from '../src/components/DataStructuresOverview/SetUnion/HashSet/Add/AddAnimation.ts'
+import { ContainsAnimation } from '../src/components/DataStructuresOverview/SetUnion/HashSet/Contains/ContainsAnimation.ts'
+import { RemoveAnimation } from '../src/components/DataStructuresOverview/SetUnion/HashSet/Remove/RemoveAnimation.ts'
+import { ClearAnimation as SetClear } from '../src/components/DataStructuresOverview/SetUnion/HashSet/Clear/ClearAnimation.ts'
 import { AddAnimation as BloomAdd } from '../src/components/DataStructuresOverview/Probabilistic/BloomFilter/Add/AddAnimation.ts'
 import { CheckMembershipAnimation } from '../src/components/DataStructuresOverview/Probabilistic/BloomFilter/CheckMembership/CheckMembershipAnimation.ts'
 import { ClearAnimation as BloomClear } from '../src/components/DataStructuresOverview/Probabilistic/BloomFilter/Clear/ClearAnimation.ts'
@@ -257,7 +257,7 @@ test('hash actions expose validated inputs, suitable menus, previews, and comple
   assert.match(mapInput.validateUpperBound('100', ''), /whole number/)
   assert.match(mapInput.validateUpperBound('100', '1.5'), /whole number/)
   for (const kind of ['hash-map', 'hash-set', 'bloom-filter']) {
-    assert.equal(StructureCatalog.getGroupForStructure(kind), kind === 'bloom-filter' ? 'probabilistic' : 'hash-based')
+    assert.equal(StructureCatalog.getGroupForStructure(kind), kind === 'bloom-filter' ? 'probabilistic' : kind === 'hash-set' ? 'set-union' : 'hash-based')
     const preview = StructureCatalog.createPreview(kind, new LinkedList())
     assert.equal(preview.kind, kind)
     assert.equal(preview.count, 10)

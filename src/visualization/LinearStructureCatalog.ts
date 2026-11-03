@@ -1,3 +1,5 @@
+import { SetUnionStructureCatalog } from './SetUnionStructureCatalog.ts'
+import { SetUnionModel } from '../components/DataStructuresOverview/SetUnion/SetUnionModel.ts'
 import { StringTextStructureCatalog } from './StringTextStructureCatalog.ts'
 import { StringTextModel } from '../components/DataStructuresOverview/StringText/StringTextModel.ts'
 import type { LinearModel } from './LinearModel.ts'
@@ -13,8 +15,8 @@ import { GapBuffer } from '../components/DataStructuresOverview/StringText/GapBu
 import { GapBufferLayout } from '../components/DataStructuresOverview/StringText/GapBuffer/GapBufferLayout.ts'
 import { Rope } from '../components/DataStructuresOverview/StringText/Rope/Rope.ts'
 import { RopeLayout } from '../components/DataStructuresOverview/StringText/Rope/RopeLayout.ts'
-import { BitSet } from '../components/DataStructuresOverview/Linear/BitSet/BitSet.ts'
-import { BitSetLayout } from '../components/DataStructuresOverview/Linear/BitSet/BitSetLayout.ts'
+import { BitSet } from '../components/DataStructuresOverview/SetUnion/BitSet/BitSet.ts'
+import { BitSetLayout } from '../components/DataStructuresOverview/SetUnion/BitSet/BitSetLayout.ts'
 import { SparseArray } from '../components/DataStructuresOverview/Linear/SparseArray/SparseArray.ts'
 import { SparseArrayLayout } from '../components/DataStructuresOverview/Linear/SparseArray/SparseArrayLayout.ts'
 import { FreeList } from '../components/DataStructuresOverview/Linear/FreeList/FreeList.ts'
@@ -32,11 +34,14 @@ export class LinearStructureCatalog {
       ['sparse-array', SparseArray.createDefault()],
       ['free-list', FreeList.createDefault()],
     ])
+    for (const [kind, model] of SetUnionStructureCatalog.createModels()) models.set(kind, model)
     for (const [kind, model] of StringTextStructureCatalog.createModels()) models.set(kind, model)
     return models
   }
 
   public static createDefault(kind: StructureKind): LinearModel | null {
+    const setUnion = SetUnionStructureCatalog.createDefault(kind)
+    if (setUnion) return setUnion
     const stringText = StringTextStructureCatalog.createDefault(kind)
     if (stringText) return stringText
     switch (kind) {
@@ -53,6 +58,7 @@ export class LinearStructureCatalog {
   }
 
   public static createScene(model: LinearModel, frame: LinearFrame = {}): Scene {
+    if (model instanceof SetUnionModel) return SetUnionStructureCatalog.createScene(model, frame)
     if (model instanceof StringTextModel) return StringTextStructureCatalog.createScene(model, frame)
     switch (model.kind) {
       case 'skip-list': return new SkipListLayout().create(model, frame)

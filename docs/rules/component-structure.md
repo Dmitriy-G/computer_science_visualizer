@@ -10,7 +10,7 @@ categories, with consistent PascalCase spelling.
 
 Use `src/components/DataStructuresOverview/<Group>/<Structure>/` for canonical
 models, structure layouts, and Overview actions. Overview groups map to `Linear`,
-`QueuePriority`, `Trees`, `StringText`, `Graphs`, `HashBased`, and `Probabilistic`. Queue, Deque, CircularBuffer,
+`QueuePriority`, `Trees`, `StringText`, `Graphs`, `SetUnion`, `HashBased`, and `Probabilistic`. Queue, Deque, CircularBuffer,
 and Heap belong under `DataStructuresOverview/QueuePriority/`.
 
 PriorityQueue, BinaryMaxHeap, BinomialHeap, FibonacciHeap, PairingHeap,
@@ -218,7 +218,7 @@ defines the required organization; it does not mean those features already exist
 
 ## Extended linear structures
 
-Keep SkipList, UnrolledLinkedList, XORLinkedList, BitSet,
+Keep SkipList, UnrolledLinkedList, XORLinkedList,
 SparseArray, and FreeList under `DataStructuresOverview/Linear/`. Each owns its model,
 layout, and action folders. `LinearFeatures` connects their class components and
 action-owned information to App; shared contracts, catalog, input validation,
@@ -259,11 +259,32 @@ in the result description. Keep scene bounds fixed throughout each playback.
 The simulated address table in XORLinkedList must be described explicitly;
 do not claim JavaScript exposes native pointers or saves memory through XOR links.
 
+## Set / Union structures
+
+Keep HashSet and BitSet under `src/components/DataStructuresOverview/SetUnion/`,
+including their canonical models, layouts, and action folders. Preserve their
+structure keys and existing operations. HashSet composes the HashMap storage in
+HashBased; BitSet reuses the LinearStructureCatalog and LinearFeatures adapters.
+These shared adapter names describe implementation contracts rather than menu
+membership.
+
+DisjointSet, OrderedSet, Multiset, and IntervalSet also live in this group with
+their own canonical model, layout, and action component/CSS/animation folders.
+SetUnionFeatures owns action dispatch and action-owned information;
+SetUnionStructureDefinitions, SetUnionStructureCatalog, SetUnionActionCatalog,
+and StructuredSetUnionInput connect menus, defaults, scenes, and input dialogs.
+Reuse LinearStructureCatalog/LinearFeatures as App routing adapters and reuse
+LinearAnimation, StructuredLinearAction, and ActionPlayback for bounded traces
+and final-frame commits. SetUnionModel shares only rejection and trace adapters.
+OrderedSet composes the canonical AVLTree storage and uses its actual lower-bound
+search; do not duplicate AVL repair logic. The other models retain their own
+parent forests, positive occurrence counters, and normalized interval arrays.
+
 ## Hash-based structures
 
-Keep Hash Map and Hash Set under
-`src/components/DataStructuresOverview/HashBased/`, each with its model, layout, and action
-folders. Hash Set composes the chained Hash Map storage. Reuse shared hashing,
+Keep Hash Map under
+`src/components/DataStructuresOverview/HashBased/`, with its model, layout, and action
+folders. Reuse shared hashing,
 bucket layout, and trace playback from `src/visualization/` where they serve more
 than one structure. Each action has its own sequence, class component, and CSS file.
 

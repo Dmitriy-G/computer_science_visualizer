@@ -38,6 +38,20 @@ export class AVLTree {
     return this.findNode(value, observer)?.toEntry() ?? null
   }
 
+  public lowerBound(value: number, observer?: TreeTraceObserver): AVLTreeEntry | null {
+    TreeTrace.validate(value)
+    let current = this.root
+    let candidate: AVLNode | null = null
+    while (current) {
+      TreeTrace.emit(observer, 'compare', current.id, 'Find the lower bound',
+        `${current.value >= value ? 'Keep this candidate and try its left child' : 'Try the right child'} for the smallest key at least ${value}.`,
+        'if node.key >= value: candidate = node; node = node.left; else: node = node.right')
+      if (current.value >= value) { candidate = current; current = current.left }
+      else current = current.right
+    }
+    return candidate?.toEntry() ?? null
+  }
+
   public insert(value: number, observer?: TreeTraceObserver): boolean {
     TreeTrace.validate(value)
     let parent: AVLNode | null = null
