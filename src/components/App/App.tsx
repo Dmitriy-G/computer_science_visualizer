@@ -275,6 +275,7 @@ import ActionInput from '../ActionInput/ActionInput.tsx'
 import { ActionInputRequest } from '../../visualization/ActionInputRequest.ts'
 import { MenuNavigation } from '../MainMenu/MenuNavigation.ts'
 import type { MenuCategoryKind, AlgorithmGroupKind } from '../MainMenu/MenuNavigation.ts'
+import type { MenuSearchResult } from '../MainMenu/Search/MenuSearchIndex.ts'
 import type { StructureGroupKind } from '../../visualization/StructureCatalog.ts'
 import Renderer from '../Renderer/Renderer.tsx'
 import AddInTheMiddle from '../DataStructuresOverview/Linear/LinkedList/AddInTheMiddle/AddInTheMiddle.tsx'
@@ -416,6 +417,15 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private selectStructure = (kind: StructureKind): void => {
     const menu = this.state.menu.selectStructure(kind)
+    this.loadStructure(kind, menu)
+  }
+
+  private selectSearchResult = (result: MenuSearchResult): void => {
+    const menu = MenuNavigation.forStructure(result.structure, result.scope)
+    this.loadStructure(result.structure, menu, result.action)
+  }
+
+  private loadStructure(kind: StructureKind, menu: MenuNavigation, action?: ActionKind): void {
     const changingScope = this.state.selected === kind && this.state.selectedScope !== menu.actionScope
     if (!changingScope) {
       this.probabilisticModels = ProbabilisticStructureCatalog.createModels()
@@ -483,7 +493,10 @@ export default class App extends Component<Record<string, never>, AppState> {
       overviewInformation: null,
       structureInformation: null,
       actionSession: this.state.actionSession + 1,
-    }, this.focusActions)
+    }, () => {
+      this.focusActions()
+      if (action) this.selectAction(action)
+    })
   }
 
   private selectAction = (action: ActionKind): void => {
@@ -616,28 +629,32 @@ export default class App extends Component<Record<string, never>, AppState> {
     return realWorldUsage ? { ...information, realWorldUsage } : information
   }
 
-  private describeActionDetails = (action: ActionKind): AlgorithmInformation | null => {
-    const probabilistic = this.state.selected ? this.probabilisticModels.get(this.state.selected) : undefined
-    const hash = this.state.selected ? this.hashModels.get(this.state.selected) : undefined
+  private describeSearchAlgorithm = (structure: StructureKind, action: ActionKind, scope: ActionScope): AlgorithmInformation | null => {
+    return this.describeActionDetails(action, structure, scope)
+  }
+
+  private describeActionDetails = (action: ActionKind, structure: StructureKind | null = this.state.selected, scope: ActionScope = this.state.selectedScope): AlgorithmInformation | null => {
+    const probabilistic = structure ? this.probabilisticModels.get(structure) : undefined
+    const hash = structure ? this.hashModels.get(structure) : undefined
     if (probabilistic) return ProbabilisticFeatures.describe(action, probabilistic)
     if (hash) return HashFeatures.describe(action, hash)
-    const extended = this.state.selected ? this.extendedGraphs.get(this.state.selected) : undefined
+    const extended = structure ? this.extendedGraphs.get(structure) : undefined
     if (extended) {
-      const features = this.state.selectedScope === 'graph-traversal' ? ExtendedGraphTraversalFeatures : ExtendedGraphFeatures
+      const features = scope === 'graph-traversal' ? ExtendedGraphTraversalFeatures : ExtendedGraphFeatures
       return features.describe(action, extended)
     }
-    const priority = this.state.selected ? this.priorityModels.get(this.state.selected) : undefined
+    const priority = structure ? this.priorityModels.get(structure) : undefined
     if (priority) return PriorityFeatures.describe(action, priority)
-    const linear = this.state.selected ? this.linearModels.get(this.state.selected) : undefined
+    const linear = structure ? this.linearModels.get(structure) : undefined
     if (linear) return linear.kind === 'rope' ? RopeFeatures.describe(action, linear) : LinearFeatures.describe(action, linear)
-    const graph = this.state.selected ? this.graphModels.get(this.state.selected) : undefined
+    const graph = structure ? this.graphModels.get(structure) : undefined
     if (graph) {
-      const features = this.state.selectedScope === 'graph-traversal' ? GraphTraversalFeatures : GraphFeatures
+      const features = scope === 'graph-traversal' ? GraphTraversalFeatures : GraphFeatures
       return features.describe(action, graph)
     }
-    const additional = this.state.selected ? this.additionalTrees.get(this.state.selected) : undefined
+    const additional = structure ? this.additionalTrees.get(structure) : undefined
     if (additional) return additional.kind === 'heap' ? HeapFeatures.describe(action, additional) : TreeFeatures.describe(action, additional)
-    if (this.state.selected === 'hash-map') {
+    if (structure === 'hash-map') {
       switch (action) {
         case 'insert': return HashMapInsertSequence.describe(this.hashMap.length)
         case 'search-value': return HashMapSearchByKeySequence.describe(this.hashMap.length)
@@ -645,7 +662,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'clear': return HashMapClearSequence.describe(this.hashMap.length)
       }
     }
-    if (this.state.selected === 'hash-set') {
+    if (structure === 'hash-set') {
       switch (action) {
         case 'insert': return HashSetAddSequence.describe(this.hashSet.length)
         case 'search-value': return HashSetContainsSequence.describe(this.hashSet.length)
@@ -653,14 +670,14 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'clear': return HashSetClearSequence.describe(this.hashSet.length)
       }
     }
-    if (this.state.selected === 'bloom-filter') {
+    if (structure === 'bloom-filter') {
       switch (action) {
         case 'insert': return BloomFilterAddSequence.describe(this.bloomFilter.length)
         case 'search-value': return BloomFilterCheckMembershipSequence.describe(this.bloomFilter.length)
         case 'clear': return BloomFilterClearSequence.describe(this.bloomFilter.length)
       }
     }
-    if (this.state.selected === 'avl-tree') {
+    if (structure === 'avl-tree') {
       switch (action) {
         case 'insert': return AVLTreeInsertSequence.describe(this.avlTree.length)
         case 'search-value': return AVLTreeSearchByKeySequence.describe(this.avlTree.length)
@@ -668,7 +685,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'clear': return AVLTreeClearSequence.describe(this.avlTree.length)
       }
     }
-    if (this.state.selected === 'red-black-tree') {
+    if (structure === 'red-black-tree') {
       switch (action) {
         case 'insert': return RedBlackTreeInsertSequence.describe(this.redBlackTree.length)
         case 'search-value': return RedBlackTreeSearchByKeySequence.describe(this.redBlackTree.length)
@@ -676,7 +693,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'clear': return RedBlackTreeClearSequence.describe(this.redBlackTree.length)
       }
     }
-    if (this.state.selected === 'b-tree') {
+    if (structure === 'b-tree') {
       switch (action) {
         case 'insert': return BTreeInsertSequence.describe(this.bTree.length)
         case 'search-value': return BTreeSearchByKeySequence.describe(this.bTree.length)
@@ -684,7 +701,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'clear': return BTreeClearSequence.describe(this.bTree.length)
       }
     }
-    if (this.state.selected === 'b-plus-tree') {
+    if (structure === 'b-plus-tree') {
       switch (action) {
         case 'insert': return BPlusTreeInsertSequence.describe(this.bPlusTree.length)
         case 'search-value': return BPlusTreeSearchByKeySequence.describe(this.bPlusTree.length)
@@ -693,7 +710,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'range-from-value': return BPlusTreeRangeFromKeySequence.describe(this.bPlusTree.length)
       }
     }
-    if (this.state.selected === 'queue') {
+    if (structure === 'queue') {
       switch (action) {
         case 'enqueue': return QueueEnqueueSequence.describe(this.queue.length)
         case 'dequeue': return QueueDequeueSequence.describe(this.queue.length)
@@ -702,7 +719,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'search-value': return QueueSearchByValueSequence.describe(this.queue.length)
       }
     }
-    if (this.state.selected === 'deque') {
+    if (structure === 'deque') {
       switch (action) {
         case 'push-front': return DequePushFrontSequence.describe(this.deque.length)
         case 'push-back': return DequePushBackSequence.describe(this.deque.length)
@@ -714,7 +731,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'search-value': return DequeSearchByValueSequence.describe(this.deque.length)
       }
     }
-    if (this.state.selected === 'doubly-linked-list') {
+    if (structure === 'doubly-linked-list') {
       switch (action) {
         case 'insert-middle': return DoublyLinkedListAddInTheMiddleSequence.describe(this.doublyList.length)
         case 'insert-start': return DoublyLinkedListAddAtStartSequence.describe(this.doublyList.length)
@@ -727,7 +744,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'clear': return DoublyLinkedListClearSequence.describe(this.doublyList.length)
       }
     }
-    if (this.state.selected === 'circular-buffer') {
+    if (structure === 'circular-buffer') {
       switch (action) {
         case 'enqueue': return CircularBufferEnqueueSequence.describe(this.buffer.length)
         case 'dequeue': return CircularBufferDequeueSequence.describe(this.buffer.length)
@@ -736,7 +753,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'search-value': return CircularBufferSearchByValueSequence.describe(this.buffer.length)
       }
     }
-    if (this.state.selected === 'stack') {
+    if (structure === 'stack') {
       switch (action) {
         case 'push': return StackPushSequence.describe(this.stack.length)
         case 'pop': return StackPopSequence.describe(this.stack.length)
@@ -745,7 +762,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'search-value': return StackSearchByValueSequence.describe(this.stack.length)
       }
     }
-    if (this.state.selected === 'linked-list') {
+    if (structure === 'linked-list') {
       switch (action) {
         case 'clear': return LinkedListClearSequence.describe(this.list.length)
         case 'insert-middle': return InsertionAnimation.describe(this.list.length)
@@ -756,7 +773,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'delete-value': return LinkedListDeleteByValueSequence.describe(this.list.length)
       }
     }
-    if (this.state.selected === 'array') {
+    if (structure === 'array') {
       switch (action) {
         case 'bubble-sorting': return BubbleSortingAnimation.describe(this.array.length)
         case 'selection-sort': return SelectionSortAnimation.describe(this.array.length)
@@ -815,7 +832,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         case 'delete-value': return ArrayDeleteByValueSequence.describe(this.array.length)
       }
     }
-    if (this.state.selected === 'binary-tree') {
+    if (structure === 'binary-tree') {
       switch (action) {
         case 'clear': return BinaryTreeClearSequence.describe(this.tree.length)
         case 'insert': return TreeInsertionAnimation.describe(this.tree.length)
@@ -1316,6 +1333,8 @@ export default class App extends Component<Record<string, never>, AppState> {
           selected={selected}
           onClose={this.closeMenu}
           onStructureSelected={this.selectStructure}
+          describeSearchAlgorithm={this.describeSearchAlgorithm}
+          onSearchResultSelected={this.selectSearchResult}
           onCategorySelected={this.selectCategory}
           onGroupSelected={this.selectGroup}
           onAlgorithmGroupSelected={this.selectAlgorithmGroup}

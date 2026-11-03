@@ -7,6 +7,8 @@ import type { MenuCategoryKind, AlgorithmGroupKind } from './MenuNavigation.ts'
 import type { StructureKind } from '../../visualization/Scene.ts'
 import { ActionCatalog } from '../../visualization/ActionCatalog.ts'
 import { StructureInformation } from '../StructureInfo/StructureInformation.ts'
+import MenuSearch from './Search/MenuSearch.tsx'
+import type { DescribeSearchAlgorithm, MenuSearchResult } from './Search/MenuSearchIndex.ts'
 import './UsageTag.css'
 import './MainMenu.css'
 
@@ -25,14 +27,22 @@ interface MainMenuProps {
   readonly onGroupSelected: (group: StructureGroupKind) => void
   readonly onAlgorithmGroupSelected: (group: AlgorithmGroupKind) => void
   readonly onBack: () => void
+  readonly describeSearchAlgorithm: DescribeSearchAlgorithm
+  readonly onSearchResultSelected: (result: MenuSearchResult) => void
+}
+
+interface MainMenuState {
+  readonly searchOpen: boolean
 }
 
 export default class MainMenu extends Component<
   MainMenuProps,
-  Record<string, never>
+  MainMenuState
 > {
+  public state: MainMenuState = { searchOpen: false }
   private readonly dialog = createRef<HTMLDialogElement>()
   private readonly title = createRef<HTMLHeadingElement>()
+  private readonly searchButton = createRef<HTMLButtonElement>()
 
   public componentDidMount(): void {
     this.syncDialog()
@@ -40,6 +50,9 @@ export default class MainMenu extends Component<
 
   public componentDidUpdate(previous: MainMenuProps): void {
     this.syncDialog()
+    if (this.state.searchOpen && (!this.props.open || this.props.navigation.screen !== 'categories')) {
+      this.setState({ searchOpen: false })
+    }
     if (
       this.props.open &&
       (previous.navigation !== this.props.navigation ||
@@ -58,7 +71,20 @@ export default class MainMenu extends Component<
 
   private handleCancel = (event: SyntheticEvent<HTMLDialogElement>): void => {
     event.preventDefault()
-    this.props.onClose()
+    if (this.state.searchOpen) this.closeSearch()
+    else this.props.onClose()
+  }
+
+  private openSearch = (): void => {
+    this.setState({ searchOpen: true })
+  }
+
+  private closeSearch = (): void => {
+    this.setState({ searchOpen: false }, () => this.searchButton.current?.focus())
+  }
+
+  private renderSearchIcon = (result: MenuSearchResult): ReactNode => {
+    return this.renderStructureIcon(result.structure, result.symbol)
   }
 
   private handleBackdrop = (event: MouseEvent<HTMLDialogElement>): void => {
@@ -516,6 +542,7 @@ export default class MainMenu extends Component<
 
   public render() {
     const navigation = this.props.navigation
+    const searching = navigation.screen === 'categories' && this.state.searchOpen
     const description = this.getDescription()
     return (
       <dialog
@@ -539,18 +566,41 @@ export default class MainMenu extends Component<
               </svg>
             </button>
           </div>
-          <h2 id="menu-title" ref={this.title} tabIndex={-1}>
-            {navigation.title}
-          </h2>
-          {description && <p className="menu-description">{description}</p>}
+          <div className="menu-heading-row">
+            <h2 id="menu-title" ref={this.title} tabIndex={-1}>
+              {searching ? 'Search' : navigation.title}
+            </h2>
+            {navigation.screen === 'categories' && (
+              <button
+                className="icon-button menu-search-toggle"
+                ref={this.searchButton}
+                aria-label={searching ? 'Close search and return to categories' : 'Search data structures or algorithms'}
+                aria-expanded={searching}
+                aria-controls="menu-root-content"
+                title={searching ? 'Back to categories' : 'Search'}
+                onClick={searching ? this.closeSearch : this.openSearch}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden="true">
+                  {searching ? <path d="M20 12H4m7-7-7 7 7 7" strokeLinejoin="round" /> : <><circle cx="10" cy="10" r="6.5" /><path d="m15 15 5.5 5.5" /></>}
+                </svg>
+              </button>
+            )}
+          </div>
+          {!searching && description && <p className="menu-description">{description}</p>}
           {navigation.screen !== 'categories' && (
             <button className="back-button" onClick={this.props.onBack}>
               <span aria-hidden="true">←</span> {navigation.backLabel}
             </button>
           )}
-          <nav aria-label={navigation.title}>
-            {this.renderChoices()}
-          </nav>
+          <div id="menu-root-content">
+            {searching ? (
+              <MenuSearch
+                describeAlgorithm={this.props.describeSearchAlgorithm}
+                onResultSelected={this.props.onSearchResultSelected}
+                renderIcon={this.renderSearchIcon}
+              />
+            ) : <nav aria-label={navigation.title}>{this.renderChoices()}</nav>}
+          </div>
         </div>
       </dialog>
     )

@@ -3,6 +3,17 @@
 ## Main flow
 
 1. Start with an empty renderer and a clickable menu icon in the top left.
+   Only the root Categories menu has a search icon beside its heading. Opening
+   it replaces the category list with a labeled search field, an exclusive Data
+   structures / Algorithms choice, and matching cards sorted A–Z. Match all query
+   words case-insensitively across names, Area of use labels where available,
+   and documented real technology/product names. Exclude descriptive prose,
+   use-case explanations, technology usage, and notes. Show an entry prompt for empty input and
+   a no-results message for unmatched text. Algorithm cards include the target
+   structure name; selecting one follows its normal input/animation flow. Browsing
+   results does not change the current visualization. Close search with its back
+   arrow or Escape to restore Categories and focus the search icon. Keep the ×
+   icon for closing the entire menu panel.
 2. Open the menu to see **Data Structures Overview** and **Data Structures Algorithms**.
    Overview contains the existing structure groups. Algorithms contains
    **Sorting** (Array with forty-eight sorting actions) and **Graphs Traversal** (all eighteen graph

@@ -165,6 +165,15 @@ Algorithm-specific layouts stay beside their algorithm helpers under
 
 ## Main menu
 
+Keep the root menu's search component and catalog index in `MainMenu/Search/`.
+Index only names, Area of use labels, and verified technology/product names.
+Exclude summaries, card descriptions, use-case explanations, usage notes,
+complexity explanations, and terms. Algorithm names come from the same read-only
+describe methods as their info dialogs, without constructing animations or
+changing the selected model.
+Search results retain the structure, scope, and optional algorithm action so App
+can open a result through its usual structure loading and action-input flow.
+
 Place the `MainMenu` component in `src/components/MainMenu/`. It lets the user
 choose the data structure. Keep its canvas action card in
 `src/components/MainMenu/ActionMenu/`, with a `.tsx` class component and a separate
