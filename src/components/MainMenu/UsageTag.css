@@ -1,0 +1,36 @@
+.usage-tags {
+  position: absolute;
+  top: 6px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.usage-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 6px;
+  border: 1px solid;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 14px;
+  letter-spacing: 0.015em;
+  white-space: nowrap;
+}
+.usage-tag--real-systems {
+  border-color: #bfdccc;
+  background: #eaf5ee;
+  color: #315e45;
+}
+.usage-tag--educational {
+  border-color: #e6d1aa;
+  background: #fff4df;
+  color: #765025;
+}
+.usage-tag--popular {
+  border-color: #c9d5ee;
+  background: #edf2fc;
+  color: #3a5689;
+}

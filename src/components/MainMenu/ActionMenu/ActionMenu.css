@@ -114,31 +114,6 @@
   padding-bottom: 8px;
   gap: 2px;
 }
-.algorithm-usage-tag {
-  position: absolute;
-  top: 6px;
-  left: 14px;
-  display: inline-flex;
-  align-items: center;
-  padding: 0 6px;
-  border: 1px solid;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 600;
-  line-height: 14px;
-  letter-spacing: 0.015em;
-  white-space: nowrap;
-}
-.algorithm-usage-tag--real-systems {
-  border-color: #bfdccc;
-  background: #eaf5ee;
-  color: #315e45;
-}
-.algorithm-usage-tag--educational {
-  border-color: #e6d1aa;
-  background: #fff4df;
-  color: #765025;
-}
 .action-info-button {
   display: inline-grid;
   place-items: center;

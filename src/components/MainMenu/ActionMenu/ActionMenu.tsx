@@ -9,6 +9,7 @@ import type { StructureKind } from '../../../visualization/Scene.ts'
 import type { AlgorithmInformation } from '../../../visualization/AlgorithmInformation.ts'
 import { ActionOrdering } from './ActionOrdering.ts'
 import type { ActionOrder } from './ActionOrdering.ts'
+import '../UsageTag.css'
 import './ActionMenu.css'
 
 interface ActionMenuProps {
@@ -55,6 +56,7 @@ export default class ActionMenu extends PureComponent<
       const selected = action.kind === this.props.selectedAction
       const requiresInput = ActionInputRequest.requiresInput(this.props.structure, action.kind)
       const usageLabel = AlgorithmTechnologyCatalog.getLabel(this.props.structure, action.kind, this.props.scope)
+      const popular = AlgorithmTechnologyCatalog.isPopular(this.props.structure, action.kind, this.props.scope)
       buttons.push(
         <div className="canvas-action-row" key={action.kind}>
           <button
@@ -68,8 +70,15 @@ export default class ActionMenu extends PureComponent<
             aria-current={selected ? 'true' : undefined}
           >
             {usageLabel && (
-              <span className={`algorithm-usage-tag algorithm-usage-tag--${usageLabel.kind}`} title={usageLabel.description}>
-                {usageLabel.text}
+              <span className="usage-tags">
+                <span className={`usage-tag usage-tag--${usageLabel.kind}`} title={usageLabel.description}>
+                  {usageLabel.text}
+                </span>
+                {popular && (
+                  <span className="usage-tag usage-tag--popular" title="Has at least three documented real examples; duplicate source links count once.">
+                    Popular
+                  </span>
+                )}
               </span>
             )}
             <span className="canvas-action-heading">

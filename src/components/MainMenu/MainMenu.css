@@ -70,6 +70,11 @@
   padding: 14px;
   text-align: left;
 }
+.structure-choice--labeled {
+  position: relative;
+  padding-top: 24px;
+  padding-bottom: 4px;
+}
 .structure-choice:hover {
   background: #f3f8ff;
   border-color: #9bbde8;

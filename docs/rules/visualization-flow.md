@@ -44,6 +44,13 @@
    not execution mode or actual threads in this visualizer. Preserve button
    width and the existing 112px height, leaving space for two-line titles and
    descriptions. Overview operation buttons do not receive algorithm-use tags.
+   Structure picker buttons in Overview use the same tags, based on their
+   documented technologies. Structure picker buttons in Sorting and Graphs
+   Traversal have no tags; only specific algorithm buttons do in those sections.
+   Add a second **Popular** tag beside the usage tag when a
+   structure has at least three technology examples, or an algorithm has at
+   least three distinct source links across its technology and product examples.
+   Count a repeated algorithm source link once, even if listed in both sections.
    Only algorithm action lists have a sorting icon immediately left of the
    large structure-info button. Offer exactly three choices: Alphabetical
    (A–Z, default), Average time (fast to slow), and Average memory (less to more).

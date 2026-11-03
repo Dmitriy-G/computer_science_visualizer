@@ -471,4 +471,14 @@ export class AlgorithmTechnologyCatalog {
     if (!usage) return null
     return usage.technologies.length > 0 || usage.products.length > 0 ? this.realSystemsLabel : this.educationalLabel
   }
+
+  public static isPopular(structure: StructureKind, action: ActionKind, scope: ActionScope): boolean {
+    const usage = this.get(structure, action, scope)
+    if (!usage) return false
+    const sources = new Set<string>()
+    // A product and its technology entry can describe the same sourced example.
+    for (const example of usage.technologies) sources.add(example.url)
+    for (const example of usage.products) sources.add(example.url)
+    return sources.size >= 3
+  }
 }

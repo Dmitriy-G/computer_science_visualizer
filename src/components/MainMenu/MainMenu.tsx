@@ -6,6 +6,8 @@ import { MenuNavigation } from './MenuNavigation.ts'
 import type { MenuCategoryKind, AlgorithmGroupKind } from './MenuNavigation.ts'
 import type { StructureKind } from '../../visualization/Scene.ts'
 import { ActionCatalog } from '../../visualization/ActionCatalog.ts'
+import { StructureInformation } from '../StructureInfo/StructureInformation.ts'
+import './UsageTag.css'
 import './MainMenu.css'
 
 interface MenuChoice {
@@ -442,6 +444,8 @@ export default class MainMenu extends Component<
     const buttons: ReactNode[] = []
     for (const structure of this.orderChoices(this.props.navigation.getStructures())) {
       let description = structure.description
+      const technologyCount = StructureInformation.get(structure.kind).technologies.length
+      const hasTechnologies = technologyCount > 0
       const examples = this.props.navigation.actionScope !== 'overview'
       if (examples) {
         const titles: string[] = []
@@ -455,11 +459,26 @@ export default class MainMenu extends Component<
       }
       buttons.push(
         <button
-          className={examples ? 'structure-choice structure-choice-examples' : 'structure-choice'}
+          className={`structure-choice${examples ? ' structure-choice-examples' : ' structure-choice--labeled'}`}
           key={structure.kind}
           data-kind={structure.kind}
           onClick={this.handleSelection}
         >
+          {!examples && (
+            <span className="usage-tags">
+              <span
+                className={`usage-tag usage-tag--${hasTechnologies ? 'real-systems' : 'educational'}`}
+                title={hasTechnologies ? 'Used in one or more technologies listed in the structure description.' : 'No real technologies are listed in the structure description.'}
+              >
+                {hasTechnologies ? 'Real Systems' : 'Educational'}
+              </span>
+              {technologyCount >= 3 && (
+                <span className="usage-tag usage-tag--popular" title="Has at least three documented real examples.">
+                  Popular
+                </span>
+              )}
+            </span>
+          )}
           <span className="structure-symbol" aria-hidden="true">
             {this.renderStructureIcon(structure.kind, structure.symbol)}
           </span>
