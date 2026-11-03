@@ -1,3 +1,4 @@
+import { AppliedStructureInformation } from './AppliedStructureInformation.ts'
 import { SetUnionStructureInformation } from './SetUnionStructureInformation.ts'
 import { StringTextStructureInformation } from './StringTextStructureInformation.ts'
 import { ProbabilisticStructureInformation } from './ProbabilisticStructureInformation.ts'
@@ -27,6 +28,7 @@ export interface StructureOverview {
 
 export class StructureInformation {
   private static readonly overviews: Record<StructureKind, StructureOverview> = {
+    ...AppliedStructureInformation.overviews,
     ...SetUnionStructureInformation.overviews,
     ...HashStructureInformation.overviews,
     ...ProbabilisticStructureInformation.overviews,

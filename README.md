@@ -31,7 +31,7 @@ Counting Sort accepts an inclusive integer key range of at most 4,096 values;
 wider inputs are rejected unchanged. Radix and Bucket Sort support negative safe
 integers and their full span using exact integer arithmetic.
 Its ten-element example starts shuffled; Reset restores that example.
-Graphs Traversal lists all fifteen graph entries with BFS and DFS, plus Dijkstra for
+Graphs Traversal lists all eighteen graph entries with BFS and DFS, plus Dijkstra for
 Weighted Graph, topological sorting for DAG, and Edmonds–Karp maximum flow for
 Flow Network. These algorithm actions live in
 Algorithms; Overview retains graph editing and value search. Switching branches
@@ -48,14 +48,14 @@ Choose **Data Structures Overview**, then a group:
 
 | Group | Structures |
 | --- | --- |
-| Linear | Array, Linked list, Stack, Doubly linked list, Skip List, Unrolled Linked List, XOR Linked List, Sparse Array, Free List |
-| Queue / Priority | Queue, Deque, Circular buffer, Heap (min-heap), Priority Queue, Binary Max-Heap, Binomial Heap, Fibonacci Heap, Pairing Heap, Leftist Heap, Skew Heap, Indexed Priority Queue, Monotonic Queue |
-| Trees | Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, B+ Tree, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, Abstract Syntax Tree (AST), General Tree (N-ary Tree), Binary Tree, Complete Binary Tree, Threaded Binary Tree, Splay Tree, Treap, Cartesian Tree, Scapegoat Tree, AA Tree, 2-3 Tree, 2-3-4 Tree, Interval Tree, Order Statistic Tree, Persistent Segment Tree, Sparse Table, KD-Tree, Quadtree, Octree, Bounding Volume Hierarchy (BVH), Merkle Tree, Van Emde Boas Tree |
-| String / Text | Gap Buffer, Rope, Trie, Radix Tree (Patricia Trie), Ternary Search Tree, Suffix Tree, Suffix Array, Suffix Automaton, Aho-Corasick Automaton, Directed Acyclic Word Graph (DAWG), FM-Index |
-| Graphs | Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph, Bipartite Graph, Complete Graph, Tree Graph, Hypergraph, Flow Network, Functional Graph, Adjacency Matrix, Adjacency List, Edge List, Compressed Sparse Row (CSR) |
+| Linear | Array, Linked list, Stack, Doubly linked list, Skip List, Unrolled Linked List, XOR Linked List, Sparse Array, Free List, Append-only Log, XArray, Sorted Array / Fanout Table, Flat Vector Array, Request Tag Array |
+| Queue / Priority | Queue, Deque, Circular buffer, Heap (min-heap), Priority Queue, Binary Max-Heap, Binomial Heap, Fibonacci Heap, Pairing Heap, Leftist Heap, Skew Heap, Indexed Priority Queue, Monotonic Queue, Multiqueue / Request Queues, Lock-free Ring Buffer (SPSC) |
+| Trees | Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, B+ Tree, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, Abstract Syntax Tree (AST), General Tree (N-ary Tree), Binary Tree, Complete Binary Tree, Threaded Binary Tree, Splay Tree, Treap, Cartesian Tree, Scapegoat Tree, AA Tree, 2-3 Tree, 2-3-4 Tree, Interval Tree, Order Statistic Tree, Persistent Segment Tree, Sparse Table, KD-Tree, Quadtree, Octree, Bounding Volume Hierarchy (BVH), Merkle Tree, Van Emde Boas Tree, GiST, BKD Tree, Ball Tree, Maple Tree (Range Variant), Checksummed Block Pointer Hierarchy |
+| String / Text | Gap Buffer, Rope, Trie, Radix Tree (Patricia Trie), Ternary Search Tree, Suffix Tree, Suffix Array, Suffix Automaton, Aho-Corasick Automaton, Directed Acyclic Word Graph (DAWG), FM-Index, GIN / Inverted Index |
+| Graphs | Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph, Bipartite Graph, Complete Graph, Tree Graph, Hypergraph, Flow Network, Functional Graph, Adjacency Matrix, Adjacency List, Edge List, Compressed Sparse Row (CSR), HNSW Graph, Compacted de Bruijn Graph, OPC UA AddressSpace Graph |
 | Set / Union | Hash Set, Bit Array / BitSet, Disjoint Set (Union-Find), Ordered Set, Multiset (Bag), Interval Set |
-| Hash-based | Hash Table / Hash Map, Open Addressing Hash Table, Separate Chaining Hash Table, Robin Hood Hash Table, Cuckoo Hash Table, Hopscotch Hashing, Extendible Hashing, Linear Hashing, Perfect Hash Table, Consistent Hashing Ring |
-| Probabilistic | Bloom Filter, Counting Bloom Filter, Cuckoo Filter, Quotient Filter, Count-Min Sketch, HyperLogLog, Reservoir Sampling Buffer |
+| Hash-based | Hash Table / Hash Map, Open Addressing Hash Table, Separate Chaining Hash Table, Robin Hood Hash Table, Cuckoo Hash Table, Hopscotch Hashing, Extendible Hashing, Linear Hashing, Perfect Hash Table, Consistent Hashing Ring, Locality-Sensitive Hashing (LSH), Minimizer Index |
+| Probabilistic | Bloom Filter, Counting Bloom Filter, Cuckoo Filter, Quotient Filter, Count-Min Sketch, HyperLogLog, Reservoir Sampling Buffer, Blocked Bloom Filter |
 
 Select a structure to load its example, then choose an action from the canvas
 card. Examples generally start with ten elements. Sparse Array has ten stored
@@ -385,3 +385,51 @@ and playback cancellation.
 
 See [AGENTS.md](AGENTS.md), [component structure](docs/rules/component-structure.md),
 and [visualization flow](docs/rules/visualization-flow.md) for project guidance.
+
+## Applied structure examples
+
+Nineteen additional structures fit the existing Overview groups. All start with
+ten logical entries and use automatic playback, validated inputs, a full Reset,
+and independently recorded scenes. Structure information identifies the real
+technology and the implemented teaching variant. New graph BFS/DFS operations
+live under Algorithms > Graphs Traversal and reuse the same committed model.
+
+| Structure | Operations |
+| --- | --- |
+| Append-only Log | Append, read a retained offset, inspect segments, clear while preserving the next offset |
+| XArray | Store/read/erase an index, inspect radix branches, clear |
+| Sorted Array / Fanout Table | Insert/search/delete a key, inspect cumulative fanout, clear |
+| Flat Vector Array | Insert a 2D vector, exact nearest neighbor, inspect, clear |
+| Request Tag Array | Allocate, read by tag, complete/release, inspect bitmap and slots, clear |
+| Multiqueue / Request Queues | Enqueue in one of three FIFOs, round-robin dispatch, inspect, clear |
+| Lock-free Ring Buffer (SPSC) | Enqueue/publish, dequeue/release, inspect sequences, drain |
+| GiST | Insert an interval, overlap search, inspect balanced pages, clear |
+| BKD Tree | Build from points, inclusive box search, inspect block leaves, clear |
+| Ball Tree | Build from points, exact nearest neighbor, inspect balls, clear |
+| Maple Tree (Range Variant) | Store/erase an interval, read an index, find the first gap, inspect pivots, clear |
+| Checksummed Block Pointer Hierarchy | Update a data block, verify all checksums, inject corruption, inspect, reset values to zero |
+| GIN / Inverted Index | Index/replace a document, AND term search, delete a document, inspect postings, clear |
+| Locality-Sensitive Hashing (LSH) | Insert/encode a vector, approximate Hamming-code match, inspect, clear |
+| Minimizer Index | Build a DNA reference index, verify exact query matches, inspect selected seeds, clear |
+| Blocked Bloom Filter | Add, check possible membership, inspect blocks, clear |
+| HNSW Graph | Insert a vector, approximate nearest neighbor, find an ID, inspect layers, clear; BFS/DFS in Algorithms |
+| Compacted de Bruijn Graph | Build from DNA, check a graph walk, find a unitig ID, inspect, clear; BFS/DFS in Algorithms |
+| OPC UA AddressSpace Graph | Add/delete typed nodes, add/remove typed references, find/browse nodes, inspect, clear; BFS/DFS in Algorithms |
+
+Coordinates are integers in -1024..1024. Point builds accept 1..64 `x:y` pairs
+separated by commas. Most mutable examples allow 64 entries. Request tags and
+the SPSC ring have sixteen slots; XArray and Maple indices cover 0..4095;
+fanout keys cover 0..65535. The text index allows 32 documents and 64 terms.
+DNA inputs accept lowercase `a/c/g/t`: builds use at most 64 bases, queries at
+most 32; minimizers require at least five bases and de Bruijn graphs three.
+
+The ring illustrates a sequential SPSC publication protocol without actual
+threads. HNSW and LSH results are approximate. The Maple variant rebuilds pages
+after edits, GiST supplies one interval operator class, and the checksummed
+hierarchy uses its own serialized block format. It has no ZFS repair or disk I/O.
+Action information describes implementation-specific upper bounds and excludes
+playback snapshots. Traces retain at most 96 detailed events while executing all
+operation work, and reserve fixed maximum bounds for the full session.
+
+The remaining structures requiring new groups are recorded in
+[coverage.md](coverage.md) for future implementation.

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { LinkedList } from '../src/components/DataStructuresOverview/Linear/LinkedList/LinkedList.ts'
 import { InsertionAnimation } from '../src/components/DataStructuresOverview/Linear/LinkedList/AddInTheMiddle/InsertionAnimation.ts'
+import { AppliedStructureCatalog } from '../src/visualization/AppliedStructureCatalog.ts'
 import { StructureCatalog } from '../src/visualization/StructureCatalog.ts'
 
 class ListAssertions {
@@ -162,7 +163,10 @@ test('every structure preview has ten elements and valid edge endpoints', () => 
       LinkedList.createDefault(),
     )
     assert.equal(scene.count, 10)
-    if (['hypergraph', 'adjacency-matrix', 'adjacency-list', 'edge-list', 'compressed-sparse-row'].includes(structure.kind)) {
+    if (AppliedStructureCatalog.supports(structure.kind)) {
+      assert.ok(scene.nodes.length > 0, 'Applied previews show representation cells independently of logical count')
+      assert.ok(scene.countLabel)
+    } else if (['hypergraph', 'adjacency-matrix', 'adjacency-list', 'edge-list', 'compressed-sparse-row'].includes(structure.kind)) {
       assert.equal(scene.nodes.filter((node) => node.id.startsWith(`${structure.kind}-v`)).length, 10, 'Graph vertices are counted independently of representation cells and hyperedge markers')
     } else if (['counting-bloom-filter', 'cuckoo-filter', 'quotient-filter', 'count-min-sketch', 'hyperloglog', 'reservoir-sampling-buffer'].includes(structure.kind)) {
       const expectedCells = { 'counting-bloom-filter': 32, 'cuckoo-filter': 16, 'quotient-filter': 16, 'count-min-sketch': 24, hyperloglog: 16, 'reservoir-sampling-buffer': 6 }

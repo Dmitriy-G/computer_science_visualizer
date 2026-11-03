@@ -1,3 +1,5 @@
+import { AppliedStructureCatalog } from './AppliedStructureCatalog.ts'
+import { AppliedModel } from './AppliedModel.ts'
 import { SetUnionStructureCatalog } from './SetUnionStructureCatalog.ts'
 import { SetUnionModel } from '../components/DataStructuresOverview/SetUnion/SetUnionModel.ts'
 import { StringTextStructureCatalog } from './StringTextStructureCatalog.ts'
@@ -34,12 +36,15 @@ export class LinearStructureCatalog {
       ['sparse-array', SparseArray.createDefault()],
       ['free-list', FreeList.createDefault()],
     ])
+    for (const [kind, model] of AppliedStructureCatalog.createModels()) models.set(kind, model)
     for (const [kind, model] of SetUnionStructureCatalog.createModels()) models.set(kind, model)
     for (const [kind, model] of StringTextStructureCatalog.createModels()) models.set(kind, model)
     return models
   }
 
   public static createDefault(kind: StructureKind): LinearModel | null {
+    const applied = AppliedStructureCatalog.createDefault(kind)
+    if (applied) return applied
     const setUnion = SetUnionStructureCatalog.createDefault(kind)
     if (setUnion) return setUnion
     const stringText = StringTextStructureCatalog.createDefault(kind)
@@ -58,6 +63,7 @@ export class LinearStructureCatalog {
   }
 
   public static createScene(model: LinearModel, frame: LinearFrame = {}): Scene {
+    if (model instanceof AppliedModel) return AppliedStructureCatalog.createScene(model, frame)
     if (model instanceof SetUnionModel) return SetUnionStructureCatalog.createScene(model, frame)
     if (model instanceof StringTextModel) return StringTextStructureCatalog.createScene(model, frame)
     switch (model.kind) {

@@ -69,9 +69,9 @@ test('recursive, factorial, graph, and unavailable bounds receive explicit order
 test('Overview contains exactly the requested structure groups', () => {
   assert.deepEqual(StructureCatalog.groups.map((group) => group.name), ['Linear', 'Queue / Priority', 'Trees', 'String / Text', 'Graphs', 'Set / Union', 'Hash-based', 'Probabilistic'])
   const expected = {
-    linear: ['array', 'doubly-linked-list', 'free-list', 'linked-list', 'skip-list', 'sparse-array', 'stack', 'unrolled-linked-list', 'xor-linked-list'],
-    'queue-priority': ['binary-max-heap', 'binomial-heap', 'circular-buffer', 'deque', 'fibonacci-heap', 'heap', 'indexed-priority-queue', 'leftist-heap', 'monotonic-queue', 'pairing-heap', 'priority-queue', 'queue', 'skew-heap'],
-    trees: [
+    linear: ['append-only-log', 'xarray', 'fanout-array', 'flat-vector-array', 'request-tag-array', 'array', 'doubly-linked-list', 'free-list', 'linked-list', 'skip-list', 'sparse-array', 'stack', 'unrolled-linked-list', 'xor-linked-list'],
+    'queue-priority': ['multi-queue', 'lock-free-ring', 'binary-max-heap', 'binomial-heap', 'circular-buffer', 'deque', 'fibonacci-heap', 'heap', 'indexed-priority-queue', 'leftist-heap', 'monotonic-queue', 'pairing-heap', 'priority-queue', 'queue', 'skew-heap'],
+    trees: ['gist', 'bkd-tree', 'ball-tree', 'maple-tree', 'checksummed-block-tree',
       'aa-tree', 'ast', 'avl-tree', 'b-plus-tree', 'b-tree', 'binary-tree', 'bvh',
       'cartesian-tree', 'complete-binary-tree', 'fenwick-tree', 'general-tree',
       'interval-tree', 'kd-tree', 'lsm-tree', 'merkle-tree', 'octree',
@@ -81,16 +81,16 @@ test('Overview contains exactly the requested structure groups', () => {
       'threaded-binary-tree', 'treap', 'two-three-four-tree',
       'two-three-tree', 'unordered-binary-tree', 'van-emde-boas-tree',
     ],
-    'string-text': ['aho-corasick-automaton', 'dawg', 'fm-index', 'gap-buffer', 'radix-tree', 'rope', 'suffix-array', 'suffix-automaton', 'suffix-tree', 'ternary-search-tree', 'trie'],
-    graphs: ['adjacency-list', 'adjacency-matrix', 'bipartite-graph', 'complete-graph', 'compressed-sparse-row', 'dag', 'directed-graph', 'edge-list', 'flow-network', 'functional-graph', 'graph', 'hypergraph', 'multigraph', 'tree-graph', 'weighted-graph'],
+    'string-text': ['inverted-index', 'aho-corasick-automaton', 'dawg', 'fm-index', 'gap-buffer', 'radix-tree', 'rope', 'suffix-array', 'suffix-automaton', 'suffix-tree', 'ternary-search-tree', 'trie'],
+    graphs: ['hnsw-graph', 'compacted-de-bruijn-graph', 'address-space-graph', 'adjacency-list', 'adjacency-matrix', 'bipartite-graph', 'complete-graph', 'compressed-sparse-row', 'dag', 'directed-graph', 'edge-list', 'flow-network', 'functional-graph', 'graph', 'hypergraph', 'multigraph', 'tree-graph', 'weighted-graph'],
     'set-union': ['bit-set', 'disjoint-set', 'hash-set', 'interval-set', 'multiset', 'ordered-set'],
-    'hash-based': ['consistent-hashing-ring', 'cuckoo-hash-table', 'extendible-hashing', 'hash-map', 'hopscotch-hashing', 'linear-hashing', 'open-addressing-hash-table', 'perfect-hash-table', 'robin-hood-hash-table', 'separate-chaining-hash-table'],
-    probabilistic: ['bloom-filter', 'count-min-sketch', 'counting-bloom-filter', 'cuckoo-filter', 'hyperloglog', 'quotient-filter', 'reservoir-sampling-buffer'],
+    'hash-based': ['lsh-index', 'minimizer-index', 'consistent-hashing-ring', 'cuckoo-hash-table', 'extendible-hashing', 'hash-map', 'hopscotch-hashing', 'linear-hashing', 'open-addressing-hash-table', 'perfect-hash-table', 'robin-hood-hash-table', 'separate-chaining-hash-table'],
+    probabilistic: ['blocked-bloom-filter', 'bloom-filter', 'count-min-sketch', 'counting-bloom-filter', 'cuckoo-filter', 'hyperloglog', 'quotient-filter', 'reservoir-sampling-buffer'],
   }
   const seen = new Set()
   for (const group of StructureCatalog.groups) {
     const structures = StructureCatalog.getStructures(group.kind)
-    assert.deepEqual(structures.map((structure) => structure.kind).sort(), expected[group.kind])
+    assert.deepEqual(structures.map((structure) => structure.kind).sort(), [...expected[group.kind]].sort())
     for (const structure of structures) {
       assert.ok(!seen.has(structure.kind), 'Each structure belongs to one group')
       seen.add(structure.kind)
@@ -153,8 +153,9 @@ test('graph algorithm actions move to traversal while Overview retains editing a
   for (const graph of StructureCatalog.getStructures('graphs')) {
     const overview = ActionCatalog.getScopedActions(graph.kind, 'overview').map((action) => action.kind)
     const traversal = ActionCatalog.getScopedActions(graph.kind, 'graph-traversal').map((action) => action.kind)
-    assert.ok(overview.includes('add-vertex') && overview.includes('search-value') && overview.includes('clear'))
-    assert.equal(overview.includes('add-edge'), !['complete-graph', 'tree-graph'].includes(graph.kind))
+    assert.ok(overview.includes('search-value') && overview.includes('clear'))
+    if (!['hnsw-graph', 'compacted-de-bruijn-graph'].includes(graph.kind)) assert.ok(overview.includes('add-vertex'))
+    assert.equal(overview.includes('add-edge'), !['complete-graph', 'tree-graph', 'hnsw-graph', 'compacted-de-bruijn-graph'].includes(graph.kind))
     assert.ok(overview.every((action) => !moved.has(action)))
     assert.ok(traversal.every((action) => moved.has(action)))
     assert.ok(traversal.includes('breadth-first') && traversal.includes('depth-first'))

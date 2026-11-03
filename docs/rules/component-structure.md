@@ -216,6 +216,32 @@ both inclusive bounds through the action definition and playback to its model.
 Create these components and folders as their features are implemented. The tree
 defines the required organization; it does not mean those features already exist.
 
+## Applied structure adapters
+
+Additional real-technology examples retain canonical models under their existing
+Overview groups: Linear/{AppendOnlyLog,XArray,FanoutArray,FlatVectorArray,RequestTagArray},
+QueuePriority/{MultiQueue,LockFreeRing}, Trees/{GiST,BKDTree,BallTree,MapleTree,ChecksummedBlockTree},
+StringText/InvertedIndex, HashBased/{LSHIndex,MinimizerIndex},
+Probabilistic/BlockedBloomFilter, and Graphs/{HNSWGraph,CompactedDeBruijnGraph,AddressSpaceGraph}.
+Each owns a layout wrapper and action component/CSS/sequence folders. Their BFS/DFS
+folders live under Algorithms/GraphsTraversal, sharing the canonical graph models.
+
+AppliedFeatures connects their action-owned sequences to the existing
+LinearFeatures/LinearStructureCatalog storage adapters; these adapter names do
+not determine menu membership. AppliedStructureDefinitions, AppliedActionCatalog,
+AppliedStructureCatalog, and AppliedInput supply menus, defaults, and structured
+dialogs. AppliedModel shares trace/rejection contracts, AppliedGraphModel shares
+only reachable-vertex traversal, PointData shares coordinate validation/distance,
+and AppliedLayout shares storage-row and link geometry. Structure-specific
+storage, splitting, compaction, hashing, and searches stay in each canonical model.
+
+Reuse LinearAnimation and StructuredLinearAction for bounded tracing and final
+clone commits. Do not substitute generic arrays or graphs for the advertised
+representation. Document sequential SPSC, interval GiST, rebuilt Maple pages,
+block-checksum serialization, fixed LSH planes, simplified HNSW link selection,
+and forward-only DNA variants explicitly. Deferred categories and production
+extensions belong in coverage.md, not empty menu scaffolding.
+
 ## Extended linear structures
 
 Keep SkipList, UnrolledLinkedList, XORLinkedList,

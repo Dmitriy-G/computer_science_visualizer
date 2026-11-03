@@ -5,7 +5,7 @@
 1. Start with an empty renderer and a clickable menu icon in the top left.
 2. Open the menu to see **Data Structures Overview** and **Data Structures Algorithms**.
    Overview contains the existing structure groups. Algorithms contains
-   **Sorting** (Array with forty-eight sorting actions) and **Graphs Traversal** (all fifteen graph
+   **Sorting** (Array with forty-eight sorting actions) and **Graphs Traversal** (all eighteen graph
    entries). Its graph action cards offer BFS and DFS, plus Dijkstra for Weighted
    Graph, topological sorting for DAG, and maximum flow for Flow Network. These algorithm actions move out
    of Overview; graph editing and value search remain there. Browsing either
@@ -294,6 +294,42 @@ concrete trigger, such as a head match versus a full traversal.
 
 Keep structure selection and action selection distinct. Only offer working actions;
 identify structures with previews but no animated actions clearly.
+
+## Applied structure operations
+
+The nineteen additions listed in README fit existing Overview groups and do not
+add root categories or groups. All use the shared renderer, validated structured
+inputs, automatic playback, full Reset, final-clone commits, independent snapshots,
+and 96 detailed trace frames with an omission count. All default logical counts
+are ten; allocated cells, internal pages, unitigs, and filter bits are not counted
+as additional logical records. Labels identify the counted quantity.
+
+Their class-based models must execute the advertised storage algorithms: radix
+branches for XArray, a stored 256-entry fanout array, per-slot SPSC sequences,
+operator-class GiST splitting, block KD and metric-ball bounds, nonoverlapping
+Maple range pages, parent-stored block checksums, sorted term postings, minimizer
+window minima, within-block Bloom probes, actual HNSW layers, unitig compaction,
+and typed AddressSpace references. Never present these as production-equivalent
+kernel, database, genomic, or protocol implementations. Explain the variant in
+structure information and action-owned complexity descriptions.
+
+HNSW, compacted de Bruijn, and AddressSpace graph BFS/DFS live under Algorithms >
+Graphs Traversal, bringing its graph entries to eighteen. Traversals start at a
+visible vertex ID, visit reachable outgoing links, report actual output, and retain
+visited marks. Their Overview cards retain structure-specific editing and queries.
+HNSW and LSH similarity queries explicitly report approximate results. De Bruijn
+walk membership does not establish occurrence in the original DNA source.
+
+SPSC publication is sequential, without real threads. GiST supports one interval
+operator class. Maple edits rebuild pivot pages and may split ranges; reject
+results over 64 ranges before consuming IDs. Checksum corruption deliberately
+changes data without repairing expected parent pointers; verification detects it
+without repair. Clear resets that ten-block example to zero. Append-only Log
+clear retains the next offset, and SPSC draining retains sequence counters.
+
+coverage.md records the work that needs new groups, including storage/search
+indexes, numerical matrices/tensors, layered storage systems, and message schemas.
+Do not add menu entries for those deferred items yet.
 
 ## Action responsibilities
 
@@ -909,7 +945,7 @@ edge IDs through ActionInputRequest in the shared dialog.
 
 Keep algorithm groups separate from the Overview structure groups in
 MenuNavigation. Sorting lists Array and exposes its forty-eight sorting actions; Graphs Traversal
-lists the existing five graphs and reuses their model, input, sequence, renderer,
+lists all eighteen graphs and reuses their model, input, sequence, renderer,
 and info implementations. ActionCatalog.getScopedActions controls the visible
 choices and App validates action selection against the selected scope. Keep the
 selected action scope separate from menu browsing state: opening Algorithms or

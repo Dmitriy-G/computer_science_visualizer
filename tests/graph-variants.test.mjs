@@ -28,10 +28,10 @@ class GraphFixtures {
   static plan(model, action, input = {}) { return new GraphAnimation(model, new GraphSceneLayout(), action, input, action, action) }
 }
 
-test('original graph choices remain available alongside the ten additional graph entries', () => {
+test('original graph choices remain available alongside representation and applied graph entries', () => {
   const graphs = StructureCatalog.getStructures('graphs')
   assert.equal(StructureCatalog.getName('graph'), 'Undirected Graph')
-  assert.deepEqual(graphs.map((graph) => graph.kind).sort(), ['adjacency-list', 'adjacency-matrix', 'bipartite-graph', 'complete-graph', 'compressed-sparse-row', 'dag', 'directed-graph', 'edge-list', 'flow-network', 'functional-graph', 'graph', 'hypergraph', 'multigraph', 'tree-graph', 'weighted-graph'])
+  assert.deepEqual(graphs.map((graph) => graph.kind).sort(), ['address-space-graph', 'compacted-de-bruijn-graph', 'hnsw-graph', 'adjacency-list', 'adjacency-matrix', 'bipartite-graph', 'complete-graph', 'compressed-sparse-row', 'dag', 'directed-graph', 'edge-list', 'flow-network', 'functional-graph', 'graph', 'hypergraph', 'multigraph', 'tree-graph', 'weighted-graph'].sort())
   for (const [kind, model] of GraphCatalog.createModels()) {
     assert.equal(model.kind, kind)
     assert.equal(model.length, 10)
