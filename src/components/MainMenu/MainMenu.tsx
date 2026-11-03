@@ -8,6 +8,11 @@ import type { StructureKind } from '../../visualization/Scene.ts'
 import { ActionCatalog } from '../../visualization/ActionCatalog.ts'
 import './MainMenu.css'
 
+interface MenuChoice {
+  readonly kind: string
+  readonly name: string
+}
+
 interface MainMenuProps {
   readonly open: boolean
   readonly navigation: MenuNavigation
@@ -95,9 +100,18 @@ export default class MainMenu extends Component<
     }
   }
 
+  private orderChoices<T extends MenuChoice>(choices: readonly T[]): T[] {
+    const ordered = [...choices]
+    ordered.sort((first, second) =>
+      first.name.localeCompare(second.name, 'en', { sensitivity: 'base' }) ||
+      first.kind.localeCompare(second.kind, 'en'),
+    )
+    return ordered
+  }
+
   private renderAlgorithmGroups(): ReactNode[] {
     const buttons: ReactNode[] = []
-    for (const group of MenuNavigation.algorithmGroups) {
+    for (const group of this.orderChoices(MenuNavigation.algorithmGroups)) {
       buttons.push(
         <button className="structure-choice" key={group.kind} data-algorithm-group={group.kind} onClick={this.handleAlgorithmGroup}>
           <span className="structure-symbol" aria-hidden="true">{group.symbol}</span>
@@ -110,7 +124,7 @@ export default class MainMenu extends Component<
 
   private renderCategories(): ReactNode[] {
     const buttons: ReactNode[] = []
-    for (const category of MenuNavigation.categories) {
+    for (const category of this.orderChoices(MenuNavigation.categories)) {
       buttons.push(
         <button className="structure-choice" key={category.kind} data-category={category.kind} onClick={this.handleCategory}>
           <span className="structure-symbol" aria-hidden="true">{category.symbol}</span>
@@ -126,7 +140,7 @@ export default class MainMenu extends Component<
 
   private renderGroups(): ReactNode[] {
     const buttons: ReactNode[] = []
-    for (const group of StructureCatalog.groups) {
+    for (const group of this.orderChoices(StructureCatalog.groups)) {
       buttons.push(
         <button
           className="structure-choice"
@@ -426,7 +440,7 @@ export default class MainMenu extends Component<
 
   private renderStructures(): ReactNode[] {
     const buttons: ReactNode[] = []
-    for (const structure of this.props.navigation.getStructures()) {
+    for (const structure of this.orderChoices(this.props.navigation.getStructures())) {
       let description = structure.description
       const examples = this.props.navigation.actionScope !== 'overview'
       if (examples) {
