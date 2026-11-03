@@ -10,7 +10,11 @@ export class LinearStructureInformation {
         { area: 'Range iteration', description: 'Find a boundary key through express links, then scan the base level in order.' },
         { area: 'In-memory storage', description: 'Use linked ordered records as an alternative to a balanced search tree.' },
       ],
-      technologies: [{ name: 'Redis sorted sets', url: 'https://redis.io/docs/latest/develop/data-types/sorted-sets/', usage: 'Redis documents a skip list paired with a hash table for sorted sets. Its score/member records and indexing are richer than this unique-integer teaching model.' }],
+      technologies: [
+        { name: 'Redis sorted sets', url: 'https://redis.io/docs/latest/develop/data-types/sorted-sets/', usage: 'Redis documents a skip list paired with a hash table for sorted sets. Its score/member records and indexing are richer than this unique-integer teaching model.' },
+        { name: 'RocksDB (skip-list memtable)', url: 'https://github.com/meta/rocksdb/wiki/RocksDB-Overview#pluggable-memtables', usage: 'Uses a skip list as the default ordered memtable so writes can be interleaved with range scans before flushing to SST files. Other memtable implementations are configurable.' },
+        { name: 'Apache Lucene 9.10 (postings skip lists)', url: 'https://lucene.apache.org/core/9_10_0/core/org/apache/lucene/codecs/lucene99/package-summary.html', usage: 'Stores multiple skip levels to advance through blocks of postings without visiting every document ID. This serialized block-postings variant differs from mutable randomized key towers.' },
+      ],
     },
     'unrolled-linked-list': {
       summary: 'An Unrolled Linked List stores several values in each linked block, spreading link overhead across those values. This example uses four-value blocks, splits full blocks, and merges a following block after deletion when it fits.',
@@ -60,7 +64,11 @@ export class LinearStructureInformation {
         { area: 'Visited markers', description: 'Track visited integer IDs during graph or search processing.' },
         { area: 'Compact state masks', description: 'Read and change individual flags with bitwise masks.' },
       ],
-      technologies: [{ name: 'Java BitSet (growable variant)', url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/BitSet.html', usage: 'The standard library exposes indexed boolean bits and logical operations. Java BitSet can grow, whereas this example fixes the bit count.' }],
+      technologies: [
+        { name: 'Java BitSet (growable variant)', url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/BitSet.html', usage: 'The standard library exposes indexed boolean bits and logical operations. Java BitSet can grow, whereas this example fixes the bit count.' },
+        { name: 'Redis (string-backed bitmaps)', url: 'https://redis.io/docs/latest/develop/data-types/strings/bitmaps/', usage: 'Treats binary strings as bit vectors with indexed SETBIT/GETBIT operations for activity flags, permissions, and compact membership. Redis strings can grow; this example fixes the logical bit count.' },
+        { name: 'Linux blk-mq (request-tag bitmaps)', url: 'https://github.com/torvalds/linux/blob/master/include/linux/blk-mq.h', usage: 'Keeps scalable bitmap queues for ordinary and reserved request tags alongside request-pointer arrays. This lesson shows packed flags without concurrent tag allocation or wait queues.' },
+      ],
     },
     'sparse-array': {
       summary: 'A Sparse Array stores explicit index/value entries while omitted positions have an implicit default. This Map-backed example has 64 logical slots, initially ten stored values, and implicit zero for holes; explicitly stored zero remains an entry.',
@@ -70,7 +78,10 @@ export class LinearStructureInformation {
         { area: 'Feature vectors', description: 'Represent only selected dimensions of an indexed numeric record.' },
         { area: 'Default-valued grids', description: 'Store deviations from a default rather than every logical cell.' },
       ],
-      technologies: [{ name: 'Eigen SparseVector (compressed-index variant)', url: 'https://eigen.tuxfamily.org/dox/group__TutorialSparse.html', usage: 'Eigen supplies sparse vectors for numeric linear algebra, using compressed index/value storage rather than this JavaScript Map.' }],
+      technologies: [
+        { name: 'Eigen SparseVector (compressed-index variant)', url: 'https://eigen.tuxfamily.org/dox/group__TutorialSparse.html', usage: 'Eigen supplies sparse vectors for numeric linear algebra, using compressed index/value storage rather than this JavaScript Map.' },
+        { name: 'Linux XArray (indexed-pointer variant)', url: 'https://docs.kernel.org/core-api/xarray.html', usage: 'Maps integer indices to pointers, notably page-cache entries, with ordered iteration and RCU lookups. Its kernel representation and concurrency differ from this fixed-range Map-backed sparse numeric array.' },
+      ],
     },
     'free-list': {
       summary: 'A Free List links reusable slots in an allocation pool. This simulated pool has ten slots, initially three allocated; allocation pops the free head and release pushes a slot onto it, rejecting exhaustion and double release.',

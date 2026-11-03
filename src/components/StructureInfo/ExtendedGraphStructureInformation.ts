@@ -100,7 +100,10 @@ export class ExtendedGraphStructureInformation {
         { area: 'Graph computation', description: 'Expose a sparse adjacency matrix to row-oriented algorithms.' },
         { area: 'Storage locality', description: 'Group outgoing column indices while making insertion and offset-update costs visible.' },
       ],
-      technologies: [{ name: 'SciPy CSR matrices', url: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html', usage: 'Represents sparse matrices with data, indices, and indptr arrays. This binary graph omits an explicit data array because every stored value is 1.' }],
+      technologies: [
+        { name: 'SciPy CSR matrices', url: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html', usage: 'Represents sparse matrices with data, indices, and indptr arrays. This binary graph omits an explicit data array because every stored value is 1.' },
+        { name: 'PyTorch (sparse CSR tensors)', url: 'https://docs.pytorch.org/docs/stable/generated/torch.sparse_csr_tensor.html', usage: 'Stores sparse tensor entries through compressed row offsets, column indices, and explicit values for numerical operations. This graph uses the same row/column organization with implicit unit values.' },
+      ],
     },
   } satisfies Record<string, StructureOverview>
 }

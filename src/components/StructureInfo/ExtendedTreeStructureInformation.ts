@@ -12,6 +12,7 @@ export class ExtendedTreeStructureInformation {
       ],
       technologies: [
         { name: 'Browser DOM trees', url: 'https://dom.spec.whatwg.org/#trees', usage: 'The DOM defines parent/ordered-child node trees for document structure; unlike this lesson, nodes carry document data rather than numeric keys.' },
+        { name: 'Git (directory tree objects)', url: 'https://git-scm.com/book/en/v2/Git-Internals-Git-Objects', usage: 'Represents directory snapshots as tree objects whose named entries reference blobs or subtrees. Stored objects can be shared between snapshots; this lesson shows a single numeric-node hierarchy.' },
       ],
     },
     'unordered-binary-tree': {
@@ -215,6 +216,9 @@ export class ExtendedTreeStructureInformation {
       ],
       technologies: [
         { name: 'CGAL spatial searching', url: 'https://doc.cgal.org/latest/Spatial_searching/index.html', usage: 'KD-tree variants support spatial range and neighbor searches; production construction policies differ from this incremental lesson.' },
+        { name: 'scikit-learn (KDTree neighbor searches)', url: 'https://scikit-learn.org/stable/modules/neighbors.html', usage: 'Uses KDTree for nearest-neighbor and radius queries in learning workflows. Its batch-built, metric-aware index differs from this incremental two-dimensional range-search tree.' },
+        { name: 'Point Cloud Library (pcl::KdTree)', url: 'https://pointclouds.org/documentation/classpcl_1_1_kd_tree.html', usage: 'Provides nearest-neighbor and radius searches over point clouds through KD-tree implementations. Production point types and search backends extend beyond the integer 2D example.' },
+        { name: 'Apache Lucene 10.3.1 (block KD-tree variant)', url: 'https://lucene.apache.org/core/10_3_1/core/org/apache/lucene/util/bkd/package-summary.html', usage: 'Builds BKD cells containing bounded blocks of multidimensional points for indexed searches. Its block storage and bulk construction differ from this one-point-per-node incremental KD-tree.' },
       ],
     },
     'quadtree': {
@@ -239,6 +243,7 @@ export class ExtendedTreeStructureInformation {
       ],
       technologies: [
         { name: 'CGAL Octree', url: 'https://doc.cgal.org/latest/Orthtree/index.html', usage: 'The Orthtree package provides octree variants to refine three-dimensional point sets and accelerate spatial queries.' },
+        { name: 'OctoMap (occupancy octree variant)', url: 'https://octomap.github.io/octomap/doc/index', usage: 'Stores probabilistic occupied, free, and unknown regions in an octree for 3D robot mapping. This lesson partitions point buckets without occupancy probabilities or sensor updates.' },
       ],
     },
     'bvh': {
@@ -251,6 +256,7 @@ export class ExtendedTreeStructureInformation {
       ],
       technologies: [
         { name: 'CGAL AABB tree', url: 'https://doc.cgal.org/latest/AABB_tree/', usage: 'A static bounding-box hierarchy accelerates geometric intersection and distance queries; this lesson instead inserts two-dimensional rectangle leaves incrementally.' },
+        { name: 'MoveIt / FCL (collision hierarchy and AABBs)', url: 'https://moveit.ai/documentation/concepts/developer_concepts/', usage: 'Maintains collision-manager trees and cached axis-aligned bounds to prune robot/world overlap candidates before narrow-phase tests. Its moving 3D geometry differs from this unbalanced 2D rectangle hierarchy.' },
       ],
     },
     'merkle-tree': {

@@ -112,6 +112,11 @@ export class StructureInformation {
           usage: 'Maintains a minimum-priority queue for selecting the next item and merging sorted input streams.',
         },
         {
+          name: 'Linux kernel (Min Heap API)',
+          url: 'https://docs.kernel.org/core-api/min_heap.html',
+          usage: 'Provides array-backed binary min-heaps with insertion, removal, and configurable comparison callbacks. Kernel storage can be preallocated or dynamically allocated; this lesson uses numeric values.',
+        },
+        {
           name: 'Java (PriorityQueue)',
           url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/PriorityQueue.html',
           usage: 'Removes the least-priority element according to the configured ordering without sorting the entire queue.',
@@ -186,12 +191,12 @@ export class StructureInformation {
         },
         {
           name: 'MySQL InnoDB (R-tree spatial indexes)',
-          url: 'https://dev.mysql.com/doc/refman/8.4/en/creating-spatial-indexes.html',
+          url: 'https://dev.mysql.com/doc/refman/8.4/en/innodb-physical-structure.html',
           usage: 'Uses SPATIAL indexes to find candidate geometries through their bounding rectangles.',
         },
         {
           name: 'PostGIS (R-tree indexes implemented with GiST)',
-          url: 'https://postgis.net/workshops/postgis-intro/indexing.html',
+          url: 'https://postgis.net/docs/manual-dev/en/using_postgis_dbmanagement.html',
           usage: 'Narrows spatial joins and geometry searches to overlapping bounds before exact geometry checks.',
         },
         {
@@ -222,7 +227,7 @@ export class StructureInformation {
         },
         {
           name: 'Apache Cassandra (SSTables and compaction)',
-          url: 'https://cassandra.apache.org/doc/latest/cassandra/managing/operating/compaction/overview.html',
+          url: 'https://cassandra.apache.org/doc/stable/cassandra/architecture/storage-engine.html',
           usage: 'Writes immutable SSTables and compacts them to reconcile updates and deletion markers.',
         },
         {
@@ -270,6 +275,16 @@ export class StructureInformation {
           name: 'GLib (GHashTable)',
           url: 'https://docs.gtk.org/glib/struct.HashTable.html',
           usage: 'Provides hash-based lookup of keys and associated values to GLib applications.',
+        },
+        {
+          name: 'Redis (dict hash tables)',
+          url: 'https://github.com/redis/redis/blob/unstable/src/dict.c',
+          usage: 'Stores dictionary entries in power-of-two bucket tables with chained collisions and incremental rehashing. This lesson instead moves all entries together when growing.',
+        },
+        {
+          name: 'minimap2 (minimizer index)',
+          url: 'https://github.com/lh3/minimap2/blob/master/README.md#algorithm-overview',
+          usage: 'Indexes reference-sequence minimizers in a hash table so matching query seeds can locate candidate alignments. Its genomic keys and position records differ from this numeric key-value example.',
         },
       ],
     },
@@ -330,7 +345,7 @@ export class StructureInformation {
         },
         {
           name: 'Apache Cassandra (SSTable Bloom filters)',
-          url: 'https://cassandra.apache.org/doc/3.11/cassandra/operating/bloom_filters.html',
+          url: 'https://cassandra.apache.org/doc/stable/cassandra/architecture/storage-engine.html',
           usage: 'Checks whether an SSTable may contain a partition key to avoid unnecessary file reads.',
         },
         {
@@ -342,6 +357,21 @@ export class StructureInformation {
           name: 'LevelDB (BloomFilterPolicy)',
           url: 'https://github.com/google/leveldb/blob/main/util/bloom.cc',
           usage: 'Builds compact table filters that can rule out missing keys before searching stored data.',
+        },
+        {
+          name: 'Git (changed-path Bloom filters)',
+          url: 'https://git-scm.com/docs/commit-graph-format',
+          usage: 'Optionally stores filters of paths changed against each commit\'s first parent in the commit-graph file. Negative checks let path-history searches skip commits; positive checks still need confirmation.',
+        },
+        {
+          name: 'ClickHouse (Bloom filter skip indexes)',
+          url: 'https://clickhouse.com/blog/index-sharding-clickhouse-cloud-petabyte-scale-indexing',
+          usage: 'Evaluates Bloom filters to rule out data granules during query pruning. Production filters belong to secondary indexes and can be distributed across replicas, rather than one standalone numeric filter.',
+        },
+        {
+          name: 'Bifrost (blocked Bloom filter variant)',
+          url: 'https://github.com/pmelsted/bifrost',
+          usage: 'Uses a blocked Bloom filter during filtering for compacted de Bruijn graph construction. Blocking organizes probes for locality; this lesson uses a single small bit array without blocks.',
         },
       ],
     },
@@ -372,6 +402,31 @@ export class StructureInformation {
           name: '.NET (System.Array)',
           url: 'https://learn.microsoft.com/en-us/dotnet/api/system.array',
           usage: 'Provides indexed, fixed-length array storage for .NET applications.',
+        },
+        {
+          name: 'Git (pack-index arrays and fanout table)',
+          url: 'https://git-scm.com/docs/pack-format',
+          usage: 'Stores sorted object IDs and a 256-entry cumulative fanout table to narrow object lookup ranges. This lesson shows indexed numeric slots rather than the complete pack-index format.',
+        },
+        {
+          name: 'FAISS (flat vector indexes)',
+          url: 'https://github.com/facebookresearch/faiss/wiki/Faiss-indexes#flat-indexes',
+          usage: 'Stores fixed-size vector codes in an array and scans them for similarity queries. Production indexes can grow and store vector records; this lesson uses fixed-length scalar storage.',
+        },
+        {
+          name: 'PyTorch (dense tensor storage variant)',
+          url: 'https://docs.pytorch.org/docs/stable/tensors.html',
+          usage: 'Exposes multidimensional strided views over typed storage for numerical computing. Tensors can have noncontiguous views and device storage; this lesson visualizes a one-dimensional numeric array.',
+        },
+        {
+          name: 'Nav2 (Costmap2D grid storage variant)',
+          url: 'https://api.nav2.org/nav2-jazzy/html/classnav2__costmap__2d_1_1Costmap2D.html',
+          usage: 'Maps two-dimensional cells to indices in a byte cost array for robot navigation. The app demonstrates indexed slots without grid coordinates, world transforms, or costmap layers.',
+        },
+        {
+          name: 'Linux blk-mq (request tag arrays)',
+          url: 'https://github.com/torvalds/linux/blob/master/include/linux/blk-mq.h',
+          usage: 'Uses integer tags to index request-pointer arrays, avoiding a scan to locate completed I/O. Kernel request lifetimes and concurrent access extend beyond this numeric array example.',
         },
       ],
       useCases: [
@@ -420,6 +475,11 @@ export class StructureInformation {
           name: 'Microsoft C++ STL (std::forward_list)',
           url: 'https://github.com/microsoft/STL/blob/main/stl/inc/forward_list',
           usage: 'Implements the C++ singly linked sequence container with insertion and erasure after a known position.',
+        },
+        {
+          name: 'Docker / Moby v28 (parent-linked layer chains)',
+          url: 'https://github.com/moby/moby/blob/v28.0.0/layer/layer.go',
+          usage: 'Each read-only layer exposes a Parent link to the next layer in its chain. Content hashes and filesystem overlays add storage semantics beyond the simple next-linked numeric nodes shown here.',
         },
       ],
       useCases: [
@@ -511,6 +571,16 @@ export class StructureInformation {
           name: 'Python (queue.Queue)',
           url: 'https://docs.python.org/3/library/queue.html',
           usage: 'Provides a synchronized FIFO queue for transferring work between Python threads.',
+        },
+        {
+          name: 'DPDK (bounded ring-backed FIFO)',
+          url: 'https://doc.dpdk.org/guides/prog_guide/ring_lib.html',
+          usage: 'Transfers objects through fixed-capacity FIFO rings with bulk operations and producer/consumer synchronization. Its ring storage differs from this unbounded linked-node queue.',
+        },
+        {
+          name: 'Linux blk-mq (I/O request queues)',
+          url: 'https://docs.kernel.org/block/blk-mq.html',
+          usage: 'Stages I/O requests in per-CPU software queues and hardware dispatch queues. Request merging, scheduling, and parallel dispatch extend beyond the simple FIFO behavior shown here.',
         },
         {
           name: 'Java (ConcurrentLinkedQueue)',
@@ -609,6 +679,11 @@ export class StructureInformation {
           usage: 'Embeds circular doubly linked lists in kernel objects to connect and manipulate collections of records.',
         },
         {
+          name: 'Linux networking (sk_buff packet queues)',
+          url: 'https://www.kernel.org/doc/html/next/networking/kapi.html#c.sk_buff',
+          usage: 'Packet metadata includes next/prev links for doubly linked queues. The same union can instead hold a red-black-tree node or other list links, so these representations are alternatives rather than simultaneous memberships.',
+        },
+        {
           name: 'Java LinkedHashMap (access-order LRU caches)',
           url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/LinkedHashMap.html',
           usage: 'Links hash-map entries in insertion or access order, supporting predictable iteration and LRU-style caches.',
@@ -645,6 +720,16 @@ export class StructureInformation {
           name: 'Linux kfifo (kernel FIFO buffers)',
           url: 'https://docs.kernel.org/core-api/kernel-api.html#fifo-buffer',
           usage: 'Provides bounded FIFO buffering for kernel data with wraparound storage.',
+        },
+        {
+          name: 'Linux kernel (circular-buffer helpers)',
+          url: 'https://docs.kernel.org/core-api/circular-buffers.html',
+          usage: 'Provides power-of-two occupancy/space helpers and memory-barrier guidance for producer/consumer rings. That convention reserves a slot; this lesson uses a cached count and can fill every slot.',
+        },
+        {
+          name: 'DPDK (rte_ring)',
+          url: 'https://doc.dpdk.org/guides/prog_guide/ring_lib.html',
+          usage: 'Uses a fixed-size table with wrapping producer/consumer positions for lockless FIFO transfer. It supports concurrent and bulk operations; this sequential example animates one enqueue or dequeue at a time.',
         },
         {
           name: 'JACK Audio Connection Kit (ringbuffer)',
@@ -771,6 +856,21 @@ export class StructureInformation {
           usage: 'Provides balanced ordered trees used by kernel subsystems for tasks such as timers and resource tracking.',
         },
         {
+          name: 'Linux TCP (out-of-order receive tree)',
+          url: 'https://linux.googlesource.com/linux/kernel/git/torvalds/linux/+/482deed9dfa065cf3f68372dadac857541c7d504/net/ipv4/tcp_input.c',
+          usage: 'Orders out-of-order packet buffers by TCP sequence number and removes them as receive gaps close. Packet nodes embed rbnode links; sequence-range overlap handling extends beyond this integer-key tree.',
+        },
+        {
+          name: 'Linux CFS (virtual-runtime runqueue)',
+          url: 'https://docs.kernel.org/scheduler/sched-design-CFS.html',
+          usage: 'The documented CFS design orders runnable tasks by virtual runtime and chooses the leftmost task. This is a CFS example; the documentation notes the transition to EEVDF scheduling.',
+        },
+        {
+          name: 'Linux nftables (red-black set backend)',
+          url: 'https://wiki.iptables.org/wiki-nftables/index.php/Sets',
+          usage: 'Uses red-black trees as one backend for firewall sets, alongside hash-table alternatives. This identifies a supported backend rather than claiming every nftables set uses a tree.',
+        },
+        {
           name: 'NGINX (event timer tree)',
           url: 'https://github.com/nginx/nginx/blob/master/src/event/ngx_event_timer.h',
           usage: 'Orders pending event timers so the event loop can find and expire the earliest timer.',
@@ -802,6 +902,16 @@ export class StructureInformation {
           name: 'SQLite (index B-trees)',
           url: 'https://sqlite.org/fileformat.html#b_tree_pages',
           usage: 'Stores SQL index keys in balanced pages for ordered lookup; SQLite index B-trees differ from its table B-tree variant.',
+        },
+        {
+          name: 'MongoDB (B-tree indexes)',
+          url: 'https://www.mongodb.com/docs/manual/indexes/',
+          usage: 'Stores indexed field values in key order to accelerate equality, range, and ordered-result queries. This lesson demonstrates small numeric-key pages rather than database records and storage-engine policies.',
+        },
+        {
+          name: 'Linux Maple Tree (range-oriented B-tree variant)',
+          url: 'https://docs.kernel.org/core-api/maple_tree.html',
+          usage: 'Indexes nonoverlapping ranges, notably virtual memory areas, in a cache-conscious B-tree variant with RCU support. Its range nodes and concurrency differ from this order-4 key tree.',
         },
         {
           name: 'Rust (BTreeMap)',
@@ -897,6 +1007,7 @@ export class StructureInformation {
       technologies: [
         { name: 'LLVM (control-flow graphs)', url: 'https://llvm.org/docs/ProgrammersManual.html#viewing-graphs-while-debugging-code', usage: 'Represents control flow between basic blocks for compiler analysis, optimization, and CFG inspection.' },
         { name: 'Neo4j (directed property-graph variant)', url: 'https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/', usage: 'Stores typed, directed relationships and properties for querying connected data; its property-graph model also supports multiple relationships.' },
+        { name: 'OPC UA (typed AddressSpace graph)', url: 'https://reference.opcfoundation.org/specs/OPC-10000-3/4', usage: 'Connects industrial information Nodes through typed source-to-target References for browsing and queries. Its attributes, reference types, and cross-server links extend beyond this simple numeric directed graph.' },
       ],
     },
     'weighted-graph': {
@@ -922,7 +1033,7 @@ export class StructureInformation {
       ],
       technologies: [
         { name: 'Apache Airflow (workflow Dags)', url: 'https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/dags.html', usage: 'Models tasks and dependencies to schedule and execute data workflows in dependency order.' },
-        { name: 'Git (commit graph)', url: 'https://git-scm.com/docs/gitglossary.html#def_DAG', usage: 'Stores commit ancestry as a DAG: commits point to parents, enabling history traversal and merges.' },
+        { name: 'Git (commit graph)', url: 'https://git-scm.com/docs/commit-graph', usage: 'Stores commit ancestry as a DAG and caches parent positions, generation numbers, and other metadata in commit-graph files to accelerate history queries.' },
       ],
     },
     'multigraph': {

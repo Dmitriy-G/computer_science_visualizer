@@ -34,6 +34,7 @@ export class StringTextStructureInformation {
       ],
       technologies: [
         { name: '.NET 9 SearchValues<string>', url: 'https://devblogs.microsoft.com/dotnet/performance-improvements-in-net-9/', usage: 'The .NET team documents Aho-Corasick among the strategies used for multiple-string SearchValues searches. Production code selects optimized strategies and match semantics; this lesson uses explicit sparse links and enumerates every overlapping match.' },
+        { name: 'Suricata (Aho-Corasick pattern matchers)', url: 'https://github.com/OISF/suricata/blob/main/doc/userguide/performance/tuning-considerations.rst', usage: 'Offers ac and ac-ks multiple-pattern matchers for signature inspection, including the Ken Steele variant. Production matcher choices and packet inspection extend beyond the lowercase dictionary scanner shown here.' },
       ],
     },
     'dawg': {

@@ -24,6 +24,7 @@ export class HashStructureInformation {
       ],
       technologies: [
         { name: 'OpenJDK HashMap', url: 'https://github.com/openjdk/jdk13/blob/master/src/java.base/share/classes/java/util/HashMap.java', usage: 'HashMap uses linked bucket bins and may replace long bins with tree bins; this lesson keeps only singly linked chains.' },
+        { name: 'Redis (dict collision chains)', url: 'https://github.com/redis/redis/blob/unstable/src/dict.c', usage: 'Resolves collisions with linked chains in power-of-two bucket tables and rehashes incrementally. This lesson shares Hash Map storage and grows by rehashing all entries together.' },
       ],
     },
     'robin-hood-hash-table': {
@@ -84,6 +85,7 @@ export class HashStructureInformation {
       ],
       technologies: [
         { name: 'PostgreSQL hash indexes', url: 'https://github.com/postgres/postgres/blob/master/src/backend/access/hash/README', usage: 'Persistent hash indexes grow through incremental bucket splitting and overflow pages; PostgreSQL also manages disk allocation, recovery, masks, and concurrency.' },
+        { name: 'OpenSSL 1.0.2 (LHASH dynamic tables)', url: 'https://docs.openssl.org/1.0.2/man3/lhash/', usage: 'The documented LHASH implementation expands by splitting one bucket at a time instead of redistributing every entry. It also supports contraction and custom key comparisons, unlike this growth-only numeric lesson.' },
       ],
     },
     'perfect-hash-table': {
