@@ -38,6 +38,7 @@ export class MenuSearchIndex {
       let text = structure.name
       for (const useCase of information.useCases) text += ` ${useCase.area}`
       text += this.technologyNames(information.technologies)
+      text += this.technologyNames(StructureInformation.getProducts(structure.kind))
       this.documents.push({
         target: 'structures', text: this.normalize(text),
         result: {

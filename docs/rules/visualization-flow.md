@@ -277,6 +277,13 @@ two-sentence introduction and a two-column table containing four or five areas
 of use, each with a one- or two-sentence explanation of how it is used and what
 problem it solves. Below the table, list verified real technologies, with primary
 documentation or source links and a short explanation of their concrete use.
+Follow this with a separate **Real products** section containing only
+comma-separated linked product names, matching the algorithm dialog. Use the
+curated labels in `StructureInfo/StructureProductCatalog.ts` with the existing
+technology evidence links; retain variant and historical qualifications. Deduplicate
+products per structure and do not treat a specification alone as a product.
+If none are established, show "No verified real products." Product names are
+also searchable in the Data structures search target.
 Include real systems, language runtimes, standard libraries, and established
 application libraries; exclude competitive-programming collections, educational
 algorithm catalogs, and standalone projects without evidence of application use.

@@ -3,7 +3,7 @@ import type { MouseEvent, ReactNode, SyntheticEvent } from 'react'
 import { StructureCatalog } from '../../visualization/StructureCatalog.ts'
 import type { StructureKind } from '../../visualization/Scene.ts'
 import { StructureInformation } from './StructureInformation.ts'
-import type { StructureOverview } from './StructureInformation.ts'
+import type { StructureOverview, StructureTechnology } from './StructureInformation.ts'
 import './StructureInfo.css'
 
 interface StructureInfoProps {
@@ -76,9 +76,19 @@ export default class StructureInfo extends PureComponent<
     return items
   }
 
+  private renderProductLinks(products: readonly StructureTechnology[]): ReactNode[] {
+    const links: ReactNode[] = []
+    for (const product of products) {
+      if (links.length > 0) links.push(', ')
+      links.push(<a key={product.name} href={product.url} target="_blank" rel="noreferrer">{product.name}</a>)
+    }
+    return links
+  }
+
   public render() {
     const name = this.props.structure ? StructureCatalog.getName(this.props.structure) : 'data structure'
     const information = this.props.structure ? StructureInformation.get(this.props.structure) : null
+    const products = this.props.structure ? StructureInformation.getProducts(this.props.structure) : []
     return (
       <dialog
         id="structure-overview"
@@ -117,6 +127,12 @@ export default class StructureInfo extends PureComponent<
                 {information.technologies.length > 0
                   ? <ul>{this.renderTechnologies(information)}</ul>
                   : <p>No use in a production system, language runtime, or established application library has been verified for this structure.</p>}
+              </section>
+              <section className="structure-technologies" aria-labelledby="structure-products-title">
+                <h3 id="structure-products-title">Real products</h3>
+                {products.length > 0
+                  ? <p>{this.renderProductLinks(products)}</p>
+                  : <p>No verified real products.</p>}
               </section>
             </>
           )}

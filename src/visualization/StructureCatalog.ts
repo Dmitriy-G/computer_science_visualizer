@@ -71,14 +71,14 @@ export interface StructureDefinition {
 
 export class StructureCatalog {
   public static readonly groups: readonly StructureGroupDefinition[] = [
-    { kind: 'linear', name: 'Linear', description: 'Arrays, linked blocks, and allocation pools', symbol: '[]' },
-    { kind: 'queue-priority', name: 'Queue / Priority', description: 'Queues, binary and meldable heaps, indexed priorities, and sliding windows', symbol: '⇥' },
-    { kind: 'trees', name: 'Trees', description: 'Search trees, range indexes, spatial indexes, and LSM storage', symbol: '⋔' },
-    { kind: 'string-text', name: 'String / Text', description: 'Text buffers, dictionaries, suffix indexes, and pattern-matching automata', symbol: 'Aa' },
-    { kind: 'graphs', name: 'Graphs', description: 'Constrained graphs, hyperedges, flow networks, and storage representations', symbol: '◇' },
-    { kind: 'set-union', name: 'Set / Union', description: 'Unique and counted values, ranked unions, packed bits, and interval ranges', symbol: '{}' },
-    { kind: 'hash-based', name: 'Hash-based', description: 'Probing, chained and dynamic hash indexes, perfect tables, and rings', symbol: '#' },
-    { kind: 'probabilistic', name: 'Probabilistic', description: 'Approximate membership, frequency and distinct counts, and stream sampling', symbol: '≈' },
+    { kind: 'linear', name: 'Linear', description: 'Keep elements in a sequence, with each item at a defined position.', symbol: '[]' },
+    { kind: 'queue-priority', name: 'Queue / Priority', description: 'Choose which item to process next by arrival order or priority.', symbol: '⇥' },
+    { kind: 'trees', name: 'Trees', description: 'Organize data into branching hierarchies for efficient lookup and updates.', symbol: '⋔' },
+    { kind: 'string-text', name: 'String / Text', description: 'Organize character sequences for efficient editing and pattern searches.', symbol: 'Aa' },
+    { kind: 'graphs', name: 'Graphs', description: 'Represent connections between entities to explore relationships and paths.', symbol: '◇' },
+    { kind: 'set-union', name: 'Set / Union', description: 'Track membership and group related elements to compare or combine collections.', symbol: '{}' },
+    { kind: 'hash-based', name: 'Hash-based', description: 'Turn keys into storage locations for fast lookup, insertion, and removal.', symbol: '#' },
+    { kind: 'probabilistic', name: 'Probabilistic', description: 'Use randomness to sample data or estimate answers with limited memory.', symbol: '≈' },
   ]
 
   public static readonly structures: readonly StructureDefinition[] = [

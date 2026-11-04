@@ -203,6 +203,12 @@ There is no minimum example count. Exclude competitive-programming collections,
 educational algorithm catalogs, and standalone projects without evidence of real
 application use. If no use can be verified, leave the list empty and state that
 limitation without claiming the structure is never used anywhere.
+Follow Real technologies with a separate Real products section, using the same
+comma-separated linked-name format as the algorithm dialog. Keep curated product
+labels in `StructureInfo/StructureProductCatalog.ts`, reuse the verified technology
+evidence links and variant notes, and deduplicate product names per structure.
+Standards alone do not identify a product. Show "No verified real products." when
+none are established. Include product names in structure search alongside technology names.
 Shared value/index dialogs belong in `src/components/ActionInput/`, with their
 request configuration and validation in `src/visualization/ActionInputRequest.ts`.
 Reuse them for Array, Linked list, Stack, Queue, Deque, Doubly linked list,

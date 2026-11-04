@@ -74,7 +74,7 @@ export class SuffixAutomaton extends StringTextModel {
     SuffixAutomaton.emit(observer, current.id, `Create a state for the new prefix ending in ${character}.`, 'cur.max = last.max + 1', 'NEW')
     let position: string | null = this.last
     while (position !== null && !this.states.get(position)!.transitions.has(character)) {
-      const state = this.states.get(position)!
+      const state: MutableSuffixState = this.states.get(position)!
       state.transitions.set(character, current.id)
       SuffixAutomaton.emit(observer, state.id, `Add ${character} → ${current.id}, then follow the suffix link.`, 'while p != null and missing(p, c): next[p][c] = cur; p = link[p]')
       position = state.link
@@ -91,7 +91,7 @@ export class SuffixAutomaton extends StringTextModel {
         this.states.set(split.id, split)
         SuffixAutomaton.emit(observer, split.id, `Clone ${target.id} with shorter maximum length ${split.maximum}.`, 'clone.next = q.next; clone.link = q.link; clone.max = p.max + 1', 'NEW')
         while (position !== null && this.states.get(position)!.transitions.get(character) === target.id) {
-          const predecessor = this.states.get(position)!
+          const predecessor: MutableSuffixState = this.states.get(position)!
           predecessor.transitions.set(character, split.id)
           SuffixAutomaton.emit(observer, predecessor.id, `Redirect ${character} to the cloned state.`, 'while next[p][c] == q: next[p][c] = clone; p = link[p]')
           position = predecessor.link

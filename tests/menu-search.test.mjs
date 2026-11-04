@@ -28,6 +28,11 @@ test('search ignores summaries, card descriptions, use-case explanations, and te
   assert.ok(!index.find('algorithms', 'logarithmic stack space').some((result) => result.action === 'quick-sort'))
 })
 
+test('structure search includes curated product names without indexing product usage notes', () => {
+  assert.ok(index.find('structures', 'Java').some((result) => result.structure === 'separate-chaining-hash-table'))
+  assert.ok(!index.find('structures', 'incrementally').some((result) => result.structure === 'separate-chaining-hash-table'))
+})
+
 test('target selection separates structures from algorithms and excludes Overview operations', () => {
   const structures = index.find('structures', 'array')
   assert.ok(structures.length > 0)

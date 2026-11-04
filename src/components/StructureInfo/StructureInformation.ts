@@ -8,6 +8,7 @@ import type { StructureKind } from '../../visualization/Scene.ts'
 import { LinearStructureInformation } from './LinearStructureInformation.ts'
 import { PriorityStructureInformation } from './PriorityStructureInformation.ts'
 import { ExtendedGraphStructureInformation } from './ExtendedGraphStructureInformation.ts'
+import { StructureProductCatalog } from './StructureProductCatalog.ts'
 
 export interface StructureUseCase {
   readonly area: string
@@ -1088,5 +1089,9 @@ export class StructureInformation {
 
   public static get(structure: StructureKind): StructureOverview {
     return this.overviews[structure]
+  }
+
+  public static getProducts(structure: StructureKind): readonly StructureTechnology[] {
+    return StructureProductCatalog.get(this.overviews[structure].technologies)
   }
 }
