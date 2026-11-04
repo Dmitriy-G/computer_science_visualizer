@@ -8,7 +8,9 @@ Repository: [Dmitriy-G/computer_science_visualizer](https://github.com/Dmitriy-G
 
 ## Explore
 
-The root menu offers **Data Structures Overview** and **Data Structures Algorithms**.
+The root menu offers **Fundamental Data Structures**, **Advanced Data Structures**,
+and **Data Structures Algorithms**. Structure subjects and their assignments are
+defined in `src/components/MainMenu/MenuStructureCatalog.ts`.
 Algorithms contains **Sorting** and **Graphs Traversal**. Sorting contains
 **Array**, with **Bubble Sort**, **Selection Sort**, **Insertion Sort**,
 **Binary Insertion Sort**, **Merge Sort**, **Quick Sort**, **Heap Sort**, **Shell Sort**,
@@ -44,7 +46,8 @@ of their use of the specific algorithm. Unverified
 algorithms display an explicit educational-example notice. Overview operations
 such as Add, Search, and Clear do not receive this section.
 
-Choose **Data Structures Overview**, then a group:
+Canonical model families are listed below. Their storage folders are independent
+of the Fundamental and Advanced menu subjects:
 
 | Group | Structures |
 | --- | --- |
@@ -424,7 +427,8 @@ and [visualization flow](docs/rules/visualization-flow.md) for project guidance.
 
 ## Applied structure examples
 
-Nineteen additional structures fit the existing Overview groups. All start with
+The original nineteen applied structures retain their canonical model families;
+the seven storage, vector, and integrity indexes below extend this set to 26. All start with
 ten logical entries and use automatic playback, validated inputs, a full Reset,
 and independently recorded scenes. Structure information identifies the real
 technology and the implemented teaching variant. New graph BFS/DFS operations
@@ -469,3 +473,47 @@ operation work, and reserve fixed maximum bounds for the full session.
 
 The remaining structures requiring new groups are recorded in
 [coverage.md](coverage.md) for future implementation.
+
+
+## Storage, vector, and integrity indexes
+
+The seven categorized entries formerly deferred in `coverage.md` are available
+under Advanced Data Structures. Each starts with ten records or vectors, uses
+validated inputs, and has action-owned animated playback and complexity information.
+All offer Inspect storage and incremental Clear.
+
+| Advanced subject | Structure | Additional operations and representation |
+| --- | --- | --- |
+| Storage Indexes | BRIN / Block Range Index | Append records; query inclusive value ranges. Three-record page-range min/max summaries prune candidates; all candidate records receive exact rechecks. Summaries are maintained eagerly. |
+| Storage Indexes | SSTable | Build a replacement sorted immutable key/value table; look up a key. Three-record blocks have last-key fences, encoded byte positions, and explicitly simulated data-block reads. |
+| Storage Indexes | Sparse Primary Index / Index Summary | Build replacement sorted key/value records; look up a key. Sample every third key and its byte position, then scan at most three records. This direct-data variant omits the extra primary-index level of Cassandra summaries. |
+| Storage Indexes | Sparse Offset Index | Append log records; read by logical offset. Every third record stores an offset-to-byte checkpoint, followed by a bounded scan. Clear preserves logical offset allocation. |
+| Storage Indexes | Time Index | Append timestamp/value records; find the earliest physical offset with timestamp at least the query. Nondecreasing prefix-maximum checkpoints at three-record boundaries handle duplicate and out-of-order timestamps. This conservative boundary variant differs from Kafka batch metadata. |
+| Spatial Indexes | Inverted File Index (IVF) | Train/build replacement vectors; query nearest neighbor with configurable list probes. Eight deterministic Lloyd iterations train up to eight centroids; actual inverted lists retain full 2D vectors. All-list probing is exact; partial probing may miss the global nearest vector. |
+| Integrity | Content-addressed layer references / hash chain | Add a layer with an existing parent or a new root; look up content; read ancestry; verify local identities. SHA-256 DiffIDs share payload blobs. ChainIDs include full parent and content digest strings with the Moby space-separated hash rule. Identical parent/content pairs reuse a reference. |
+
+Record builds accept 1..64 distinct safe-integer `key:value` pairs. Log and BRIN
+examples retain at most 64 records. Their UTF-8 numeric text encoding determines
+byte positions; storage reads are simulated without real files, disk I/O, caching,
+compression, or recovery. These SSTables do not offer mutable insert/delete or
+compaction. Offset IDs and layer IDs are not reused after Clear.
+
+IVF accepts 1..64 integer `x:y` vectors in -1024..1024 and 1..8 clusters, no more
+than the distinct input vector count. Queries request 1..trained-cluster-count
+probes. Empty centroids retain their prior coordinates; equal-distance ties use
+stable IDs. Displayed centroid coordinates are rounded but calculations retain
+full precision. This is IVF-flat coarse quantization, without product quantization.
+
+Layer payloads are decimal UTF-8 integers rather than tar archives. A root ChainID
+equals its DiffID; a child ChainID is SHA-256 of `parentChainID + ' ' + DiffID`,
+including each `sha256:` prefix. The diagram abbreviates hashes while identity
+checks use full digests. Verification checks local consistency; no filesystem
+layers, mounts, manifests, or external trusted-root protocol are implemented.
+
+Primary references: [PostgreSQL BRIN](https://www.postgresql.org/docs/current/brin.html),
+[RocksDB block-based tables](https://github.com/facebook/rocksdb/wiki/rocksdb-blockbasedtable-format),
+[Cassandra storage](https://cassandra.apache.org/doc/stable/cassandra/architecture/storage-engine.html),
+[Kafka OffsetIndex](https://github.com/apache/kafka/blob/trunk/storage/src/main/java/org/apache/kafka/storage/internals/log/OffsetIndex.java),
+[Kafka TimeIndex](https://github.com/apache/kafka/blob/trunk/storage/src/main/java/org/apache/kafka/storage/internals/log/TimeIndex.java),
+[FAISS IVF](https://github.com/facebookresearch/faiss/wiki/Faiss-indexes), and
+[Moby ChainIDs](https://github.com/moby/moby/blob/v28.0.0/layer/layer.go).

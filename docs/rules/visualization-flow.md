@@ -16,8 +16,8 @@
    or Escape and restore focus to the header search icon. Keep back buttons in
    ordinary category and group navigation.
 2. Open the menu to see **Fundamental Data Structures**, **Advanced Data Structures**,
-   and **Data Structures Algorithms**. Structure assignments follow `new_categories.md`
-   through `MainMenu/MenuStructureCatalog.ts`, independently of canonical model folders.
+   and **Data Structures Algorithms**. Structure assignments are defined in `MainMenu/MenuStructureCatalog.ts`,
+   independently of canonical model folders.
    Fundamental contains Linear, Queue / Priority, Trees, String / Text, Graphs,
    Set / Union, and Hash-based. Advanced contains Sequences, Sparse Arrays / Matrices,
    Queues / Heaps, Search Trees, Multiway Trees, Range Queries, Spatial Indexes,

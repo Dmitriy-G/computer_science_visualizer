@@ -3,6 +3,76 @@ import type { AppliedStructureKind } from '../../visualization/AppliedStructureK
 
 export class AppliedStructureInformation {
   public static readonly overviews: Record<AppliedStructureKind, StructureOverview> = {
+    'brin': {
+      summary: 'BRIN groups physically adjacent records under compact min/max summaries. This example eagerly summarizes three-record groups and exactly rechecks all candidate records, with at most 64 safe-integer values.',
+      useCases: [
+        { area: 'Range pruning', description: 'Discard page ranges whose summaries cannot overlap a query.' },
+        { area: 'Correlated records', description: 'Summarize neighboring records that have similar values.' },
+        { area: 'Lossy candidates', description: 'Distinguish a summary hit from an exact record match.' },
+        { area: 'Incremental summaries', description: 'Widen a range summary when a new record is appended.' },
+      ],
+      technologies: [{ name: 'PostgreSQL BRIN', url: 'https://www.postgresql.org/docs/current/brin.html', usage: 'PostgreSQL uses page-range summaries and rechecks candidate tuples. This eager min/max lesson uses record groups rather than actual pages.' }],
+    },
+    'sstable': {
+      summary: 'An SSTable stores sorted immutable key/value records with a block index. This example encodes numeric records into logical UTF-8 bytes, stores three-record blocks, and simulates indexed block reads without disk access.',
+      useCases: [
+        { area: 'Immutable storage', description: 'Replace a complete sorted table with a new build.' },
+        { area: 'Block lookup', description: 'Find the first block whose last key can contain a target.' },
+        { area: 'Read accounting', description: 'Identify the byte position and length of the simulated block read.' },
+        { area: 'Ordered records', description: 'Keep distinct keys sorted inside immutable blocks.' },
+      ],
+      technologies: [{ name: 'RocksDB block-based tables', url: 'https://github.com/facebook/rocksdb/wiki/rocksdb-blockbasedtable-format', usage: 'RocksDB block-based SST files use an index to locate data blocks. This numeric variant excludes compression, restart arrays, filters, and real file reads.' }],
+    },
+    'sparse-primary-index': {
+      summary: 'A sparse primary index samples keys and byte positions from sorted records. This direct-data variant samples every third unique key and bounds lookup scans to one three-record interval; Cassandra summaries instead sample a separate primary-index file.',
+      useCases: [
+        { area: 'Index sampling', description: 'Retain only selected keys instead of indexing every record.' },
+        { area: 'Byte seeks', description: 'Locate a bounded scan interval through a stored byte position.' },
+        { area: 'Ordered lookup', description: 'Use the predecessor sample for exact-key queries.' },
+        { area: 'Index summaries', description: 'Compare the sample size with the complete sorted representation.' },
+      ],
+      technologies: [{ name: 'Apache Cassandra index summaries', url: 'https://cassandra.apache.org/doc/stable/cassandra/architecture/storage-engine.html', usage: 'Cassandra Summary.db samples entries from Index.db, which points into Data.db. This simplified one-level lesson samples data records directly.' }],
+    },
+    'sparse-offset-index': {
+      summary: 'A sparse offset index translates a logical log offset to a nearby encoded byte position. This sequential Kafka-inspired variant samples every third retained record and scans at most three records after a simulated seek; logical offsets survive clear.',
+      useCases: [
+        { area: 'Log lookup', description: 'Read a record using its logical offset.' },
+        { area: 'Sparse checkpoints', description: 'Store byte positions for only selected offsets.' },
+        { area: 'Variable record sizes', description: 'Distinguish record positions from encoded byte positions.' },
+        { area: 'Segment scans', description: 'Finish lookup with a bounded forward scan after a seek.' },
+      ],
+      technologies: [{ name: 'Apache Kafka offset indexes', url: 'https://github.com/apache/kafka/blob/trunk/storage/src/main/java/org/apache/kafka/storage/internals/log/OffsetIndex.java', usage: 'Kafka offset indexes map logical offsets to physical positions. This text-encoded teaching segment omits batches, memory mapping, and disk files.' }],
+    },
+    'time-index': {
+      summary: 'A time index narrows timestamp queries over a retained log. This conservative three-record boundary variant stores prefix maxima, handles duplicate and out-of-order timestamps, and returns the first physical record at or after the requested time.',
+      useCases: [
+        { area: 'Timestamp lookup', description: 'Find the earliest qualifying log offset for a requested time.' },
+        { area: 'Out-of-order events', description: 'Avoid assuming record timestamps are sorted.' },
+        { area: 'Conservative pruning', description: 'Skip a prefix only when its maximum is strictly below the target.' },
+        { area: 'Offset translation', description: 'Resolve the chosen checkpoint to encoded log byte positions.' },
+      ],
+      technologies: [{ name: 'Apache Kafka time indexes', url: 'https://github.com/apache/kafka/blob/trunk/storage/src/main/java/org/apache/kafka/storage/internals/log/TimeIndex.java', usage: 'Kafka maintains monotone timestamp index entries for log lookup. This lesson uses prefix-maximum block-end checkpoints and strict-less-than pruning, rather than the Kafka batch format.' }],
+    },
+    'ivf-index': {
+      summary: 'An IVF-flat index partitions vectors into centroid-owned inverted lists. This example trains up to eight coarse centroids in two dimensions using eight deterministic Lloyd iterations and probes a chosen number of lists; fewer probes can miss the global nearest vector.',
+      useCases: [
+        { area: 'Vector partitioning', description: 'Assign each vector to its nearest coarse centroid.' },
+        { area: 'Similarity search', description: 'Compare a query with vectors in selected inverted lists.' },
+        { area: 'Accuracy tradeoffs', description: 'Increase list probes to improve candidate coverage.' },
+        { area: 'Exact baseline', description: 'Probe every list to obtain the exact nearest stored vector.' },
+      ],
+      technologies: [{ name: 'FAISS IVF-flat indexes', url: 'https://github.com/facebookresearch/faiss/wiki/Faiss-indexes', usage: 'FAISS IVF assigns vectors to coarse cells and searches selected lists using nprobe. This uncompressed 2D variant uses deterministic bounded training and no product quantization.' }],
+    },
+    'content-addressed-layers': {
+      summary: 'Content-addressed layers share payloads by DiffID and identify parent chains by ChainID. This example hashes decimal UTF-8 integer payloads, applies the Moby parent-space-diff hash rule with full SHA-256 identifiers, and stores at most 64 immutable references; payloads are not tar archives.',
+      useCases: [
+        { area: 'Content identity', description: 'Locate a blob using the digest of its bytes.' },
+        { area: 'Shared storage', description: 'Reuse one payload blob across different parent chains.' },
+        { area: 'Parent identity', description: 'Distinguish identical payloads attached to different ancestry.' },
+        { area: 'Hash verification', description: 'Recompute local payload and chain identities without modifying references.' },
+      ],
+      technologies: [{ name: 'Moby layer ChainIDs', url: 'https://github.com/moby/moby/blob/v28.0.0/layer/layer.go', usage: 'Moby derives ChainIDs from ordered DiffIDs, hashing the parent identity, a space, and the next DiffID. This numeric variant excludes tar processing and filesystem layer behavior.' }],
+    },
     'append-only-log': {
       summary: 'An append-only log retains ordered offset/value records for repeatable reads. This in-memory example groups offsets into four-record segments, allows 64 retained records, and keeps offset allocation across clear.',
       useCases: [

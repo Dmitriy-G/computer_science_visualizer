@@ -1,3 +1,63 @@
+import BRINAppend from './Trees/BRIN/Append/Append.tsx'
+import { AppendAnimation as BRINAppendSequence } from './Trees/BRIN/Append/AppendAnimation.ts'
+import BRINSearchRange from './Trees/BRIN/SearchRange/SearchRange.tsx'
+import { SearchRangeAnimation as BRINSearchRangeSequence } from './Trees/BRIN/SearchRange/SearchRangeAnimation.ts'
+import BRINInspectStorage from './Trees/BRIN/InspectStorage/InspectStorage.tsx'
+import { InspectStorageAnimation as BRINInspectStorageSequence } from './Trees/BRIN/InspectStorage/InspectStorageAnimation.ts'
+import BRINClear from './Trees/BRIN/Clear/Clear.tsx'
+import { ClearAnimation as BRINClearSequence } from './Trees/BRIN/Clear/ClearAnimation.ts'
+import SSTableBuild from './Trees/SSTable/Build/Build.tsx'
+import { BuildAnimation as SSTableBuildSequence } from './Trees/SSTable/Build/BuildAnimation.ts'
+import SSTableSearchByKey from './Trees/SSTable/SearchByKey/SearchByKey.tsx'
+import { SearchByKeyAnimation as SSTableSearchByKeySequence } from './Trees/SSTable/SearchByKey/SearchByKeyAnimation.ts'
+import SSTableInspectStorage from './Trees/SSTable/InspectStorage/InspectStorage.tsx'
+import { InspectStorageAnimation as SSTableInspectStorageSequence } from './Trees/SSTable/InspectStorage/InspectStorageAnimation.ts'
+import SSTableClear from './Trees/SSTable/Clear/Clear.tsx'
+import { ClearAnimation as SSTableClearSequence } from './Trees/SSTable/Clear/ClearAnimation.ts'
+import SparsePrimaryIndexBuild from './Trees/SparsePrimaryIndex/Build/Build.tsx'
+import { BuildAnimation as SparsePrimaryIndexBuildSequence } from './Trees/SparsePrimaryIndex/Build/BuildAnimation.ts'
+import SparsePrimaryIndexSearchByKey from './Trees/SparsePrimaryIndex/SearchByKey/SearchByKey.tsx'
+import { SearchByKeyAnimation as SparsePrimaryIndexSearchByKeySequence } from './Trees/SparsePrimaryIndex/SearchByKey/SearchByKeyAnimation.ts'
+import SparsePrimaryIndexInspectStorage from './Trees/SparsePrimaryIndex/InspectStorage/InspectStorage.tsx'
+import { InspectStorageAnimation as SparsePrimaryIndexInspectStorageSequence } from './Trees/SparsePrimaryIndex/InspectStorage/InspectStorageAnimation.ts'
+import SparsePrimaryIndexClear from './Trees/SparsePrimaryIndex/Clear/Clear.tsx'
+import { ClearAnimation as SparsePrimaryIndexClearSequence } from './Trees/SparsePrimaryIndex/Clear/ClearAnimation.ts'
+import SparseOffsetIndexAppend from './Trees/SparseOffsetIndex/Append/Append.tsx'
+import { AppendAnimation as SparseOffsetIndexAppendSequence } from './Trees/SparseOffsetIndex/Append/AppendAnimation.ts'
+import SparseOffsetIndexReadOffset from './Trees/SparseOffsetIndex/ReadOffset/ReadOffset.tsx'
+import { ReadOffsetAnimation as SparseOffsetIndexReadOffsetSequence } from './Trees/SparseOffsetIndex/ReadOffset/ReadOffsetAnimation.ts'
+import SparseOffsetIndexInspectStorage from './Trees/SparseOffsetIndex/InspectStorage/InspectStorage.tsx'
+import { InspectStorageAnimation as SparseOffsetIndexInspectStorageSequence } from './Trees/SparseOffsetIndex/InspectStorage/InspectStorageAnimation.ts'
+import SparseOffsetIndexClear from './Trees/SparseOffsetIndex/Clear/Clear.tsx'
+import { ClearAnimation as SparseOffsetIndexClearSequence } from './Trees/SparseOffsetIndex/Clear/ClearAnimation.ts'
+import TimeIndexAppend from './Trees/TimeIndex/Append/Append.tsx'
+import { AppendAnimation as TimeIndexAppendSequence } from './Trees/TimeIndex/Append/AppendAnimation.ts'
+import TimeIndexSearchTimestamp from './Trees/TimeIndex/SearchTimestamp/SearchTimestamp.tsx'
+import { SearchTimestampAnimation as TimeIndexSearchTimestampSequence } from './Trees/TimeIndex/SearchTimestamp/SearchTimestampAnimation.ts'
+import TimeIndexInspectStorage from './Trees/TimeIndex/InspectStorage/InspectStorage.tsx'
+import { InspectStorageAnimation as TimeIndexInspectStorageSequence } from './Trees/TimeIndex/InspectStorage/InspectStorageAnimation.ts'
+import TimeIndexClear from './Trees/TimeIndex/Clear/Clear.tsx'
+import { ClearAnimation as TimeIndexClearSequence } from './Trees/TimeIndex/Clear/ClearAnimation.ts'
+import IVFIndexBuild from './Trees/IVFIndex/Build/Build.tsx'
+import { BuildAnimation as IVFIndexBuildSequence } from './Trees/IVFIndex/Build/BuildAnimation.ts'
+import IVFIndexNearestNeighbor from './Trees/IVFIndex/NearestNeighbor/NearestNeighbor.tsx'
+import { NearestNeighborAnimation as IVFIndexNearestNeighborSequence } from './Trees/IVFIndex/NearestNeighbor/NearestNeighborAnimation.ts'
+import IVFIndexInspectStorage from './Trees/IVFIndex/InspectStorage/InspectStorage.tsx'
+import { InspectStorageAnimation as IVFIndexInspectStorageSequence } from './Trees/IVFIndex/InspectStorage/InspectStorageAnimation.ts'
+import IVFIndexClear from './Trees/IVFIndex/Clear/Clear.tsx'
+import { ClearAnimation as IVFIndexClearSequence } from './Trees/IVFIndex/Clear/ClearAnimation.ts'
+import ContentAddressedLayersAddLayer from './HashBased/ContentAddressedLayers/AddLayer/AddLayer.tsx'
+import { AddLayerAnimation as ContentAddressedLayersAddLayerSequence } from './HashBased/ContentAddressedLayers/AddLayer/AddLayerAnimation.ts'
+import ContentAddressedLayersLookupContent from './HashBased/ContentAddressedLayers/LookupContent/LookupContent.tsx'
+import { LookupContentAnimation as ContentAddressedLayersLookupContentSequence } from './HashBased/ContentAddressedLayers/LookupContent/LookupContentAnimation.ts'
+import ContentAddressedLayersReadChain from './HashBased/ContentAddressedLayers/ReadChain/ReadChain.tsx'
+import { ReadChainAnimation as ContentAddressedLayersReadChainSequence } from './HashBased/ContentAddressedLayers/ReadChain/ReadChainAnimation.ts'
+import ContentAddressedLayersVerify from './HashBased/ContentAddressedLayers/Verify/Verify.tsx'
+import { VerifyAnimation as ContentAddressedLayersVerifySequence } from './HashBased/ContentAddressedLayers/Verify/VerifyAnimation.ts'
+import ContentAddressedLayersInspectStorage from './HashBased/ContentAddressedLayers/InspectStorage/InspectStorage.tsx'
+import { InspectStorageAnimation as ContentAddressedLayersInspectStorageSequence } from './HashBased/ContentAddressedLayers/InspectStorage/InspectStorageAnimation.ts'
+import ContentAddressedLayersClear from './HashBased/ContentAddressedLayers/Clear/Clear.tsx'
+import { ClearAnimation as ContentAddressedLayersClearSequence } from './HashBased/ContentAddressedLayers/Clear/ClearAnimation.ts'
 import type { ReactNode } from 'react'
 import type { ActionKind } from '../../visualization/ActionCatalog.ts'
 import type { AlgorithmInformation } from '../../visualization/AlgorithmInformation.ts'
@@ -198,6 +258,65 @@ import { DepthFirstAnimation as AddressSpaceGraphDepthFirstSequence } from '../D
 export class AppliedFeatures {
   public static render(action: ActionKind, props: StructuredLinearActionProps, session: number): ReactNode {
     switch (props.model.kind) {
+      case 'brin':
+        switch (action) {
+          case 'insert-end': return <BRINAppend key={session} {...props} />
+          case 'search-overlap': return <BRINSearchRange key={session} {...props} />
+          case 'inspect-storage': return <BRINInspectStorage key={session} {...props} />
+          case 'clear': return <BRINClear key={session} {...props} />
+        }
+        break
+      case 'sstable':
+        switch (action) {
+          case 'build-values': return <SSTableBuild key={session} {...props} />
+          case 'search-value': return <SSTableSearchByKey key={session} {...props} />
+          case 'inspect-storage': return <SSTableInspectStorage key={session} {...props} />
+          case 'clear': return <SSTableClear key={session} {...props} />
+        }
+        break
+      case 'sparse-primary-index':
+        switch (action) {
+          case 'build-values': return <SparsePrimaryIndexBuild key={session} {...props} />
+          case 'search-value': return <SparsePrimaryIndexSearchByKey key={session} {...props} />
+          case 'inspect-storage': return <SparsePrimaryIndexInspectStorage key={session} {...props} />
+          case 'clear': return <SparsePrimaryIndexClear key={session} {...props} />
+        }
+        break
+      case 'sparse-offset-index':
+        switch (action) {
+          case 'insert-end': return <SparseOffsetIndexAppend key={session} {...props} />
+          case 'search-index': return <SparseOffsetIndexReadOffset key={session} {...props} />
+          case 'inspect-storage': return <SparseOffsetIndexInspectStorage key={session} {...props} />
+          case 'clear': return <SparseOffsetIndexClear key={session} {...props} />
+        }
+        break
+      case 'time-index':
+        switch (action) {
+          case 'insert-end': return <TimeIndexAppend key={session} {...props} />
+          case 'search-value': return <TimeIndexSearchTimestamp key={session} {...props} />
+          case 'inspect-storage': return <TimeIndexInspectStorage key={session} {...props} />
+          case 'clear': return <TimeIndexClear key={session} {...props} />
+        }
+        break
+      case 'ivf-index':
+        switch (action) {
+          case 'build-values': return <IVFIndexBuild key={session} {...props} />
+          case 'nearest-neighbor': return <IVFIndexNearestNeighbor key={session} {...props} />
+          case 'inspect-storage': return <IVFIndexInspectStorage key={session} {...props} />
+          case 'clear': return <IVFIndexClear key={session} {...props} />
+        }
+        break
+      case 'content-addressed-layers':
+        switch (action) {
+          case 'insert': return <ContentAddressedLayersAddLayer key={session} {...props} />
+          case 'search-value': return <ContentAddressedLayersLookupContent key={session} {...props} />
+          case 'browse-node': return <ContentAddressedLayersReadChain key={session} {...props} />
+          case 'verify-proof': return <ContentAddressedLayersVerify key={session} {...props} />
+          case 'inspect-storage': return <ContentAddressedLayersInspectStorage key={session} {...props} />
+          case 'clear': return <ContentAddressedLayersClear key={session} {...props} />
+        }
+        break
+
       case 'append-only-log':
         switch (action) {
           case 'insert-end': return <AppendOnlyLogAppend key={session} {...props} />
@@ -377,6 +496,65 @@ export class AppliedFeatures {
     const size = model instanceof AppliedGraphModel && (action === 'breadth-first' || action === 'depth-first' || action === 'inspect-storage')
       ? model.getVertexIds().length : model.length
     switch (model.kind) {
+      case 'brin':
+        switch (action) {
+          case 'insert-end': return BRINAppendSequence.describe(size)
+          case 'search-overlap': return BRINSearchRangeSequence.describe(size)
+          case 'inspect-storage': return BRINInspectStorageSequence.describe(size)
+          case 'clear': return BRINClearSequence.describe(size)
+        }
+        break
+      case 'sstable':
+        switch (action) {
+          case 'build-values': return SSTableBuildSequence.describe(size)
+          case 'search-value': return SSTableSearchByKeySequence.describe(size)
+          case 'inspect-storage': return SSTableInspectStorageSequence.describe(size)
+          case 'clear': return SSTableClearSequence.describe(size)
+        }
+        break
+      case 'sparse-primary-index':
+        switch (action) {
+          case 'build-values': return SparsePrimaryIndexBuildSequence.describe(size)
+          case 'search-value': return SparsePrimaryIndexSearchByKeySequence.describe(size)
+          case 'inspect-storage': return SparsePrimaryIndexInspectStorageSequence.describe(size)
+          case 'clear': return SparsePrimaryIndexClearSequence.describe(size)
+        }
+        break
+      case 'sparse-offset-index':
+        switch (action) {
+          case 'insert-end': return SparseOffsetIndexAppendSequence.describe(size)
+          case 'search-index': return SparseOffsetIndexReadOffsetSequence.describe(size)
+          case 'inspect-storage': return SparseOffsetIndexInspectStorageSequence.describe(size)
+          case 'clear': return SparseOffsetIndexClearSequence.describe(size)
+        }
+        break
+      case 'time-index':
+        switch (action) {
+          case 'insert-end': return TimeIndexAppendSequence.describe(size)
+          case 'search-value': return TimeIndexSearchTimestampSequence.describe(size)
+          case 'inspect-storage': return TimeIndexInspectStorageSequence.describe(size)
+          case 'clear': return TimeIndexClearSequence.describe(size)
+        }
+        break
+      case 'ivf-index':
+        switch (action) {
+          case 'build-values': return IVFIndexBuildSequence.describe(size)
+          case 'nearest-neighbor': return IVFIndexNearestNeighborSequence.describe(size)
+          case 'inspect-storage': return IVFIndexInspectStorageSequence.describe(size)
+          case 'clear': return IVFIndexClearSequence.describe(size)
+        }
+        break
+      case 'content-addressed-layers':
+        switch (action) {
+          case 'insert': return ContentAddressedLayersAddLayerSequence.describe(size)
+          case 'search-value': return ContentAddressedLayersLookupContentSequence.describe(size)
+          case 'browse-node': return ContentAddressedLayersReadChainSequence.describe(size)
+          case 'verify-proof': return ContentAddressedLayersVerifySequence.describe(size)
+          case 'inspect-storage': return ContentAddressedLayersInspectStorageSequence.describe(size)
+          case 'clear': return ContentAddressedLayersClearSequence.describe(size)
+        }
+        break
+
       case 'append-only-log':
         switch (action) {
           case 'insert-end': return AppendOnlyLogAppendSequence.describe(size)

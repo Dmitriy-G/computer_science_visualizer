@@ -4,6 +4,13 @@ export class StructureProductCatalog {
   // Product labels are curated against existing, verified technology entries.
   // Reuse their evidence links and usage notes instead of inferring downstream users.
   private static readonly names: Readonly<Record<string, string>> = {
+    'PostgreSQL BRIN': 'PostgreSQL',
+    'RocksDB block-based tables': 'RocksDB',
+    'Apache Cassandra index summaries': 'Apache Cassandra',
+    'Apache Kafka offset indexes': 'Apache Kafka',
+    'Apache Kafka time indexes': 'Apache Kafka',
+    'FAISS IVF-flat indexes': 'FAISS',
+    'Moby layer ChainIDs': 'Docker',
     'NumPy ndarray': 'NumPy',
     'SciPy COO arrays': 'SciPy',
     'SciPy CSC arrays': 'SciPy',

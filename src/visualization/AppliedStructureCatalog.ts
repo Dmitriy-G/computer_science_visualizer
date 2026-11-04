@@ -1,3 +1,17 @@
+import { BRIN } from '../components/DataStructuresOverview/Trees/BRIN/BRIN.ts'
+import { BRINLayout } from '../components/DataStructuresOverview/Trees/BRIN/BRINLayout.ts'
+import { SSTable } from '../components/DataStructuresOverview/Trees/SSTable/SSTable.ts'
+import { SSTableLayout } from '../components/DataStructuresOverview/Trees/SSTable/SSTableLayout.ts'
+import { SparsePrimaryIndex } from '../components/DataStructuresOverview/Trees/SparsePrimaryIndex/SparsePrimaryIndex.ts'
+import { SparsePrimaryIndexLayout } from '../components/DataStructuresOverview/Trees/SparsePrimaryIndex/SparsePrimaryIndexLayout.ts'
+import { SparseOffsetIndex } from '../components/DataStructuresOverview/Trees/SparseOffsetIndex/SparseOffsetIndex.ts'
+import { SparseOffsetIndexLayout } from '../components/DataStructuresOverview/Trees/SparseOffsetIndex/SparseOffsetIndexLayout.ts'
+import { TimeIndex } from '../components/DataStructuresOverview/Trees/TimeIndex/TimeIndex.ts'
+import { TimeIndexLayout } from '../components/DataStructuresOverview/Trees/TimeIndex/TimeIndexLayout.ts'
+import { IVFIndex } from '../components/DataStructuresOverview/Trees/IVFIndex/IVFIndex.ts'
+import { IVFIndexLayout } from '../components/DataStructuresOverview/Trees/IVFIndex/IVFIndexLayout.ts'
+import { ContentAddressedLayers } from '../components/DataStructuresOverview/HashBased/ContentAddressedLayers/ContentAddressedLayers.ts'
+import { ContentAddressedLayersLayout } from '../components/DataStructuresOverview/HashBased/ContentAddressedLayers/ContentAddressedLayersLayout.ts'
 import type { StructureKind, Scene } from './Scene.ts'
 import type { LinearFrame } from './LinearModel.ts'
 import { AppliedModel } from './AppliedModel.ts'
@@ -55,6 +69,14 @@ export class AppliedStructureCatalog {
 
   public static createDefault(kind: StructureKind): AppliedModel | null {
     switch (kind) {
+      case 'brin': return BRIN.createDefault()
+      case 'sstable': return SSTable.createDefault()
+      case 'sparse-primary-index': return SparsePrimaryIndex.createDefault()
+      case 'sparse-offset-index': return SparseOffsetIndex.createDefault()
+      case 'time-index': return TimeIndex.createDefault()
+      case 'ivf-index': return IVFIndex.createDefault()
+      case 'content-addressed-layers': return ContentAddressedLayers.createDefault()
+
       case 'append-only-log': return AppendOnlyLog.createDefault()
       case 'xarray': return XArray.createDefault()
       case 'fanout-array': return FanoutArray.createDefault()
@@ -80,6 +102,14 @@ export class AppliedStructureCatalog {
 
   public static createScene(model: AppliedModel, frame: LinearFrame = {}): Scene {
     switch (model.kind) {
+      case 'brin': return new BRINLayout().create(model, frame)
+      case 'sstable': return new SSTableLayout().create(model, frame)
+      case 'sparse-primary-index': return new SparsePrimaryIndexLayout().create(model, frame)
+      case 'sparse-offset-index': return new SparseOffsetIndexLayout().create(model, frame)
+      case 'time-index': return new TimeIndexLayout().create(model, frame)
+      case 'ivf-index': return new IVFIndexLayout().create(model, frame)
+      case 'content-addressed-layers': return new ContentAddressedLayersLayout().create(model, frame)
+
       case 'append-only-log': return new AppendOnlyLogLayout().create(model, frame)
       case 'xarray': return new XArrayLayout().create(model, frame)
       case 'fanout-array': return new FanoutArrayLayout().create(model, frame)

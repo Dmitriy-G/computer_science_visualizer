@@ -6,7 +6,7 @@ menu hierarchy: main category, subcategory, structure, then action. Use
 `DataStructuresOverview` and `DataStructuresAlgorithms` for the canonical feature
 folders, with consistent PascalCase spelling. The menu splits Overview into
 Fundamental Data Structures and Advanced Data Structures using
-`MainMenu/MenuStructureCatalog.ts` and the assignments in `new_categories.md`.
+`MainMenu/MenuStructureCatalog.ts`.
 These subject groups do not relocate canonical models or algorithm actions.
 Use concise subject labels such as Probabilistic, Spatial Indexes, and Memory / I/O.
 
@@ -508,3 +508,36 @@ neighborhood, directory, overflow, perfect-table, and token policies distinct.
 Use StructuredHashInput through ActionInputRequest for input; never coerce the
 second value into a range bound or CSV key sets through a numeric callback.
 HashTableHash provides seeded exact affine arithmetic for the variants using it.
+
+
+## Storage and integrity index lessons
+
+Keep BRIN, SSTable, SparsePrimaryIndex, SparseOffsetIndex, TimeIndex, and IVFIndex
+under canonical `DataStructuresOverview/Trees/` folders. Keep ContentAddressedLayers
+under `DataStructuresOverview/HashBased/`. MenuStructureCatalog assigns the five
+storage/log indexes to Advanced > Storage Indexes, IVF to Spatial Indexes, and
+layer references to Integrity. AppliedStructureDefinitions, AppliedStructureCatalog,
+AppliedActionCatalog, AppliedInput, and AppliedFeatures integrate these models.
+Use SortedRecords only for shared safe-integer key/value parsing, deterministic
+merge sorting, and byte-position calculation. ByteLog shares encoded sequential
+record metadata, monotone offset allocation, cloning, and incremental release;
+SparseOffsetIndex and TimeIndex retain their distinct checkpoint and search logic.
+Each structure owns its model, layout wrapper, and action component/CSS/sequence
+folders. Reuse AppliedLayout, LinearAnimation, and StructuredLinearAction.
+
+BRIN eagerly maintains three-record min/max ranges and exactly rechecks candidates.
+SSTable builds immutable sorted three-record blocks with last-key fences and explicit
+simulated reads. SparsePrimaryIndex samples every third data key and scans only the
+selected interval. SparseOffsetIndex samples every third record; TimeIndex uses
+prefix maxima at three-record boundaries and skips only maxima strictly below the
+query to handle out-of-order and duplicate timestamps. Record byte positions follow
+the documented numeric UTF-8 serialization, without claiming production file formats.
+
+IVF uses actual centroid-owned inverted lists, eight deterministic Lloyd iterations,
+and configurable probing; disclose partial-probe approximation and uncompressed
+IVF-flat storage. Layer references use the existing SHA256 implementation, full
+DiffID/ChainID identities, shared numeric payloads, immutable parents, and child-first
+release. Display hashes in abbreviated form but never compare abbreviated digests.
+Reject invalid builds and exhausted bounds before changing canonical storage or IDs.
+Document representation variants and excluded production behavior in README and
+structure information. Keep the None entries in coverage.md deferred.

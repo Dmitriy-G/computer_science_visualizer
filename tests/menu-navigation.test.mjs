@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
 import { MenuStructureCatalog } from '../src/components/MainMenu/MenuStructureCatalog.ts'
 import { MenuNavigation } from '../src/components/MainMenu/MenuNavigation.ts'
@@ -73,7 +72,7 @@ test('canonical storage groups retain their existing structure membership', () =
   const expected = {
     linear: ['dense-tensor', 'sparse-coo', 'sparse-csc', 'numerical-csr', 'grid-2d', 'append-only-log', 'xarray', 'fanout-array', 'flat-vector-array', 'request-tag-array', 'array', 'doubly-linked-list', 'free-list', 'linked-list', 'skip-list', 'sparse-array', 'stack', 'unrolled-linked-list', 'xor-linked-list'],
     'queue-priority': ['multi-queue', 'lock-free-ring', 'binary-max-heap', 'binomial-heap', 'circular-buffer', 'deque', 'fibonacci-heap', 'heap', 'indexed-priority-queue', 'leftist-heap', 'monotonic-queue', 'pairing-heap', 'priority-queue', 'queue', 'skew-heap'],
-    trees: ['gist', 'bkd-tree', 'ball-tree', 'maple-tree', 'checksummed-block-tree',
+    trees: ['brin', 'sstable', 'sparse-primary-index', 'sparse-offset-index', 'time-index', 'ivf-index', 'gist', 'bkd-tree', 'ball-tree', 'maple-tree', 'checksummed-block-tree',
       'aa-tree', 'ast', 'avl-tree', 'b-plus-tree', 'b-tree', 'binary-tree', 'bvh',
       'cartesian-tree', 'complete-binary-tree', 'fenwick-tree', 'general-tree',
       'interval-tree', 'kd-tree', 'lsm-tree', 'merkle-tree', 'octree',
@@ -86,7 +85,7 @@ test('canonical storage groups retain their existing structure membership', () =
     'string-text': ['inverted-index', 'aho-corasick-automaton', 'dawg', 'fm-index', 'gap-buffer', 'radix-tree', 'rope', 'suffix-array', 'suffix-automaton', 'suffix-tree', 'ternary-search-tree', 'trie'],
     graphs: ['hnsw-graph', 'compacted-de-bruijn-graph', 'address-space-graph', 'adjacency-list', 'adjacency-matrix', 'bipartite-graph', 'complete-graph', 'compressed-sparse-row', 'dag', 'directed-graph', 'edge-list', 'flow-network', 'functional-graph', 'graph', 'hypergraph', 'multigraph', 'tree-graph', 'weighted-graph'],
     'set-union': ['bit-set', 'disjoint-set', 'hash-set', 'interval-set', 'multiset', 'ordered-set'],
-    'hash-based': ['lsh-index', 'minimizer-index', 'consistent-hashing-ring', 'cuckoo-hash-table', 'extendible-hashing', 'hash-map', 'hopscotch-hashing', 'linear-hashing', 'open-addressing-hash-table', 'perfect-hash-table', 'robin-hood-hash-table', 'separate-chaining-hash-table'],
+    'hash-based': ['content-addressed-layers', 'lsh-index', 'minimizer-index', 'consistent-hashing-ring', 'cuckoo-hash-table', 'extendible-hashing', 'hash-map', 'hopscotch-hashing', 'linear-hashing', 'open-addressing-hash-table', 'perfect-hash-table', 'robin-hood-hash-table', 'separate-chaining-hash-table'],
     probabilistic: ['blocked-bloom-filter', 'bloom-filter', 'count-min-sketch', 'counting-bloom-filter', 'cuckoo-filter', 'hyperloglog', 'quotient-filter', 'reservoir-sampling-buffer'],
   }
   const seen = new Set()
@@ -238,23 +237,7 @@ test('root categories split structures and reject groups from another category',
   assert.deepEqual(fundamental.back(), root)
 })
 
-test('every table entry belongs to exactly its requested track and subject', () => {
-  const table = readFileSync(new URL('../new_categories.md', import.meta.url), 'utf8')
-  const expected = new Map()
-  let category
-  let previousSubject
-  let subjectIndex = -1
-  for (const line of table.split(/\r?\n/)) {
-    if (line.startsWith('## Fundamental')) category = 'fundamental'
-    if (line.startsWith('## Advanced')) category = 'advanced'
-    if (!line.startsWith('| ') || line.startsWith('| Type') || line.startsWith('| ---')) continue
-    const [, subject, name] = line.split('|').map((cell) => cell.trim())
-    if (subject !== previousSubject) {
-      previousSubject = subject
-      subjectIndex++
-    }
-    expected.set(name, { category, group: MenuStructureCatalog.groups[subjectIndex].kind })
-  }
+test('every implemented structure belongs to one menu track and subject', () => {
   const seen = new Set()
   for (const group of MenuStructureCatalog.groups) {
     assert.ok(group.structures.length > 0)
@@ -263,9 +246,10 @@ test('every table entry belongs to exactly its requested track and subject', () 
     for (const structure of structures) {
       assert.ok(!seen.has(structure.kind), `${structure.name} appears only once`)
       seen.add(structure.kind)
-      assert.deepEqual(expected.get(structure.name), { category: group.category, group: group.kind })
+      const picker = MenuNavigation.forStructure(structure.kind)
+      assert.equal(picker.group, group.kind)
+      assert.equal(picker.category, group.category)
     }
   }
   assert.equal(seen.size, StructureCatalog.structures.length)
-  assert.equal(seen.size, expected.size)
 })

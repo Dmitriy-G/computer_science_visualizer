@@ -45,9 +45,9 @@ function validScene(scene) {
   }
 }
 
-test('nineteen new structures have ten-element defaults, sources, dialogs, and independent playback snapshots', () => {
+test('applied structures have ten-element defaults, sources, dialogs, and independent playback snapshots', () => {
   const models = AppliedStructureCatalog.createModels()
-  assert.equal(models.size, 19)
+  assert.equal(models.size, 26)
   for (const definition of AppliedStructureDefinitions.structures) {
     const model = models.get(definition.kind)
     assert.equal(model.length, 10, definition.kind)

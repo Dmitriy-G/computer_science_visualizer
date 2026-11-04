@@ -36,7 +36,7 @@ export interface MenuStructureGroup {
   readonly structures: readonly StructureKind[]
 }
 
-// Menu subjects follow new_categories.md. Canonical storage groups remain stable
+// Menu subjects are independent of canonical storage groups, which remain stable
 // so Algorithms and model/action dispatch retain their existing behavior.
 export class MenuStructureCatalog {
   public static readonly groups: readonly MenuStructureGroup[] = [
@@ -108,12 +108,12 @@ export class MenuStructureCatalog {
     {
       kind: 'spatial-similarity-indexes', category: 'advanced', name: 'Spatial Indexes',
       description: 'Index coordinates, bounding regions, and nearest neighbors.', symbol: 'xy',
-      structures: ['kd-tree', 'quadtree', 'octree', 'r-tree', 'bvh', 'bkd-tree', 'ball-tree', 'flat-vector-array', 'lsh-index', 'hnsw-graph'],
+      structures: ['ivf-index', 'kd-tree', 'quadtree', 'octree', 'r-tree', 'bvh', 'bkd-tree', 'ball-tree', 'flat-vector-array', 'lsh-index', 'hnsw-graph'],
     },
     {
       kind: 'storage-database-indexes', category: 'advanced', name: 'Storage Indexes',
       description: 'Organize durable records, sorted runs, and database searches.', symbol: 'DB',
-      structures: ['append-only-log', 'fanout-array', 'lsm-tree', 'gist'],
+      structures: ['brin', 'sstable', 'sparse-primary-index', 'sparse-offset-index', 'time-index', 'append-only-log', 'fanout-array', 'lsm-tree', 'gist'],
     },
     {
       kind: 'memory-concurrency-io', category: 'advanced', name: 'Memory / I/O',
@@ -143,7 +143,7 @@ export class MenuStructureCatalog {
     {
       kind: 'integrity-verification', category: 'advanced', name: 'Integrity',
       description: 'Use hash hierarchies and checksums to verify stored data.', symbol: '#',
-      structures: ['merkle-tree', 'checksummed-block-tree'],
+      structures: ['content-addressed-layers', 'merkle-tree', 'checksummed-block-tree'],
     },
     {
       kind: 'probabilistic-filters-sketches-sampling', category: 'advanced', name: 'Probabilistic',

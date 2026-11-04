@@ -6,6 +6,7 @@ import type { LinearInputValues } from './LinearModel.ts'
 import type { ActionInputField, StructuredActionInput } from './StructuredActionInput.ts'
 import { PointData } from './PointData.ts'
 import { InvertedIndex } from '../components/DataStructuresOverview/StringText/InvertedIndex/InvertedIndex.ts'
+import { SortedRecords } from '../components/DataStructuresOverview/Trees/SortedRecords.ts'
 
 export class AppliedInput implements StructuredActionInput {
   public readonly available = true
@@ -30,6 +31,7 @@ export class AppliedInput implements StructuredActionInput {
     if (!field.text) return /^-?\d*$/.test(value)
     switch (this.specification.format) {
       case 'points': return value.length <= 1536 && /^[\d,:\s-]*$/.test(value)
+      case 'records': return value.length <= 4096 && /^[\d,:\s-]*$/.test(value)
       case 'words': return value.length <= 128 && /^[a-z ]*$/.test(value)
       default: return value.length <= (this.specification.format?.endsWith('query') ? 32 : 64) && /^[acgt]*$/.test(value)
     }
@@ -42,6 +44,7 @@ export class AppliedInput implements StructuredActionInput {
       if (field.text) {
         try {
           if (this.specification.format === 'points') PointData.parse(text)
+          else if (this.specification.format === 'records') SortedRecords.parse(text)
           else if (this.specification.format === 'words') InvertedIndex.words(text)
           else {
             const minimum = this.specification.format?.startsWith('dna5') ? 5 : 3
@@ -59,6 +62,11 @@ export class AppliedInput implements StructuredActionInput {
     }
     for (const [minimum, maximum] of [['minimum', 'maximum'], ['minX', 'maxX'], ['minY', 'maxY']]) {
       if (values[minimum] !== undefined && values[maximum] !== undefined && !errors[minimum] && !errors[maximum] && Number(values[minimum]) > Number(values[maximum])) errors[maximum] = 'Maximum must be at least minimum.'
+    }
+    if (this.specification.format === 'points' && values.clusters !== undefined && !errors.values && !errors.clusters) {
+      const distinct = new Set<string>()
+      for (const point of PointData.parse(values.values)) distinct.add(`${point.x}:${point.y}`)
+      if (Number(values.clusters) > distinct.size) errors.clusters = 'Clusters cannot exceed the number of distinct vectors.'
     }
     return errors
   }

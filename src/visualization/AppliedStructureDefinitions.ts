@@ -2,6 +2,13 @@ import type { StructureDefinition } from './StructureCatalog.ts'
 
 export class AppliedStructureDefinitions {
   public static readonly structures: readonly StructureDefinition[] = [
+    { kind: 'brin', group: 'trees', name: 'BRIN / Block Range Index', description: 'Page-range min/max summaries with candidate pruning and exact heap rechecks', symbol: '#' },
+    { kind: 'sstable', group: 'trees', name: 'SSTable', description: 'Immutable sorted record blocks, byte offsets, and indexed simulated reads', symbol: '#' },
+    { kind: 'sparse-primary-index', group: 'trees', name: 'Sparse Primary Index / Index Summary', description: 'Sampled sorted keys and byte positions with bounded interval scans', symbol: '#' },
+    { kind: 'sparse-offset-index', group: 'trees', name: 'Sparse Offset Index', description: 'Logical log offsets mapped to byte checkpoints and bounded scans', symbol: '#' },
+    { kind: 'time-index', group: 'trees', name: 'Time Index', description: 'Timestamp prefix maxima and conservative log-offset lookup', symbol: '#' },
+    { kind: 'ivf-index', group: 'trees', name: 'Inverted File Index (IVF)', description: 'Trained coarse centroids and configurable inverted-list probing', symbol: '#' },
+    { kind: 'content-addressed-layers', group: 'hash-based', name: 'Content-addressed layer references / hash chain', description: 'SHA-256 content identities, shared blobs, and parent-chain hashes', symbol: '#' },
     { kind: 'append-only-log', group: 'linear', name: 'Append-only Log', description: 'Retained records, monotone offsets, and segmented reads', symbol: '[]' },
     { kind: 'xarray', group: 'linear', name: 'XArray', description: 'Sparse integer-indexed radix branches and allocated leaf slots', symbol: '[]' },
     { kind: 'fanout-array', group: 'linear', name: 'Sorted Array / Fanout Table', description: 'Cumulative high-byte counters narrow binary searches', symbol: '[]' },
