@@ -15,34 +15,22 @@
    beside Categories or a back button in search. Close search with the × icon
    or Escape and restore focus to the header search icon. Keep back buttons in
    ordinary category and group navigation.
-2. Open the menu to see **Data Structures Overview** and **Data Structures Algorithms**.
-   Overview contains the existing structure groups. Algorithms contains
-   **Sorting** (Array with forty-eight sorting actions) and **Graphs Traversal** (all eighteen graph
-   entries). Its graph action cards offer BFS and DFS, plus Dijkstra for Weighted
-   Graph, topological sorting for DAG, and maximum flow for Flow Network. These algorithm actions move out
-   of Overview; graph editing and value search remain there. Browsing either
-   branch preserves the current visualization and playback.
-   Selecting Overview shows **Linear** (Array, Linked list, Stack,
-   Doubly linked list, Skip List, Unrolled Linked
-   List, XOR Linked List, Sparse Array,
-   and Free List),
-   **Queue / Priority** (Queue, Deque, Circular buffer, Heap (min-heap),
-   Priority Queue, Binary Max-Heap, Binomial Heap, Fibonacci Heap, Pairing Heap,
-   Leftist Heap, Skew Heap, Indexed Priority Queue, and Monotonic Queue),
-   **Trees** (Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, and
-   B+ Tree, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, and
-   Abstract Syntax Tree (AST), plus the non-text extended entries listed below),
-   **String / Text** (Gap Buffer, Rope, Trie, Radix Tree (Patricia Trie),
-   Ternary Search Tree, Suffix Tree, Suffix Array, Suffix Automaton,
-   Aho-Corasick Automaton, Directed Acyclic Word Graph (DAWG), FM-Index),
-   **Graphs** (Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph, Bipartite Graph, Complete Graph, Tree Graph, Hypergraph, Flow Network, Functional Graph, Adjacency Matrix, Adjacency List, Edge List, Compressed Sparse Row (CSR)),
-   **Set / Union** (Hash Set, Bit Array / BitSet, Disjoint Set (Union-Find),
-   Ordered Set, Multiset (Bag), and Interval Set),
-   **Hash-based** (Hash Table / Hash Map and the nine additional hash entries listed below), and
-   **Probabilistic** (Bloom Filter, Counting Bloom Filter, Cuckoo Filter,
-   Quotient Filter, Count-Min Sketch, HyperLogLog, Reservoir Sampling Buffer). Choose a group to see only
-   its structures. Provide Back navigation through these levels, without a
-   visible breadcrumb path or instruction text on the structure list.
+2. Open the menu to see **Fundamental Data Structures**, **Advanced Data Structures**,
+   and **Data Structures Algorithms**. Structure assignments follow `new_categories.md`
+   through `MainMenu/MenuStructureCatalog.ts`, independently of canonical model folders.
+   Fundamental contains Linear, Queue / Priority, Trees, String / Text, Graphs,
+   Set / Union, and Hash-based. Advanced contains Sequences, Sparse Arrays / Matrices,
+   Queues / Heaps, Search Trees, Multiway Trees, Range Queries, Spatial Indexes,
+   Storage Indexes, Memory / I/O, Text / Search, Syntax, Hashing, Specialized Graphs,
+   Integrity, and Probabilistic. Choose a group to see only its assigned structures.
+   Algorithms retains Sorting (Array with forty-eight sorting actions) and
+   Graphs Traversal (all eighteen graph entries), including BFS/DFS, Dijkstra for
+   Weighted Graph, topological sorting for DAG, and maximum flow for Flow Network.
+   Graph editing and value search remain in the structure categories. Browsing
+   preserves the current visualization and playback. Back returns through the
+   selected subject and its root category. Reopening a selected structure restores
+   that same path, including after a search selection. Do not show a breadcrumb
+   path or instruction text on the structure list.
 3. Selecting a structure loads an example containing 10 elements in the shared
    renderer. Lists, trees, graphs, and other structures can use different layouts.
 4. After selection, close the structure picker and show the structure's allowed

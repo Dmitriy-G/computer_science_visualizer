@@ -289,7 +289,7 @@ for (const [kind, folder, actions] of fixtures) {
     const model = PriorityStructureCatalog.createDefault(kind)
     assert.equal(model.length, 10)
     assert.equal(StructureCatalog.getGroupForStructure(kind), 'queue-priority')
-    assert.equal(MenuNavigation.forStructure(kind).title, 'Queue / Priority')
+    assert.equal(MenuNavigation.forStructure(kind).title, ['priority-queue', 'binary-max-heap'].includes(kind) ? 'Queue / Priority' : 'Queues / Heaps')
     assert.deepEqual(ActionCatalog.getScopedActions(kind, 'overview').map((choice) => choice.kind), Object.keys(actions))
     const overview = StructureInformation.get(kind)
     assert.ok(overview.summary && overview.useCases.length >= 4)

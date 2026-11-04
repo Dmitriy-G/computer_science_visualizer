@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
+import { MenuStructureCatalog } from '../src/components/MainMenu/MenuStructureCatalog.ts'
 import { MenuNavigation } from '../src/components/MainMenu/MenuNavigation.ts'
 import { StructureCatalog } from '../src/visualization/StructureCatalog.ts'
 import { ActionCatalog } from '../src/visualization/ActionCatalog.ts'
@@ -66,7 +68,7 @@ test('recursive, factorial, graph, and unavailable bounds receive explicit order
   assert.deepEqual(ActionOrdering.arrange(graph, 'average-time', (action) => ({ time: { average: action === 'shortest-path' ? 'O(V^2 + E)' : 'O(V + E)' } })).map((action) => action.kind), ['breadth-first', 'depth-first', 'shortest-path'])
 })
 
-test('Overview contains exactly the requested structure groups', () => {
+test('canonical storage groups retain their existing structure membership', () => {
   assert.deepEqual(StructureCatalog.groups.map((group) => group.name), ['Linear', 'Queue / Priority', 'Trees', 'String / Text', 'Graphs', 'Set / Union', 'Hash-based', 'Probabilistic'])
   const expected = {
     linear: ['dense-tensor', 'sparse-coo', 'sparse-csc', 'numerical-csr', 'grid-2d', 'append-only-log', 'xarray', 'fanout-array', 'flat-vector-array', 'request-tag-array', 'array', 'doubly-linked-list', 'free-list', 'linked-list', 'skip-list', 'sparse-array', 'stack', 'unrolled-linked-list', 'xor-linked-list'],
@@ -179,19 +181,20 @@ test('structure selection retains its group path and reversible back navigation'
     assert.equal(root.title, 'Categories')
     assert.deepEqual(root.getPath(), [])
 
-    const groups = root.selectCategory()
+    const group = MenuStructureCatalog.getGroupForStructure(structure.kind)
+    const groups = root.selectCategory(group.category)
     assert.equal(groups.screen, 'groups')
-    assert.equal(groups.title, MenuNavigation.categoryName)
-    const list = groups.selectGroup(structure.group)
+    assert.equal(groups.title, group.category === 'fundamental' ? MenuNavigation.categoryName : MenuNavigation.advancedCategoryName)
+    const list = groups.selectGroup(group.kind)
     assert.equal(list.screen, 'structures')
-    assert.equal(list.title, StructureCatalog.getGroup(structure.group).name)
+    assert.equal(list.title, group.name)
 
     const selected = list.selectStructure(structure.kind)
     assert.equal(selected.screen, 'structures')
     assert.deepEqual(selected, list)
     assert.deepEqual(selected.getPath(), [
-      MenuNavigation.categoryName,
-      StructureCatalog.getGroup(structure.group).name,
+      groups.title,
+      group.name,
     ])
     assert.ok(ActionCatalog.getActions(structure.kind).length > 0)
     assert.deepEqual(selected.back(), groups)
@@ -205,8 +208,10 @@ test('reopening the structure picker restores its group and prevents cross-group
   for (const structure of StructureCatalog.structures) {
     const picker = MenuNavigation.forStructure(structure.kind)
     assert.equal(picker.screen, 'structures')
-    assert.equal(picker.group, structure.group)
-    const available = StructureCatalog.getStructures(picker.group)
+    const group = MenuStructureCatalog.getGroupForStructure(structure.kind)
+    assert.equal(picker.group, group.kind)
+    assert.equal(picker.category, group.category)
+    const available = MenuStructureCatalog.getStructures(picker.group)
     assert.ok(available.some((entry) => entry.kind === structure.kind))
     assert.deepEqual(picker.selectStructure(structure.kind), picker)
   }
@@ -215,4 +220,52 @@ test('reopening the structure picker restores its group and prevents cross-group
   assert.throws(() => linear.selectStructure('graph'), /current group/)
   assert.throws(() => new MenuNavigation().selectStructure('array'), /current group/)
   assert.throws(() => new MenuNavigation('structures'), /require a group/)
+})
+
+test('root categories split structures and reject groups from another category', () => {
+  assert.deepEqual(MenuNavigation.categories.map((category) => category.name), [
+    'Fundamental Data Structures', 'Advanced Data Structures', 'Data Structures Algorithms',
+  ])
+  const root = new MenuNavigation()
+  const fundamental = root.selectCategory('fundamental')
+  const advanced = root.selectCategory('advanced')
+  assert.equal(fundamental.getGroups().length, 7)
+  assert.equal(advanced.getGroups().length, 15)
+  assert.equal(advanced.getGroups().at(-1).name, 'Probabilistic')
+  assert.throws(() => fundamental.selectGroup('sequence-variants'), /current category/)
+  assert.throws(() => advanced.selectGroup('linear'), /current category/)
+  assert.deepEqual(advanced.back(), root)
+  assert.deepEqual(fundamental.back(), root)
+})
+
+test('every table entry belongs to exactly its requested track and subject', () => {
+  const table = readFileSync(new URL('../new_categories.md', import.meta.url), 'utf8')
+  const expected = new Map()
+  let category
+  let previousSubject
+  let subjectIndex = -1
+  for (const line of table.split(/\r?\n/)) {
+    if (line.startsWith('## Fundamental')) category = 'fundamental'
+    if (line.startsWith('## Advanced')) category = 'advanced'
+    if (!line.startsWith('| ') || line.startsWith('| Type') || line.startsWith('| ---')) continue
+    const [, subject, name] = line.split('|').map((cell) => cell.trim())
+    if (subject !== previousSubject) {
+      previousSubject = subject
+      subjectIndex++
+    }
+    expected.set(name, { category, group: MenuStructureCatalog.groups[subjectIndex].kind })
+  }
+  const seen = new Set()
+  for (const group of MenuStructureCatalog.groups) {
+    assert.ok(group.structures.length > 0)
+    const structures = MenuStructureCatalog.getStructures(group.kind)
+    assert.equal(structures.length, group.structures.length)
+    for (const structure of structures) {
+      assert.ok(!seen.has(structure.kind), `${structure.name} appears only once`)
+      seen.add(structure.kind)
+      assert.deepEqual(expected.get(structure.name), { category: group.category, group: group.kind })
+    }
+  }
+  assert.equal(seen.size, StructureCatalog.structures.length)
+  assert.equal(seen.size, expected.size)
 })

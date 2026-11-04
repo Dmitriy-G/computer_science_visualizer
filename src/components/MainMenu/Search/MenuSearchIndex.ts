@@ -1,4 +1,5 @@
 import { StructureCatalog } from '../../../visualization/StructureCatalog.ts'
+import { MenuStructureCatalog } from '../MenuStructureCatalog.ts'
 import { ActionCatalog } from '../../../visualization/ActionCatalog.ts'
 import type { ActionKind, ActionScope } from '../../../visualization/ActionCatalog.ts'
 import { AlgorithmTechnologyCatalog } from '../../../visualization/AlgorithmTechnologyCatalog.ts'
@@ -34,7 +35,7 @@ export class MenuSearchIndex {
   constructor(describe: DescribeSearchAlgorithm) {
     for (const structure of StructureCatalog.structures) {
       const information = StructureInformation.get(structure.kind)
-      const group = StructureCatalog.getGroup(StructureCatalog.getGroupForStructure(structure.kind))
+      const group = MenuStructureCatalog.getGroupForStructure(structure.kind)
       let text = structure.name
       for (const useCase of information.useCases) text += ` ${useCase.area}`
       text += this.technologyNames(information.technologies)

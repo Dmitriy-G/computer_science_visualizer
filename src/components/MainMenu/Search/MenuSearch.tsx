@@ -7,7 +7,6 @@ import './MenuSearch.css'
 interface MenuSearchProps {
   readonly describeAlgorithm: DescribeSearchAlgorithm
   readonly onResultSelected: (result: MenuSearchResult) => void
-  readonly renderIcon: (result: MenuSearchResult) => ReactNode
 }
 
 interface MenuSearchState {
@@ -58,7 +57,6 @@ export default class MenuSearch extends PureComponent<MenuSearchProps, MenuSearc
             </span>
             {result.popular && <span className="usage-tag usage-tag--popular" title="Has at least three documented real examples.">Popular</span>}
           </span>
-          <span className="structure-symbol" aria-hidden="true">{this.props.renderIcon(result)}</span>
           <span className="choice-copy">
             <strong title={result.name}>{result.name}</strong>
             <small title={description}>{description}</small>

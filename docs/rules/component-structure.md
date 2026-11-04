@@ -3,8 +3,12 @@
 All React components belong under `src/components/`.
 `App` is the root of Computer Science Visualizer. Feature folders follow the
 menu hierarchy: main category, subcategory, structure, then action. Use
-`DataStructuresOverview` and `DataStructuresAlgorithms` for the current main
-categories, with consistent PascalCase spelling.
+`DataStructuresOverview` and `DataStructuresAlgorithms` for the canonical feature
+folders, with consistent PascalCase spelling. The menu splits Overview into
+Fundamental Data Structures and Advanced Data Structures using
+`MainMenu/MenuStructureCatalog.ts` and the assignments in `new_categories.md`.
+These subject groups do not relocate canonical models or algorithm actions.
+Use concise subject labels such as Probabilistic, Spatial Indexes, and Memory / I/O.
 
 ## Data structures and actions
 
@@ -186,9 +190,11 @@ choose the data structure. Keep its canvas action card in
 action selection remains separate from drawing the scene.
 Each action row has a separate info button on its right. It opens that action's
 overview dialog without selecting or restarting the action.
-Use two consistent card styles for menu buttons. Category, group, and structure
-cards have one leading icon, a heading, and up to two description lines; omit
-trailing arrow icons. Action cards have a heading and up to two description lines,
+Use two consistent card styles for menu buttons. Category, group, structure,
+and search-result cards have a heading and up to two description lines, with
+no icon or reserved icon column. Keep the Close icon and Back arrow on navigation
+controls, and retain the separate action info and sorting icons.
+Action cards have a heading and up to two description lines,
 with no icon inside the card. Keep their info controls separate and vertically
 centered beside them. Both styles use the shared --menu-card-height token (112px),
 matching text sizes and spacing. Allow headings up to two lines for long names;

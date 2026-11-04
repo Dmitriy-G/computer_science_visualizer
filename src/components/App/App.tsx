@@ -276,7 +276,7 @@ import { ActionInputRequest } from '../../visualization/ActionInputRequest.ts'
 import { MenuNavigation } from '../MainMenu/MenuNavigation.ts'
 import type { MenuCategoryKind, AlgorithmGroupKind } from '../MainMenu/MenuNavigation.ts'
 import type { MenuSearchResult } from '../MainMenu/Search/MenuSearchIndex.ts'
-import type { StructureGroupKind } from '../../visualization/StructureCatalog.ts'
+import type { MenuStructureGroupKind } from '../MainMenu/MenuStructureCatalog.ts'
 import Renderer from '../Renderer/Renderer.tsx'
 import AddInTheMiddle from '../DataStructuresOverview/Linear/LinkedList/AddInTheMiddle/AddInTheMiddle.tsx'
 import { InsertionAnimation } from '../DataStructuresOverview/Linear/LinkedList/AddInTheMiddle/InsertionAnimation.ts'
@@ -420,7 +420,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.setState({ menu: this.state.menu.selectAlgorithmGroup(group) })
   }
 
-  private selectGroup = (group: StructureGroupKind): void => {
+  private selectGroup = (group: MenuStructureGroupKind): void => {
     this.setState({ menu: this.state.menu.selectGroup(group) })
   }
 

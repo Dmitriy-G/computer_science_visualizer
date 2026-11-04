@@ -71,7 +71,7 @@
 }
 .structure-choice {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
   width: 100%;
   height: var(--menu-card-height);
@@ -90,25 +90,6 @@
 .structure-choice:hover {
   background: #f3f8ff;
   border-color: #9bbde8;
-}
-.structure-symbol {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  background: #eef4fc;
-  color: var(--accent);
-  font: 24px var(--mono);
-  line-height: 1;
-  white-space: nowrap;
-  overflow: hidden;
-}
-.structure-icon {
-  display: block;
-  width: 28px;
-  height: 28px;
 }
 .structure-choice strong {
   display: -webkit-box;
