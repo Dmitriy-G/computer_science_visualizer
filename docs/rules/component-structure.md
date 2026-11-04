@@ -166,6 +166,11 @@ Algorithm-specific layouts stay beside their algorithm helpers under
 ## Main menu
 
 Keep the root menu's search component and catalog index in `MainMenu/Search/`.
+Place its search trigger in the app header between the menu button and brand
+icon. It opens the existing search panel directly; do not show a search trigger
+beside Categories or a back button in the search panel. Close and Escape dismiss
+search and restore focus to the header search button. Keep back buttons for
+ordinary category and group navigation.
 Index only names, Area of use labels, and verified technology/product names.
 Exclude summaries, card descriptions, use-case explanations, usage notes,
 complexity explanations, and terms. Algorithm names come from the same read-only

@@ -317,6 +317,7 @@ interface AppState {
   readonly selected: StructureKind | null
   readonly selectedScope: ActionScope
   readonly menuOpen: boolean
+  readonly searchOpen: boolean
   readonly menu: MenuNavigation
   readonly scene: Scene | null
   readonly actionOpen: boolean
@@ -346,6 +347,8 @@ export default class App extends Component<Record<string, never>, AppState> {
   private bTree = BTree.createDefault()
   private bPlusTree = BPlusTree.createDefault()
   private readonly menuButton = createRef<HTMLButtonElement>()
+  private readonly searchButton = createRef<HTMLButtonElement>()
+  private menuOpenedFromSearch = false
   private readonly actionMenu = createRef<ActionMenu>()
   private graph = Graph.createDefault()
   private graphModels = GraphCatalog.createModels(this.graph)
@@ -365,6 +368,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       selected: null,
       selectedScope: 'overview',
       menuOpen: false,
+      searchOpen: false,
       menu: new MenuNavigation(),
       scene: null,
       actionOpen: false,
@@ -381,18 +385,26 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private openMenu = (): void => {
+    this.menuOpenedFromSearch = false
     this.setState({
       menuOpen: true,
+      searchOpen: false,
       menu: this.state.selected ? MenuNavigation.forStructure(this.state.selected, this.state.selectedScope) : new MenuNavigation(),
     })
   }
 
+  private openSearch = (): void => {
+    this.menuOpenedFromSearch = true
+    this.setState({ menuOpen: true, searchOpen: true, menu: new MenuNavigation() })
+  }
+
   private closeMenu = (): void => {
-    this.setState({ menuOpen: false }, this.restoreMenuFocus)
+    this.setState({ menuOpen: false, searchOpen: false }, this.restoreMenuFocus)
   }
 
   private restoreMenuFocus = (): void => {
-    this.menuButton.current?.focus()
+    const trigger = this.menuOpenedFromSearch ? this.searchButton : this.menuButton
+    trigger.current?.focus()
   }
 
   private focusActions = (): void => {
@@ -489,6 +501,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       inputRequest: null,
       menu,
       menuOpen: false,
+      searchOpen: false,
       algorithmInformation: null,
       overviewInformation: null,
       structureInformation: null,
@@ -530,6 +543,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       actionRunning: ActionInputRequest.supportsStructure(this.state.selected),
       inputRequest: null,
       menuOpen: false,
+      searchOpen: false,
       algorithmInformation: this.describeAction(action),
       overviewInformation: null,
       structureInformation: null,
@@ -1290,6 +1304,21 @@ export default class App extends Component<Record<string, never>, AppState> {
               />
             </svg>
           </button>
+          <button
+            className="search-trigger icon-button"
+            ref={this.searchButton}
+            onClick={this.openSearch}
+            aria-label="Search data structures or algorithms"
+            aria-haspopup="dialog"
+            aria-expanded={this.state.menuOpen && this.state.searchOpen}
+            aria-controls="main-menu"
+            title="Search"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden="true">
+              <circle cx="10" cy="10" r="6.5" />
+              <path d="m15 15 5.5 5.5" />
+            </svg>
+          </button>
           <div className="brand">
             <span className="brand-mark" aria-hidden="true">cs.</span>
             <span>
@@ -1329,6 +1358,7 @@ export default class App extends Component<Record<string, never>, AppState> {
 
         <MainMenu
           open={this.state.menuOpen}
+          searchOpen={this.state.searchOpen}
           navigation={this.state.menu}
           selected={selected}
           onClose={this.closeMenu}

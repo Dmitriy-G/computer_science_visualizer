@@ -17,7 +17,8 @@
   background: #fff;
   border-bottom: 1px solid var(--border);
 }
-.menu-trigger {
+.menu-trigger,
+.search-trigger {
   flex-shrink: 0;
 }
 .brand {

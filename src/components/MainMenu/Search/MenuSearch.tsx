@@ -21,6 +21,10 @@ export default class MenuSearch extends PureComponent<MenuSearchProps, MenuSearc
   private readonly index = new MenuSearchIndex(this.props.describeAlgorithm)
 
   public componentDidMount(): void {
+    this.focusInput()
+  }
+
+  public focusInput(): void {
     this.input.current?.focus()
   }
 
