@@ -10,14 +10,14 @@ import { ActionInputRequest } from '../src/visualization/ActionInputRequest.ts'
 import { ActionCatalog } from '../src/visualization/ActionCatalog.ts'
 import { StructureCatalog } from '../src/visualization/StructureCatalog.ts'
 import { StructureInformation } from '../src/components/StructureInfo/StructureInformation.ts'
-import { OpenAddressingHashTable } from '../src/components/DataStructuresOverview/HashBased/OpenAddressingHashTable/OpenAddressingHashTable.ts'
-import { RobinHoodHashTable } from '../src/components/DataStructuresOverview/HashBased/RobinHoodHashTable/RobinHoodHashTable.ts'
-import { CuckooHashTable } from '../src/components/DataStructuresOverview/HashBased/CuckooHashTable/CuckooHashTable.ts'
-import { HopscotchHashing } from '../src/components/DataStructuresOverview/HashBased/HopscotchHashing/HopscotchHashing.ts'
-import { ExtendibleHashing } from '../src/components/DataStructuresOverview/HashBased/ExtendibleHashing/ExtendibleHashing.ts'
-import { LinearHashing } from '../src/components/DataStructuresOverview/HashBased/LinearHashing/LinearHashing.ts'
-import { PerfectHashTable } from '../src/components/DataStructuresOverview/HashBased/PerfectHashTable/PerfectHashTable.ts'
-import { ConsistentHashingRing } from '../src/components/DataStructuresOverview/HashBased/ConsistentHashingRing/ConsistentHashingRing.ts'
+import { OpenAddressingHashTable } from '../src/components/FundamentalDataStructures/HashBased/OpenAddressingHashTable/OpenAddressingHashTable.ts'
+import { RobinHoodHashTable } from '../src/components/AdvancedDataStructures/Hashing/RobinHoodHashTable/RobinHoodHashTable.ts'
+import { CuckooHashTable } from '../src/components/AdvancedDataStructures/Hashing/CuckooHashTable/CuckooHashTable.ts'
+import { HopscotchHashing } from '../src/components/AdvancedDataStructures/Hashing/HopscotchHashing/HopscotchHashing.ts'
+import { ExtendibleHashing } from '../src/components/AdvancedDataStructures/Hashing/ExtendibleHashing/ExtendibleHashing.ts'
+import { LinearHashing } from '../src/components/AdvancedDataStructures/Hashing/LinearHashing/LinearHashing.ts'
+import { PerfectHashTable } from '../src/components/AdvancedDataStructures/Hashing/PerfectHashTable/PerfectHashTable.ts'
+import { ConsistentHashingRing } from '../src/components/AdvancedDataStructures/Hashing/ConsistentHashingRing/ConsistentHashingRing.ts'
 
 const create = (kind) => {
   const model = HashStructureCatalog.createDefault(kind)
@@ -407,14 +407,15 @@ test('hash dialogs separate key/value, static CSV keys, and server membership in
 })
 
 test('all 36 hash action sequences own files and preserve deterministic independent final-commit playback', async () => {
-  const features = readFileSync(new URL('../src/components/DataStructuresOverview/HashBased/HashFeatures.tsx', import.meta.url), 'utf8')
-  const imports = [...features.matchAll(/import \{ (\w+)Animation as \w+Sequence \} from '\.\/(.*?)'/g)]
+  const featuresUrl = new URL('../src/components/StructureFeatures/HashFeatures.tsx', import.meta.url)
+  const features = readFileSync(featuresUrl, 'utf8')
+  const imports = [...features.matchAll(/import \{ (\w+)Animation as \w+Sequence \} from '([^']+)'/g)]
   assert.equal(imports.length, 36)
   for (const [, folder, relative] of imports) {
-    const className = relative.split('/')[0]
-    const source = readFileSync(new URL(`../src/components/DataStructuresOverview/HashBased/${className}/${className}.ts`, import.meta.url), 'utf8')
+    const url = new URL(relative, featuresUrl)
+    const className = relative.split('/').at(-3)
+    const source = readFileSync(new URL(`../${className}.ts`, url), 'utf8')
     const kind = /readonly kind = '([^']+)'/.exec(source)[1]
-    const url = new URL(`../src/components/DataStructuresOverview/HashBased/${relative}`, import.meta.url)
     const { [folder + 'Animation']: Sequence } = await import(url.href)
     const action = /super\(model, new \w+Layout\(\), '([^']+)'/.exec(readFileSync(url, 'utf8'))[1]
     const model = create(kind)

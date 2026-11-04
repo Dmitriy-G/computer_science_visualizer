@@ -1,7 +1,7 @@
 import type { ActionKind } from './ActionCatalog.ts'
 import type { StructureKind } from './Scene.ts'
 import type { TreeInputValues } from './AdditionalTreeModel.ts'
-import { ASTParser } from '../components/DataStructuresOverview/Trees/AST/ASTParser.ts'
+import { ASTParser } from '../components/AdvancedDataStructures/Syntax/AST/ASTParser.ts'
 import { ExtendedTreeInput } from './ExtendedTreeInput.ts'
 
 import type { ActionInputField as TreeInputField } from './StructuredActionInput.ts'

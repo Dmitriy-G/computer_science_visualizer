@@ -1,5 +1,5 @@
 import { AnimationSequence } from '../../../../visualization/AnimationSequence.ts'
-import { FixedArray } from '../../../DataStructuresOverview/Linear/Array/FixedArray.ts'
+import { FixedArray } from '../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
 import { ArraySortingLayout } from './ArraySortingLayout.ts'
 import type { ArraySortEvent, ArraySortFrame } from './ArraySortTrace.ts'
 

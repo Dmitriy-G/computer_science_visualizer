@@ -1,4 +1,4 @@
-import type { ArrayEntry } from '../../../DataStructuresOverview/Linear/Array/FixedArray.ts'
+import type { ArrayEntry } from '../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
 
 export interface ArraySortCounter {
   readonly label: string

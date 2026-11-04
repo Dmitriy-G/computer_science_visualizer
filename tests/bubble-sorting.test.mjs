@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { FixedArray } from '../src/components/DataStructuresOverview/Linear/Array/FixedArray.ts'
+import { FixedArray } from '../src/components/FundamentalDataStructures/Linear/Array/FixedArray.ts'
 import { BubbleSortingAnimation } from '../src/components/DataStructuresAlgorithms/Sorting/Array/BubbleSorting/BubbleSortingAnimation.ts'
 import { ActionInputRequest } from '../src/visualization/ActionInputRequest.ts'
 

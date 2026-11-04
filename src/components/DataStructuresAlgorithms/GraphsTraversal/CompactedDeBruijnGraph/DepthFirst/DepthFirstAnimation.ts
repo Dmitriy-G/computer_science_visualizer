@@ -1,7 +1,7 @@
 import { LinearAnimation } from '../../../../../visualization/LinearAnimation.ts'
 import type { LinearModel, LinearInputValues } from '../../../../../visualization/LinearModel.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
-import { CompactedDeBruijnGraphLayout } from '../../../../DataStructuresOverview/Graphs/CompactedDeBruijnGraph/CompactedDeBruijnGraphLayout.ts'
+import { CompactedDeBruijnGraphLayout } from '../../../../AdvancedDataStructures/SpecializedGraphs/CompactedDeBruijnGraph/CompactedDeBruijnGraphLayout.ts'
 
 export class DepthFirstAnimation extends LinearAnimation {
   public static readonly title = 'Depth-first traversal'

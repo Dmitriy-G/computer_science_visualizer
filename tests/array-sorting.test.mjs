@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { FixedArray } from '../src/components/DataStructuresOverview/Linear/Array/FixedArray.ts'
+import { FixedArray } from '../src/components/FundamentalDataStructures/Linear/Array/FixedArray.ts'
 import { SelectionSortAnimation } from '../src/components/DataStructuresAlgorithms/Sorting/Array/SelectionSort/SelectionSortAnimation.ts'
 import { InsertionSortAnimation } from '../src/components/DataStructuresAlgorithms/Sorting/Array/InsertionSort/InsertionSortAnimation.ts'
 import { BinaryInsertionSortAnimation } from '../src/components/DataStructuresAlgorithms/Sorting/Array/BinaryInsertionSort/BinaryInsertionSortAnimation.ts'

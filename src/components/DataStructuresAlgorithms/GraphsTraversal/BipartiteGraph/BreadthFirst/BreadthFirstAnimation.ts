@@ -1,7 +1,7 @@
 import { LinearAnimation } from '../../../../../visualization/LinearAnimation.ts'
 import type { LinearModel, LinearInputValues } from '../../../../../visualization/LinearModel.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
-import { BipartiteGraphLayout } from '../../../../DataStructuresOverview/Graphs/BipartiteGraph/BipartiteGraphLayout.ts'
+import { BipartiteGraphLayout } from '../../../../FundamentalDataStructures/Graphs/BipartiteGraph/BipartiteGraphLayout.ts'
 
 export class BreadthFirstAnimation extends LinearAnimation {
   public static readonly title = 'Breadth-first traversal'

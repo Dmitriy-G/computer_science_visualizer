@@ -1,7 +1,7 @@
 import { LinearAnimation } from '../../../../../visualization/LinearAnimation.ts'
 import type { LinearModel, LinearInputValues } from '../../../../../visualization/LinearModel.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
-import { EdgeListLayout } from '../../../../DataStructuresOverview/Graphs/EdgeList/EdgeListLayout.ts'
+import { EdgeListLayout } from '../../../../FundamentalDataStructures/Graphs/EdgeList/EdgeListLayout.ts'
 
 export class BreadthFirstAnimation extends LinearAnimation {
   public static readonly title = 'Breadth-first traversal'

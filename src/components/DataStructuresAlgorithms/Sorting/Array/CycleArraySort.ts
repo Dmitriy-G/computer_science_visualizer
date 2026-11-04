@@ -1,5 +1,5 @@
 import { ArraySortOperations } from './ArraySortOperations.ts'
-import type { ArrayEntry } from '../../../DataStructuresOverview/Linear/Array/FixedArray.ts'
+import type { ArrayEntry } from '../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
 import type { ArraySortFrame } from './ArraySortTrace.ts'
 
 // Comparison-based Cycle Sort: count smaller suffix keys to locate each write.

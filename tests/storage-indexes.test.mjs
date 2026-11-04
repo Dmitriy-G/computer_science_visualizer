@@ -1,13 +1,14 @@
+import { StructurePaths } from './helpers/StructurePaths.mjs'
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { test } from 'node:test'
-import { BRIN } from '../src/components/DataStructuresOverview/Trees/BRIN/BRIN.ts'
-import { SSTable } from '../src/components/DataStructuresOverview/Trees/SSTable/SSTable.ts'
-import { SparsePrimaryIndex } from '../src/components/DataStructuresOverview/Trees/SparsePrimaryIndex/SparsePrimaryIndex.ts'
-import { SparseOffsetIndex } from '../src/components/DataStructuresOverview/Trees/SparseOffsetIndex/SparseOffsetIndex.ts'
-import { TimeIndex } from '../src/components/DataStructuresOverview/Trees/TimeIndex/TimeIndex.ts'
-import { IVFIndex } from '../src/components/DataStructuresOverview/Trees/IVFIndex/IVFIndex.ts'
-import { ContentAddressedLayers } from '../src/components/DataStructuresOverview/HashBased/ContentAddressedLayers/ContentAddressedLayers.ts'
+import { BRIN } from '../src/components/AdvancedDataStructures/StorageIndexes/BRIN/BRIN.ts'
+import { SSTable } from '../src/components/AdvancedDataStructures/StorageIndexes/SSTable/SSTable.ts'
+import { SparsePrimaryIndex } from '../src/components/AdvancedDataStructures/StorageIndexes/SparsePrimaryIndex/SparsePrimaryIndex.ts'
+import { SparseOffsetIndex } from '../src/components/AdvancedDataStructures/StorageIndexes/SparseOffsetIndex/SparseOffsetIndex.ts'
+import { TimeIndex } from '../src/components/AdvancedDataStructures/StorageIndexes/TimeIndex/TimeIndex.ts'
+import { IVFIndex } from '../src/components/AdvancedDataStructures/SpatialIndexes/IVFIndex/IVFIndex.ts'
+import { ContentAddressedLayers } from '../src/components/AdvancedDataStructures/Integrity/ContentAddressedLayers/ContentAddressedLayers.ts'
 import { AppliedStructureCatalog } from '../src/visualization/AppliedStructureCatalog.ts'
 import { AppliedActionCatalog } from '../src/visualization/AppliedActionCatalog.ts'
 import { AppliedInput } from '../src/visualization/AppliedInput.ts'
@@ -204,7 +205,7 @@ for (const [kind, group, folder, subject, actions] of fixtures) {
     const before = model.getDiagram()
     for (const action of AppliedActionCatalog.getActions(kind)) {
       const [actionFolder, input] = actions[action.kind] ?? [action.kind === 'clear' ? 'Clear' : 'InspectStorage', {}]
-      const module = await import(`../src/components/DataStructuresOverview/${group}/${folder}/${actionFolder}/${actionFolder}Animation.ts`)
+      const module = await import(`../src/components/${StructurePaths.group(kind)}/${folder}/${actionFolder}/${actionFolder}Animation.ts`)
       const Sequence = module[`${actionFolder}Animation`]
       assert.ok(Sequence.prototype instanceof LinearAnimation)
       const plan = new Sequence(model, input)

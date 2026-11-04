@@ -1,7 +1,7 @@
 import { LinearScene } from './LinearScene.ts'
 import type { LinearModel, LinearFrame } from './LinearModel.ts'
 import type { Scene, SceneNode, SceneHint } from './Scene.ts'
-import type { HashRecord } from '../components/DataStructuresOverview/HashBased/HashTableModel.ts'
+import type { HashRecord } from './HashTableModel.ts'
 
 export interface HashSlotGroup {
   readonly prefix: string

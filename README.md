@@ -46,8 +46,8 @@ of their use of the specific algorithm. Unverified
 algorithms display an explicit educational-example notice. Overview operations
 such as Add, Search, and Clear do not receive this section.
 
-Canonical model families are listed below. Their storage folders are independent
-of the Fundamental and Advanced menu subjects:
+The model families below describe shared operation adapters. Source folders follow
+the Fundamental and Advanced menu subjects listed in MenuStructureCatalog:
 
 | Group | Structures |
 | --- | --- |
@@ -306,9 +306,10 @@ cost in its complexity information. Playback keeps at most 96 detailed frames,
 executes the complete operation, and reports any omitted events. Amortized bounds
 are identified explicitly in action information.
 
-Gap Buffer, Rope, Trie, Radix Tree (Patricia Trie), Ternary Search Tree, and
-Suffix Tree belong to **String / Text**, with their models and actions under
-`DataStructuresOverview/StringText/`.
+Trie belongs to Fundamental > String / Text, with its model and actions under
+`FundamentalDataStructures/StringText/Trie/`. Gap Buffer, Rope, Radix Tree
+(Patricia Trie), Ternary Search Tree, and Suffix Tree belong to Advanced > Text /
+Search under `AdvancedDataStructures/TextSearch/`.
 
 The five additional text indexes have their own models, layouts, and actions:
 
@@ -372,9 +373,11 @@ module use `computer_science_visualizer`. Use that name for the checkout folder
 as well; close apps using an existing checkout before renaming its directory.
 
 - `src/components/App/`: application shell and branding.
-- `src/components/DataStructuresOverview/<Group>/<Structure>/`: canonical models,
-  layouts, and common operations under `Linear`, `QueuePriority`, `Trees`, `Graphs`,
-  and `HashBased`.
+- `src/components/FundamentalDataStructures/<Group>/<Structure>/`: fundamental
+  models, layouts, and ordinary operations, matching the menu hierarchy.
+- `src/components/AdvancedDataStructures/<Group>/<Structure>/`: advanced models,
+  layouts, and ordinary operations, matching the menu hierarchy.
+- `src/components/StructureFeatures/`: shared action dispatchers spanning subjects.
 - `src/components/DataStructuresAlgorithms/Sorting/Array/`: the 48 sorting actions
   and their array-specific algorithm, trace, and layout helpers.
 - `src/components/DataStructuresAlgorithms/GraphsTraversal/<Graph>/`: BFS, DFS,
@@ -388,7 +391,7 @@ as well; close apps using an existing checkout before renaming its directory.
 - `public/`: static assets.
 
 Feature folders mirror the menu's main category, subcategory, structure, and
-action. Sorting and graph algorithms reuse the canonical Overview models.
+action. Sorting and graph algorithms reuse the canonical Fundamental or Advanced models.
 
 ## Development
 
@@ -427,7 +430,7 @@ and [visualization flow](docs/rules/visualization-flow.md) for project guidance.
 
 ## Applied structure examples
 
-The original nineteen applied structures retain their canonical model families;
+The original nineteen applied structures retain their menu categories;
 the seven storage, vector, and integrity indexes below extend this set to 26. All start with
 ten logical entries and use automatic playback, validated inputs, a full Reset,
 and independently recorded scenes. Structure information identifies the real

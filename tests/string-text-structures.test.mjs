@@ -10,11 +10,11 @@ import { ActionCatalog } from '../src/visualization/ActionCatalog.ts'
 import { ActionInputRequest } from '../src/visualization/ActionInputRequest.ts'
 import { StructureCatalog } from '../src/visualization/StructureCatalog.ts'
 import { StructureInformation } from '../src/components/StructureInfo/StructureInformation.ts'
-import { SuffixArray } from '../src/components/DataStructuresOverview/StringText/SuffixArray/SuffixArray.ts'
-import { SuffixAutomaton } from '../src/components/DataStructuresOverview/StringText/SuffixAutomaton/SuffixAutomaton.ts'
-import { AhoCorasickAutomaton } from '../src/components/DataStructuresOverview/StringText/AhoCorasickAutomaton/AhoCorasickAutomaton.ts'
-import { DAWG } from '../src/components/DataStructuresOverview/StringText/DAWG/DAWG.ts'
-import { FMIndex } from '../src/components/DataStructuresOverview/StringText/FMIndex/FMIndex.ts'
+import { SuffixArray } from '../src/components/AdvancedDataStructures/TextSearch/SuffixArray/SuffixArray.ts'
+import { SuffixAutomaton } from '../src/components/AdvancedDataStructures/TextSearch/SuffixAutomaton/SuffixAutomaton.ts'
+import { AhoCorasickAutomaton } from '../src/components/AdvancedDataStructures/TextSearch/AhoCorasickAutomaton/AhoCorasickAutomaton.ts'
+import { DAWG } from '../src/components/AdvancedDataStructures/TextSearch/DAWG/DAWG.ts'
+import { FMIndex } from '../src/components/AdvancedDataStructures/TextSearch/FMIndex/FMIndex.ts'
 
 const build = (model, text) => model.execute('build-text', { text })
 const search = (model, pattern) => model.execute('search-value', { pattern }).value
@@ -261,7 +261,7 @@ test('invalid rebuilds preserve storage and cleared models accept a fresh build'
 })
 
 test('all sixteen string/text sequences have action-owned metadata and bounded immutable playback', async () => {
-  const featuresUrl = new URL('../src/components/DataStructuresOverview/StringText/StringTextFeatures.tsx', import.meta.url)
+  const featuresUrl = new URL('../src/components/StructureFeatures/StringTextFeatures.tsx', import.meta.url)
   const source = readFileSync(featuresUrl, 'utf8')
   const imports = [...source.matchAll(/import \{ (\w+)Animation as \w+Sequence \} from '([^']+)'/g)]
   assert.equal(imports.length, 16)
@@ -298,7 +298,7 @@ test('all sixteen string/text sequences have action-owned metadata and bounded i
 })
 
 test('long text scans execute all matches while capping detailed playback snapshots', async () => {
-  const { ScanAnimation } = await import('../src/components/DataStructuresOverview/StringText/AhoCorasickAutomaton/Scan/ScanAnimation.ts')
+  const { ScanAnimation } = await import('../src/components/AdvancedDataStructures/TextSearch/AhoCorasickAutomaton/Scan/ScanAnimation.ts')
   const model = new AhoCorasickAutomaton()
   model.execute('build-words', { words: 'a,aa,aaa' })
   const plan = new ScanAnimation(model, { text: 'a'.repeat(128) })

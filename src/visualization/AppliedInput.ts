@@ -5,8 +5,8 @@ import type { StructureKind } from './Scene.ts'
 import type { LinearInputValues } from './LinearModel.ts'
 import type { ActionInputField, StructuredActionInput } from './StructuredActionInput.ts'
 import { PointData } from './PointData.ts'
-import { InvertedIndex } from '../components/DataStructuresOverview/StringText/InvertedIndex/InvertedIndex.ts'
-import { SortedRecords } from '../components/DataStructuresOverview/Trees/SortedRecords.ts'
+import { InvertedIndex } from '../components/AdvancedDataStructures/TextSearch/InvertedIndex/InvertedIndex.ts'
+import { SortedRecords } from '../components/AdvancedDataStructures/StorageIndexes/SortedRecords.ts'
 
 export class AppliedInput implements StructuredActionInput {
   public readonly available = true

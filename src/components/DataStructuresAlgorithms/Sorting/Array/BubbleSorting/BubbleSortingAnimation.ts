@@ -1,5 +1,5 @@
 import { AnimationSequence } from '../../../../../visualization/AnimationSequence.ts'
-import { FixedArray } from '../../../../DataStructuresOverview/Linear/Array/FixedArray.ts'
+import { FixedArray } from '../../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
 import { BubbleSortingLayout } from './BubbleSortingLayout.ts'
 
 export class BubbleSortingAnimation extends AnimationSequence {

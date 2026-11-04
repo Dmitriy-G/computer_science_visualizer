@@ -36,8 +36,8 @@ export interface MenuStructureGroup {
   readonly structures: readonly StructureKind[]
 }
 
-// Menu subjects are independent of canonical storage groups, which remain stable
-// so Algorithms and model/action dispatch retain their existing behavior.
+// Source folders mirror these root categories and subjects. Model families in
+// StructureCatalog remain stable for algorithm routing and shared adapters.
 export class MenuStructureCatalog {
   public static readonly groups: readonly MenuStructureGroup[] = [
     {

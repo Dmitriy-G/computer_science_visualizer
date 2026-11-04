@@ -1,7 +1,7 @@
 import { LinearAnimation } from '../../../../../visualization/LinearAnimation.ts'
 import type { LinearModel, LinearInputValues } from '../../../../../visualization/LinearModel.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
-import { FlowNetworkLayout } from '../../../../DataStructuresOverview/Graphs/FlowNetwork/FlowNetworkLayout.ts'
+import { FlowNetworkLayout } from '../../../../AdvancedDataStructures/SpecializedGraphs/FlowNetwork/FlowNetworkLayout.ts'
 
 export class MaxFlowAnimation extends LinearAnimation {
   public static readonly title = 'Edmonds–Karp maximum flow'

@@ -1,5 +1,5 @@
 import { ArrayMergeOperations } from './ArrayMergeOperations.ts'
-import type { ArrayEntry } from '../../../DataStructuresOverview/Linear/Array/FixedArray.ts'
+import type { ArrayEntry } from '../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
 import type { ArraySortFrame, ArraySortRun, ArraySortStorage } from './ArraySortTrace.ts'
 
 class TapeRun {

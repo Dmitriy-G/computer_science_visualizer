@@ -1,5 +1,5 @@
 import { ArraySortOperations } from './ArraySortOperations.ts'
-import type { ArrayEntry } from '../../../DataStructuresOverview/Linear/Array/FixedArray.ts'
+import type { ArrayEntry } from '../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
 import type { ArraySortEvent, ArraySortFrame } from './ArraySortTrace.ts'
 
 // Sequential Sample Sort with bounded fan-out and stable local merge sorting.

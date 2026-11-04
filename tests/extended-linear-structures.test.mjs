@@ -1,13 +1,14 @@
+import { StructurePaths } from './helpers/StructurePaths.mjs'
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { SkipList } from '../src/components/DataStructuresOverview/Linear/SkipList/SkipList.ts'
-import { UnrolledLinkedList } from '../src/components/DataStructuresOverview/Linear/UnrolledLinkedList/UnrolledLinkedList.ts'
-import { XORLinkedList } from '../src/components/DataStructuresOverview/Linear/XORLinkedList/XORLinkedList.ts'
-import { GapBuffer } from '../src/components/DataStructuresOverview/StringText/GapBuffer/GapBuffer.ts'
-import { Rope } from '../src/components/DataStructuresOverview/StringText/Rope/Rope.ts'
-import { BitSet } from '../src/components/DataStructuresOverview/SetUnion/BitSet/BitSet.ts'
-import { SparseArray } from '../src/components/DataStructuresOverview/Linear/SparseArray/SparseArray.ts'
-import { FreeList } from '../src/components/DataStructuresOverview/Linear/FreeList/FreeList.ts'
+import { SkipList } from '../src/components/AdvancedDataStructures/Sequences/SkipList/SkipList.ts'
+import { UnrolledLinkedList } from '../src/components/AdvancedDataStructures/Sequences/UnrolledLinkedList/UnrolledLinkedList.ts'
+import { XORLinkedList } from '../src/components/AdvancedDataStructures/Sequences/XORLinkedList/XORLinkedList.ts'
+import { GapBuffer } from '../src/components/AdvancedDataStructures/TextSearch/GapBuffer/GapBuffer.ts'
+import { Rope } from '../src/components/AdvancedDataStructures/TextSearch/Rope/Rope.ts'
+import { BitSet } from '../src/components/FundamentalDataStructures/SetUnion/BitSet/BitSet.ts'
+import { SparseArray } from '../src/components/AdvancedDataStructures/SparseArraysMatrices/SparseArray/SparseArray.ts'
+import { FreeList } from '../src/components/AdvancedDataStructures/MemoryIO/FreeList/FreeList.ts'
 import { LinearStructureCatalog } from '../src/visualization/LinearStructureCatalog.ts'
 import { LinearAnimation } from '../src/visualization/LinearAnimation.ts'
 import { ActionCatalog } from '../src/visualization/ActionCatalog.ts'
@@ -304,8 +305,7 @@ for (const [kind, folder, actions, input] of features) {
         assert.deepEqual(request.structured.validate(drafts), {})
         assert.ok(Object.keys(request.structured.validate({})).length > 0)
       }
-      const group = kind === 'bit-set' ? 'SetUnion' : kind === 'rope' || kind === 'gap-buffer' ? 'StringText' : 'Linear'
-      const module = await import(`../src/components/DataStructuresOverview/${group}/${folder}/${actionFolder}/${actionFolder}Animation.ts`)
+      const module = await import(`../src/components/${StructurePaths.group(kind)}/${folder}/${actionFolder}/${actionFolder}Animation.ts`)
       const Sequence = module[`${actionFolder}Animation`]
       const animation = new Sequence(model, input)
       const replay = new Sequence(model, input)
@@ -381,7 +381,7 @@ test('teaching limits reject additions without partial mutation', () => {
 test('trace limits bound snapshots while still completing every mutation', async () => {
   const model = new GapBuffer()
   for (let count = 0; count < 8; count += 1) model.execute('insert', { index: model.length, text: 'x'.repeat(32) })
-  const { ClearAnimation } = await import('../src/components/DataStructuresOverview/StringText/GapBuffer/Clear/ClearAnimation.ts')
+  const { ClearAnimation } = await import('../src/components/AdvancedDataStructures/TextSearch/GapBuffer/Clear/ClearAnimation.ts')
   const animation = new ClearAnimation(model)
   assert.equal(animation.result.getText(), '')
   assert.equal(model.length, 256)

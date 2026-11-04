@@ -1,7 +1,7 @@
 import { LinearAnimation } from '../../../../../visualization/LinearAnimation.ts'
 import type { LinearModel, LinearInputValues } from '../../../../../visualization/LinearModel.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
-import { AdjacencyListLayout } from '../../../../DataStructuresOverview/Graphs/AdjacencyList/AdjacencyListLayout.ts'
+import { AdjacencyListLayout } from '../../../../FundamentalDataStructures/Graphs/AdjacencyList/AdjacencyListLayout.ts'
 
 export class DepthFirstAnimation extends LinearAnimation {
   public static readonly title = 'Depth-first traversal'

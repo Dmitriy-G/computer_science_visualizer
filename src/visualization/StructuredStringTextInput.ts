@@ -3,7 +3,7 @@ import type { ActionKind } from './ActionCatalog.ts'
 import type { ActionInputField, StructuredActionInput } from './StructuredActionInput.ts'
 import type { LinearInputValues } from './LinearModel.ts'
 import { StringTextActionCatalog } from './StringTextActionCatalog.ts'
-import { StringTextModel } from '../components/DataStructuresOverview/StringText/StringTextModel.ts'
+import { StringTextModel } from '../components/AdvancedDataStructures/TextSearch/StringTextModel.ts'
 
 export class StructuredStringTextInput implements StructuredActionInput {
   public readonly fields: readonly ActionInputField[]

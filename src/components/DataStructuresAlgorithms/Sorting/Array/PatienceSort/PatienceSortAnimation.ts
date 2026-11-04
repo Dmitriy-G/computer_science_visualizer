@@ -1,5 +1,5 @@
 import { ArraySortingAnimation } from '../ArraySortingAnimation.ts'
-import { FixedArray } from '../../../../DataStructuresOverview/Linear/Array/FixedArray.ts'
+import { FixedArray } from '../../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
 
 export class PatienceSortAnimation extends ArraySortingAnimation {
   public static describe(size: number) {

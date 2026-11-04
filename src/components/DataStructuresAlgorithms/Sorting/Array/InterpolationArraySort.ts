@@ -1,5 +1,5 @@
 import { IntegerDistributionSort } from './IntegerDistributionSort.ts'
-import type { ArrayEntry } from '../../../DataStructuresOverview/Linear/Array/FixedArray.ts'
+import type { ArrayEntry } from '../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
 
 // Stable histogram interpolation, followed by comparison cleanup within the
 // ordered value regions. Unlike Flashsort, placement uses separate output.

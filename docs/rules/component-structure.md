@@ -1,60 +1,88 @@
 # Component structure
 
 All React components belong under `src/components/`.
-`App` is the root of Computer Science Visualizer. Feature folders follow the
-menu hierarchy: main category, subcategory, structure, then action. Use
-`DataStructuresOverview` and `DataStructuresAlgorithms` for the canonical feature
-folders, with consistent PascalCase spelling. The menu splits Overview into
-Fundamental Data Structures and Advanced Data Structures using
-`MainMenu/MenuStructureCatalog.ts`.
-These subject groups do not relocate canonical models or algorithm actions.
+`App` is the root of Computer Science Visualizer. Feature folders mirror the
+menu hierarchy: root category, subject, structure, then action. Use
+`FundamentalDataStructures`, `AdvancedDataStructures`, and `DataStructuresAlgorithms`
+with exact PascalCase spelling. MainMenu/MenuStructureCatalog.ts defines structure
+membership. Do not retain a separate Overview folder or duplicate canonical models.
 Use concise subject labels such as Probabilistic, Spatial Indexes, and Memory / I/O.
 
 ## Data structures and actions
 
-Use `src/components/DataStructuresOverview/<Group>/<Structure>/` for canonical
-models, structure layouts, and Overview actions. Overview groups map to `Linear`,
-`QueuePriority`, `Trees`, `StringText`, `Graphs`, `SetUnion`, `HashBased`, and `Probabilistic`. Queue, Deque, CircularBuffer,
-and Heap belong under `DataStructuresOverview/QueuePriority/`.
+Canonical models, structure layouts, and ordinary-operation action folders live
+under `src/components/<RootCategory>/<Subject>/<Structure>/`.
+The subjects map to source directories as follows:
 
-PriorityQueue, BinaryMaxHeap, BinomialHeap, FibonacciHeap, PairingHeap,
-LeftistHeap, SkewHeap, IndexedPriorityQueue, and MonotonicQueue also live under
-`DataStructuresOverview/QueuePriority/`, each with its own model, layout, and
-action folders. `PriorityFeatures` connects the new actions to App.
-`PriorityModel`, `PriorityLayout`, `BinaryPriorityHeap`, and `MeldableBinaryHeap`
-share only contracts, scene geometry, and actual common heap primitives within
-that group. Keep each heap's distinct linking, consolidation, rank, or cut policy
-in its own model. Shared priority catalogs and input validation live under
-`src/visualization/`. Reuse the bounded `LinearAnimation` trace recorder and
-`StructuredLinearAction` playback adapter; their contract also supports heaps.
+| Root category | Subject folder | Structure folders |
+| --- | --- | --- |
+| FundamentalDataStructures | Graphs | AdjacencyList, AdjacencyMatrix, BipartiteGraph, CompleteGraph, DAG, DirectedGraph, EdgeList, FunctionalGraph, Multigraph, SimpleGraph, TreeGraph, WeightedGraph |
+| FundamentalDataStructures | HashBased | HashMap, OpenAddressingHashTable, SeparateChainingHashTable |
+| FundamentalDataStructures | Linear | Array, DenseTensor, DoublyLinkedList, Grid2D, LinkedList, Stack |
+| FundamentalDataStructures | QueuePriority | BinaryMaxHeap, CircularBuffer, Deque, Heap, PriorityQueue, Queue |
+| FundamentalDataStructures | SetUnion | BitSet, DisjointSet, HashSet, Multiset, OrderedSet |
+| FundamentalDataStructures | StringText | Trie |
+| FundamentalDataStructures | Trees | AVLTree, BinaryTree, CompleteBinaryTree, GeneralTree, RedBlackTree, UnorderedBinaryTree |
+| AdvancedDataStructures | Hashing | ConsistentHashingRing, CuckooHashTable, ExtendibleHashing, HopscotchHashing, LinearHashing, PerfectHashTable, RobinHoodHashTable |
+| AdvancedDataStructures | Integrity | ChecksummedBlockTree, ContentAddressedLayers, MerkleTree |
+| AdvancedDataStructures | MemoryIO | FreeList, LockFreeRing, MapleTree, MultiQueue, RequestTagArray, XArray |
+| AdvancedDataStructures | MultiwayTrees | BPlusTree, BTree, TwoThreeFourTree, TwoThreeTree |
+| AdvancedDataStructures | Probabilistic | BlockedBloomFilter, BloomFilter, CountMinSketch, CountingBloomFilter, CuckooFilter, HyperLogLog, QuotientFilter, ReservoirSamplingBuffer |
+| AdvancedDataStructures | QueuesHeaps | BinomialHeap, FibonacciHeap, IndexedPriorityQueue, LeftistHeap, MonotonicQueue, PairingHeap, SkewHeap |
+| AdvancedDataStructures | RangeQueries | FenwickTree, IntervalSet, IntervalTree, OrderStatisticTree, PersistentSegmentTree, SegmentTree, SparseTable |
+| AdvancedDataStructures | SearchTrees | AATree, CartesianTree, ScapegoatTree, SplayTree, ThreadedBinaryTree, Treap, VanEmdeBoasTree |
+| AdvancedDataStructures | Sequences | SkipList, UnrolledLinkedList, XORLinkedList |
+| AdvancedDataStructures | SparseArraysMatrices | CompressedSparseRow, NumericalCSR, SparseArray, SparseCOO, SparseCSC |
+| AdvancedDataStructures | SpatialIndexes | BKDTree, BallTree, BoundingVolumeHierarchy, FlatVectorArray, HNSWGraph, IVFIndex, KDTree, LSHIndex, Octree, Quadtree, RTree |
+| AdvancedDataStructures | SpecializedGraphs | AddressSpaceGraph, CompactedDeBruijnGraph, FlowNetwork, Hypergraph, MinimizerIndex |
+| AdvancedDataStructures | StorageIndexes | AppendOnlyLog, BRIN, FanoutArray, GiST, LSMTree, SSTable, SparseOffsetIndex, SparsePrimaryIndex, TimeIndex |
+| AdvancedDataStructures | Syntax | AST |
+| AdvancedDataStructures | TextSearch | AhoCorasickAutomaton, DAWG, FMIndex, GapBuffer, InvertedIndex, RadixTree, Rope, SuffixArray, SuffixAutomaton, SuffixTree, TernarySearchTree |
 
-Use `src/components/DataStructuresAlgorithms/Sorting/Array/` for all sorting
-actions and array-specific sorting helpers, traces, and layouts. Keep the single
-canonical FixedArray model and its ordinary-operation layout under
-`DataStructuresOverview/Linear/Array/`; sorting imports that model. Retain its
-existing sorting entry points, which delegate to the relocated sorting helpers.
+Use `FundamentalDataStructures/Linear/LinkedList/` as the ordinary-operation example.
+Its model and layout sit beside AddInTheMiddle, SearchByValue, and other action
+folders. Keep supporting entities used only by that structure beside its model.
 
-Use `src/components/DataStructuresAlgorithms/GraphsTraversal/<Graph>/` for
-BreadthFirst, DepthFirst, ShortestPath, TopologicalSort, and MaxFlow actions where supported.
-Keep each graph's canonical model and editing/search/clear actions under
-`DataStructuresOverview/Graphs/<Graph>/`. Both branches share the same models and
-scene/playback contracts; never duplicate model classes to satisfy the hierarchy.
+Sorting actions, algorithm-specific helpers, traces, and layouts remain under
+`DataStructuresAlgorithms/Sorting/Array/`. Import the one canonical FixedArray
+model from `FundamentalDataStructures/Linear/Array/`; retain its sorting entry
+points delegating to algorithm helpers. Never duplicate a model for an algorithm.
 
-Keep action-specific entities together in the action's category folder. Keep a
-canonical model and its supporting entities beside its Overview actions, with
-algorithm-specific helpers beside their Algorithms actions. Follow the
-existing `LinkedList/` organization: `LinkedList.ts` and `LinkedListLayout.ts`
-sit beside `AddInTheMiddle/`. Do not split structure-specific entities into
-top-level model or visualization folders.
+Graph algorithm actions remain under `DataStructuresAlgorithms/GraphsTraversal/<Graph>/`.
+Import graph models from their actual Fundamental or Advanced subject directory.
+The graph CSR model lives in Advanced/SparseArraysMatrices; HNSWGraph lives in
+Advanced/SpatialIndexes; specialized graph models live in Advanced/SpecializedGraphs.
+Algorithm and ordinary-operation branches share the same committed models and
+scene/playback contracts. Moving model folders must not change algorithm behavior.
+
+Place class-based dispatchers spanning subjects in `src/components/StructureFeatures/`.
+This includes AppliedFeatures, LinearFeatures, NumericalFeatures, TreeFeatures,
+ExtendedTreeFeatures, GraphFeatures, ExtendedGraphFeatures, PriorityFeatures,
+SetUnionFeatures, HashFeatures, StringTextFeatures, and ProbabilisticFeatures.
+Keep single-structure dispatchers with their structure: HeapFeatures beside Heap,
+and RopeFeatures beside Rope. Shared dispatcher names describe model interfaces,
+not category membership.
+
+Keep helpers shared across subjects under `src/visualization/`, including
+PriorityModel, PriorityLayout, BinaryPriorityHeap, MeldableBinaryHeap,
+ExtendedTreeModel, SearchTreeModel, ExtendedGraphModel, ExtendedGraphLayout,
+StoredEdgeGraph, HashTableModel, ProbingHashTable, NumericalModel, NumericalLayout,
+and SetUnionModel. Subject-local shared helpers stay under their actual subject:
+DenseArrayModel in Fundamental/Linear; SparseMatrixModel and CompressedMatrixModel
+in Advanced/SparseArraysMatrices; StringTextModel and SuffixOrder in
+Advanced/TextSearch; OrthantTreeModel in Advanced/SpatialIndexes; ByteLog and
+SortedRecords in Advanced/StorageIndexes; ProbabilisticModel in Advanced/Probabilistic.
+Reuse genuine shared primitives while keeping distinct structure policies in
+concrete models. Shared action catalogs and validation remain in src/visualization.
 
 Inside each data structure folder, create a PascalCase folder for each action,
 such as `AddInTheMiddle` or `SearchByValue`. Every action folder must contain
 a `.tsx` React component and a separate `.css` file with its styles. Name both
 files after the action and import the stylesheet from the component.
 Keep action-specific sequence classes, such as `InsertionAnimation.ts`, in the
-same action folder. Use relative imports with exact directory casing. Overview
+same action folder. Use relative imports with exact directory casing. Ordinary-operation
 actions normally import their model and layout from the parent folder;
-Algorithms actions import the canonical model from its Overview location and
+Algorithms actions import the canonical model from its canonical category location and
 algorithm-specific layouts from the Algorithms structure folder.
 Tree action components use key terminology: `SearchByKey`, `DeleteByKey`, and
 the B+ Tree's `RangeFromKey`. Match their class, folder, `.tsx`, and `.css` names.
@@ -67,8 +95,14 @@ for expression validation in the shared input dialog.
 
 ```text
 src/components/
-  DataStructuresOverview/
+  FundamentalDataStructures/
     Linear/
+      Array/
+        FixedArray.ts
+        ArrayLayout.ts
+        AddInTheMiddle/
+          AddInTheMiddle.tsx
+          AddInTheMiddle.css
       LinkedList/
         LinkedList.ts
         LinkedListLayout.ts
@@ -76,45 +110,39 @@ src/components/
           AddInTheMiddle.tsx
           AddInTheMiddle.css
           InsertionAnimation.ts
-      Array/
-        FixedArray.ts
-        ArrayLayout.ts
-        AddInTheMiddle/
-          AddInTheMiddle.tsx
-          AddInTheMiddle.css
-        SearchByValue/
-          SearchByValue.tsx
-          SearchByValue.css
     QueuePriority/
       Queue/
         Queue.ts
-        Enqueue/
-          Enqueue.tsx
-          Enqueue.css
-          InsertionAnimation.ts
-      Heap/
-        Heap.ts
-        Insert/
-          Insert.tsx
-          Insert.css
-          InsertAnimation.ts
-    Graphs/
-      SimpleGraph/
-        Graph.ts
+  AdvancedDataStructures/
+    StorageIndexes/
+      SSTable/
+        SSTable.ts
+        SSTableLayout.ts
+        Build/
+          Build.tsx
+          Build.css
+          BuildAnimation.ts
+    SpatialIndexes/
+      HNSWGraph/
+        HNSWGraph.ts
+    Integrity/
+      MerkleTree/
+        MerkleTree.ts
   DataStructuresAlgorithms/
     Sorting/
       Array/
-        ArraySortingLayout.ts
         QuickSort/
           QuickSort.tsx
           QuickSort.css
           QuickSortAnimation.ts
     GraphsTraversal/
-      SimpleGraph/
+      HNSWGraph/
         BreadthFirst/
           BreadthFirst.tsx
           BreadthFirst.css
           BreadthFirstAnimation.ts
+  StructureFeatures/
+    AppliedFeatures.tsx
   Renderer/
     Renderer.tsx
     Renderer.css
@@ -162,8 +190,8 @@ second portal, using the same playback index as the scene and timeline.
 
 Keep contracts and infrastructure used across structures in `src/visualization/`,
 such as `Scene.ts`, `AnimationController.ts`, and `StructureCatalog.ts`.
-Structure-specific layouts belong in their structure's folder under
-`src/components/DataStructuresOverview/`, alongside the canonical model.
+Structure-specific layouts belong beside their canonical model in the matching
+FundamentalDataStructures or AdvancedDataStructures subject folder.
 Algorithm-specific layouts stay beside their algorithm helpers under
 `DataStructuresAlgorithms/`.
 
@@ -244,11 +272,13 @@ defines the required organization; it does not mean those features already exist
 
 ## Applied structure adapters
 
-Additional real-technology examples retain canonical models under their existing
-Overview groups: Linear/{AppendOnlyLog,XArray,FanoutArray,FlatVectorArray,RequestTagArray},
-QueuePriority/{MultiQueue,LockFreeRing}, Trees/{GiST,BKDTree,BallTree,MapleTree,ChecksummedBlockTree},
-StringText/InvertedIndex, HashBased/{LSHIndex,MinimizerIndex},
-Probabilistic/BlockedBloomFilter, and Graphs/{HNSWGraph,CompactedDeBruijnGraph,AddressSpaceGraph}.
+Applied structures follow the category/subject mapping above. In particular,
+AppendOnlyLog and FanoutArray live in Advanced/StorageIndexes; FlatVectorArray,
+BKDTree, BallTree, LSHIndex, and HNSWGraph live in Advanced/SpatialIndexes;
+XArray, RequestTagArray, MultiQueue, LockFreeRing, and MapleTree live in
+Advanced/MemoryIO; ChecksummedBlockTree lives in Advanced/Integrity; InvertedIndex
+lives in Advanced/TextSearch; MinimizerIndex, CompactedDeBruijnGraph, and
+AddressSpaceGraph live in Advanced/SpecializedGraphs.
 Each owns a layout wrapper and action component/CSS/sequence folders. Their BFS/DFS
 folders live under Algorithms/GraphsTraversal, sharing the canonical graph models.
 
@@ -270,8 +300,9 @@ extensions belong in coverage.md, not empty menu scaffolding.
 
 ## Extended linear structures
 
-DenseTensor, SparseCOO, SparseCSC, NumericalCSR, and Grid2D also live under
-Overview/Linear with their own models, layouts, and action folders. NumericalFeatures,
+DenseTensor and Grid2D live under FundamentalDataStructures/Linear. SparseCOO,
+SparseCSC, and NumericalCSR live under AdvancedDataStructures/SparseArraysMatrices.
+Each has its own model, layout, and action folders. NumericalFeatures,
 NumericalStructureCatalog, NumericalActionCatalog, and StructuredNumericalInput
 reuse LinearFeatures, LinearStructureCatalog, LinearAnimation, and shared playback.
 NumericalModel shares validation; DenseArrayModel shares contiguous storage;
@@ -280,8 +311,10 @@ major-axis compression algorithm for CSC and numerical CSR. COO retains its own
 triplet arrays. Pass current shape into the shared input request for coordinate,
 reshape, and vector validation. Keep numerical CSR separate from binary graph CSR.
 
-Keep SkipList, UnrolledLinkedList, XORLinkedList,
-SparseArray, and FreeList under `DataStructuresOverview/Linear/`. Each owns its model,
+Keep SkipList, UnrolledLinkedList, and XORLinkedList under
+`AdvancedDataStructures/Sequences/`; SparseArray under
+`AdvancedDataStructures/SparseArraysMatrices/`; and FreeList under
+`AdvancedDataStructures/MemoryIO/`. Each owns its model,
 layout, and action folders. `LinearFeatures` connects their class components and
 action-owned information to App; shared contracts, catalog, input validation,
 scene helpers, and trace recording live in `src/visualization/Linear*.ts` and
@@ -290,18 +323,17 @@ Do not reuse a tree model or tree layout to stand in for these linear structures
 
 ## String / Text structures
 
-Keep GapBuffer, Rope, Trie, RadixTree, TernarySearchTree, and SuffixTree under
-`DataStructuresOverview/StringText/`, including their canonical models, layouts,
-and action folders. Keep `RopeFeatures` beside Rope in this group. Reuse the
+Keep Trie under `FundamentalDataStructures/StringText/`. Keep GapBuffer, Rope,
+RadixTree, TernarySearchTree, and SuffixTree under `AdvancedDataStructures/TextSearch/`,
+including their canonical models, layouts, and action folders. Keep `RopeFeatures` beside Rope in this group. Reuse the
 existing linear/tree model contracts, catalogs, structured inputs, action
 dispatchers, and playback adapters; their names describe shared implementation
 contracts rather than menu membership. Cross-group imports of shared tree
-primitives are allowed. StructureCatalog assigns these six entries exclusively
-to String / Text, with stable structure keys and existing operation behavior.
-AST remains under Trees because it models expression nodes and evaluation.
+primitives are allowed. MenuStructureCatalog assigns these entries to their subjects without changing
+structure keys or operation behavior. AST lives under AdvancedDataStructures/Syntax.
 
 SuffixArray, SuffixAutomaton, AhoCorasickAutomaton, DAWG, and FMIndex also live
-under `DataStructuresOverview/StringText/`, each with a canonical model, layout,
+under `AdvancedDataStructures/TextSearch/`, each with a canonical model, layout,
 and action component/CSS/animation folders. `StringTextFeatures` owns dispatch;
 `StringTextStructureDefinitions`, `StringTextActionCatalog`,
 `StringTextStructureCatalog`, and `StructuredStringTextInput` connect menus,
@@ -323,15 +355,16 @@ do not claim JavaScript exposes native pointers or saves memory through XOR link
 
 ## Set / Union structures
 
-Keep HashSet and BitSet under `src/components/DataStructuresOverview/SetUnion/`,
+Keep HashSet and BitSet under `src/components/FundamentalDataStructures/SetUnion/`,
 including their canonical models, layouts, and action folders. Preserve their
 structure keys and existing operations. HashSet composes the HashMap storage in
 HashBased; BitSet reuses the LinearStructureCatalog and LinearFeatures adapters.
 These shared adapter names describe implementation contracts rather than menu
 membership.
 
-DisjointSet, OrderedSet, Multiset, and IntervalSet also live in this group with
-their own canonical model, layout, and action component/CSS/animation folders.
+DisjointSet, OrderedSet, and Multiset also live in FundamentalDataStructures/SetUnion.
+IntervalSet lives in AdvancedDataStructures/RangeQueries. Each owns its canonical
+model, layout, and action component/CSS/animation folders.
 SetUnionFeatures owns action dispatch and action-owned information;
 SetUnionStructureDefinitions, SetUnionStructureCatalog, SetUnionActionCatalog,
 and StructuredSetUnionInput connect menus, defaults, scenes, and input dialogs.
@@ -345,7 +378,7 @@ parent forests, positive occurrence counters, and normalized interval arrays.
 ## Hash-based structures
 
 Keep Hash Map under
-`src/components/DataStructuresOverview/HashBased/`, with its model, layout, and action
+`src/components/FundamentalDataStructures/HashBased/`, with its model, layout, and action
 folders. Reuse shared hashing,
 bucket layout, and trace playback from `src/visualization/` where they serve more
 than one structure. Each action has its own sequence, class component, and CSS file.
@@ -353,7 +386,7 @@ than one structure. Each action has its own sequence, class component, and CSS f
 ## Probabilistic structures
 
 Keep Bloom Filter under
-`src/components/DataStructuresOverview/Probabilistic/BloomFilter/`, including its
+`src/components/AdvancedDataStructures/Probabilistic/BloomFilter/`, including its
 model, layout, and Add, CheckMembership, and Clear action folders. The Probabilistic
 menu group contains approximate-answer filters and sketches as they are implemented.
 Exact lookup structures retain their representation groups even when their internal
@@ -361,7 +394,7 @@ construction or balancing uses randomization. Keep existing structure keys and r
 shared hashing, input, and playback infrastructure across groups.
 
 CountingBloomFilter, CuckooFilter, QuotientFilter, CountMinSketch, HyperLogLog,
-and ReservoirSamplingBuffer also belong under `DataStructuresOverview/Probabilistic/`,
+and ReservoirSamplingBuffer also belong under `AdvancedDataStructures/Probabilistic/`,
 each with its own model, layout, and action component/CSS/animation folders.
 `ProbabilisticFeatures` dispatches their actions; catalogs and structured input live
 under `src/visualization/Probabilistic*.ts` and `StructuredProbabilisticInput.ts`.
@@ -374,9 +407,9 @@ extra deletion-ledger storage, overflow/capacity rejection, and approximate sema
 
 ## Graphs
 
-Keep the original undirected Graph under DataStructuresOverview/Graphs/SimpleGraph
+Keep the original undirected Graph under FundamentalDataStructures/Graphs/SimpleGraph
 and DirectedGraph, WeightedGraph, DAG, and Multigraph beside it. GraphFeatures
-dispatches only Overview actions; GraphTraversalFeatures belongs under
+dispatches only ordinary-operation actions; GraphTraversalFeatures belongs under
 DataStructuresAlgorithms/GraphsTraversal and dispatches graph algorithms.
 GraphModel, GraphSceneLayout, and
 GraphAnimation are shared across these variants. Each allowed action has its own
@@ -388,7 +421,9 @@ technology examples with primary links and explain differences from this model.
 BipartiteGraph, CompleteGraph, TreeGraph, Hypergraph, FlowNetwork,
 FunctionalGraph, AdjacencyMatrix, AdjacencyList, EdgeList, and
 CompressedSparseRow also own canonical models, layouts, and editing action
-folders under Overview/Graphs. Keep their BFS/DFS actions and FlowNetwork's
+folders under their subjects: ordinary graphs in FundamentalDataStructures/Graphs,
+Hypergraph and FlowNetwork in AdvancedDataStructures/SpecializedGraphs, and
+CompressedSparseRow in AdvancedDataStructures/SparseArraysMatrices. Keep their BFS/DFS actions and FlowNetwork's
 MaxFlow under Algorithms/GraphsTraversal. ExtendedGraphFeatures and
 ExtendedGraphTraversalFeatures dispatch the two scopes separately.
 ExtendedGraphModel shares vertex identity, validation, traversal, and trace
@@ -413,7 +448,7 @@ LibrarySort, SplaySort, StrandSort, PancakeSort, StoogeSort, SlowSort, BogoSort,
 and SleepSort.
 Each action owns its component,
 CSS, and sequence folder under DataStructuresAlgorithms/Sorting/Array. Keep the
-model entry points in the canonical Overview FixedArray, with shared sorting
+model entry points in the canonical FundamentalDataStructures/Linear/Array/FixedArray, with shared sorting
 algorithms, trace, layout, and snapshot helpers in the Algorithms Array folder.
 HybridArraySort implements TimSort, IntroSort, and Dual-Pivot QuickSort on the
 existing allocation. BlockMergeArraySort implements buffered block-wise multiway
@@ -458,7 +493,7 @@ ActionMenu receives an explicit
 ActionScope, and App preserves the selected scope independently of menu browsing.
 ActionOrdering belongs beside ActionMenu. It sorts copies of algorithm action
 choices alphabetically or by average time/memory growth using action-owned
-AlgorithmInformation supplied by App. Keep catalog order and Overview actions
+AlgorithmInformation supplied by App. Keep catalog order and ordinary-operation actions
 unchanged; sort selection is local menu state and does not affect playback.
 Algorithm structure buttons show at most two example names in one truncated line;
 keep the complete list in the independently scrolling action panel.
@@ -467,9 +502,9 @@ in the Algorithms branch.
 
 ## Extended tree structures
 
-The 24 extended tree models and their layouts live in individual folders under
-`DataStructuresOverview/Trees/`, except RadixTree, TernarySearchTree, and SuffixTree
-under `DataStructuresOverview/StringText/`. `UnorderedBinaryTree` is the ordinary Binary Tree;
+Extended tree models and layouts follow the Fundamental/Trees, Advanced/SearchTrees,
+MultiwayTrees, RangeQueries, SpatialIndexes, Integrity, and TextSearch subjects
+in the mapping above. `UnorderedBinaryTree` is the ordinary Binary Tree;
 the existing `BinaryTree` and `binary-tree` key remain the BST. Use
 `ExtendedTreeFeatures` for their action components and action-owned information,
 `ExtendedTreeDefinitions` / `ExtendedTreeActionCatalog` for menu entries, and
@@ -491,8 +526,8 @@ threads separately from child links. Sparse Table uses rows of cached intervals.
 
 Keep OpenAddressingHashTable, SeparateChainingHashTable, RobinHoodHashTable,
 CuckooHashTable, HopscotchHashing, ExtendibleHashing, LinearHashing,
-PerfectHashTable, and ConsistentHashingRing in their own Overview/HashBased
-folders, each with a canonical model, layout, and action component/CSS/sequence
+PerfectHashTable, and ConsistentHashingRing in their matching FundamentalDataStructures/HashBased or
+AdvancedDataStructures/Hashing folders, each with a canonical model, layout, and action component/CSS/sequence
 folders. HashFeatures connects their components and action-owned information to
 App. HashStructureCatalog owns defaults and scene dispatch; HashStructureDefinitions
 and HashActionCatalog own menu entries. Store these committed models in App's
@@ -512,9 +547,11 @@ HashTableHash provides seeded exact affine arithmetic for the variants using it.
 
 ## Storage and integrity index lessons
 
-Keep BRIN, SSTable, SparsePrimaryIndex, SparseOffsetIndex, TimeIndex, and IVFIndex
-under canonical `DataStructuresOverview/Trees/` folders. Keep ContentAddressedLayers
-under `DataStructuresOverview/HashBased/`. MenuStructureCatalog assigns the five
+Keep BRIN, SSTable, SparsePrimaryIndex, SparseOffsetIndex, and TimeIndex under
+`AdvancedDataStructures/StorageIndexes/`. Keep IVFIndex under
+`AdvancedDataStructures/SpatialIndexes/` and ContentAddressedLayers under
+`AdvancedDataStructures/Integrity/`.
+MenuStructureCatalog assigns the five
 storage/log indexes to Advanced > Storage Indexes, IVF to Spatial Indexes, and
 layer references to Integrity. AppliedStructureDefinitions, AppliedStructureCatalog,
 AppliedActionCatalog, AppliedInput, and AppliedFeatures integrate these models.

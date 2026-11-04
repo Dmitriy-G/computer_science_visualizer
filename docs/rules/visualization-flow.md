@@ -17,7 +17,7 @@
    ordinary category and group navigation.
 2. Open the menu to see **Fundamental Data Structures**, **Advanced Data Structures**,
    and **Data Structures Algorithms**. Structure assignments are defined in `MainMenu/MenuStructureCatalog.ts`,
-   independently of canonical model folders.
+   and mirrored by canonical model folders under the matching root and subject.
    Fundamental contains Linear, Queue / Priority, Trees, String / Text, Graphs,
    Set / Union, and Hash-based. Advanced contains Sequences, Sparse Arrays / Matrices,
    Queues / Heaps, Search Trees, Multiway Trees, Range Queries, Spatial Indexes,
@@ -311,8 +311,8 @@ identify structures with previews but no animated actions clearly.
 
 ## Applied structure operations
 
-The nineteen additions listed in README fit existing Overview groups and do not
-add root categories or groups. All use the shared renderer, validated structured
+Applied structures listed in README follow the Fundamental and Advanced menu
+subjects in their source folders. All use the shared renderer, validated structured
 inputs, automatic playback, full Reset, final-clone commits, independent snapshots,
 and 96 detailed trace frames with an omission count. All default logical counts
 are ten; allocated cells, internal pages, unitigs, and filter bits are not counted
@@ -1010,7 +1010,7 @@ Also include Interpolation Sort, Library Sort, Splay Sort, Strand Sort, Pancake
 Sort, Stooge Sort, Slow Sort, Bogo Sort, and Sleep Sort.
 Each action owns its component, CSS, sequence, and complexity
 information. Keep model entry points and optional synchronous trace callbacks in
-the canonical DataStructuresOverview/Linear/Array/FixedArray model, with sorting
+the canonical FundamentalDataStructures/Linear/Array/FixedArray model, with sorting
 actions and helpers under DataStructuresAlgorithms/Sorting/Array. Reuse
 ArraySortingLayout and ArraySortingAnimation for independent snapshots and fixed
 slot positions. None of these actions collects a value.

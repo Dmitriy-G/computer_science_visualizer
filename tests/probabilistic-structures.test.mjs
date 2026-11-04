@@ -9,12 +9,12 @@ import { ActionInputRequest } from '../src/visualization/ActionInputRequest.ts'
 import { ActionCatalog } from '../src/visualization/ActionCatalog.ts'
 import { StructureCatalog } from '../src/visualization/StructureCatalog.ts'
 import { StructureInformation } from '../src/components/StructureInfo/StructureInformation.ts'
-import { CountingBloomFilter } from '../src/components/DataStructuresOverview/Probabilistic/CountingBloomFilter/CountingBloomFilter.ts'
-import { CuckooFilter } from '../src/components/DataStructuresOverview/Probabilistic/CuckooFilter/CuckooFilter.ts'
-import { QuotientFilter } from '../src/components/DataStructuresOverview/Probabilistic/QuotientFilter/QuotientFilter.ts'
-import { CountMinSketch } from '../src/components/DataStructuresOverview/Probabilistic/CountMinSketch/CountMinSketch.ts'
-import { HyperLogLog } from '../src/components/DataStructuresOverview/Probabilistic/HyperLogLog/HyperLogLog.ts'
-import { ReservoirSamplingBuffer } from '../src/components/DataStructuresOverview/Probabilistic/ReservoirSamplingBuffer/ReservoirSamplingBuffer.ts'
+import { CountingBloomFilter } from '../src/components/AdvancedDataStructures/Probabilistic/CountingBloomFilter/CountingBloomFilter.ts'
+import { CuckooFilter } from '../src/components/AdvancedDataStructures/Probabilistic/CuckooFilter/CuckooFilter.ts'
+import { QuotientFilter } from '../src/components/AdvancedDataStructures/Probabilistic/QuotientFilter/QuotientFilter.ts'
+import { CountMinSketch } from '../src/components/AdvancedDataStructures/Probabilistic/CountMinSketch/CountMinSketch.ts'
+import { HyperLogLog } from '../src/components/AdvancedDataStructures/Probabilistic/HyperLogLog/HyperLogLog.ts'
+import { ReservoirSamplingBuffer } from '../src/components/AdvancedDataStructures/Probabilistic/ReservoirSamplingBuffer/ReservoirSamplingBuffer.ts'
 
 const snapshot = (model) => JSON.stringify(ProbabilisticStructureCatalog.createScene(model))
 const add = (model, value, weight = 1) => model.execute('insert', { value, weight })
@@ -251,7 +251,7 @@ test('reservoir retains stream occurrences, bounds storage, and clones generator
 })
 
 test('all probabilistic actions own metadata and produce bounded immutable playback scenes', async () => {
-  const featuresUrl = new URL('../src/components/DataStructuresOverview/Probabilistic/ProbabilisticFeatures.tsx', import.meta.url)
+  const featuresUrl = new URL('../src/components/StructureFeatures/ProbabilisticFeatures.tsx', import.meta.url)
   const source = readFileSync(featuresUrl, 'utf8')
   const imports = [...source.matchAll(/import \{ (\w+) as \w+Sequence \} from '([^']+)'/g)]
   assert.equal(imports.length, 20)

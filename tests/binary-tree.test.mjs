@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { BinaryTree } from '../src/components/DataStructuresOverview/Trees/BinaryTree/BinaryTree.ts'
-import { BinaryTreeLayout } from '../src/components/DataStructuresOverview/Trees/BinaryTree/BinaryTreeLayout.ts'
-import { InsertionAnimation } from '../src/components/DataStructuresOverview/Trees/BinaryTree/Insert/InsertionAnimation.ts'
+import { BinaryTree } from '../src/components/FundamentalDataStructures/Trees/BinaryTree/BinaryTree.ts'
+import { BinaryTreeLayout } from '../src/components/FundamentalDataStructures/Trees/BinaryTree/BinaryTreeLayout.ts'
+import { InsertionAnimation } from '../src/components/FundamentalDataStructures/Trees/BinaryTree/Insert/InsertionAnimation.ts'
 import { StructureCatalog } from '../src/visualization/StructureCatalog.ts'
-import { LinkedList } from '../src/components/DataStructuresOverview/Linear/LinkedList/LinkedList.ts'
+import { LinkedList } from '../src/components/FundamentalDataStructures/Linear/LinkedList/LinkedList.ts'
 import { AnimationController } from '../src/visualization/AnimationController.ts'
 
 class TreeAssertions {

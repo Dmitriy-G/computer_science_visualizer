@@ -1,7 +1,7 @@
 import { LinearAnimation } from '../../../../../visualization/LinearAnimation.ts'
 import type { LinearModel, LinearInputValues } from '../../../../../visualization/LinearModel.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
-import { HNSWGraphLayout } from '../../../../DataStructuresOverview/Graphs/HNSWGraph/HNSWGraphLayout.ts'
+import { HNSWGraphLayout } from '../../../../AdvancedDataStructures/SpatialIndexes/HNSWGraph/HNSWGraphLayout.ts'
 
 export class BreadthFirstAnimation extends LinearAnimation {
   public static readonly title = 'Breadth-first traversal'

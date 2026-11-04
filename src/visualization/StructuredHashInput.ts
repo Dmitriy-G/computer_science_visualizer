@@ -3,7 +3,7 @@ import type { ActionKind } from './ActionCatalog.ts'
 import type { ActionInputField, StructuredActionInput } from './StructuredActionInput.ts'
 import type { LinearInputValues } from './LinearModel.ts'
 import { HashActionCatalog } from './HashActionCatalog.ts'
-import { PerfectHashTable } from '../components/DataStructuresOverview/HashBased/PerfectHashTable/PerfectHashTable.ts'
+import { PerfectHashTable } from '../components/AdvancedDataStructures/Hashing/PerfectHashTable/PerfectHashTable.ts'
 
 export class StructuredHashInput implements StructuredActionInput {
   public readonly fields: readonly ActionInputField[]

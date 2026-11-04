@@ -1,11 +1,12 @@
+import { StructurePaths } from './helpers/StructurePaths.mjs'
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { Trie } from '../src/components/DataStructuresOverview/StringText/Trie/Trie.ts'
-import { Heap } from '../src/components/DataStructuresOverview/QueuePriority/Heap/Heap.ts'
-import { SegmentTree } from '../src/components/DataStructuresOverview/Trees/SegmentTree/SegmentTree.ts'
-import { FenwickTree } from '../src/components/DataStructuresOverview/Trees/FenwickTree/FenwickTree.ts'
-import { RTree, Rectangle } from '../src/components/DataStructuresOverview/Trees/RTree/RTree.ts'
-import { LSMTree } from '../src/components/DataStructuresOverview/Trees/LSMTree/LSMTree.ts'
+import { Trie } from '../src/components/FundamentalDataStructures/StringText/Trie/Trie.ts'
+import { Heap } from '../src/components/FundamentalDataStructures/QueuePriority/Heap/Heap.ts'
+import { SegmentTree } from '../src/components/AdvancedDataStructures/RangeQueries/SegmentTree/SegmentTree.ts'
+import { FenwickTree } from '../src/components/AdvancedDataStructures/RangeQueries/FenwickTree/FenwickTree.ts'
+import { RTree, Rectangle } from '../src/components/AdvancedDataStructures/SpatialIndexes/RTree/RTree.ts'
+import { LSMTree } from '../src/components/AdvancedDataStructures/StorageIndexes/LSMTree/LSMTree.ts'
 import { AdditionalTreeCatalog } from '../src/visualization/AdditionalTreeCatalog.ts'
 import { ActionCatalog } from '../src/visualization/ActionCatalog.ts'
 import { ActionInputRequest } from '../src/visualization/ActionInputRequest.ts'
@@ -247,8 +248,7 @@ for (const [kind, className, actions, input] of features) {
         assert.deepEqual(request.structured.validate(drafts), {})
       }
       const payload = request ? request.structured.parse(drafts) : {}
-      const group = className === 'Heap' ? 'QueuePriority' : className === 'Trie' ? 'StringText' : 'Trees'
-      const { [folder + 'Animation']: Sequence } = await import(`../src/components/DataStructuresOverview/${group}/${className}/${folder}/${folder}Animation.ts`)
+      const { [folder + 'Animation']: Sequence } = await import(`../src/components/${StructurePaths.group(kind)}/${className}/${folder}/${folder}Animation.ts`)
       const plan = new Sequence(source, payload)
       const storedFirst = structuredClone(plan.steps[0].scene)
       assert.deepEqual(AdditionalTreeCatalog.createScene(source), original)

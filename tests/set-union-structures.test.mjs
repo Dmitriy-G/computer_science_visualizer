@@ -1,9 +1,10 @@
+import { StructurePaths } from './helpers/StructurePaths.mjs'
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { DisjointSet } from '../src/components/DataStructuresOverview/SetUnion/DisjointSet/DisjointSet.ts'
-import { OrderedSet } from '../src/components/DataStructuresOverview/SetUnion/OrderedSet/OrderedSet.ts'
-import { Multiset } from '../src/components/DataStructuresOverview/SetUnion/Multiset/Multiset.ts'
-import { IntervalSet } from '../src/components/DataStructuresOverview/SetUnion/IntervalSet/IntervalSet.ts'
+import { DisjointSet } from '../src/components/FundamentalDataStructures/SetUnion/DisjointSet/DisjointSet.ts'
+import { OrderedSet } from '../src/components/FundamentalDataStructures/SetUnion/OrderedSet/OrderedSet.ts'
+import { Multiset } from '../src/components/FundamentalDataStructures/SetUnion/Multiset/Multiset.ts'
+import { IntervalSet } from '../src/components/AdvancedDataStructures/RangeQueries/IntervalSet/IntervalSet.ts'
 import { SetUnionStructureCatalog } from '../src/visualization/SetUnionStructureCatalog.ts'
 import { SetUnionStructureDefinitions } from '../src/visualization/SetUnionStructureDefinitions.ts'
 import { LinearStructureCatalog } from '../src/visualization/LinearStructureCatalog.ts'
@@ -268,7 +269,7 @@ for (const definition of SetUnionStructureDefinitions.structures) {
     for (let index = 0; index < choices.length; index += 1) {
       const action = choices[index]
       const folder = actions[definition.kind][index]
-      const module = await import(`../src/components/DataStructuresOverview/SetUnion/${folders[definition.kind]}/${folder}/${folder}Animation.ts`)
+      const module = await import(`../src/components/${StructurePaths.group(definition.kind)}/${folders[definition.kind]}/${folder}/${folder}Animation.ts`)
       const Sequence = module[`${folder}Animation`]
       const first = new Sequence(model)
       const second = new Sequence(model)
@@ -319,7 +320,7 @@ test('interval input validates paired inclusive bounds before parsing', () => {
 })
 
 test('trace caps omit snapshots without skipping releases and keep previously recorded scenes independent', async () => {
-  const { ClearAnimation } = await import('../src/components/DataStructuresOverview/SetUnion/DisjointSet/Clear/ClearAnimation.ts')
+  const { ClearAnimation } = await import('../src/components/FundamentalDataStructures/SetUnion/DisjointSet/Clear/ClearAnimation.ts')
   const model = new DisjointSet()
   for (let value = 0; value < 64; value += 1) insert(model, value)
   const animation = new ClearAnimation(model)

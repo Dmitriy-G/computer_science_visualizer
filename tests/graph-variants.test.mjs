@@ -1,10 +1,11 @@
+import { StructurePaths } from './helpers/StructurePaths.mjs'
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { Graph } from '../src/components/DataStructuresOverview/Graphs/SimpleGraph/Graph.ts'
-import { DirectedGraph } from '../src/components/DataStructuresOverview/Graphs/DirectedGraph/DirectedGraph.ts'
-import { WeightedGraph } from '../src/components/DataStructuresOverview/Graphs/WeightedGraph/WeightedGraph.ts'
-import { DAG } from '../src/components/DataStructuresOverview/Graphs/DAG/DAG.ts'
-import { Multigraph } from '../src/components/DataStructuresOverview/Graphs/Multigraph/Multigraph.ts'
+import { Graph } from '../src/components/FundamentalDataStructures/Graphs/SimpleGraph/Graph.ts'
+import { DirectedGraph } from '../src/components/FundamentalDataStructures/Graphs/DirectedGraph/DirectedGraph.ts'
+import { WeightedGraph } from '../src/components/FundamentalDataStructures/Graphs/WeightedGraph/WeightedGraph.ts'
+import { DAG } from '../src/components/FundamentalDataStructures/Graphs/DAG/DAG.ts'
+import { Multigraph } from '../src/components/FundamentalDataStructures/Graphs/Multigraph/Multigraph.ts'
 import { GraphCatalog } from '../src/visualization/GraphCatalog.ts'
 import { GraphSceneLayout } from '../src/visualization/GraphSceneLayout.ts'
 import { GraphAnimation } from '../src/visualization/GraphAnimation.ts'
@@ -186,7 +187,7 @@ test('every offered action has a sequence with independent snapshots and a concr
       const prefix = kind === 'graph' && ['Clear', 'DeleteByValue', 'SearchByValue'].includes(folder) ? 'Graph' : ''
       const name = `${prefix}${folder}Animation`
       const category = ['breadth-first', 'depth-first', 'shortest-path', 'topological-sort'].includes(choice.kind)
-        ? 'DataStructuresAlgorithms/GraphsTraversal' : 'DataStructuresOverview/Graphs'
+        ? 'DataStructuresAlgorithms/GraphsTraversal' : StructurePaths.group(kind)
       const module = await import(`../src/components/${category}/${structures[kind]}/${folder}/${name}.ts`)
       const Animation = module[name]
       const input = { value: 999, from: 10, to: 100, start: 10, weight: 2, edge: 0 }

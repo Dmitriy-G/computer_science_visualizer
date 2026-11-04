@@ -5,10 +5,12 @@
 Build Computer Science Visualizer, an interactive app for computer science
 concepts with TypeScript and React, using Vite. Its current feature area is data structures.
 The app uses TypeScript and React class components. Linked list, array, binary
-search tree, graph, and stack operations have animated actions. The menu groups
-structures under Linear, Queue / Priority, Trees, String / Text, Graphs, Set / Union, Hash-based, and Probabilistic within Data Structures
-Overview. Data Structures Algorithms contains Sorting (Array with forty-eight sorting algorithms)
-and Graphs Traversal; graph algorithm examples live in the latter.
+search tree, graph, and stack operations have animated actions. Canonical model,
+layout, and ordinary-operation folders mirror the Fundamental Data Structures and
+Advanced Data Structures menu hierarchy. Their subjects and assignments are defined
+in MainMenu/MenuStructureCatalog.ts. Data Structures Algorithms contains Sorting
+(Array with forty-eight sorting algorithms) and Graphs Traversal; graph algorithm
+examples live in the latter.
 Use npm for dependency management.
 
 ## Required project rules
@@ -52,12 +54,16 @@ Commit `package-lock.json` when generated; do not commit `node_modules/` or `dis
 - `src/components/MainMenu/`: structure and action selection.
 - `src/components/Renderer/`: shared scene renderer.
 - `src/components/ActionPlayback/`: shared playback controls and animation session.
-- `src/components/DataStructuresOverview/<Group>/<StructureName>/`: canonical
-  models, layouts, supporting types, and common-operation action folders.
+- `src/components/FundamentalDataStructures/<Group>/<StructureName>/`: fundamental
+  models, layouts, supporting types, and ordinary-operation action folders.
+- `src/components/AdvancedDataStructures/<Group>/<StructureName>/`: advanced
+  models, layouts, supporting types, and ordinary-operation action folders.
+- `src/components/StructureFeatures/`: shared class-based action dispatchers that
+  connect multiple categories and subjects to App.
 - `src/components/DataStructuresAlgorithms/Sorting/Array/`: sorting actions and
   array-specific algorithm helpers, traces, and layouts.
 - `src/components/DataStructuresAlgorithms/GraphsTraversal/<Graph>/`: graph
-  algorithm action folders, reusing canonical Overview graph models.
+  algorithm action folders, reusing the canonical Fundamental or Advanced graph models.
 - `src/visualization/`: shared scene contracts, structure catalog, and animation
   playback classes used across structures.
 - `src/style.css`: global styles and initial app layout.
@@ -76,11 +82,13 @@ Create directories when needed, rather than adding empty scaffolding.
 - Use `.tsx` for React components, `.ts` for other application code, and PascalCase
   for class and component names.
 - Follow the main-category/subcategory/structure/action hierarchy. Use
-  `DataStructuresOverview/Linear/LinkedList/` as the ordinary-operation example,
-  `DataStructuresOverview/QueuePriority/Queue/` for queue-family operations, and
-  `DataStructuresAlgorithms/Sorting/Array/` for sorting actions. Keep canonical
-  models in Overview and reuse them from Algorithms. Reserve shared infrastructure
-  for code used across structures. Match path casing exactly.
+  `FundamentalDataStructures/Linear/LinkedList/` for ordinary list operations,
+  `FundamentalDataStructures/QueuePriority/Queue/` for queues,
+  `AdvancedDataStructures/StorageIndexes/SSTable/` for advanced indexes, and
+  `DataStructuresAlgorithms/Sorting/Array/` for sorting actions. Algorithms import
+  canonical models from their Fundamental or Advanced location. Put helpers used
+  across subjects in `src/visualization/` and cross-subject React dispatchers in
+  `src/components/StructureFeatures/`. Match path casing exactly.
 - Follow the existing two-space indentation, single quotes, and no-semicolon style.
 - Keep state immutable and use stable keys for rendered nodes.
 - Keep data structure operations separate from rendering and animation timing.

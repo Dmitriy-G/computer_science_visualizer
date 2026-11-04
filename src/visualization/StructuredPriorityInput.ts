@@ -1,5 +1,5 @@
 import { PriorityActionCatalog } from './PriorityActionCatalog.ts'
-import { PriorityModel } from '../components/DataStructuresOverview/QueuePriority/PriorityModel.ts'
+import { PriorityModel } from './PriorityModel.ts'
 import type { ActionKind } from './ActionCatalog.ts'
 import type { StructureKind } from './Scene.ts'
 import type { ActionInputField, StructuredActionInput } from './StructuredActionInput.ts'

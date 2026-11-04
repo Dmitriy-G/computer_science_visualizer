@@ -1,14 +1,15 @@
+import { StructurePaths } from './helpers/StructurePaths.mjs'
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { PriorityQueue } from '../src/components/DataStructuresOverview/QueuePriority/PriorityQueue/PriorityQueue.ts'
-import { BinaryMaxHeap } from '../src/components/DataStructuresOverview/QueuePriority/BinaryMaxHeap/BinaryMaxHeap.ts'
-import { BinomialHeap } from '../src/components/DataStructuresOverview/QueuePriority/BinomialHeap/BinomialHeap.ts'
-import { FibonacciHeap } from '../src/components/DataStructuresOverview/QueuePriority/FibonacciHeap/FibonacciHeap.ts'
-import { PairingHeap } from '../src/components/DataStructuresOverview/QueuePriority/PairingHeap/PairingHeap.ts'
-import { LeftistHeap } from '../src/components/DataStructuresOverview/QueuePriority/LeftistHeap/LeftistHeap.ts'
-import { SkewHeap } from '../src/components/DataStructuresOverview/QueuePriority/SkewHeap/SkewHeap.ts'
-import { IndexedPriorityQueue } from '../src/components/DataStructuresOverview/QueuePriority/IndexedPriorityQueue/IndexedPriorityQueue.ts'
-import { MonotonicQueue } from '../src/components/DataStructuresOverview/QueuePriority/MonotonicQueue/MonotonicQueue.ts'
+import { PriorityQueue } from '../src/components/FundamentalDataStructures/QueuePriority/PriorityQueue/PriorityQueue.ts'
+import { BinaryMaxHeap } from '../src/components/FundamentalDataStructures/QueuePriority/BinaryMaxHeap/BinaryMaxHeap.ts'
+import { BinomialHeap } from '../src/components/AdvancedDataStructures/QueuesHeaps/BinomialHeap/BinomialHeap.ts'
+import { FibonacciHeap } from '../src/components/AdvancedDataStructures/QueuesHeaps/FibonacciHeap/FibonacciHeap.ts'
+import { PairingHeap } from '../src/components/AdvancedDataStructures/QueuesHeaps/PairingHeap/PairingHeap.ts'
+import { LeftistHeap } from '../src/components/AdvancedDataStructures/QueuesHeaps/LeftistHeap/LeftistHeap.ts'
+import { SkewHeap } from '../src/components/AdvancedDataStructures/QueuesHeaps/SkewHeap/SkewHeap.ts'
+import { IndexedPriorityQueue } from '../src/components/AdvancedDataStructures/QueuesHeaps/IndexedPriorityQueue/IndexedPriorityQueue.ts'
+import { MonotonicQueue } from '../src/components/AdvancedDataStructures/QueuesHeaps/MonotonicQueue/MonotonicQueue.ts'
 import { PriorityStructureCatalog } from '../src/visualization/PriorityStructureCatalog.ts'
 import { StructuredPriorityInput } from '../src/visualization/StructuredPriorityInput.ts'
 import { ActionCatalog } from '../src/visualization/ActionCatalog.ts'
@@ -305,7 +306,7 @@ for (const [kind, folder, actions] of fixtures) {
         assert.deepEqual(request.structured.validate(drafts), {})
         assert.ok(Object.keys(request.structured.validate({})).length)
       }
-      const module = await import(`../src/components/DataStructuresOverview/QueuePriority/${folder}/${actionFolder}/${actionFolder}Animation.ts`)
+      const module = await import(`../src/components/${StructurePaths.group(kind)}/${folder}/${actionFolder}/${actionFolder}Animation.ts`)
       const Animation = module[`${actionFolder}Animation`]
       const animation = new Animation(model, input)
       assert.deepEqual(new Animation(model, input).steps, animation.steps)

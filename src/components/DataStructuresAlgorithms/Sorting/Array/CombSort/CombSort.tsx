@@ -1,6 +1,6 @@
 import ActionView from '../../../../ActionPlayback/ActionView.tsx'
 import type { ActionDefinition } from '../../../../../visualization/ActionDefinition.ts'
-import { FixedArray } from '../../../../DataStructuresOverview/Linear/Array/FixedArray.ts'
+import { FixedArray } from '../../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
 import { CombSortAnimation } from './CombSortAnimation.ts'
 import './CombSort.css'
 

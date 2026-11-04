@@ -1,4 +1,4 @@
-import { NumericalModel } from '../components/DataStructuresOverview/Linear/NumericalModel.ts'
+import { NumericalModel } from './NumericalModel.ts'
 import { NumericalActionCatalog } from './NumericalActionCatalog.ts'
 import type { ActionKind } from './ActionCatalog.ts'
 import type { StructureKind } from './Scene.ts'

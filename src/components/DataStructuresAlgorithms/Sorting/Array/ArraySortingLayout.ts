@@ -1,5 +1,5 @@
-import { ArrayLayout } from '../../../DataStructuresOverview/Linear/Array/ArrayLayout.ts'
-import type { ArrayEntry } from '../../../DataStructuresOverview/Linear/Array/FixedArray.ts'
+import { ArrayLayout } from '../../../FundamentalDataStructures/Linear/Array/ArrayLayout.ts'
+import type { ArrayEntry } from '../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
 import type { ArraySortFrame, ArraySortRun, ArraySortTreeNode } from './ArraySortTrace.ts'
 import type { Scene, SceneEdge, SceneNode, SceneSlot } from '../../../../visualization/Scene.ts'
 

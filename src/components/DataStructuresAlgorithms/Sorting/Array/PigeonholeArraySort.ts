@@ -1,5 +1,5 @@
 import { ArraySortOperations } from './ArraySortOperations.ts'
-import type { ArrayEntry } from '../../../DataStructuresOverview/Linear/Array/FixedArray.ts'
+import type { ArrayEntry } from '../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
 import type { ArraySortEvent, ArraySortFrame, ArraySortRun } from './ArraySortTrace.ts'
 
 export class PigeonholeArraySort extends ArraySortOperations {

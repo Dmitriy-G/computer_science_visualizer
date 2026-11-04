@@ -1,15 +1,16 @@
+import { StructurePaths } from './helpers/StructurePaths.mjs'
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { BipartiteGraph } from '../src/components/DataStructuresOverview/Graphs/BipartiteGraph/BipartiteGraph.ts'
-import { CompleteGraph } from '../src/components/DataStructuresOverview/Graphs/CompleteGraph/CompleteGraph.ts'
-import { TreeGraph } from '../src/components/DataStructuresOverview/Graphs/TreeGraph/TreeGraph.ts'
-import { Hypergraph } from '../src/components/DataStructuresOverview/Graphs/Hypergraph/Hypergraph.ts'
-import { FlowNetwork } from '../src/components/DataStructuresOverview/Graphs/FlowNetwork/FlowNetwork.ts'
-import { FunctionalGraph } from '../src/components/DataStructuresOverview/Graphs/FunctionalGraph/FunctionalGraph.ts'
-import { AdjacencyMatrix } from '../src/components/DataStructuresOverview/Graphs/AdjacencyMatrix/AdjacencyMatrix.ts'
-import { AdjacencyList } from '../src/components/DataStructuresOverview/Graphs/AdjacencyList/AdjacencyList.ts'
-import { EdgeList } from '../src/components/DataStructuresOverview/Graphs/EdgeList/EdgeList.ts'
-import { CompressedSparseRow } from '../src/components/DataStructuresOverview/Graphs/CompressedSparseRow/CompressedSparseRow.ts'
+import { BipartiteGraph } from '../src/components/FundamentalDataStructures/Graphs/BipartiteGraph/BipartiteGraph.ts'
+import { CompleteGraph } from '../src/components/FundamentalDataStructures/Graphs/CompleteGraph/CompleteGraph.ts'
+import { TreeGraph } from '../src/components/FundamentalDataStructures/Graphs/TreeGraph/TreeGraph.ts'
+import { Hypergraph } from '../src/components/AdvancedDataStructures/SpecializedGraphs/Hypergraph/Hypergraph.ts'
+import { FlowNetwork } from '../src/components/AdvancedDataStructures/SpecializedGraphs/FlowNetwork/FlowNetwork.ts'
+import { FunctionalGraph } from '../src/components/FundamentalDataStructures/Graphs/FunctionalGraph/FunctionalGraph.ts'
+import { AdjacencyMatrix } from '../src/components/FundamentalDataStructures/Graphs/AdjacencyMatrix/AdjacencyMatrix.ts'
+import { AdjacencyList } from '../src/components/FundamentalDataStructures/Graphs/AdjacencyList/AdjacencyList.ts'
+import { EdgeList } from '../src/components/FundamentalDataStructures/Graphs/EdgeList/EdgeList.ts'
+import { CompressedSparseRow } from '../src/components/AdvancedDataStructures/SparseArraysMatrices/CompressedSparseRow/CompressedSparseRow.ts'
 import { ExtendedGraphCatalog } from '../src/visualization/ExtendedGraphCatalog.ts'
 import { ExtendedGraphInput } from '../src/visualization/ExtendedGraphInput.ts'
 import { ActionCatalog } from '../src/visualization/ActionCatalog.ts'
@@ -275,7 +276,7 @@ test('every new action has deterministic independent bounded scenes and action-o
     for (const choice of ActionCatalog.getActions(kind)) {
       const folder = kind === 'functional-graph' && choice.kind === 'add-edge' ? 'SetSuccessor' : folders[choice.kind]
       const algorithm = ['breadth-first', 'depth-first', 'max-flow'].includes(choice.kind)
-      const category = algorithm ? 'DataStructuresAlgorithms/GraphsTraversal' : 'DataStructuresOverview/Graphs'
+      const category = algorithm ? 'DataStructuresAlgorithms/GraphsTraversal' : StructurePaths.group(kind)
       const module = await import(`../src/components/${category}/${structures[kind]}/${folder}/${folder}Animation.ts`)
       const Animation = module[`${folder}Animation`]
       const input = { value: choice.kind === 'add-vertex' ? 110 : choice.kind === 'delete-value' ? 100 : 10, partition: 0, parent: 10, successor: 10, from: 10, to: kind === 'bipartite-graph' ? 80 : 100, members: '10,100', capacity: 2, edge: 0, start: 10 }
@@ -309,7 +310,7 @@ test('every new action has deterministic independent bounded scenes and action-o
 })
 
 test('matrix inspection caps stored frames while still completing the entire operation', async () => {
-  const { InspectStorageAnimation } = await import('../src/components/DataStructuresOverview/Graphs/AdjacencyMatrix/InspectStorage/InspectStorageAnimation.ts')
+  const { InspectStorageAnimation } = await import('../src/components/FundamentalDataStructures/Graphs/AdjacencyMatrix/InspectStorage/InspectStorageAnimation.ts')
   const model = AdjacencyMatrix.createDefault()
   for (let value = 110; value <= 160; value += 10) model.execute('add-vertex', { value })
   const plan = new InspectStorageAnimation(model)

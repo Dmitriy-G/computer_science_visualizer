@@ -1,4 +1,4 @@
-import type { ArrayEntry } from '../../../DataStructuresOverview/Linear/Array/FixedArray.ts'
+import type { ArrayEntry } from '../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
 import type { ArraySortEvent, ArraySortFrame, ArraySortObserver } from './ArraySortTrace.ts'
 
 // Shared trace primitives only. Algorithms own their storage and control flow.

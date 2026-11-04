@@ -12,7 +12,7 @@ import { ActionCatalog } from '../src/visualization/ActionCatalog.ts'
 import { ActionInputRequest } from '../src/visualization/ActionInputRequest.ts'
 import { StructureCatalog } from '../src/visualization/StructureCatalog.ts'
 import { StructureInformation } from '../src/components/StructureInfo/StructureInformation.ts'
-import { SHA256 } from '../src/components/DataStructuresOverview/Trees/MerkleTree/SHA256.ts'
+import { SHA256 } from '../src/components/AdvancedDataStructures/Integrity/MerkleTree/SHA256.ts'
 
 const model = (kind) => {
   const value = ExtendedTreeCatalog.createDefault(kind)
@@ -364,7 +364,7 @@ test('new tree playback bounds traces, preserves originals, and rolls back rejec
 })
 
 test('every new action owns its component, stylesheet, sequence, and complexity description', () => {
-  const featuresUrl = new URL('../src/components/DataStructuresOverview/Trees/ExtendedTreeFeatures.tsx', import.meta.url)
+  const featuresUrl = new URL('../src/components/StructureFeatures/ExtendedTreeFeatures.tsx', import.meta.url)
   const features = readFileSync(featuresUrl, 'utf8')
   const imports = [...features.matchAll(/import \{ (\w+)Animation as \w+Sequence \} from '([^']+)'/g)]
   assert.equal(imports.length, 89)
@@ -380,7 +380,7 @@ test('every new action owns its component, stylesheet, sequence, and complexity 
 })
 
 test('all 89 action sequences accept their dialogs, snapshot independently, and commit only the final result', async () => {
-  const featuresUrl = new URL('../src/components/DataStructuresOverview/Trees/ExtendedTreeFeatures.tsx', import.meta.url)
+  const featuresUrl = new URL('../src/components/StructureFeatures/ExtendedTreeFeatures.tsx', import.meta.url)
   const features = readFileSync(featuresUrl, 'utf8')
   const imports = [...features.matchAll(/import \{ (\w+)Animation as \w+Sequence \} from '([^']+)'/g)]
   let inspected = 0

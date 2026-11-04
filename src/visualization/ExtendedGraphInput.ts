@@ -1,5 +1,5 @@
 import { ExtendedGraphActionCatalog } from './ExtendedGraphActionCatalog.ts'
-import { Hypergraph } from '../components/DataStructuresOverview/Graphs/Hypergraph/Hypergraph.ts'
+import { Hypergraph } from '../components/AdvancedDataStructures/SpecializedGraphs/Hypergraph/Hypergraph.ts'
 import type { ActionKind } from './ActionCatalog.ts'
 import type { StructureKind } from './Scene.ts'
 import type { GraphInputContext } from './GraphActionInput.ts'
