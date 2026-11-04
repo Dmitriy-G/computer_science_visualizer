@@ -1,4 +1,5 @@
 import { AppliedInput } from './AppliedInput.ts'
+import { StructuredNumericalInput } from './StructuredNumericalInput.ts'
 import { StructuredSetUnionInput } from './StructuredSetUnionInput.ts'
 import { StructuredStringTextInput } from './StructuredStringTextInput.ts'
 import { StructuredProbabilisticInput } from './StructuredProbabilisticInput.ts'
@@ -31,9 +32,9 @@ export class ActionInputRequest {
   public readonly secondLabel: string
   public readonly secondHint: string
 
-  private constructor(structure: StructureKind, action: ActionKind, title: string, description: string, size: number, context?: GraphInputContext) {
+  private constructor(structure: StructureKind, action: ActionKind, title: string, description: string, size: number, context?: GraphInputContext, numericalShape?: readonly number[]) {
     this.structure = structure
-    this.structured = AppliedInput.create(structure, action) ?? StructuredSetUnionInput.create(structure, action) ?? StructuredStringTextInput.create(structure, action) ?? StructuredProbabilisticInput.create(structure, action) ?? StructuredHashInput.create(structure, action) ?? ExtendedGraphInput.create(structure, action, size, context) ?? StructuredPriorityInput.create(structure, action) ?? StructuredLinearInput.create(structure, action, size) ?? GraphActionInput.create(structure, action, size, context) ?? StructuredTreeInput.create(structure, action, size)
+    this.structured = StructuredNumericalInput.create(structure, action, numericalShape) ?? AppliedInput.create(structure, action) ?? StructuredSetUnionInput.create(structure, action) ?? StructuredStringTextInput.create(structure, action) ?? StructuredProbabilisticInput.create(structure, action) ?? StructuredHashInput.create(structure, action) ?? ExtendedGraphInput.create(structure, action, size, context) ?? StructuredPriorityInput.create(structure, action) ?? StructuredLinearInput.create(structure, action, size) ?? GraphActionInput.create(structure, action, size, context) ?? StructuredTreeInput.create(structure, action, size)
     this.action = action
     this.title = title
     this.rangeInput = action === 'range-from-value'
@@ -61,6 +62,7 @@ export class ActionInputRequest {
   }
 
   public static supportsStructure(structure: StructureKind): boolean {
+    if (StructuredNumericalInput.supports(structure)) return true
     if (AppliedInput.supports(structure)) return true
     if (StructuredSetUnionInput.supports(structure) || StructuredStringTextInput.supports(structure) || StructuredProbabilisticInput.supports(structure) || StructuredHashInput.supports(structure) || ExtendedGraphInput.supports(structure) || StructuredPriorityInput.supports(structure) || StructuredLinearInput.supports(structure) || GraphCatalog.supports(structure) || StructuredTreeInput.supports(structure)) return true
     switch (structure) {
@@ -87,6 +89,7 @@ export class ActionInputRequest {
 
   public static requiresInput(structure: StructureKind, action: ActionKind): boolean {
     if (!this.supportsStructure(structure)) return false
+    if (StructuredNumericalInput.supports(structure)) return StructuredNumericalInput.create(structure, action) !== null
     if (AppliedInput.supports(structure)) return AppliedInput.create(structure, action) !== null
     if (StructuredSetUnionInput.supports(structure)) return StructuredSetUnionInput.create(structure, action) !== null
     if (StructuredStringTextInput.supports(structure)) return StructuredStringTextInput.create(structure, action) !== null
@@ -124,11 +127,11 @@ export class ActionInputRequest {
     return false
   }
 
-  public static create(structure: StructureKind, action: ActionKind, size: number, context?: GraphInputContext): ActionInputRequest | null {
+  public static create(structure: StructureKind, action: ActionKind, size: number, context?: GraphInputContext, numericalShape?: readonly number[]): ActionInputRequest | null {
     if (!Number.isSafeInteger(size) || size < 0) throw new RangeError('Structure size must be a nonnegative safe integer')
     if (!this.requiresInput(structure, action)) return null
     for (const choice of ActionCatalog.getActions(structure)) {
-      if (choice.kind === action) return new ActionInputRequest(structure, action, choice.title, choice.description, size, context)
+      if (choice.kind === action) return new ActionInputRequest(structure, action, choice.title, choice.description, size, context, numericalShape)
     }
     return null
   }

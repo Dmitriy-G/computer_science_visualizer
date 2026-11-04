@@ -294,6 +294,7 @@ import { AdditionalTreeCatalog } from '../../visualization/AdditionalTreeCatalog
 import type { AdditionalTreeModel, TreeInputValues } from '../../visualization/AdditionalTreeModel.ts'
 import { TreeFeatures } from '../DataStructuresOverview/Trees/TreeFeatures.tsx'
 import { LinearStructureCatalog } from '../../visualization/LinearStructureCatalog.ts'
+import { NumericalModel } from '../DataStructuresOverview/Linear/NumericalModel.ts'
 import type { LinearModel } from '../../visualization/LinearModel.ts'
 import { LinearFeatures } from '../DataStructuresOverview/Linear/LinearFeatures.tsx'
 import { PriorityStructureCatalog } from '../../visualization/PriorityStructureCatalog.ts'
@@ -523,7 +524,8 @@ export default class App extends Component<Record<string, never>, AppState> {
       if (extended) for (const vertex of extended.getVertices()) if (vertex.partition !== undefined) partitions[String(vertex.value)] = vertex.partition
       const context = extended ? { vertices: extended.getVertices().map((vertex) => vertex.value), edges: extended.getEdges().map((edge) => edge.number), partitions }
         : graph ? { vertices: graph.getEntries().map((entry) => entry.value), edges: graph.getEdges().map((edge) => edge.number) } : undefined
-      const request = ActionInputRequest.create(this.state.selected, action, this.getInputSize(this.state.selected), context)
+      const numerical = this.linearModels.get(this.state.selected)
+      const request = ActionInputRequest.create(this.state.selected, action, this.getInputSize(this.state.selected), context, numerical instanceof NumericalModel ? numerical.shape : undefined)
       if (request) {
         this.setState({ inputRequest: request, overviewInformation: null, structureInformation: null })
         return

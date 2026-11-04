@@ -1,4 +1,5 @@
 import { AppliedStructureDefinitions } from './AppliedStructureDefinitions.ts'
+import { NumericalStructureDefinitions } from './NumericalStructureDefinitions.ts'
 import { StringTextStructureDefinitions } from './StringTextStructureDefinitions.ts'
 import { ProbabilisticStructureDefinitions } from './ProbabilisticStructureDefinitions.ts'
 import { ProbabilisticStructureCatalog } from './ProbabilisticStructureCatalog.ts'
@@ -82,6 +83,7 @@ export class StructureCatalog {
   ]
 
   public static readonly structures: readonly StructureDefinition[] = [
+    ...NumericalStructureDefinitions.structures,
     ...AppliedStructureDefinitions.structures,
     ...SetUnionStructureDefinitions.structures,
     ...ExtendedTreeDefinitions.structures,

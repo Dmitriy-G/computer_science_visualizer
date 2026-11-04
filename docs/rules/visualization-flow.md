@@ -353,9 +353,23 @@ changes data without repairing expected parent pointers; verification detects it
 without repair. Clear resets that ten-block example to zero. Append-only Log
 clear retains the next offset, and SPSC draining retains sequence counters.
 
-coverage.md records the work that needs new groups, including storage/search
-indexes, numerical matrices/tensors, layered storage systems, and message schemas.
-Do not add menu entries for those deferred items yet.
+coverage.md records deferred storage/search indexes, layered storage systems,
+message schemas, and advanced numerical extensions. The five fundamental numerical
+representations now belong to Linear; their permitted operations are in README.
+
+Numerical defaults contain ten occupied dense cells or ten sparse nonzeros.
+Accept 1 to 4 tensor axes and exactly two grid/matrix axes, dimensions 1 to 8,
+and at most 64 logical cells. Build validates all row-major safe-integer values
+before replacing storage. Read/Set use current shape bounds. Tensor Reshape keeps
+the same allocation and value order; dense Clear zeroes every allocated cell.
+COO append retains duplicates and explicit zeros, while Set replaces a coordinate
+and Coalesce sums duplicates and removes zeros. Reject overflowing coalesced sums
+without changes. CSC/CSR show actual major pointers, sorted minor indices, and
+numeric values; structural edits repair subsequent pointers. Numerical CSR is
+independent of binary graph CSR. Matrix-vector products use exact BigInt sums and
+preserve matrix storage. Show results in timeline descriptions, count occupied
+dense cells or stored sparse triplets/nonzeros, and reuse bounded automatic
+playback, independent scenes, final clone commits, and full Reset.
 
 ## Action responsibilities
 

@@ -69,7 +69,7 @@ test('recursive, factorial, graph, and unavailable bounds receive explicit order
 test('Overview contains exactly the requested structure groups', () => {
   assert.deepEqual(StructureCatalog.groups.map((group) => group.name), ['Linear', 'Queue / Priority', 'Trees', 'String / Text', 'Graphs', 'Set / Union', 'Hash-based', 'Probabilistic'])
   const expected = {
-    linear: ['append-only-log', 'xarray', 'fanout-array', 'flat-vector-array', 'request-tag-array', 'array', 'doubly-linked-list', 'free-list', 'linked-list', 'skip-list', 'sparse-array', 'stack', 'unrolled-linked-list', 'xor-linked-list'],
+    linear: ['dense-tensor', 'sparse-coo', 'sparse-csc', 'numerical-csr', 'grid-2d', 'append-only-log', 'xarray', 'fanout-array', 'flat-vector-array', 'request-tag-array', 'array', 'doubly-linked-list', 'free-list', 'linked-list', 'skip-list', 'sparse-array', 'stack', 'unrolled-linked-list', 'xor-linked-list'],
     'queue-priority': ['multi-queue', 'lock-free-ring', 'binary-max-heap', 'binomial-heap', 'circular-buffer', 'deque', 'fibonacci-heap', 'heap', 'indexed-priority-queue', 'leftist-heap', 'monotonic-queue', 'pairing-heap', 'priority-queue', 'queue', 'skew-heap'],
     trees: ['gist', 'bkd-tree', 'ball-tree', 'maple-tree', 'checksummed-block-tree',
       'aa-tree', 'ast', 'avl-tree', 'b-plus-tree', 'b-tree', 'binary-tree', 'bvh',

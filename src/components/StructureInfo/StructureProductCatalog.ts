@@ -4,6 +4,11 @@ export class StructureProductCatalog {
   // Product labels are curated against existing, verified technology entries.
   // Reuse their evidence links and usage notes instead of inferring downstream users.
   private static readonly names: Readonly<Record<string, string>> = {
+    'NumPy ndarray': 'NumPy',
+    'SciPy COO arrays': 'SciPy',
+    'SciPy CSC arrays': 'SciPy',
+    'SciPy numerical CSR arrays': 'SciPy',
+    'OpenCV Mat grids': 'OpenCV',
     'Apache Kafka logs': 'Apache Kafka',
     'Linux XArray': 'Linux',
     'Git pack indexes': 'Git',

@@ -174,12 +174,17 @@ export default class MainMenu extends Component<MainMenuProps> {
   private renderStructureIcon(kind: StructureKind, fallback: string): ReactNode {
     let drawing: ReactNode
     switch (kind) {
+      case 'dense-tensor':
+      case 'grid-2d':
       case 'suffix-array':
       case 'fm-index':
       case 'sparse-table':
       case 'adjacency-matrix':
         drawing = <><rect x="3" y="3" width="26" height="26" rx="2" /><path d="M3 12h26M3 21h26M12 3v26M21 3v26m-5-20v1m9 7v1M7 25v1" /></>
         break
+      case 'sparse-coo':
+      case 'sparse-csc':
+      case 'numerical-csr':
       case 'adjacency-list':
       case 'edge-list':
       case 'compressed-sparse-row':

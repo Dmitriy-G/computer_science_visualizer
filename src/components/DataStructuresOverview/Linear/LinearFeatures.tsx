@@ -1,4 +1,6 @@
 import { AppliedFeatures } from '../AppliedFeatures.tsx'
+import { NumericalFeatures } from './NumericalFeatures.tsx'
+import { NumericalStructureCatalog } from '../../../visualization/NumericalStructureCatalog.ts'
 import { AppliedStructureCatalog } from '../../../visualization/AppliedStructureCatalog.ts'
 import { SetUnionFeatures } from '../SetUnion/SetUnionFeatures.tsx'
 import { SetUnionStructureCatalog } from '../../../visualization/SetUnionStructureCatalog.ts'
@@ -70,6 +72,7 @@ import { ClearAnimation as FreeListClearSequence } from './FreeList/Clear/ClearA
 
 export class LinearFeatures {
   public static render(action: ActionKind, props: StructuredLinearActionProps, session: number): ReactNode {
+    if (NumericalStructureCatalog.supports(props.model.kind)) return NumericalFeatures.render(action, props, session)
     if (AppliedStructureCatalog.supports(props.model.kind)) return AppliedFeatures.render(action, props, session)
     if (SetUnionStructureCatalog.supports(props.model.kind)) return SetUnionFeatures.render(action, props, session)
     if (StringTextStructureCatalog.supports(props.model.kind)) return StringTextFeatures.render(action, props, session)
@@ -136,6 +139,7 @@ export class LinearFeatures {
   }
 
   public static describe(action: ActionKind, model: LinearModel): AlgorithmInformation | null {
+    if (NumericalStructureCatalog.supports(model.kind)) return NumericalFeatures.describe(action, model)
     if (AppliedStructureCatalog.supports(model.kind)) return AppliedFeatures.describe(action, model)
     if (SetUnionStructureCatalog.supports(model.kind)) return SetUnionFeatures.describe(action, model)
     if (StringTextStructureCatalog.supports(model.kind)) return StringTextFeatures.describe(action, model)

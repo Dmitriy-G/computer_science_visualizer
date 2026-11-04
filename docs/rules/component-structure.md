@@ -264,6 +264,16 @@ extensions belong in coverage.md, not empty menu scaffolding.
 
 ## Extended linear structures
 
+DenseTensor, SparseCOO, SparseCSC, NumericalCSR, and Grid2D also live under
+Overview/Linear with their own models, layouts, and action folders. NumericalFeatures,
+NumericalStructureCatalog, NumericalActionCatalog, and StructuredNumericalInput
+reuse LinearFeatures, LinearStructureCatalog, LinearAnimation, and shared playback.
+NumericalModel shares validation; DenseArrayModel shares contiguous storage;
+SparseMatrixModel shares matrix operations; CompressedMatrixModel shares the actual
+major-axis compression algorithm for CSC and numerical CSR. COO retains its own
+triplet arrays. Pass current shape into the shared input request for coordinate,
+reshape, and vector validation. Keep numerical CSR separate from binary graph CSR.
+
 Keep SkipList, UnrolledLinkedList, XORLinkedList,
 SparseArray, and FreeList under `DataStructuresOverview/Linear/`. Each owns its model,
 layout, and action folders. `LinearFeatures` connects their class components and

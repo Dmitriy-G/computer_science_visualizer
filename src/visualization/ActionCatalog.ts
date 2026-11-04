@@ -1,4 +1,5 @@
 import { AppliedActionCatalog } from './AppliedActionCatalog.ts'
+import { NumericalActionCatalog } from './NumericalActionCatalog.ts'
 import { SetUnionActionCatalog } from './SetUnionActionCatalog.ts'
 import { StringTextActionCatalog } from './StringTextActionCatalog.ts'
 import { ExtendedGraphActionCatalog } from './ExtendedGraphActionCatalog.ts'
@@ -12,7 +13,7 @@ import type { StructureKind } from './Scene.ts'
 
 export type ActionScope = 'overview' | 'graph-traversal' | 'sorting'
 
-export type ActionKind = 'nearest-neighbor' | 'find-gap' | 'corrupt-block' | 'browse-node' | 'union' | 'find-set' | 'connected' | 'count-value' | 'lower-bound' | 'build-words' | 'append-text' | 'search-text' | 'estimate-cardinality' | 'range-min' | 'rank' | 'select-rank' | 'build-text' | 'build-values' | 'verify-proof' | 'successor' | ArraySortingActionKind | 'max-flow' | 'update-capacity' | 'inspect-storage' | 'read-successor' | 'extract-max' | 'meld' | 'decrease-key' | 'change-priority' | 'delete-index' | 'move-gap' | 'concatenate' | 'set-bit' | 'clear-bit' | 'toggle-bit' | 'allocate' | 'release' | 'insert-middle' | 'insert-start' | 'insert-end' | 'insert' | 'search-value' | 'search-index' | 'delete-value' | 'push' | 'pop' | 'peek' | 'clear' | 'enqueue' | 'dequeue' | 'push-front' | 'push-back' | 'pop-front' | 'pop-back' | 'peek-front' | 'peek-back' | 'delete-start' | 'delete-end' | 'range-from-value' | 'starts-with' | 'extract-min' | 'update-index' | 'add-index' | 'prefix-sum' | 'range-sum' | 'search-overlap' | 'flush' | 'compact' | 'build-expression' | 'evaluate' | 'traverse-preorder' | 'traverse-inorder' | 'traverse-postorder' | 'add-vertex' | 'add-edge' | 'remove-edge' | 'breadth-first' | 'depth-first' | 'shortest-path' | 'topological-sort' | 'update-weight' | 'bubble-sorting'
+export type ActionKind = 'reshape' | 'coalesce' | 'multiply-vector' | 'nearest-neighbor' | 'find-gap' | 'corrupt-block' | 'browse-node' | 'union' | 'find-set' | 'connected' | 'count-value' | 'lower-bound' | 'build-words' | 'append-text' | 'search-text' | 'estimate-cardinality' | 'range-min' | 'rank' | 'select-rank' | 'build-text' | 'build-values' | 'verify-proof' | 'successor' | ArraySortingActionKind | 'max-flow' | 'update-capacity' | 'inspect-storage' | 'read-successor' | 'extract-max' | 'meld' | 'decrease-key' | 'change-priority' | 'delete-index' | 'move-gap' | 'concatenate' | 'set-bit' | 'clear-bit' | 'toggle-bit' | 'allocate' | 'release' | 'insert-middle' | 'insert-start' | 'insert-end' | 'insert' | 'search-value' | 'search-index' | 'delete-value' | 'push' | 'pop' | 'peek' | 'clear' | 'enqueue' | 'dequeue' | 'push-front' | 'push-back' | 'pop-front' | 'pop-back' | 'peek-front' | 'peek-back' | 'delete-start' | 'delete-end' | 'range-from-value' | 'starts-with' | 'extract-min' | 'update-index' | 'add-index' | 'prefix-sum' | 'range-sum' | 'search-overlap' | 'flush' | 'compact' | 'build-expression' | 'evaluate' | 'traverse-preorder' | 'traverse-inorder' | 'traverse-postorder' | 'add-vertex' | 'add-edge' | 'remove-edge' | 'breadth-first' | 'depth-first' | 'shortest-path' | 'topological-sort' | 'update-weight' | 'bubble-sorting'
 
 export type ArraySortingActionKind = 'selection-sort' | 'insertion-sort' | 'binary-insertion-sort' | 'merge-sort' | 'quick-sort' | 'heap-sort' | 'shell-sort' | 'counting-sort' | 'radix-sort' | 'bucket-sort' | 'tim-sort' | 'intro-sort' | 'dual-pivot-quick-sort' | 'block-merge-sort' | 'wiki-sort' | 'smooth-sort' | 'tree-sort' | 'tournament-sort' | 'patience-sort' | 'cycle-sort' | 'comb-sort' | 'cocktail-shaker-sort' | 'gnome-sort' | 'odd-even-sort' | 'odd-even-merge-sort' | 'bitonic-sort' | 'pairwise-sorting-network' | 'sample-sort' | 'parallel-merge-sort' | 'parallel-quick-sort' | 'external-merge-sort' | 'polyphase-merge-sort' | 'natural-merge-sort' | 'flash-sort' | 'american-flag-sort' | 'spread-sort' | 'burst-sort' | 'pigeonhole-sort' | 'interpolation-sort' | 'library-sort' | 'splay-sort' | 'strand-sort' | 'pancake-sort' | 'stooge-sort' | 'slow-sort' | 'bogo-sort' | 'sleep-sort'
 
@@ -96,6 +97,8 @@ export class ActionCatalog {
   }
 
   public static getActions(structure: StructureKind): readonly ActionChoice[] {
+    const numerical = NumericalActionCatalog.getActions(structure)
+    if (numerical) return numerical
     const applied = AppliedActionCatalog.getActions(structure)
     if (applied) return applied
     const setUnion = SetUnionActionCatalog.getActions(structure)

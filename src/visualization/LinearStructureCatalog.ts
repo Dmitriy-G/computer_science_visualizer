@@ -1,4 +1,5 @@
 import { AppliedStructureCatalog } from './AppliedStructureCatalog.ts'
+import { NumericalStructureCatalog } from './NumericalStructureCatalog.ts'
 import { AppliedModel } from './AppliedModel.ts'
 import { SetUnionStructureCatalog } from './SetUnionStructureCatalog.ts'
 import { SetUnionModel } from '../components/DataStructuresOverview/SetUnion/SetUnionModel.ts'
@@ -37,12 +38,15 @@ export class LinearStructureCatalog {
       ['free-list', FreeList.createDefault()],
     ])
     for (const [kind, model] of AppliedStructureCatalog.createModels()) models.set(kind, model)
+    for (const [kind, model] of NumericalStructureCatalog.createModels()) models.set(kind, model)
     for (const [kind, model] of SetUnionStructureCatalog.createModels()) models.set(kind, model)
     for (const [kind, model] of StringTextStructureCatalog.createModels()) models.set(kind, model)
     return models
   }
 
   public static createDefault(kind: StructureKind): LinearModel | null {
+    const numerical = NumericalStructureCatalog.createDefault(kind)
+    if (numerical) return numerical
     const applied = AppliedStructureCatalog.createDefault(kind)
     if (applied) return applied
     const setUnion = SetUnionStructureCatalog.createDefault(kind)
@@ -63,6 +67,7 @@ export class LinearStructureCatalog {
   }
 
   public static createScene(model: LinearModel, frame: LinearFrame = {}): Scene {
+    if (NumericalStructureCatalog.supports(model.kind)) return NumericalStructureCatalog.createScene(model, frame)
     if (model instanceof AppliedModel) return AppliedStructureCatalog.createScene(model, frame)
     if (model instanceof SetUnionModel) return SetUnionStructureCatalog.createScene(model, frame)
     if (model instanceof StringTextModel) return StringTextStructureCatalog.createScene(model, frame)

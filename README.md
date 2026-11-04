@@ -48,7 +48,7 @@ Choose **Data Structures Overview**, then a group:
 
 | Group | Structures |
 | --- | --- |
-| Linear | Array, Linked list, Stack, Doubly linked list, Skip List, Unrolled Linked List, XOR Linked List, Sparse Array, Free List, Append-only Log, XArray, Sorted Array / Fanout Table, Flat Vector Array, Request Tag Array |
+| Linear | Array, Linked list, Stack, Doubly linked list, Skip List, Unrolled Linked List, XOR Linked List, Sparse Array, Free List, Append-only Log, XArray, Sorted Array / Fanout Table, Flat Vector Array, Request Tag Array, Dense Multidimensional Array / Tensor, Sparse COO, Sparse CSC, Numerical CSR, 2D Grid |
 | Queue / Priority | Queue, Deque, Circular buffer, Heap (min-heap), Priority Queue, Binary Max-Heap, Binomial Heap, Fibonacci Heap, Pairing Heap, Leftist Heap, Skew Heap, Indexed Priority Queue, Monotonic Queue, Multiqueue / Request Queues, Lock-free Ring Buffer (SPSC) |
 | Trees | Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, B+ Tree, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, Abstract Syntax Tree (AST), General Tree (N-ary Tree), Binary Tree, Complete Binary Tree, Threaded Binary Tree, Splay Tree, Treap, Cartesian Tree, Scapegoat Tree, AA Tree, 2-3 Tree, 2-3-4 Tree, Interval Tree, Order Statistic Tree, Persistent Segment Tree, Sparse Table, KD-Tree, Quadtree, Octree, Bounding Volume Hierarchy (BVH), Merkle Tree, Van Emde Boas Tree, GiST, BKD Tree, Ball Tree, Maple Tree (Range Variant), Checksummed Block Pointer Hierarchy |
 | String / Text | Gap Buffer, Rope, Trie, Radix Tree (Patricia Trie), Ternary Search Tree, Suffix Tree, Suffix Array, Suffix Automaton, Aho-Corasick Automaton, Directed Acyclic Word Graph (DAWG), FM-Index, GIN / Inverted Index |
@@ -66,6 +66,42 @@ or quotient slots. Count-Min Sketch counts weighted update operations, HyperLogL
 counts add operations while estimating distinct values, and Reservoir Sampling Buffer
 shows five retained occurrences after ten stream arrivals. The back button reopens the current
 group's structure list.
+
+The five fundamental numerical and spatial structures belong to **Overview > Linear**:
+
+| Structure | Allowed actions |
+| --- | --- |
+| Dense Multidimensional Array / Tensor | Build from values, Read coordinates, Set coordinates, Reshape, Inspect storage, Zero all cells |
+| Sparse COO | Build from values, Read coordinates, Set coordinates, Append triplet, Coalesce, Multiply by vector, Inspect storage, Clear stored entries |
+| Sparse CSC | Build from values, Read coordinates, Set coordinates, Multiply by vector, Inspect storage, Clear stored entries |
+| Numerical CSR | Build from values, Read coordinates, Set coordinates, Multiply by vector, Inspect storage, Clear stored entries |
+| 2D Grid | Build from values, Read coordinates, Set coordinates, Inspect storage, Zero all cells |
+
+Tensor and grid defaults contain ten occupied cells in shape `[2, 5]`. Sparse
+defaults contain ten nonzeros in shape `[4, 5]`. Tensor rank is 1 to 4; the other
+four structures have two dimensions. Dimensions range from 1 to 8, with at most
+64 logical cells. Build accepts exactly one safe integer per logical cell in
+row-major order; sparse builds omit zeros. Coordinate inputs use the current
+shape. Clear preserves shape; dense cells remain occupied with value zero.
+
+Tensor storage is a contiguous `Float64Array` with element strides; Reshape changes
+only dimensions and strides. COO keeps actual row/column/value arrays, permits
+64 triplets including duplicates and explicit zeros on Append, and sums duplicates
+on Read. Set replaces all matching COO triplets; Coalesce insertion-sorts, sums
+duplicate coordinates, and removes zeros. A coalesced sum outside safe-integer
+storage rejects unchanged. CSC and numerical CSR keep sorted packed minor indices
+and repair all subsequent major pointers on structural edits. They remain distinct
+from the binary graph CSR. Sparse matrix-vector multiplication uses BigInt for
+exact products and sums and returns a separate result without changing the matrix.
+The grid displays discrete row/column cells; costmap layers, world transforms,
+arbitrary-stride tensor views, and floating-point inputs are outside these lessons.
+
+All five use validated structured dialogs, automatic playback, final-clone commits,
+full Reset, and action-owned complexity information. Storage inspection can exceed
+96 detailed events; execution completes and reports the omitted event count.
+Structure information links to [NumPy](https://numpy.org/doc/stable/reference/arrays.ndarray.html),
+[SciPy](https://docs.scipy.org/doc/scipy/reference/sparse.html), and
+[OpenCV](https://docs.opencv.org/4.x/d3/d63/classcv_1_1Mat.html) with variant notes.
 
 The additional Set / Union structures offer these actions:
 
