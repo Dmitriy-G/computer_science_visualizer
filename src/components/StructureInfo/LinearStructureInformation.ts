@@ -24,7 +24,10 @@ export class LinearStructureInformation {
         { area: 'Compact linked records', description: 'Share one link across multiple values instead of allocating a link per value.' },
         { area: 'Chunked lists', description: 'Grow a sequence by attaching blocks while preserving its logical order.' },
       ],
-      technologies: [{ name: 'Redis quicklist (packed-node variant)', url: 'https://github.com/redis/redis/blob/unstable/src/quicklist.h', usage: 'Quicklist links nodes that can contain packed groups of list entries. It uses doubly linked nodes, configurable packing, and optional compression rather than this four-integer singly linked layout.' }],
+      technologies: [
+        { name: 'Redis quicklist (packed-node variant)', url: 'https://github.com/redis/redis/blob/unstable/src/quicklist.h', usage: 'Quicklist links nodes that can contain packed groups of list entries. It uses doubly linked nodes, configurable packing, and optional compression rather than this four-integer singly linked layout.' },
+        { name: 'TCMalloc span free-object lists', url: 'https://github.com/google/tcmalloc/blob/master/docs/design.md?plain=1', usage: 'Packs multiple free-object indexes and a next-link into small-object storage inside allocator spans, reducing cache misses. This allocator-specific unrolled list differs from the editable four-value blocks shown here.' },
+      ],
     },
     'xor-linked-list': {
       summary: 'An XOR Linked List encodes previous and next addresses in one XOR field and carries a neighboring address during traversal. This JavaScript simulation uses BigInt XOR and a Map of numeric IDs, does not expose real pointers, and makes no memory-saving claim. No concrete production use of this exact structure has been verified here.',
@@ -54,7 +57,10 @@ export class LinearStructureInformation {
         { area: 'Persistent editing', description: 'Retain older versions by sharing immutable subtrees across edits.' },
         { area: 'Substring editing', description: 'Split around an edit span and join the surviving and inserted pieces.' },
       ],
-      technologies: [{ name: 'Abseil Cord (tree-of-buffers variant)', url: 'https://github.com/abseil/abseil-cpp/blob/master/absl/strings/cord.h', usage: 'Cord provides chunked, shared tree storage for character sequences. Its optimized buffer-tree implementation differs from the small AVL rope shown here.' }],
+      technologies: [
+        { name: 'Abseil Cord (tree-of-buffers variant)', url: 'https://github.com/abseil/abseil-cpp/blob/master/absl/strings/cord.h', usage: 'Cord provides chunked, shared tree storage for character sequences. Its optimized buffer-tree implementation differs from the small AVL rope shown here.' },
+        { name: 'Zed text buffers (SumTree rope variant)', url: 'https://zed.dev/blog/zed-decoded-rope-sumtree', usage: 'Stores editable text in shared chunks with subtree summaries for character and line lookup, snapshots, and concurrent reads. Zed uses a B+ tree-based SumTree rope rather than this binary AVL rope.' },
+      ],
     },
     'bit-set': {
       summary: 'A Bit Array / BitSet packs boolean flags into machine words. This fixed-length example stores bits in Uint32Array words and provides indexed set, clear, toggle, and test operations without changing its logical size.',
@@ -91,7 +97,10 @@ export class LinearStructureInformation {
         { area: 'Page reuse', description: 'Record unused storage pages so future writes can reuse them.' },
         { area: 'Fixed resource budgets', description: 'Represent exhaustion explicitly when every preallocated slot is occupied.' },
       ],
-      technologies: [{ name: 'SQLite freelist (database-page variant)', url: 'https://www.sqlite.org/fileformat.html#the_freelist', usage: 'SQLite records reusable database pages through freelist trunk and leaf pages. This persistent page format differs from the single-slot chain in the simulated pool.' }],
+      technologies: [
+        { name: 'SQLite freelist (database-page variant)', url: 'https://www.sqlite.org/fileformat.html#the_freelist', usage: 'SQLite records reusable database pages through freelist trunk and leaf pages. This persistent page format differs from the single-slot chain in the simulated pool.' },
+        { name: 'TCMalloc per-thread free lists', url: 'https://github.com/google/tcmalloc/blob/master/docs/design.md?plain=1', usage: 'In per-thread mode, keeps a singly linked free-object list for each size class; allocation removes an object and deallocation returns one. Per-CPU mode has different storage, and production lists refill from shared allocator caches.' },
+      ],
     },
   } satisfies Record<'skip-list' | 'unrolled-linked-list' | 'xor-linked-list' | 'gap-buffer' | 'rope' | 'bit-set' | 'sparse-array' | 'free-list', StructureOverview>
 }

@@ -20,7 +20,9 @@ export class ExtendedGraphStructureInformation {
         { area: 'All-to-all connectivity', description: 'Model a system in which each participant can contact every other participant directly.' },
         { area: 'Clique analysis', description: 'Describe the fully connected subgraphs sought in larger networks.' },
       ],
-      technologies: [{ name: 'NetworkX complete_graph', url: 'https://networkx.org/documentation/stable/reference/generated/networkx.generators.classic.complete_graph.html', usage: 'Constructs complete graphs within the graph-analysis library; its generator also supports directed variants.' }],
+      technologies: [
+        { name: 'Concorde TSP solver (weighted complete graph)', url: 'https://www.math.uwaterloo.ca/tsp/concorde/DOC/tsp.html#CCtsp_init_lp', usage: 'Its traveling-salesman solver accepts a complete weighted graph and manages working edge subsets for optimization. The full graph may be implicit; this lesson instead materializes every unweighted edge and does not solve TSP.' },
+      ],
     },
     'tree-graph': {
       summary: 'A Tree Graph is a connected undirected graph without cycles, with V - 1 edges when nonempty. This general tree has no search-key ordering: edits attach new leaves and delete only leaves.',
@@ -30,7 +32,10 @@ export class ExtendedGraphStructureInformation {
         { area: 'Unique routes', description: 'Model connections with exactly one simple path between each pair.' },
         { area: 'Spanning trees', description: 'Represent the cycle-free connected result of a spanning-tree algorithm.' },
       ],
-      technologies: [{ name: 'NetworkX spanning trees', url: 'https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.tree.mst.minimum_spanning_tree.html', usage: 'Returns a minimum spanning tree for a connected undirected graph, or a forest for disconnected input. This example edits an unweighted single tree directly.' }],
+      technologies: [
+        { name: 'NetworkX spanning trees', url: 'https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.tree.mst.minimum_spanning_tree.html', usage: 'Returns a minimum spanning tree for a connected undirected graph, or a forest for disconnected input. This example edits an unweighted single tree directly.' },
+        { name: 'Nav2 / ROS tf2 transform trees', url: 'https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/configuration_and_development/first_time_robot_setup_guide/transformation/setup_transforms.md', usage: 'Uses a tree of robot coordinate frames to find the unique transform path between frames. Edges carry directed, time-dependent transforms; this lesson shows only an unweighted undirected tree.' },
+      ],
     },
     'hypergraph': {
       summary: 'A Hypergraph allows one hyperedge to contain several vertices. This unweighted example stores distinct sets of 2–16 members and draws square H incidence nodes; deletion shrinks sets, drops sets smaller than two, and coalesces duplicates.',
@@ -40,7 +45,10 @@ export class ExtendedGraphStructureInformation {
         { area: 'Collaboration', description: 'Represent each collaboration as one group rather than a collection of pairwise links.' },
         { area: 'Set incidence', description: 'Explore which objects belong to which overlapping sets.' },
       ],
-      technologies: [{ name: 'HyperNetX', url: 'https://hypernetx.readthedocs.io/en/latest/classes/classes.html', usage: 'Provides hypergraph objects with incidence data, node and edge properties, and weighted variants beyond this restricted unweighted model.' }],
+      technologies: [
+        { name: 'HyperNetX', url: 'https://hypernetx.readthedocs.io/en/latest/classes/classes.html', usage: 'Provides hypergraph objects with incidence data, node and edge properties, and weighted variants beyond this restricted unweighted model.' },
+        { name: 'KaHyPar hypergraph partitioning', url: 'https://kahypar.org/#projects-using-kahypar', usage: 'Partitions weighted hypergraphs to minimize cut nets or communication costs. Its documented users include logic-synthesis and quantum-circuit tools; weights and multilevel coarsening extend beyond this unweighted incidence graph.' },
+      ],
     },
     'flow-network': {
       summary: 'A Flow Network assigns capacities to directed edges and conserves flow at intermediate vertices. This example computes Edmonds–Karp maximum flow with exact integer arithmetic; valid graph edits reset flows, and reverse residual arcs can cancel earlier flow.',

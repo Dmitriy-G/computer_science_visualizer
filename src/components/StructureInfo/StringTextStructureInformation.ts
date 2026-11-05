@@ -12,17 +12,20 @@ export class StringTextStructureInformation {
       ],
       technologies: [
         { name: 'Go standard library index/suffixarray', url: 'https://pkg.go.dev/index/suffixarray', usage: 'The standard package builds an in-memory suffix array and exposes substring Lookup returning match offsets. Its byte-oriented implementation and construction algorithm differ from this lowercase comparison-sort and LCP lesson.' },
+        { name: 'MUMmer4 nucmer suffix arrays', url: 'https://github.com/mummer4/mummer/blob/master/src/umd/nucmer_cmdline.yaggo', usage: 'The nucmer genome aligner builds a suffix-array index and supports saving and loading it for reuse. Genome matching and alignment extend beyond this exact lowercase substring lesson.' },
       ],
     },
     'suffix-automaton': {
-      summary: 'A Suffix Automaton groups substrings with equivalent end-position behavior and supports online extension through suffix links and clone-state splitting. This lesson uses all reachable states for substring membership and marks the suffix-final chain separately; no production example is verified for this entry.',
+      summary: 'A Suffix Automaton groups substrings with equivalent end-position behavior and supports online extension through suffix links and clone-state splitting. This lesson uses all reachable states for substring membership and marks the suffix-final chain separately.',
       useCases: [
         { area: 'Online text indexing', description: 'Extend substring recognition as new characters arrive.' },
         { area: 'Substring membership', description: 'Check a pattern by following one character transition per letter.' },
         { area: 'State equivalence', description: 'Observe why clone states split an end-position class during extension.' },
         { area: 'Suffix recognition', description: 'Distinguish states accepting complete suffixes from general reachable substring states.' },
       ],
-      technologies: [],
+      technologies: [
+        { name: 'Baseten Speculation Engine', url: 'https://www.baseten.co/blog/boosting-mtp-acceptance-rates-in-baseten-speculation-engine/', usage: 'Uses an online suffix automaton to find repeated token sequences and propose draft tokens during production language-model inference, combined with multi-token prediction. Its token alphabet and drafting task differ from this lowercase substring recognizer.' },
+      ],
     },
     'aho-corasick-automaton': {
       summary: 'An Aho-Corasick Automaton combines a pattern trie with failure and output links to find many patterns in one text scan. This sparse teaching variant reports all overlaps, retains terminal output links rather than copied output sets, and builds failure links by explicit fallback walks.',
@@ -59,6 +62,7 @@ export class StringTextStructureInformation {
       ],
       technologies: [
         { name: 'Bowtie 2', url: 'https://bowtie-bio.sourceforge.net/bowtie2/manual.html', usage: 'Bowtie 2 uses an FM-Index to align seed substrings during read alignment. Its DNA-oriented compressed representation and alignment search differ from this exact lowercase search with dense rank arrays and stride-four position samples.' },
+        { name: 'BWA reference-genome FM-index', url: 'https://bio-bwa.sourceforge.net/bwa.shtml', usage: 'Builds an FM-index of a reference genome before aligning sequencing reads. Its DNA alignment algorithms allow mismatches and gaps, beyond the exact substring searches in this lesson.' },
       ],
     },
   } satisfies Record<string, StructureOverview>

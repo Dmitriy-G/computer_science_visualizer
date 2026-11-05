@@ -12,6 +12,7 @@ export class NumericalStructureInformation {
       ],
       technologies: [
         { name: 'NumPy ndarray', url: 'https://numpy.org/doc/stable/reference/arrays.ndarray.html', usage: 'NumPy represents multidimensional arrays using shape, dtype, storage, and byte strides. This example uses contiguous integer-valued Float64 storage and element strides; NumPy also supports noncontiguous views and many dtypes.' },
+        { name: 'PyTorch dense tensors', url: 'https://docs.pytorch.org/docs/stable/tensors.html', usage: 'Stores numerical tensors for machine learning with shape, dtype, device, and strides. Views can share storage and be noncontiguous, unlike the contiguous row-major tensor shown here.' },
       ],
     },
     'sparse-coo': {
@@ -24,6 +25,7 @@ export class NumericalStructureInformation {
       ],
       technologies: [
         { name: 'SciPy COO arrays', url: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.coo_array.html', usage: 'SciPy exposes coordinate-format sparse arrays and supports duplicate-coordinate summation. Its production algorithms and numeric dtypes differ from this bounded two-dimensional integer lesson and insertion-sort coalescing.' },
+        { name: 'PyTorch sparse COO tensors', url: 'https://docs.pytorch.org/docs/stable/sparse.html#sparse-coo-tensors', usage: 'Represents sparse tensors with coordinate indices and values. Duplicate coordinates add together and coalesce combines them; PyTorch also supports more dimensions and tensor-valued entries.' },
       ],
     },
     'sparse-csc': {
@@ -36,6 +38,7 @@ export class NumericalStructureInformation {
       ],
       technologies: [
         { name: 'SciPy CSC arrays', url: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csc_array.html', usage: 'SciPy CSC stores a column pointer array, packed row indices, and corresponding numerical data. This lesson shows a sorted, zero-free integer variant and direct structural edits, rather than all SciPy conversion and arithmetic facilities.' },
+        { name: 'PyTorch sparse CSC tensors', url: 'https://docs.pytorch.org/docs/stable/sparse.html#sparse-csc-tensor', usage: 'Stores column pointers, row indices, and values for sparse tensor operations. Its CSC format also supports batches and dense value dimensions beyond this two-dimensional scalar model.' },
       ],
     },
     'numerical-csr': {
@@ -48,6 +51,7 @@ export class NumericalStructureInformation {
       ],
       technologies: [
         { name: 'SciPy numerical CSR arrays', url: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_array.html', usage: 'SciPy CSR stores row pointers, column indices, and numerical values for sparse array operations. This bounded sorted integer variant omits the wider dtype, solver, and format-conversion APIs.' },
+        { name: 'PyTorch numerical CSR tensors', url: 'https://docs.pytorch.org/docs/stable/sparse.html#sparse-csr-tensor', usage: 'Uses compressed row pointers, column indices, and values for sparse numerical tensors and matrix products. Supported dtypes, devices, and batched layouts extend beyond this integer matrix lesson.' },
       ],
     },
     'grid-2d': {
@@ -60,6 +64,7 @@ export class NumericalStructureInformation {
       ],
       technologies: [
         { name: 'OpenCV Mat grids', url: 'https://docs.opencv.org/4.x/d3/d63/classcv_1_1Mat.html', usage: 'OpenCV Mat supports row/column access to dense image and matrix data. OpenCV also permits channels, row padding, and shared regions; this lesson uses one contiguous numeric channel with fixed discrete coordinates.' },
+        { name: 'Nav2 Costmap2D navigation grids', url: 'https://api.nav2.org/nav2-jazzy/html/classnav2__costmap__2d_1_1Costmap2D.html', usage: 'Stores robot-navigation costs in a two-dimensional byte grid with conversions between cells and world coordinates. Layer updates and physical coordinates extend beyond this fixed numeric grid.' },
       ],
     },
   } satisfies Record<string, StructureOverview>

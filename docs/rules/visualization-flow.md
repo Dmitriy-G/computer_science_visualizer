@@ -783,8 +783,9 @@ equal reservoir-inclusion claims assume suitable hashing or ideal uniform draws.
 Keep exact keys out of sketches and reservoir histories. The two explicit deletion
 guards are the only full-key registries in these new models and never answer queries.
 Action information describes each implemented variant and excludes trace snapshots
-from algorithmic complexity. Include only verified real-technology links; the
-Quotient Filter entry currently has no verified production example.
+from algorithmic complexity. Include only verified real-technology links. The
+Quotient Filter entry cites [Squeakr](https://github.com/splatlab/squeakr), explicitly
+identified as a counting quotient filter variant used for genomic k-mer counting.
 
 Algorithm references: [Cuckoo Filter paper](https://www.cs.cmu.edu/~binfan/papers/conext14_cuckoofilter.pdf),
 [Quotient Filter paper](https://www3.cs.stonybrook.edu/~bender/newpub/2012-PVLDB-dont-thrash-BenderFaJo.pdf),
@@ -1498,7 +1499,10 @@ in descriptions/pseudocode rather than standalone diagram annotations. Give
 captions and status markers enough space between rows.
 
 Structure information includes verified primary-source technology examples and
-variant notes; the suffix automaton currently has no verified production example.
+variant notes. The suffix automaton cites the
+[Baseten Speculation Engine](https://www.baseten.co/blog/boosting-mtp-acceptance-rates-in-baseten-speculation-engine/)
+for token drafting during inference; distinguish that token-sequence application
+from this lowercase substring-recognition lesson.
 Algorithm references include the [dictionary-automata paper](https://aclanthology.org/J00-1002/),
 [Aho-Corasick definition](https://xlinux.nist.gov/dads/HTML/ahoCorasick.html),
 [suffix-automaton definition](https://xlinux.nist.gov/dads/HTML/suffixautmtn.html), and

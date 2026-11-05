@@ -11,7 +11,8 @@ export class ProbabilisticStructureInformation {
         { area: 'Collision lessons', description: 'Observe why positive counters are not proof of membership or exact frequency.' },
       ],
       technologies: [
-        { name: 'Apache Hadoop bloom utilities', url: 'https://hadoop.apache.org/docs/r2.6.0/api/src-html/org/apache/hadoop/util/bloom/CountingBloomFilter.html', usage: 'The documented Hadoop 2.6 implementation exposes a CountingBloomFilter with four-bit counters and add, membership test, and delete operations. This lesson additionally retains a deletion guard and rejects overflow rather than relying on caller discipline.' },
+        { name: 'Apache Hadoop 2.6 counting Bloom filters (historical)', url: 'https://hadoop.apache.org/docs/r2.6.0/api/src-html/org/apache/hadoop/util/bloom/CountingBloomFilter.html', usage: 'The documented Hadoop 2.6 implementation exposes a CountingBloomFilter with four-bit counters and add, membership test, and delete operations. This lesson additionally retains a deletion guard and rejects overflow rather than relying on caller discipline.' },
+        { name: 'WebKit CSS selector filter', url: 'https://github.com/WebKit/WebKit/blob/main/Source/WebCore/css/SelectorFilter.h', usage: 'Keeps ancestor element identifiers in a counting Bloom filter to quickly reject CSS selectors that cannot match. Its DOM traversal and counter management differ from this numeric filter with an exact deletion ledger.' },
       ],
     },
     'cuckoo-filter': {
@@ -27,14 +28,16 @@ export class ProbabilisticStructureInformation {
       ],
     },
     'quotient-filter': {
-      summary: 'A Quotient Filter stores hash remainders in sorted circular runs and reconstructs their quotient association using occupied, continuation, and shifted metadata. This lesson rebuilds packed runs on insertion and offers approximate membership without retaining full keys; no production example is verified for this entry.',
+      summary: 'A Quotient Filter stores hash remainders in sorted circular runs and reconstructs their quotient association using occupied, continuation, and shifted metadata. This lesson rebuilds packed runs on insertion and offers approximate membership without retaining full keys.',
       useCases: [
         { area: 'Approximate membership', description: 'Recognize definite misses using a compact quotient/remainder fingerprint.' },
         { area: 'Locality-sensitive storage', description: 'Keep collided fingerprint runs in neighboring physical slots.' },
         { area: 'Compact metadata', description: 'Decode canonical quotients from three metadata bits per slot.' },
         { area: 'Packed index design', description: 'Study circular clusters, sorted runs, and the cost of high occupancy.' },
       ],
-      technologies: [],
+      technologies: [
+        { name: 'Squeakr (counting quotient filter variant)', url: 'https://github.com/splatlab/squeakr', usage: 'Counts and queries DNA k-mers using a counting quotient filter. This scientific tool stores multiplicities with a different metadata/counter encoding; it is not the basic three-flag quotient filter shown here.' },
+      ],
     },
     'count-min-sketch': {
       summary: 'A Count-Min Sketch uses multiple hashed counter rows to estimate item frequencies without storing the items. This three-row, eight-column version accepts positive weighted updates and uses BigInt counters, so collisions can overestimate but cannot cause underestimation.',

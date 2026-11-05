@@ -31,7 +31,10 @@ export class AppliedStructureInformation {
         { area: 'Ordered lookup', description: 'Use the predecessor sample for exact-key queries.' },
         { area: 'Index summaries', description: 'Compare the sample size with the complete sorted representation.' },
       ],
-      technologies: [{ name: 'Apache Cassandra index summaries', url: 'https://cassandra.apache.org/doc/stable/cassandra/architecture/storage-engine.html', usage: 'Cassandra Summary.db samples entries from Index.db, which points into Data.db. This simplified one-level lesson samples data records directly.' }],
+      technologies: [
+        { name: 'Apache Cassandra index summaries', url: 'https://cassandra.apache.org/doc/stable/cassandra/architecture/storage-engine.html', usage: 'Cassandra Summary.db samples entries from Index.db, which points into Data.db. This simplified one-level lesson samples data records directly.' },
+        { name: 'ClickHouse sparse primary indexes', url: 'https://clickhouse.com/docs/concepts/core-concepts/primary-indexes', usage: 'Stores primary-key marks for granules of sorted MergeTree data and uses them to skip irrelevant row groups. Production granules, composite keys, and column files differ from this every-third-record numeric example.' },
+      ],
     },
     'sparse-offset-index': {
       summary: 'A sparse offset index translates a logical log offset to a nearby encoded byte position. This sequential Kafka-inspired variant samples every third retained record and scans at most three records after a simulated seek; logical offsets survive clear.',
@@ -61,7 +64,11 @@ export class AppliedStructureInformation {
         { area: 'Accuracy tradeoffs', description: 'Increase list probes to improve candidate coverage.' },
         { area: 'Exact baseline', description: 'Probe every list to obtain the exact nearest stored vector.' },
       ],
-      technologies: [{ name: 'FAISS IVF-flat indexes', url: 'https://github.com/facebookresearch/faiss/wiki/Faiss-indexes', usage: 'FAISS IVF assigns vectors to coarse cells and searches selected lists using nprobe. This uncompressed 2D variant uses deterministic bounded training and no product quantization.' }],
+      technologies: [
+        { name: 'FAISS IVF-flat indexes', url: 'https://github.com/facebookresearch/faiss/wiki/Faiss-indexes', usage: 'FAISS IVF assigns vectors to coarse cells and searches selected lists using nprobe. This uncompressed 2D variant uses deterministic bounded training and no product quantization.' },
+        { name: 'Milvus IVF_FLAT', url: 'https://milvus.io/docs/ivf-flat.md', usage: 'Clusters vectors around centroids and searches selected inverted lists while retaining full vectors. The number of lists and probes trades search cost against recall; the lesson uses small two-dimensional clusters.' },
+        { name: 'pgvector IVFFlat', url: 'https://github.com/pgvector/pgvector#ivfflat', usage: 'Divides PostgreSQL vectors into lists and probes a selected subset for approximate nearest-neighbor searches. Its trained index and database integration extend beyond this in-memory two-dimensional lesson.' },
+      ],
     },
     'content-addressed-layers': {
       summary: 'Content-addressed layers share payloads by DiffID and identify parent chains by ChainID. This example hashes decimal UTF-8 integer payloads, applies the Moby parent-space-diff hash rule with full SHA-256 identifiers, and stores at most 64 immutable references; payloads are not tar archives.',
@@ -111,7 +118,10 @@ export class AppliedStructureInformation {
         { area: 'Search baseline', description: 'Provide an exact reference for approximate-index results.' },
         { area: 'Stable identity', description: 'Keep vector IDs separate from storage positions.' },
       ],
-      technologies: [{ name: 'FAISS flat indexes', url: 'https://github.com/facebookresearch/faiss/wiki/Faiss-indexes#flat-indexes', usage: 'FAISS flat indexes store fixed-size vector codes in arrays and compare them during searches. This lesson uses two uncompressed coordinates.' }],
+      technologies: [
+        { name: 'FAISS flat indexes', url: 'https://github.com/facebookresearch/faiss/wiki/Faiss-indexes#flat-indexes', usage: 'FAISS flat indexes store fixed-size vector codes in arrays and compare them during searches. This lesson uses two uncompressed coordinates.' },
+        { name: 'Milvus FLAT vector search', url: 'https://milvus.io/docs/flat.md', usage: 'Retains full vectors and compares each query against every stored vector for exact nearest-neighbor results. Its configurable dimensions and distance metrics extend beyond this two-dimensional squared-distance scan.' },
+      ],
     },
     'request-tag-array': {
       summary: 'Request tags combine direct array indexing with a bitmap of occupied slots. This bounded sequential example allocates the lowest free tag, releases completed requests, and rejects double release or exhaustion.',
@@ -161,7 +171,10 @@ export class AppliedStructureInformation {
         { area: 'Leaf blocks', description: 'Scan a small block of points after reaching a leaf.' },
         { area: 'Bulk construction', description: 'Partition the complete point set before publishing the index.' },
       ],
-      technologies: [{ name: 'Apache Lucene BKD', url: 'https://lucene.apache.org/core/10_3_1/core/org/apache/lucene/util/bkd/package-summary.html', usage: 'Lucene groups multidimensional point values in recursively subdivided BKD cells. Its production leaf blocks and construction methods differ from this small in-memory example.' }],
+      technologies: [
+        { name: 'Apache Lucene BKD', url: 'https://lucene.apache.org/core/10_3_1/core/org/apache/lucene/util/bkd/package-summary.html', usage: 'Lucene groups multidimensional point values in recursively subdivided BKD cells. Its production leaf blocks and construction methods differ from this small in-memory example.' },
+        { name: 'Elasticsearch geospatial BKD indexes', url: 'https://www.elastic.co/elasticsearch/features', usage: 'Uses Lucene BKD trees to index geospatial points and shapes for spatial queries. Production geometry encoding and disk blocks differ from the two-dimensional point buckets shown here.' },
+      ],
     },
     'ball-tree': {
       summary: 'A Ball Tree groups points inside enclosing metric balls. This Euclidean 2D example uses centroid centers, enclosing radii, median partitions, and three-point leaves; nearest search prunes by the triangle inequality.',
@@ -201,7 +214,11 @@ export class AppliedStructureInformation {
         { area: 'Index maintenance', description: 'Remove old term memberships before replacing a document.' },
         { area: 'Vocabulary management', description: 'Drop dictionary entries when their postings become empty.' },
       ],
-      technologies: [{ name: 'PostgreSQL GIN', url: 'https://www.postgresql.org/docs/current/gin.html', usage: 'GIN maps extracted keys to row-ID postings for composite-value searches. This example uses text documents and in-memory sorted lists rather than a complete PostgreSQL index.' }],
+      technologies: [
+        { name: 'PostgreSQL GIN', url: 'https://www.postgresql.org/docs/current/gin.html', usage: 'GIN maps extracted keys to row-ID postings for composite-value searches. This example uses text documents and in-memory sorted lists rather than a complete PostgreSQL index.' },
+        { name: 'Elasticsearch full-text postings', url: 'https://www.elastic.co/docs/solutions/search/full-text/how-full-text-works', usage: 'Builds a term dictionary and per-term document postings after text analysis, then uses them for full-text retrieval and scoring. Optional positions and frequencies go beyond this small document-ID index.' },
+        { name: 'Redis Search inverted indexes', url: 'https://redis.io/docs/latest/develop/ai/search-and-query/administration/overview/', usage: 'Stores compressed, increasing document-ID postings for each indexed term, with frequency and other metadata used by search. Its compression and scoring are outside this teaching model.' },
+      ],
     },
     'lsh-index': {
       summary: 'A binary-code LSH index uses hyperplane signs to encode vector direction. This reproducible 2D example compares eight-bit codes by exhaustive Hamming distance; it approximates angular similarity and does not promise exact Euclidean neighbors.',
@@ -241,7 +258,10 @@ export class AppliedStructureInformation {
         { area: 'Stable identity', description: 'Keep vertex handles separate from labels and positions.' },
         { area: 'Query explanation', description: 'Show visited vertices and return the query result without editing topology.' },
       ],
-      technologies: [{ name: 'FAISS HNSW', url: 'https://github.com/facebookresearch/faiss/wiki/Faiss-indexes#indexhnsw-variants', usage: 'FAISS uses HNSW over indexed vectors with configurable construction/search effort. The lesson uses sorted-array beams, capped levels, and a simpler link selector.' }],
+      technologies: [
+        { name: 'FAISS HNSW', url: 'https://github.com/facebookresearch/faiss/wiki/Faiss-indexes#indexhnsw-variants', usage: 'FAISS uses HNSW over indexed vectors with configurable construction/search effort. The lesson uses sorted-array beams, capped levels, and a simpler link selector.' },
+        { name: 'pgvector HNSW indexes', url: 'https://github.com/pgvector/pgvector#hnsw', usage: 'Builds multilayer proximity graphs for approximate nearest-neighbor queries inside PostgreSQL. Construction and search parameters tune recall and cost; the lesson simplifies neighbor selection and graph size.' },
+      ],
     },
     'compacted-de-bruijn-graph': {
       summary: 'A compacted de Bruijn graph replaces maximal nonbranching k-mer paths with unitigs. This forward-only k=3 model builds all induced suffix/prefix overlaps, retains cycle-closing edges, and accepts graph-walk queries rather than claiming source-substring occurrence.',
@@ -261,7 +281,9 @@ export class AppliedStructureInformation {
         { area: 'Stable identity', description: 'Keep vertex handles separate from labels and positions.' },
         { area: 'Query explanation', description: 'Show visited vertices and return the query result without editing topology.' },
       ],
-      technologies: [{ name: 'OPC Foundation AddressSpace model', url: 'https://reference.opcfoundation.org/specs/OPC-10000-3/4', usage: 'OPC UA connects information Nodes through typed source-to-target References. The lesson restricts node classes and reference types and excludes namespaces, remote targets, and protocol services.' }],
+      technologies: [
+        { name: 'open62541 AddressSpace', url: 'https://open62541.org/doc/v1.4.5/core_concepts.html', usage: 'Implements OPC UA information models as Nodes connected by typed References, with services for browsing and editing the AddressSpace. Its industrial data types, attributes, and network services extend beyond this local graph.' },
+      ],
     },
   }
 }

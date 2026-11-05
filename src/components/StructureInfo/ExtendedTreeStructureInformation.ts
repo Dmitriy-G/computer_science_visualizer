@@ -11,8 +11,8 @@ export class ExtendedTreeStructureInformation {
         { area: 'Scene organization', description: 'Group related objects so parent operations can affect descendants.' },
       ],
       technologies: [
-        { name: 'Browser DOM trees', url: 'https://dom.spec.whatwg.org/#trees', usage: 'The DOM defines parent/ordered-child node trees for document structure; unlike this lesson, nodes carry document data rather than numeric keys.' },
         { name: 'Git (directory tree objects)', url: 'https://git-scm.com/book/en/v2/Git-Internals-Git-Objects', usage: 'Represents directory snapshots as tree objects whose named entries reference blobs or subtrees. Stored objects can be shared between snapshots; this lesson shows a single numeric-node hierarchy.' },
+        { name: 'Chromium Blink DOM trees', url: 'https://www.chromium.org/blink/getting-started-with-blink-debugging/', usage: 'Maintains document nodes in a DOM tree and a separate layout tree for rendering pages. These ordered document hierarchies allow arbitrary numbers of children rather than numeric search-key ordering.' },
       ],
     },
     'unordered-binary-tree': {
@@ -24,6 +24,7 @@ export class ExtendedTreeStructureInformation {
         { area: 'Tree transformations', description: 'Practice child attachment and subtree removal independently of search invariants.' },
       ],
       technologies: [
+        { name: 'scikit-learn CART decision trees', url: 'https://scikit-learn.org/stable/modules/tree.html#tree-algorithms-id3-c4-5-c5-0-and-cart', usage: 'Classification and regression trees use binary feature/threshold decisions to route samples to predictions. Their left/right branches encode decisions, not binary-search ordering of stored keys.' },
       ],
     },
     'complete-binary-tree': {
@@ -35,6 +36,7 @@ export class ExtendedTreeStructureInformation {
         { area: 'Balanced-shape demonstrations', description: 'Study nearly equal depths without imposing a search-key ordering.' },
       ],
       technologies: [
+        { name: 'Python heapq (complete binary heap shape)', url: 'https://docs.python.org/3/library/heapq.html', usage: 'Stores a binary heap in consecutive list positions with children at 2k + 1 and 2k + 2. This supplies a practical complete-tree shape; heapq additionally enforces heap ordering, which this lesson deliberately omits.' },
       ],
     },
     'threaded-binary-tree': {
@@ -46,6 +48,7 @@ export class ExtendedTreeStructureInformation {
         { area: 'Traversal engineering', description: 'Compare tagged thread pointers with parent pointers and recursion.' },
       ],
       technologies: [
+        { name: 'fastutil threaded red-black maps', url: 'https://github.com/vigna/fastutil/blob/master/src/overview.html', usage: 'Ordered maps use predecessor and successor threads to traverse red-black trees without a traversal stack. Balancing and key/value map semantics extend the unbalanced threaded tree shown here.' },
       ],
     },
     'splay-tree': {
@@ -58,6 +61,7 @@ export class ExtendedTreeStructureInformation {
       ],
       technologies: [
         { name: 'GCC typed splay trees', url: 'https://gnu.googlesource.com/gcc/+/refs/heads/master/gcc/typed-splay-tree.h', usage: 'GCC supplies typed compiler wrappers around libiberty splay trees for compiler data.' },
+        { name: 'Windows kernel splay generic tables', url: 'https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/nf-ntddk-rtlinitializegenerictable', usage: 'Windows generic tables use splay trees by default. File systems use these tables for data such as open-file name lookup; callers can explicitly choose the separate AVL implementation.' },
       ],
     },
     'treap': {
@@ -69,6 +73,7 @@ export class ExtendedTreeStructureInformation {
         { area: 'Sequence variants', description: 'Implicit-key treap variants use subtree sizes to represent editable sequences.' },
       ],
       technologies: [
+        { name: 'Go runtime semaphore treaps', url: 'https://go.dev/src/runtime/sema.go', usage: 'Indexes blocked goroutines by semaphore address in a treap with randomized ticket priorities, so mutex and other synchronization waits can be found efficiently. Waiters on the same address share a linked list.' },
       ],
     },
     'cartesian-tree': {
@@ -102,6 +107,7 @@ export class ExtendedTreeStructureInformation {
         { area: 'Invariant education', description: 'Study horizontal right links and the exclusion of horizontal left links.' },
       ],
       technologies: [
+        { name: 'MuPDF string lookup AA-trees', url: 'https://github.com/ArtifexSoftware/mupdf/blob/master/include/mupdf/fitz/tree.h', usage: 'MuPDF documents fz_tree as an AA-tree for string-key lookup. Its virtual tree archives use these trees to locate named resource buffers; the lesson instead stores numeric keys.' },
       ],
     },
     'two-three-tree': {
@@ -124,6 +130,7 @@ export class ExtendedTreeStructureInformation {
         { area: 'Red-black correspondences', description: 'Relate multi-key nodes to black nodes connected by red links.' },
       ],
       technologies: [
+        { name: 'PuTTY 2-3-4 trees', url: 'https://www.chiark.greenend.org.uk/~sgtatham/algorithms/cbtree.html', usage: 'The PuTTY author documents the 2-3-4 B-tree implementation used in PuTTY and its counted extension. Nodes hold up to three items; the counted variant additionally supports lookup by numeric position.' },
       ],
     },
     'radix-tree': {
@@ -147,6 +154,7 @@ export class ExtendedTreeStructureInformation {
         { area: 'Character comparison', description: 'Separate same-position comparisons from next-position transitions.' },
       ],
       technologies: [
+        { name: 'Visual Studio Code workspace lookup', url: 'https://github.com/microsoft/vscode/blob/main/src/vs/platform/workspace/common/workspace.ts', usage: 'Uses a TernarySearchTree to index workspace folder URIs and find the containing folder for a resource. Its URI-segment and case-handling rules differ from this character-by-character lowercase dictionary.' },
       ],
     },
     'suffix-tree': {
@@ -158,6 +166,7 @@ export class ExtendedTreeStructureInformation {
         { area: 'String algorithms', description: 'Use descendant suffix positions as building blocks for text analysis.' },
       ],
       technologies: [
+        { name: 'MUMmer 3 genome alignment (historical)', url: 'https://mummer.sourceforge.net/manual/', usage: 'MUMmer 3 uses suffix trees to find maximal exact sequence matches that anchor genome alignments. This is the documented version-3 implementation; MUMmer4 nucmer uses suffix arrays. Construction differs from this naive teaching tree.' },
       ],
     },
     'interval-tree': {
@@ -268,7 +277,8 @@ export class ExtendedTreeStructureInformation {
         { area: 'Transparency protocols', description: 'Merkle variants support verifiable append-only log protocols.' },
       ],
       technologies: [
-        { name: 'Certificate Transparency Merkle hash trees', url: 'https://www.rfc-editor.org/rfc/rfc9162.html#section-2.1', usage: 'The transparency-log protocol defines Merkle hashing and inclusion proofs. Its unpadded log-tree shape differs from this padded fixed-size lesson.' },
+        { name: 'Trillian transparency logs', url: 'https://github.com/google/trillian', usage: 'Uses Merkle trees to serve inclusion and consistency proofs for append-only transparency logs, including production Certificate Transparency deployments. Log trees grow without this lesson’s fixed-size empty-leaf padding.' },
+        { name: 'Apache Cassandra repair trees', url: 'https://cassandra.apache.org/doc/latest/cassandra/managing/operating/repair.html', usage: 'Compares hierarchies of hashes during replica repair to locate differing token ranges before streaming missing data. These repair trees summarize database ranges rather than this lesson’s individual numeric leaves.' },
       ],
     },
     'van-emde-boas-tree': {

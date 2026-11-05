@@ -50,7 +50,10 @@ export class PriorityStructureInformation {
         { area: 'Batch priority merging', description: 'Combine newly gathered tasks with an existing priority queue.' },
         { area: 'Self-adjusting structures', description: 'Study a heap that reorganizes children during extraction without explicit balance ranks.' },
       ],
-      technologies: [{ name: 'Boost.Heap pairing_heap', url: 'https://www.boost.org/doc/libs/latest/doc/html/heap/data_structures.html', usage: 'Supplies a self-adjusting pairing-heap container, including operations beyond the insert, two-pass extract, and meld subset shown here.' }],
+      technologies: [
+        { name: 'Boost.Heap pairing_heap', url: 'https://www.boost.org/doc/libs/latest/doc/html/heap/data_structures.html', usage: 'Supplies a self-adjusting pairing-heap container, including operations beyond the insert, two-pass extract, and meld subset shown here.' },
+        { name: 'PostgreSQL ordered index-scan queue', url: 'https://github.com/postgres/postgres/blob/master/src/backend/executor/nodeIndexscan.c', usage: 'Uses a pairing heap to reorder tuples during ordered index scans when rechecked distances require it. Comparator inversion makes the queue return the smallest ordering value first.' },
+      ],
     },
     'leftist-heap': {
       summary: 'A Leftist Heap is a binary min-heap with null-path ranks satisfying rank(left) >= rank(right). Meld traverses right spines, conditionally exchanges children, and recomputes ranks with rank(null) = 0.',
@@ -60,7 +63,9 @@ export class PriorityStructureInformation {
         { area: 'Batch scheduling', description: 'Combine independently constructed queues while retaining heap order.' },
         { area: 'Rank invariants', description: 'Relate null-path ranks to guaranteed merge-path bounds.' },
       ],
-      technologies: [{ name: 'OCaml Containers CCHeap (functional variant)', url: 'https://github.com/c-cube/ocaml-containers/blob/main/src/core/CCHeap.ml', usage: 'Implements a reusable functional heap using leftist rank and merge operations. This visualization uses mutable links inside an independently cloned playback model.' }],
+      technologies: [
+        { name: 'OCaml Containers CCHeap (functional variant)', url: 'https://github.com/c-cube/ocaml-containers#new-types-ccvector-ccheap-ccresult-ccsexp-ccbyte_buffer', usage: 'Implements a reusable functional heap using leftist rank and merge operations. This visualization uses mutable links inside an independently cloned playback model.' },
+      ],
     },
     'skew-heap': {
       summary: 'A Skew Heap is a self-adjusting binary min-heap with no stored balance rank. Its meld combines right subtrees and unconditionally swaps children while returning; logarithmic performance is amortized rather than a bound on each individual operation.',

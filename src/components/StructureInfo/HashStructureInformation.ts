@@ -23,7 +23,7 @@ export class HashStructureInformation {
         { area: 'Resizing maps', description: 'Redistribute linked nodes when load exceeds a threshold.' },
       ],
       technologies: [
-        { name: 'OpenJDK HashMap', url: 'https://github.com/openjdk/jdk13/blob/master/src/java.base/share/classes/java/util/HashMap.java', usage: 'HashMap uses linked bucket bins and may replace long bins with tree bins; this lesson keeps only singly linked chains.' },
+        { name: 'OpenJDK HashMap', url: 'https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/HashMap.java', usage: 'HashMap uses linked bucket bins and may replace long bins with tree bins; this lesson keeps only singly linked chains.' },
         { name: 'Redis (dict collision chains)', url: 'https://github.com/redis/redis/blob/unstable/src/dict.c', usage: 'Resolves collisions with linked chains in power-of-two bucket tables and rehashes incrementally. This lesson shares Hash Map storage and grows by rehashing all entries together.' },
       ],
     },
@@ -37,6 +37,7 @@ export class HashStructureInformation {
       ],
       technologies: [
         { name: 'Rust 1.35 standard HashMap (historical)', url: 'https://github.com/rust-lang/rust/blob/1.35.0/src/libstd/collections/hash/map.rs', usage: 'This historical standard-library implementation used linear probing and Robin Hood bucket stealing. It is explicitly a historical example, not a claim about current Rust maps.' },
+        { name: 'Godot core HashMap', url: 'https://github.com/godotengine/godot/blob/master/core/templates/hash_map.h', usage: 'The game engine uses Robin Hood hashing for its core key-value container, retaining pointer-stable entries and insertion-order links. Those extra guarantees extend beyond this numeric slot-array lesson.' },
       ],
     },
     'cuckoo-hash-table': {
@@ -110,6 +111,7 @@ export class HashStructureInformation {
       ],
       technologies: [
         { name: 'Apache Cassandra token rings', url: 'https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html', usage: 'Cassandra partitions keys through consistent hashing with virtual tokens. Production token width, replication, placement, and membership protocols differ from this 32-bit routing lesson.' },
+        { name: 'NGINX upstream consistent hashing', url: 'https://nginx.org/en/docs/http/ngx_http_upstream_module.html#hash', usage: 'The optional hash ... consistent load-balancing mode uses Ketama consistent hashing to limit key remapping when upstream servers change. Its weighted production ring differs from this three-token-per-server simulation.' },
       ],
     },
   } satisfies Record<string, StructureOverview>

@@ -97,7 +97,7 @@ export class StructureInformation {
         },
         {
           name: 'DuckDB (Adaptive Radix Tree indexes)',
-          url: 'https://duckdb.org/why_duckdb',
+          url: 'https://duckdb.org/docs/stable/sql/indexes',
           usage: 'Uses the ART trie variant for secondary indexes that locate database rows by key.',
         },
       ],
@@ -389,11 +389,6 @@ export class StructureInformation {
           usage: 'Stores numerical data in shaped, typed arrays with support for strided views and numerical operations.',
         },
         {
-          name: 'JavaScript (typed arrays)',
-          url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray',
-          usage: 'Provides typed views over binary buffers for processing numeric and binary data.',
-        },
-        {
           name: 'Java (native arrays)',
           url: 'https://docs.oracle.com/javase/tutorial/java/nutsandbolts/arrays.html',
           usage: 'Provides fixed-length indexed storage for primitive values and object references.',
@@ -432,6 +427,11 @@ export class StructureInformation {
           name: 'Linux blk-mq (request tag arrays)',
           url: 'https://github.com/torvalds/linux/blob/master/include/linux/blk-mq.h',
           usage: 'Uses integer tags to index request-pointer arrays, avoiding a scan to locate completed I/O. Kernel request lifetimes and concurrent access extend beyond this numeric array example.',
+        },
+        {
+          name: 'Node.js Buffer byte arrays',
+          url: 'https://nodejs.org/api/buffer.html#buffer',
+          usage: 'Uses fixed-length byte sequences for binary data in runtime APIs. Buffer extends Uint8Array with binary reading, writing, and encoding operations.',
         },
       ],
       useCases: [
@@ -568,11 +568,6 @@ export class StructureInformation {
           usage: 'Preserves producer ordering for a queue with a single consumer and supports asynchronous message delivery.',
         },
         {
-          name: 'TCP (queued send data)',
-          url: 'https://www.rfc-editor.org/rfc/rfc9293.html#section-3.9.1.7',
-          usage: 'Queues application data for ordered byte-stream transmission; the protocol specifies behavior rather than one linked-node implementation.',
-        },
-        {
           name: 'Python (queue.Queue)',
           url: 'https://docs.python.org/3/library/queue.html',
           usage: 'Provides a synchronized FIFO queue for transferring work between Python threads.',
@@ -631,14 +626,14 @@ export class StructureInformation {
           usage: 'Stores a growable ring-buffer deque with insertion and removal at both ends.',
         },
         {
-          name: 'C++ Standard Library (std::deque)',
-          url: 'https://eel.is/c++draft/deque.overview',
-          usage: 'Provides the C++ double-ended sequence container with efficient end operations and indexed access.',
-        },
-        {
           name: 'Java concurrency library (LinkedBlockingDeque)',
           url: 'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/LinkedBlockingDeque.html',
           usage: 'Provides a thread-safe blocking deque for producer-consumer work at either end.',
+        },
+        {
+          name: 'Microsoft C++ STL (std::deque)',
+          url: 'https://learn.microsoft.com/en-us/cpp/standard-library/deque-class?view=msvc-170',
+          usage: 'Implements a random-access double-ended sequence with efficient insertion and removal at both ends. Its storage grows as elements are added.',
         },
       ],
       useCases: [
@@ -1012,7 +1007,7 @@ export class StructureInformation {
       technologies: [
         { name: 'LLVM (control-flow graphs)', url: 'https://llvm.org/docs/ProgrammersManual.html#viewing-graphs-while-debugging-code', usage: 'Represents control flow between basic blocks for compiler analysis, optimization, and CFG inspection.' },
         { name: 'Neo4j (directed property-graph variant)', url: 'https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/', usage: 'Stores typed, directed relationships and properties for querying connected data; its property-graph model also supports multiple relationships.' },
-        { name: 'OPC UA (typed AddressSpace graph)', url: 'https://reference.opcfoundation.org/specs/OPC-10000-3/4', usage: 'Connects industrial information Nodes through typed source-to-target References for browsing and queries. Its attributes, reference types, and cross-server links extend beyond this simple numeric directed graph.' },
+        { name: 'open62541 AddressSpace', url: 'https://open62541.org/doc/v1.4.5/core_concepts.html', usage: 'Connects industrial information Nodes with typed, directed References for browsing and data access. Its reference types, attributes, and protocol services extend beyond this unweighted numeric graph.' },
       ],
     },
     'weighted-graph': {
