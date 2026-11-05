@@ -11,11 +11,11 @@ export class ClearAnimation extends LinearAnimation {
     return {
       name: this.title,
       summary: this.summary,
-      time: { best: 'O(n?)', average: 'O(n?)', worst: 'O(n?)', explanation: 'Reverse n references, remove them child-first, and scan surviving references before reclaiming each blob. Repeated scans can take quadratic work; the reverse order list needs O(n) space. Rows state upper bounds; empty, rejected, and early-return cases may finish sooner.' },
-      memory: { best: 'O(n)', average: 'O(n)', worst: 'O(n)', explanation: 'Includes operation working storage and returned output. Playback clones, trace snapshots, and scene storage are excluded. Empty operations can use constant storage.' },
+      time: { best: 'O(n²)', average: 'O(n²)', worst: 'O(n²)', explanation: 'After each of n releases, scan every surviving reference to check blob ownership. The scans total n(n - 1)/2 regardless of sharing, so all cases are quadratic. Linear worst-case Map operations do not increase this bound. Empty storage takes O(1).' },
+      memory: { best: 'O(n)', average: 'O(n)', worst: 'O(n)', explanation: 'The reversed release-order array holds n layer references. Ownership checks use only local variables. Existing blobs, playback clones, and snapshots are excluded; empty storage needs O(1).' },
       terms: [
         { symbol: 'n', meaning: `Logical entries before the operation; currently ${size}.` },
-        { symbol: 'O(n?)', meaning: 'The stated growth bound for this bounded representation.' },
+        { symbol: 'O(n²)', meaning: 'Quadratic work from scanning surviving references after every release.' },
         { symbol: 'O(n)', meaning: 'Additional working and output storage for the operation.' },
       ],
     }

@@ -10,8 +10,8 @@ export class BreadthFirstAnimation extends LinearAnimation {
   public static describe(size: number, edges: number): AlgorithmInformation {
     return {
       name: this.title, summary: this.summary,
-      time: { best: 'O(V²)', average: 'O(V²)', worst: 'O(V²)', explanation: 'Each reached source scans up to V neighbors or cells. A complete graph reaches every vertex; matrix traversal may reach only a smaller component. The displayed average bound is conservative without a distribution assumption.' },
-      memory: { best: 'O(V)', average: 'O(V)', worst: 'O(V)', explanation: 'The discovery set, queue, and returned order contain at most V vertices; neighbor materialization is also at most V.' },
+      time: { best: 'O(V)', average: 'O(V²)', worst: 'O(V²)', explanation: 'Even an isolated start scans its full V-cell row. Reaching all vertices scans V rows, giving O(V²); the average row is an upper bound without a reachability distribution. Registry and visited-set operations assume constant-time access.' },
+      memory: { best: 'O(1)', average: 'O(V)', worst: 'O(V)', explanation: 'An isolated start needs constant storage. The visited set, queue, returned order, and one materialized neighbor list together use O(V) space. Playback clones and snapshots are excluded; average is an upper bound without a reachability distribution.' },
       terms: [
         { symbol: 'V', meaning: `Original vertex count: V = ${size}.` },
         { symbol: 'E', meaning: `Original stored edge count: E = ${edges}.` },

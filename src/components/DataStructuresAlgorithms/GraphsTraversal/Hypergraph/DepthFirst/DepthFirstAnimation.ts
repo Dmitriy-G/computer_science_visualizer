@@ -10,8 +10,8 @@ export class DepthFirstAnimation extends LinearAnimation {
   public static describe(size: number, edges: number): AlgorithmInformation {
     return {
       name: this.title, summary: this.summary,
-      time: { best: 'O(V(H + I + 1))', average: 'O(V(H + I + 1))', worst: 'O(V(H + I + 1))', explanation: 'A neighbor query scans hyperedge incidence sets; over V reachable vertices this gives the displayed conservative bound. Traversal follows shared-hyperedge reachability and returns only original vertices, never incidence marker nodes. Recursive frames retain materialized neighbor lists as well as the visited set and returned order.' },
-      memory: { best: 'O(V²)', average: 'O(V²)', worst: 'O(V²)', explanation: 'Additional storage includes newly allocated records, packed-array replacements, temporary filters, recursive frames, and any returned traversal order where relevant. Original graph storage, playback clones, and scene snapshots are excluded.' },
+      time: { best: 'O(H + I + 1)', average: 'O(V(H + I + 1))', worst: 'O(V(H + I + 1))', explanation: 'An isolated start still scans all H hyperedges and I incidences. Repeating this neighbor query for up to V reached vertices gives the displayed average/worst upper bound, without a reachability distribution. Set operations assume constant-time access.' },
+      memory: { best: 'O(1)', average: 'O(V²)', worst: 'O(V²)', explanation: 'An isolated start needs constant storage. Recursive frames retain their neighbor arrays as well as the visited set and output. Hyperedges can induce V neighbors at each of V active frames, giving O(V²). Average is an upper bound; playback clones and snapshots are excluded.' },
       terms: [
         { symbol: 'V', meaning: `Original vertex count: V = ${size}.` },
         { symbol: 'H', meaning: `Original hyperedge count: H = ${edges}.` },

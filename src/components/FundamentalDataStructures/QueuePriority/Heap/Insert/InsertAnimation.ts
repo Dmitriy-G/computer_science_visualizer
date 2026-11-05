@@ -11,9 +11,10 @@ export class InsertAnimation extends AdditionalTreeAnimation {
     return {
       name: this.title,
       summary: this.summary,
-      time: { best: 'O(1)', average: 'O(1)', worst: 'O(log n)', explanation: 'Best: the new leaf already satisfies heap order. Expected constant sift-up assumes independent uniformly ranked priorities; a new global minimum traverses the height.' },
-      memory: { best: 'O(1)', average: 'O(1)', worst: 'O(1)', explanation: 'One new entry and a few indices; backing-array allocation is managed by JavaScript. Animation snapshots and traces are excluded.' },
+      time: { best: 'O(1)', average: 'O(log n)', worst: 'O(n)', explanation: 'Appending and sifting up costs O(log n) amortized, used as a conservative average bound without a key distribution. A leaf already in heap order needs constant sift work; a new minimum may climb O(log n) levels. One backing-array growth may copy O(n) entries; this follows the same dynamic-array cost model as the other array-backed heaps.' },
+      memory: { best: 'O(1)', average: 'O(1)', worst: 'O(n)', explanation: 'One new entry and fixed local variables suffice without growth. The average row is amortized allocation over an insertion sequence; an individual backing-array growth may allocate O(n) slots. Playback clones and snapshots are excluded.' },
       terms: [
+        { symbol: 'O(n)', meaning: 'Linear work or allocation when the backing array grows.' },
         { symbol: 'n', meaning: `Original element count for this run: n = ${size}.` },
         { symbol: 'O(1)', meaning: 'Constant work or additional storage.' },
         { symbol: 'O(log n)', meaning: 'Work or storage proportional to balanced tree height.' },

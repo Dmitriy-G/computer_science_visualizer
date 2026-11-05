@@ -10,11 +10,11 @@ export class ClearAnimation extends LinearAnimation {
   public static describe(size: number, edges: number): AlgorithmInformation {
     return {
       name: this.title, summary: this.summary,
-      time: { best: 'O(V³)', average: 'O(V³)', worst: 'O(V³)', explanation: 'These are conservative upper bounds for this implementation, including stable-ID lookup, duplicate validation, canonical storage updates, and managed-array copies where relevant. No random-input assumption is made. Empty inputs and rejected requests can finish sooner.' },
-      memory: { best: 'O(V²)', average: 'O(V²)', worst: 'O(V²)', explanation: 'Additional storage includes newly allocated records, packed-array replacements, temporary filters, recursive frames, and any returned traversal order where relevant. Original graph storage, playback clones, and scene snapshots are excluded.' },
+      time: { best: 'O(V²)', average: 'O(V²)', worst: 'O(V²)', explanation: 'Clear always removes the last vertex. At size k it scans the last row and column, then removes their final slots without shifting surviving cells. Summing O(k) over V releases gives O(V²) for every matrix. Registry operations assume constant time; empty input takes O(1).' },
+      memory: { best: 'O(1)', average: 'O(1)', worst: 'O(1)', explanation: 'Rows and cells are removed in place. Only indices and constant-size splice results are needed; the original matrix, deferred garbage collection, and playback snapshots are excluded.' },
       terms: [
         { symbol: 'V', meaning: `Original vertex count: V = ${size}.` },
-        { symbol: 'E', meaning: `Original stored edge count: E = ${edges}.` },
+        { symbol: 'k', meaning: 'Number of vertices still present during one clear iteration.' },
       ],
     }
   }

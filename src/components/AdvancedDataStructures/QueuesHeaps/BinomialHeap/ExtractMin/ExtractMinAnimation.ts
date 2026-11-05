@@ -10,8 +10,8 @@ export class ExtractMinAnimation extends LinearAnimation {
 
   public static describe(size: number): AlgorithmInformation {
     const information = AnimationSequence.information(this.title, this.summary, size,
-      ['O(1)', 'O(log n)', 'O(log n)'], 'A degree-zero minimum in a one-root forest is constant work. Otherwise root scans, child-list reversal, and equal-degree links require at most logarithmic work; this is also a conservative average bound.',
-      ['O(log n)', 'O(log n)', 'O(log n)'], 'Reversed child and merged root lists each hold at most O(log n) references.')
+      ['O(log n)', 'O(log n)', 'O(log n)'], 'Consolidation iterates a degree-indexed array through the highest degree, even across empty slots. A nonempty binomial forest with n nodes has maximum degree floor(log2 n), so accepted insertions and nontrivial extractions take O(log n) in every case. Empty and singleton boundary cases take O(1).',
+      ['O(log n)', 'O(log n)', 'O(log n)'], 'Promoted children, merged root lists, and the degree-indexed consolidation array use O(log n) additional slots.')
     return { ...information, terms: [
       { symbol: 'n', meaning: `Original logical entry count for this run: n = ${size}.` },
       { symbol: 'O(1)', meaning: 'Constant work or storage.' },

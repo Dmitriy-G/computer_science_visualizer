@@ -10,8 +10,8 @@ export class InsertAnimation extends LinearAnimation {
 
   public static describe(size: number): AlgorithmInformation {
     const information = AnimationSequence.information(this.title, this.summary, size,
-      ['O(1)', 'O(log n)', 'O(log n)'], 'Root lists contain at most one tree per degree after consolidation. This implementation merges and scans those lists, giving a conservative logarithmic average and worst bound. An empty forest is constant work.',
-      ['O(log n)', 'O(log n)', 'O(log n)'], 'The temporary merged root list holds O(log n) references, plus one new node.')
+      ['O(log n)', 'O(log n)', 'O(log n)'], 'Consolidation iterates a degree-indexed array through the highest degree, even across empty slots. A nonempty binomial forest with n nodes has maximum degree floor(log2 n), so accepted insertions and nontrivial extractions take O(log n) in every case. Empty and singleton boundary cases take O(1).',
+      ['O(log n)', 'O(log n)', 'O(log n)'], 'Merged root lists and the degree-indexed consolidation array use O(log n) additional slots, plus one new node.')
     return { ...information, terms: [
       { symbol: 'n', meaning: `Original logical entry count for this run: n = ${size}.` },
       { symbol: 'O(1)', meaning: 'Constant work or storage.' },

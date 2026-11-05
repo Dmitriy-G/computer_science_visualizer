@@ -10,8 +10,8 @@ export class DepthFirstAnimation extends LinearAnimation {
   public static describe(size: number, edges: number): AlgorithmInformation {
     return {
       name: this.title, summary: this.summary,
-      time: { best: 'O(V + E)', average: 'O(V + E)', worst: 'O(V + E)', explanation: 'Each reachable vertex and its stored outgoing entries are examined once. The bound covers the whole graph and is conservative for a smaller reachable component; cached ID/position Maps assume expected constant lookup. Recursive frames retain materialized neighbor lists as well as the visited set and returned order.' },
-      memory: { best: 'O(V + E)', average: 'O(V + E)', worst: 'O(V + E)', explanation: 'Additional storage includes newly allocated records, packed-array replacements, temporary filters, recursive frames, and any returned traversal order where relevant. Original graph storage, playback clones, and scene snapshots are excluded.' },
+      time: { best: 'O(1)', average: 'O(V + E)', worst: 'O(V + E)', explanation: 'An isolated start takes constant work even when other vertices exist. Only reached vertices and their outgoing entries are scanned; O(V + E) is a whole-graph upper bound for average and worst cases, without a reachability distribution. Registry and visited-set operations assume constant-time access.' },
+      memory: { best: 'O(1)', average: 'O(V + E)', worst: 'O(V + E)', explanation: 'An isolated start needs constant storage. Recursive frames retain their neighbor arrays as well as the visited set and output. Across active frames, neighbor arrays contain at most O(E) entries and vertex bookkeeping uses O(V). Average is an upper bound; playback clones and snapshots are excluded.' },
       terms: [
         { symbol: 'V', meaning: `Original vertex count: V = ${size}.` },
         { symbol: 'E', meaning: `Original stored edge count: E = ${edges}.` },

@@ -11,9 +11,10 @@ export class BreadthFirstAnimation extends LinearAnimation {
     return {
       name: this.title,
       summary: this.summary,
-      time: { best: 'O(V² + E)', average: 'O(V² + E)', worst: 'O(V² + E)', explanation: 'Visits reachable vertices in stored outgoing-neighbor order. The displayed bound includes this representation\'s neighbor lookup and visited/frontier/output storage; it is a conservative upper bound for every graph shape. Rows are upper bounds for this teaching variant; empty or early-return cases can finish sooner.' },
-      memory: { best: 'O(V + E)', average: 'O(V + E)', worst: 'O(V + E)', explanation: 'Includes working collections and output required by this operation. Playback clones, recorded trace frames, and scene snapshots are excluded.' },
+      time: { best: 'O(V)', average: 'O(V² + E)', worst: 'O(V² + E)', explanation: 'Start validation first materializes all V vertex IDs, even for an isolated start. Each reached unitig is located by a linear search; its outgoing DNA degree is at most four. The average row is a whole-graph upper bound without a reachability distribution. Map and set accesses assume constant time.' },
+      memory: { best: 'O(V)', average: 'O(V)', worst: 'O(V)', explanation: 'Start validation allocates V IDs. Visited/frontier records and returned output use O(V); each unitig has at most four outgoing DNA neighbors, so retained DFS neighbor arrays also total O(V). Playback clones and snapshots are excluded.' },
       terms: [
+        { symbol: 'O(V)', meaning: 'Linear in the stored vertex count, including the start-validation ID array.' },
         { symbol: 'V', meaning: `Stored graph vertices; the current logical element count is ${size}.` },
         { symbol: 'E', meaning: 'Stored outgoing graph links or typed references.' },
         { symbol: 'O(V² + E)', meaning: 'A quadratic vertex term plus the outgoing-link count.' },

@@ -11,9 +11,10 @@ export class DepthFirstAnimation extends LinearAnimation {
     return {
       name: this.title,
       summary: this.summary,
-      time: { best: 'O(V + E)', average: 'O(V + E)', worst: 'O(V + E)', explanation: 'Visits reachable vertices in stored outgoing-neighbor order. The displayed bound includes this representation\'s neighbor lookup and visited/frontier/output storage; it is a conservative upper bound for every graph shape. Rows are upper bounds for this teaching variant; empty or early-return cases can finish sooner.' },
-      memory: { best: 'O(V + E)', average: 'O(V + E)', worst: 'O(V + E)', explanation: 'Includes working collections and output required by this operation. Playback clones, recorded trace frames, and scene snapshots are excluded.' },
+      time: { best: 'O(V)', average: 'O(V + E)', worst: 'O(V + E)', explanation: 'Start validation first materializes all V vertex IDs, even for an isolated start. Traversal then reads existing level-zero adjacency lists. The average row is a whole-graph upper bound without a reachability distribution. Map and set accesses assume constant time.' },
+      memory: { best: 'O(V)', average: 'O(V)', worst: 'O(V)', explanation: 'Start validation allocates V IDs. Visited/frontier records and returned output use O(V); DFS references the existing neighbor lists instead of copying edges. Playback clones and snapshots are excluded.' },
       terms: [
+        { symbol: 'O(V)', meaning: 'Linear in the stored vertex count, including the start-validation ID array.' },
         { symbol: 'V', meaning: `Stored graph vertices; the current logical element count is ${size}.` },
         { symbol: 'E', meaning: 'Stored outgoing graph links or typed references.' },
         { symbol: 'O(V + E)', meaning: 'Linear combined growth in stored vertices and outgoing links.' },

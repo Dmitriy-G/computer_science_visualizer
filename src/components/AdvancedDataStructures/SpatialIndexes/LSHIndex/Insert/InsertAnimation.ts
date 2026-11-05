@@ -11,9 +11,10 @@ export class InsertAnimation extends LinearAnimation {
     return {
       name: this.title,
       summary: this.summary,
-      time: { best: 'O(n)', average: 'O(n)', worst: 'O(n)', explanation: 'Eight projections have fixed cost; the conservative per-operation bound includes possible JavaScript backing-array growth. Rows are upper bounds for this teaching variant; empty or early-return cases can finish sooner.' },
-      memory: { best: 'O(n)', average: 'O(n)', worst: 'O(n)', explanation: 'Includes working collections and output required by this operation. Playback clones, recorded trace frames, and scene snapshots are excluded.' },
+      time: { best: 'O(1)', average: 'O(1)', worst: 'O(n)', explanation: 'Encode one 2D point using eight fixed planes, then append one code/point record. No existing vector is copied. Average denotes expected amortized host-container insertion; a backing-array growth can copy O(n) entries.' },
+      memory: { best: 'O(1)', average: 'O(1)', worst: 'O(n)', explanation: 'Allocate one record without container growth. Average allocation is amortized over insertions; backing-array growth may allocate O(n) slots. Playback clones and snapshots are excluded.' },
       terms: [
+        { symbol: 'O(1)', meaning: 'Constant work or allocation, amortized for host-container insertion.' },
         { symbol: 'n', meaning: `Logical entries before the operation; currently ${size}.` },
         { symbol: 'O(n)', meaning: 'Linear work or storage in the logical entry count.' },
       ],

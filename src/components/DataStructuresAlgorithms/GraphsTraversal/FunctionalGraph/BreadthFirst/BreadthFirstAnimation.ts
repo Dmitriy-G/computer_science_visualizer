@@ -10,8 +10,8 @@ export class BreadthFirstAnimation extends LinearAnimation {
   public static describe(size: number, edges: number): AlgorithmInformation {
     return {
       name: this.title, summary: this.summary,
-      time: { best: 'O(V(E + 1))', average: 'O(V(E + 1))', worst: 'O(V(E + 1))', explanation: 'This edge-record implementation scans the edge list for each reached vertex. It deliberately exposes that representation cost rather than claiming adjacency-list traversal time. The bound is conservative for both average and worst cases.' },
-      memory: { best: 'O(V)', average: 'O(V)', worst: 'O(V)', explanation: 'The discovery set, queue, and returned order contain at most V vertices; neighbor materialization is also at most V.' },
+      time: { best: 'O(V)', average: 'O(V(E + 1))', worst: 'O(V(E + 1))', explanation: 'Each neighbor query scans all E = V stored edges. A self-loop start visits only itself in O(V); reaching V vertices takes O(V²). Average is a whole-graph upper bound without a reachability distribution. Registry and set operations assume constant-time access.' },
+      memory: { best: 'O(1)', average: 'O(V)', worst: 'O(V)', explanation: 'An isolated or self-loop start needs constant storage. The visited set, queue, returned order, and one materialized neighbor list together use O(V) space. Playback clones and snapshots are excluded; average is an upper bound without a reachability distribution.' },
       terms: [
         { symbol: 'V', meaning: `Original vertex count: V = ${size}.` },
         { symbol: 'E', meaning: `Original stored edge count: E = ${edges}.` },

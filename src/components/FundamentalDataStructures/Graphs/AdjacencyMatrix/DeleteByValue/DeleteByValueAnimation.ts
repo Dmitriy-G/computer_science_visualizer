@@ -10,11 +10,10 @@ export class DeleteByValueAnimation extends LinearAnimation {
   public static describe(size: number, edges: number): AlgorithmInformation {
     return {
       name: this.title, summary: this.summary,
-      time: { best: 'O(V²)', average: 'O(V²)', worst: 'O(V²)', explanation: 'These are conservative upper bounds for this implementation, including stable-ID lookup, duplicate validation, canonical storage updates, and managed-array copies where relevant. No random-input assumption is made. Empty inputs and rejected requests can finish sooner.' },
-      memory: { best: 'O(V²)', average: 'O(V²)', worst: 'O(V²)', explanation: 'Additional storage includes newly allocated records, packed-array replacements, temporary filters, recursive frames, and any returned traversal order where relevant. Original graph storage, playback clones, and scene snapshots are excluded.' },
+      time: { best: 'O(V)', average: 'O(V²)', worst: 'O(V²)', explanation: 'A miss scans V vertex values; deleting the last vertex scans its row and column without shifting cells. Removing an early column shifts up to V cells in each of V rows. Average O(V²) assumes a uniformly chosen existing vertex. Registry operations assume constant time.' },
+      memory: { best: 'O(1)', average: 'O(1)', worst: 'O(1)', explanation: 'Splice removes one row reference and one cell per surviving row in place; it does not allocate a replacement matrix. Temporary splice results have constant size. Existing storage, deferred collection, and playback are excluded.' },
       terms: [
         { symbol: 'V', meaning: `Original vertex count: V = ${size}.` },
-        { symbol: 'E', meaning: `Original stored edge count: E = ${edges}.` },
       ],
     }
   }

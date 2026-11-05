@@ -11,9 +11,11 @@ export class DepthFirstAnimation extends LinearAnimation {
     return {
       name: this.title,
       summary: this.summary,
-      time: { best: 'O(V(E + V))', average: 'O(V(E + V))', worst: 'O(V(E + V))', explanation: 'Visits reachable vertices in stored outgoing-neighbor order. The displayed bound includes this representation\'s neighbor lookup and visited/frontier/output storage; it is a conservative upper bound for every graph shape. Rows are upper bounds for this teaching variant; empty or early-return cases can finish sooner.' },
-      memory: { best: 'O(V + E)', average: 'O(V + E)', worst: 'O(V + E)', explanation: 'Includes working collections and output required by this operation. Playback clones, recorded trace frames, and scene snapshots are excluded.' },
+      time: { best: 'O(V + E)', average: 'O(V(E + V))', worst: 'O(V(E + V))', explanation: 'Validation allocates V vertex IDs; an isolated start then filters all E references. Each reached vertex filters references, deduplicates targets, and sorts its neighbors. The average/worst rows are conservative whole-graph upper bounds, assuming constant-time Map/Set access and O(d log d) sorting for d neighbors.' },
+      memory: { best: 'O(V)', average: 'O(V + E)', worst: 'O(V + E)', explanation: 'Validation always allocates V IDs. DFS retains materialized neighbor arrays on active frames; these contain at most O(E) targets in total, plus O(V) frames and output. Average is an upper bound without a reachability distribution. Playback storage is excluded.' },
       terms: [
+        { symbol: 'd', meaning: 'Number of distinct outgoing neighbors of one vertex.' },
+        { symbol: 'O(V)', meaning: 'Linear in the stored vertex count.' },
         { symbol: 'V', meaning: `Stored graph vertices; the current logical element count is ${size}.` },
         { symbol: 'E', meaning: 'Stored outgoing graph links or typed references.' },
         { symbol: 'O(V(E + V))', meaning: 'A conservative bound when each visited vertex scans and orders representation neighbors.' },

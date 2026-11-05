@@ -11,9 +11,10 @@ export class AppendAnimation extends LinearAnimation {
     return {
       name: this.title,
       summary: this.summary,
-      time: { best: 'O(n)', average: 'O(n)', worst: 'O(n)', explanation: 'A segment holds at most four records. Append normally takes amortized constant work; the conservative linear bound includes possible JavaScript Map growth when adding a segment. Existing records are retained. Rows are upper bounds for this teaching variant; empty or early-return cases can finish sooner.' },
-      memory: { best: 'O(n)', average: 'O(n)', worst: 'O(n)', explanation: 'Includes working collections and output required by this operation. Playback clones, recorded trace frames, and scene snapshots are excluded.' },
+      time: { best: 'O(1)', average: 'O(1)', worst: 'O(n)', explanation: 'Append one record to a segment of at most four records and update its Map entry. Existing segments are not copied. Average denotes expected amortized host-container insertion; a container growth or a linear worst-case Map operation can cost O(n).' },
+      memory: { best: 'O(1)', average: 'O(1)', worst: 'O(n)', explanation: 'Allocate one record without container growth. Average allocation is amortized over insertions; backing-array or Map growth may allocate O(n) slots. Playback clones and snapshots are excluded.' },
       terms: [
+        { symbol: 'O(1)', meaning: 'Constant work or allocation, amortized for host-container insertion.' },
         { symbol: 'n', meaning: `Logical entries before the operation; currently ${size}.` },
         { symbol: 'O(n)', meaning: 'Linear work or storage in the logical entry count.' },
       ],

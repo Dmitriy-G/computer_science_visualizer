@@ -11,12 +11,12 @@ export class AddLayerAnimation extends LinearAnimation {
     return {
       name: this.title,
       summary: this.summary,
-      time: { best: 'O(1)', average: 'O(1)', worst: 'O(n)', explanation: 'Hash bounded integer payload bytes and a bounded pair of SHA-256 identifiers; perform a fixed number of map operations. Bounds assume average constant-time map access, with linear worst-case map access. Rows state upper bounds; empty, rejected, and early-return cases may finish sooner.' },
-      memory: { best: 'O(1)', average: 'O(1)', worst: 'O(1)', explanation: 'Includes operation working storage and returned output. Playback clones, trace snapshots, and scene storage are excluded. Empty operations can use constant storage.' },
+      time: { best: 'O(1)', average: 'O(1)', worst: 'O(n)', explanation: 'Hash bounded integer payload bytes and a bounded pair of SHA-256 identifiers; perform a fixed number of map operations. The average row assumes expected amortized Map insertion; a Map lookup or resize can require linear work in the conservative worst case. Rows state upper bounds; empty, rejected, and early-return cases may finish sooner.' },
+      memory: { best: 'O(1)', average: 'O(1)', worst: 'O(n)', explanation: 'A new reference and optional blob use constant new storage without Map growth. Average allocation is amortized across insertions; a Map resize can allocate O(n) slots. Reusing an existing layer needs constant space. Playback clones and snapshots are excluded.' },
       terms: [
         { symbol: 'n', meaning: `Logical entries before the operation; currently ${size}.` },
         { symbol: 'O(1)', meaning: 'Constant work under average constant-time map access.' },
-        { symbol: 'O(n)', meaning: 'Conservative linear worst-case map lookup cost.' },
+        { symbol: 'O(n)', meaning: 'Conservative linear worst-case Map lookup, growth, or allocation cost.' },
       ],
     }
   }

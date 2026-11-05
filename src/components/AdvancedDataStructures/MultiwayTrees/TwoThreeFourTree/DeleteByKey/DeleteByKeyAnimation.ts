@@ -8,7 +8,7 @@ export class DeleteByKeyAnimation extends ExtendedTreeAnimation {
   public static describe(size: number): AlgorithmInformation {
     return {
       name: this.title, summary: this.summary,
-      time: { best: 'O(1)', average: 'O(log n)', worst: 'O(log n)', explanation: 'Balancing or equal-depth pages bounds the search and repair path logarithmically. A root match can return immediately; average is an upper bound for any key distribution.' },
+      time: { best: 'O(log n)', average: 'O(log n)', worst: 'O(log n)', explanation: 'The adapter delegates to minimum-degree-two B-tree deletion. The preliminary search and successful recursive deletion follow a logarithmic path. A root separator match still needs predecessor/successor descent or merging; a miss descends to a leaf. Empty trees take O(1).' },
       memory: { best: 'O(1)', average: 'O(log n)', worst: 'O(log n)', explanation: 'Storage includes the explicit traversal stack and returned output, where applicable. Playback clones and scene snapshots are excluded.' },
       terms: [
         { symbol: 'n', meaning: `Original element count for this run: n = ${size}.` },

@@ -8,9 +8,10 @@ export class InsertAnimation extends ExtendedTreeAnimation {
   public static describe(size: number): AlgorithmInformation {
     return {
       name: this.title, summary: this.summary,
-      time: { best: 'O(1)', average: 'O(1)', worst: 'O(1)', explanation: 'The packed level-order array appends directly (amortized O(1) host-array append). Search scans in level order; deletion performs that scan and one last-value replacement. Average search assumes uniformly distributed matching positions.' },
-      memory: { best: 'O(1)', average: 'O(1)', worst: 'O(1)', explanation: 'Storage includes the explicit traversal stack and returned output, where applicable. Playback clones and scene snapshots are excluded.' },
+      time: { best: 'O(1)', average: 'O(1)', worst: 'O(n)', explanation: 'Append directly to the level-order array. The average row denotes amortized append cost across insertion sequences. One backing-array growth may copy O(n) entries; this follows the same dynamic-array cost model as the other array-backed heaps.' },
+      memory: { best: 'O(1)', average: 'O(1)', worst: 'O(n)', explanation: 'One new entry and fixed local variables suffice without growth. The average row is amortized allocation over an insertion sequence; an individual backing-array growth may allocate O(n) slots. Playback clones and snapshots are excluded.' },
       terms: [
+        { symbol: 'O(n)', meaning: 'Linear work or allocation when the backing array grows.' },
         { symbol: 'n', meaning: `Original element count for this run: n = ${size}.` },
         { symbol: 'O(1)', meaning: 'Constant work or additional storage.' },
       ],

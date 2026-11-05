@@ -9,7 +9,7 @@ export class InsertAnimation extends ExtendedTreeAnimation {
     return {
       name: this.title, summary: this.summary,
       time: { best: 'O(1)', average: 'O(log n)', worst: 'O(log n)', explanation: 'Balancing or equal-depth pages bounds the search and repair path logarithmically. A root match can return immediately; average is an upper bound for any key distribution. The constant best case is a root duplicate; a successful insertion descends and repairs its path.' },
-      memory: { best: 'O(1)', average: 'O(1)', worst: 'O(1)', explanation: 'Storage includes the explicit traversal stack and returned output, where applicable. Playback clones and scene snapshots are excluded.' },
+      memory: { best: 'O(1)', average: 'O(1)', worst: 'O(log n)', explanation: 'A duplicate or an insertion without cascading splits needs constant additional space. Splitting full pages along the root-to-leaf path can allocate O(log n) pages. The average row is amortized over insertion-only unique-key sequences, not a random-input expectation. Playback storage is excluded.' },
       terms: [
         { symbol: 'n', meaning: `Original element count for this run: n = ${size}.` },
         { symbol: 'O(1)', meaning: 'Constant work or additional storage.' },

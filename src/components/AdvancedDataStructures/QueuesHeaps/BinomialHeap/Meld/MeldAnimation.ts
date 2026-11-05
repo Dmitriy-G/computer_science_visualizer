@@ -10,7 +10,7 @@ export class MeldAnimation extends LinearAnimation {
 
   public static describe(size: number): AlgorithmInformation {
     const information = AnimationSequence.information(this.title, this.summary, size,
-      ['O(m)', 'O(m log m + log(n + m))', 'O(m log m + log(n + m))'], 'Constructing m donor values by repeated insertion costs O(m log m); merging two existing binomial forests costs O(log(n + m)). The displayed action includes both. Treat logarithms as at least one for small inputs.',
+      ['O(m log m + log(n + m))', 'O(m log m + log(n + m))', 'O(m log m + log(n + m))'], 'Each donor insertion scans its degree table, so constructing m donor values costs O(m log m) in every key order. Final consolidation scans through the maximum degree in O(log(n + m)). The displayed action includes both. Treat logarithms as at least one for small inputs.',
       ['O(m + log(n + m))', 'O(m + log(n + m))', 'O(m + log(n + m))'], 'Allocate m donor nodes and logarithmic temporary root lists.')
     return { ...information, terms: [
       { symbol: 'n', meaning: `Original logical entry count for this run: n = ${size}.` },
