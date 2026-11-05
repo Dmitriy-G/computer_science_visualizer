@@ -1334,7 +1334,7 @@ export default class App extends Component<Record<string, never>, AppState> {
             </svg>
           </button>
           <div className="brand">
-            <img className="brand-mark" src="/favicon.svg" width="38" height="38" alt="" />
+            <img className="brand-mark" src={`${import.meta.env.BASE_URL}favicon.svg`} width="38" height="38" alt="" />
             <span>
               Computer Science Visualizer
               <span className="brand-caption">Visualize the idea.</span>
