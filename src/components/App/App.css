@@ -18,8 +18,12 @@
   border-bottom: 1px solid var(--border);
 }
 .menu-trigger,
-.search-trigger {
+.search-trigger,
+.about-trigger {
   flex-shrink: 0;
+}
+.about-trigger {
+  margin-left: auto;
 }
 .brand {
   display: flex;

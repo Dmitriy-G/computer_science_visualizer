@@ -271,6 +271,7 @@ import MainMenu from '../MainMenu/MainMenu.tsx'
 import ActionMenu from '../MainMenu/ActionMenu/ActionMenu.tsx'
 import AlgorithmInfo from '../AlgorithmInfo/AlgorithmInfo.tsx'
 import StructureInfo from '../StructureInfo/StructureInfo.tsx'
+import AboutProject from '../AboutProject/AboutProject.tsx'
 import ActionInput from '../ActionInput/ActionInput.tsx'
 import { ActionInputRequest } from '../../visualization/ActionInputRequest.ts'
 import { MenuNavigation } from '../MainMenu/MenuNavigation.ts'
@@ -319,6 +320,7 @@ interface AppState {
   readonly selectedScope: ActionScope
   readonly menuOpen: boolean
   readonly searchOpen: boolean
+  readonly aboutOpen: boolean
   readonly menu: MenuNavigation
   readonly scene: Scene | null
   readonly actionOpen: boolean
@@ -349,6 +351,7 @@ export default class App extends Component<Record<string, never>, AppState> {
   private bPlusTree = BPlusTree.createDefault()
   private readonly menuButton = createRef<HTMLButtonElement>()
   private readonly searchButton = createRef<HTMLButtonElement>()
+  private readonly aboutButton = createRef<HTMLButtonElement>()
   private menuOpenedFromSearch = false
   private readonly actionMenu = createRef<ActionMenu>()
   private graph = Graph.createDefault()
@@ -370,6 +373,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       selectedScope: 'overview',
       menuOpen: false,
       searchOpen: false,
+      aboutOpen: false,
       menu: new MenuNavigation(),
       scene: null,
       actionOpen: false,
@@ -401,6 +405,14 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private closeMenu = (): void => {
     this.setState({ menuOpen: false, searchOpen: false }, this.restoreMenuFocus)
+  }
+
+  private openAbout = (): void => {
+    this.setState({ aboutOpen: true })
+  }
+
+  private closeAbout = (): void => {
+    this.setState({ aboutOpen: false }, () => this.aboutButton.current?.focus())
   }
 
   private restoreMenuFocus = (): void => {
@@ -1356,7 +1368,25 @@ export default class App extends Component<Record<string, never>, AppState> {
               <div id="playback-toolbar" className="playback-toolbar-host" />
             </div>
           )}
+          <button
+            type="button"
+            className="about-trigger icon-button"
+            ref={this.aboutButton}
+            onClick={this.openAbout}
+            aria-label="About this project"
+            aria-haspopup="dialog"
+            aria-expanded={this.state.aboutOpen}
+            aria-controls="about-project"
+            title="About this project"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 11v6M12 7h.01" />
+            </svg>
+          </button>
         </header>
+
+        <AboutProject open={this.state.aboutOpen} onClose={this.closeAbout} />
 
         <MainMenu
           open={this.state.menuOpen}

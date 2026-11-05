@@ -1,522 +1,87 @@
 # Computer Science Visualizer
 
-An interactive TypeScript and React app powered by Vite for exploring computer
-science concepts. Its current subject area is data structures, implemented with
-React class components and separate model, layout, and animation classes.
+## Description
 
-Repository: [Dmitriy-G/computer_science_visualizer](https://github.com/Dmitriy-G/computer_science_visualizer).
+Computer Science Visualizer is a free educational project for exploring fundamental
+computer science concepts through interactive visualizations and animated operations.
 
-## Explore
+I developed this application for my own learning and decided to share it so others
+can learn from it too.
 
-The root menu offers **Fundamental Data Structures**, **Advanced Data Structures**,
-and **Data Structures Algorithms**. Structure subjects and their assignments are
-defined in `src/components/MainMenu/MenuStructureCatalog.ts`.
-Algorithms contains **Sorting** and **Graphs Traversal**. Sorting contains
-**Array**, with **Bubble Sort**, **Selection Sort**, **Insertion Sort**,
-**Binary Insertion Sort**, **Merge Sort**, **Quick Sort**, **Heap Sort**, **Shell Sort**,
-**Counting Sort**, **Radix Sort**, **Bucket Sort**, **TimSort**, **IntroSort**,
-**Dual-Pivot QuickSort**, and **Block Merge Sort**. The action list scrolls inside
-its panel with the heading and navigation kept visible. Animations show
-comparisons, swaps, held insertion values, binary-search bounds, merge-buffer
-copies, pivot partitions, heap repairs, gap passes, count tables, and distribution
-buckets as appropriate. Insertion, binary insertion, merge, bubble, counting, radix,
-and bucket sorts are stable, as are TimSort and Block Merge Sort.
-Selection, quicksort, heap, Shell, IntroSort, and Dual-Pivot QuickSort are unstable.
-TimSort shows natural runs, binary insertion, run-stack collapse, and galloping.
-IntroSort shows a partition-depth budget and heap fallback. Dual-Pivot QuickSort
-uses endpoint pivots; it omits the sampling and worst-case protections of the
-OpenJDK production hybrid. Block Merge Sort demonstrates a locally implemented
-buffered block-wise multiway merge variant: sort square-root-sized blocks,
-then merge their heads through a min-heap into stable output. It uses O(n)
-working storage and does not implement constant-space internal-buffer block sorting.
-Counting Sort accepts an inclusive integer key range of at most 4,096 values;
-wider inputs are rejected unchanged. Radix and Bucket Sort support negative safe
-integers and their full span using exact integer arithmetic.
-Its ten-element example starts shuffled; Reset restores that example.
-Graphs Traversal lists all eighteen graph entries with BFS and DFS, plus Dijkstra for
-Weighted Graph, topological sorting for DAG, and Edmonds–Karp maximum flow for
-Flow Network. These algorithm actions live in
-Algorithms; Overview retains graph editing and value search. Switching branches
-for the same graph preserves its committed vertices and edges.
+## Supported features
 
-Sorting and graph algorithm info dialogs include **Real technologies**, with
-primary source links, concrete uses, and implementation-variant notes. A separate
-**Real products** section displays comma-separated product names linked to original evidence
-of their use of the specific algorithm. Unverified
-algorithms display an explicit educational-example notice. Overview operations
-such as Add, Search, and Clear do not receive this section.
+- Nearly 150 interactive data structures and nearly 60 animated algorithms.
+- Custom inputs that let you see how operations change the data.
+- Animated operations with synchronized explanations, pseudocode, and progress.
+- More than 800 detailed descriptions with short summaries and explanations of
+  time complexity and memory usage.
+- More than 30 examples of real systems, with links to official documentation
+  explaining how they use the concepts shown in the application.
+- Search by name, area of use, or documented technology and product names.
+- Information dialogs that you can open while an animation continues.
+- Repeatable operations and a Reset button to restore the starting example.
+- Responsive layouts, keyboard navigation, and reduced-motion support.
 
-The model families below describe shared operation adapters. Source folders follow
-the Fundamental and Advanced menu subjects listed in MenuStructureCatalog:
+## Tech stack
 
-| Group | Structures |
+- **TypeScript** with strict type checking.
+- **React** with class components.
+- **Vite** for the development server and production builds.
+- **CSS and SVG** for styling, diagrams, and visual states.
+- **npm** for dependency management.
+- **Node.js built-in test runner** for automated checks.
+
+## Key project components
+
+| Component | Purpose |
 | --- | --- |
-| Linear | Array, Linked list, Stack, Doubly linked list, Skip List, Unrolled Linked List, XOR Linked List, Sparse Array, Free List, Append-only Log, XArray, Sorted Array / Fanout Table, Flat Vector Array, Request Tag Array, Dense Multidimensional Array / Tensor, Sparse COO, Sparse CSC, Numerical CSR, 2D Grid |
-| Queue / Priority | Queue, Deque, Circular buffer, Heap (min-heap), Priority Queue, Binary Max-Heap, Binomial Heap, Fibonacci Heap, Pairing Heap, Leftist Heap, Skew Heap, Indexed Priority Queue, Monotonic Queue, Multiqueue / Request Queues, Lock-free Ring Buffer (SPSC) |
-| Trees | Binary search tree (BST), AVL tree, Red-Black tree, B-Tree, B+ Tree, Segment Tree, Fenwick Tree (BIT), R-Tree, LSM Tree, Abstract Syntax Tree (AST), General Tree (N-ary Tree), Binary Tree, Complete Binary Tree, Threaded Binary Tree, Splay Tree, Treap, Cartesian Tree, Scapegoat Tree, AA Tree, 2-3 Tree, 2-3-4 Tree, Interval Tree, Order Statistic Tree, Persistent Segment Tree, Sparse Table, KD-Tree, Quadtree, Octree, Bounding Volume Hierarchy (BVH), Merkle Tree, Van Emde Boas Tree, GiST, BKD Tree, Ball Tree, Maple Tree (Range Variant), Checksummed Block Pointer Hierarchy |
-| String / Text | Gap Buffer, Rope, Trie, Radix Tree (Patricia Trie), Ternary Search Tree, Suffix Tree, Suffix Array, Suffix Automaton, Aho-Corasick Automaton, Directed Acyclic Word Graph (DAWG), FM-Index, GIN / Inverted Index |
-| Graphs | Undirected Graph, Directed Graph, Weighted Graph, DAG, Multigraph, Bipartite Graph, Complete Graph, Tree Graph, Hypergraph, Flow Network, Functional Graph, Adjacency Matrix, Adjacency List, Edge List, Compressed Sparse Row (CSR), HNSW Graph, Compacted de Bruijn Graph, OPC UA AddressSpace Graph |
-| Set / Union | Hash Set, Bit Array / BitSet, Disjoint Set (Union-Find), Ordered Set, Multiset (Bag), Interval Set |
-| Hash-based | Hash Table / Hash Map, Open Addressing Hash Table, Separate Chaining Hash Table, Robin Hood Hash Table, Cuckoo Hash Table, Hopscotch Hashing, Extendible Hashing, Linear Hashing, Perfect Hash Table, Consistent Hashing Ring, Locality-Sensitive Hashing (LSH), Minimizer Index |
-| Probabilistic | Bloom Filter, Counting Bloom Filter, Cuckoo Filter, Quotient Filter, Count-Min Sketch, HyperLogLog, Reservoir Sampling Buffer, Blocked Bloom Filter |
+| `src/components/App/` | Connects navigation, the selected visualization, and dialogs. |
+| `src/components/MainMenu/` | Provides browsing, search, and action selection. |
+| `src/components/Renderer/` | Draws the shared visualization scene. |
+| `src/components/ActionPlayback/` | Runs animations and displays progress and pseudocode. |
+| `src/components/ActionInput/` | Collects and validates operation inputs. |
+| `src/components/StructureInfo/`, `AlgorithmInfo/`, and `AboutProject/` | Show explanations, complexity information, reference links, and project information. |
+| `src/components/FundamentalDataStructures/`, `AdvancedDataStructures/`, and `DataStructuresAlgorithms/` | Contain the models, layouts, and animated operations. |
+| `src/visualization/` | Holds shared scene types, catalogs, and animation infrastructure. |
+| `tests/` | Checks models, operation sequences, navigation, and animation playback. |
 
-Select a structure to load its example, then choose an action from the canvas
-card. Examples generally start with ten elements. Sparse Array has ten stored
-entries across 64 logical slots; Free List shows a ten-slot pool with three
-allocated slots; Bloom Filter records ten add operations rather than an exact
-distinct-member count. The new filters show allocated counters, fingerprint buckets,
-or quotient slots. Count-Min Sketch counts weighted update operations, HyperLogLog
-counts add operations while estimating distinct values, and Reservoir Sampling Buffer
-shows five retained occurrences after ten stream arrivals. The back button reopens the current
-group's structure list.
+## How to run
 
-The five fundamental numerical and spatial structures belong to **Overview > Linear**:
+You need **Node.js 22.12 or later**, **npm**, and **Git**.
 
-| Structure | Allowed actions |
-| --- | --- |
-| Dense Multidimensional Array / Tensor | Build from values, Read coordinates, Set coordinates, Reshape, Inspect storage, Zero all cells |
-| Sparse COO | Build from values, Read coordinates, Set coordinates, Append triplet, Coalesce, Multiply by vector, Inspect storage, Clear stored entries |
-| Sparse CSC | Build from values, Read coordinates, Set coordinates, Multiply by vector, Inspect storage, Clear stored entries |
-| Numerical CSR | Build from values, Read coordinates, Set coordinates, Multiply by vector, Inspect storage, Clear stored entries |
-| 2D Grid | Build from values, Read coordinates, Set coordinates, Inspect storage, Zero all cells |
+Clone the repository and enter its directory:
 
-Tensor and grid defaults contain ten occupied cells in shape `[2, 5]`. Sparse
-defaults contain ten nonzeros in shape `[4, 5]`. Tensor rank is 1 to 4; the other
-four structures have two dimensions. Dimensions range from 1 to 8, with at most
-64 logical cells. Build accepts exactly one safe integer per logical cell in
-row-major order; sparse builds omit zeros. Coordinate inputs use the current
-shape. Clear preserves shape; dense cells remain occupied with value zero.
+```sh
+git clone https://github.com/Dmitriy-G/computer_science_visualizer.git
+cd computer_science_visualizer
+```
 
-Tensor storage is a contiguous `Float64Array` with element strides; Reshape changes
-only dimensions and strides. COO keeps actual row/column/value arrays, permits
-64 triplets including duplicates and explicit zeros on Append, and sums duplicates
-on Read. Set replaces all matching COO triplets; Coalesce insertion-sorts, sums
-duplicate coordinates, and removes zeros. A coalesced sum outside safe-integer
-storage rejects unchanged. CSC and numerical CSR keep sorted packed minor indices
-and repair all subsequent major pointers on structural edits. They remain distinct
-from the binary graph CSR. Sparse matrix-vector multiplication uses BigInt for
-exact products and sums and returns a separate result without changing the matrix.
-The grid displays discrete row/column cells; costmap layers, world transforms,
-arbitrary-stride tensor views, and floating-point inputs are outside these lessons.
-
-All five use validated structured dialogs, automatic playback, final-clone commits,
-full Reset, and action-owned complexity information. Storage inspection can exceed
-96 detailed events; execution completes and reports the omitted event count.
-Structure information links to [NumPy](https://numpy.org/doc/stable/reference/arrays.ndarray.html),
-[SciPy](https://docs.scipy.org/doc/scipy/reference/sparse.html), and
-[OpenCV](https://docs.opencv.org/4.x/d3/d63/classcv_1_1Mat.html) with variant notes.
-
-The additional Set / Union structures offer these actions:
-
-| Structure | Allowed actions |
-| --- | --- |
-| Disjoint Set (Union-Find) | Make set, Find representative, Union components, Check connectivity, Clear |
-| Ordered Set | Add a key, Contains key, Lower bound, Remove a key, Clear |
-| Multiset (Bag) | Add an occurrence, Count occurrences, Remove one occurrence, Clear |
-| Interval Set | Union with interval, Subtract interval, Contains value, Intersect with interval, Clear |
-
-Union-Find starts with ten members in three components and shows ranked parent
-links. Find and connectivity compress paths; union requires two existing members.
-There is no arbitrary member deletion. Ordered Set uses the canonical AVL tree
-storage for unique keys and lower-bound search. Multiset starts with ten total
-occurrences across six distinct values and stores positive Map counters; removal
-subtracts exactly one occurrence. Interval Set starts with ten closed integer
-ranges; union merges overlaps and adjacency, subtraction may split a range, and
-intersection reports exact overlaps without changing storage. Its sorted array
-supports binary-search membership; it never enumerates covered integers.
-
-Inputs are whole safe integers. Bounds are inclusive and maximum must be at least
-minimum. Examples allow 64 members, unique keys, total bag occurrences, or stored
-intervals respectively; a split exceeding the interval limit rejects unchanged.
-All operations use automatic playback, final-frame commits, full Reset, and
-action-owned complexity information. Map-based costs disclose expected access
-assumptions; union-find amortized sequence bounds are separate from individual
-worst-case work. Structure information links to verified library examples and
-identifies their differences from these teaching variants.
-
-The probabilistic examples animate their actual storage. Counting Bloom Filter
-rejects four-bit counter overflow; it and Cuckoo Filter keep an extra exact-key
-ledger only to guard deletion, with that memory overhead disclosed in their info
-dialogs. Quotient Filter uses O/C/S metadata for lookup and rebuilds packed runs on
-insertion. Count-Min Sketch accepts positive weights with BigInt counters.
-HyperLogLog uses sixteen registers and small-range linear counting. Reservoir
-sampling uses Algorithm R with five slots and a reproducible seeded generator.
-These fixed seeds support replay; theoretical error and sampling claims assume
-suitable ideal hashing or uniform random draws. All six provide Clear and Reset.
-
-Actions that need input open a validated dialog. Hash Map insertion collects a
-key and a value; B+ Tree range search collects inclusive minimum and maximum
-keys. Trie accepts lowercase words or prefixes; range indexes collect indices
-and values; R-Tree accepts rectangle coordinates or a rectangle ID; LSM writes
-collect a key and value. Animations run automatically at normal speed. The header
-shows the current
-explanation and progress; pseudocode appears above the diagram. **Reset** cancels
-playback and restores the default example. Reduced-motion preferences suppress
-visual transitions.
-
-Searches finish on their result and preserve the highlight, reporting a location
-where available. Bloom Filter checks return **definitely absent** or **possibly
-present**; positive results can be false positives. Mutations commit only on the
-final frame.
-
-The original Graph is the **Undirected Graph** choice. All graph entries support vertex
-editing, value search, and clear in Overview. Complete Graph maintains its edges
-automatically, Tree Graph permits leaf edits, and Functional Graph replaces
-successors instead of deleting outgoing edges. Traversal examples use
-the same models, validated input, and playback under Algorithms. Weighted Graph is undirected with nonnegative weights
-and Dijkstra shortest paths; DAG rejects cycles and supports topological sort;
-Multigraph preserves parallel edges and self-loops with visible edge IDs.
-
-The ten additional graph entries start with ten vertices and cap examples at
-16 vertices and 128 ordinary edges (32 hyperedges). Bipartite Graph fixes L/R
-partitions; Complete Graph connects every pair; Tree Graph remains connected
-and acyclic; Functional Graph preserves one successor per vertex. Hypergraph
-uses multi-member sets and incidence nodes. Flow Network accepts nonnegative
-safe-integer capacities, computes exact maximum flow, and resets flows after
-valid edits. Adjacency Matrix, Adjacency List, Edge List, and CSR use their actual
-storage representations and show storage beside topology, with Inspect storage
-actions. BFS/DFS follow the selected representation. Playback stores at most
-96 detailed events, executes the entire operation, and reports omitted detail.
-
-Small info buttons open action complexity explanations. The large info button
-opens a structure introduction, use-case table, and technology links. Dialogs
-leave playback running. Hash-based structures and Bloom Filter also show their hash function
-below the legend.
-
-The technology lists include documented uses in systems, language runtimes,
-standard libraries, and established application libraries. Each entry explains
-its purpose and links to primary documentation or source. Counts vary by
-structure; competition libraries and educational algorithm collections are not
-used to fill a quota, and implementation variants are identified explicitly.
-
-The 24 additional tree entries include separate general, unordered binary, complete,
-threaded, and ordered search trees; compressed word indexes; versioned and static
-range indexes; spatial partitions; a SHA-256 Merkle tree; and a bounded integer
-universe tree. Each has its own model and layout plus animated actions and input
-validation. The existing BST keeps its selection key and behavior.
-
-| Tree family | Operations and conventions |
-| --- | --- |
-| General Tree, Binary Tree | Attach by parent key (and left/right position for Binary Tree), search, delete a whole subtree, clear |
-| Complete Binary Tree | Append in level order, search, replace a deleted match with the last value, clear; duplicates allowed |
-| Threaded Binary Tree | Insert, search, stack-free inorder via actual predecessor/successor threads, clear |
-| Splay, Treap, Scapegoat, AA, 2-3-4 | Insert, search, delete, clear using each structure's own repair rules |
-| 2-3 Tree | Insert with bottom-up splits, search, clear |
-| Cartesian Tree | Append through a monotone spine, inclusive range minimum, clear |
-| Radix Tree, Ternary Search Tree | Insert/search/delete lowercase words and clear; Radix also checks prefixes |
-| Suffix Tree | Build text, find substring occurrence indices, clear; quadratic compressed suffix insertion |
-| Interval Tree | Insert inclusive intervals, find one overlap through maximum-endpoint augmentation, clear; unbalanced BST variant |
-| Order Statistic Tree | AVL insert/search/delete, rank (strictly smaller), zero-based selection, clear |
-| Persistent Segment Tree | Path-copy updates from any existing version, exact inclusive range sum by version, reset values to zero |
-| Sparse Table | Build static values, constant-time inclusive range minimum, clear; this requested menu entry is tabular rather than a tree |
-| KD-Tree, Quadtree, Octree | Insert points, query an inclusive box, clear; KD is 2D, Octree is 3D |
-| BVH | Insert 2D rectangles, query overlaps, clear; incremental AABB hierarchy without balancing |
-| Merkle Tree | Update a data leaf, verify a supplied value using sibling hashes, reset values to zero |
-| Van Emde Boas Tree | Insert/search/delete keys, strict successor, clear; sparse recursive universe 0..255 |
-
-Examples start with ten elements. Numeric examples allow at most 64 elements;
-word/text input accepts 1–32 lowercase letters. Persistent Segment Tree retains
-at most eight versions of ten fixed values. Quadtree/Octree coordinates are
-integers in [-1024,1024), with two-point buckets and depth at most eleven.
-Merkle Tree hashes ten data leaves and six empty-byte padding leaves with SHA-256;
-displayed digests are shortened, but comparisons use the complete digest. Its
-padded shape differs from Certificate Transparency log trees.
-Tree playback records at most 96 detailed events, executes the whole operation,
-reports omitted events, reserves fixed scene bounds, and commits only its final
-clone. Rejected requests preserve the committed model and ID counters.
-
-The additional hash structures start with ten entries (ten physical servers for
-the ring), use shared automatic playback, and retain stable record IDs across
-relocation and resizing. Their action sequences cap detailed traces at 96 events,
-execute every operation fully, disclose omitted events, and commit only the final
-clone. Key/value inputs accept all whole safe integers, including negatives.
-
-| Hash structure | Operations and storage policy |
-| --- | --- |
-| Open Addressing Hash Table | Insert/update, lookup, delete, clear; linear probing and reusable tombstones |
-| Separate Chaining Hash Table | Insert/update, lookup, delete, clear; actual linked bucket chains, reusing Hash Map storage |
-| Robin Hood Hash Table | Insert/update, lookup, delete, clear; greater-distance arrivals displace residents; deletion shifts backward |
-| Cuckoo Hash Table | Insert/update, two-candidate lookup/delete, clear; held evictions, up to eight larger-table rebuilds |
-| Hopscotch Hashing | Insert/update, bitmap-guided lookup/delete, clear; four-position neighborhoods and legal hole relocation |
-| Extendible Hashing | Insert/update, lookup, delete, clear; shared directory aliases, three-record buckets, local/global depths |
-| Linear Hashing | Insert/update, lookup, delete, clear; three-record pages, overflow links, and a round split pointer |
-| Perfect Hash Table | Build a distinct static key set, exact membership lookup, clear; two-level FKS tables rather than dynamic insert/delete |
-| Consistent Hashing Ring | Add/remove server, route a key, inspect ten sample assignments, clear; three virtual nodes per physical server |
-
-Mutable hash tables are capped at 64 records. Hopscotch retries capacities up to
-256 slots; cuckoo rebuilds use up to 256 slots per table; extendible global depth
-is capped at eight. Exhausted placement attempts restore entries, capacities,
-metadata, and ID counters. Extendible deletion retains its directory; linear
-hashing deletion retains split progress. Clear restarts their initial metadata.
-Perfect construction accepts 1–64 distinct CSV keys, tries at most 128 primary
-seeds and 128 secondary seeds per bucket, and retains the old table on failure.
-Candidates are shown separately until the complete static set is constructed.
-The ring accepts at most sixteen server IDs and does not store routed keys or
-simulate a network. Tokens are equally spaced in sorted clockwise order in the
-diagram; labels show actual 32-bit positions, so angle is not hash distance.
-
-The extended linear structures offer these actions:
-
-| Structure | Allowed actions |
-| --- | --- |
-| Skip List | Insert a key, Search by key, Delete a key, Clear |
-| Unrolled Linked List | Insert at index, Search by value, Delete by value, Clear |
-| XOR Linked List | Append a value, Search by value, Delete by value, Clear |
-| Gap Buffer | Insert text, Move the gap, Delete text, Search for text, Clear |
-| Bit Array / BitSet | Set a bit, Clear a bit, Toggle a bit, Test a bit, Clear all bits |
-| Sparse Array | Set an entry, Read an entry, Delete an entry, Clear stored entries |
-| Free List | Allocate a slot, Release a slot, Release all slots |
-
-Skip List uses reproducible seeded towers; Unrolled Linked List splits four-value
-blocks. XOR Linked List uses simulated numeric addresses and BigInt XOR, with no
-native-pointer or memory-saving claim. Gap Buffer moves a physical gap; Rope
-uses immutable AVL split/join operations with cached left weights. Text requests
-accept 1–32 printable ASCII characters, with a 256-character example limit.
-BitSet packs bits into unsigned 32-bit words. Sparse Array distinguishes stored
-zero from a hole, and Free List rejects exhaustion and double release.
-
-The new numeric lists allow at most 64 values. Their shared trace recorder keeps
-at most 96 detailed operation frames, executes every operation event, and reports
-omitted frames in the result. Snapshots preserve stable bounds during playback.
-
-The additional priority structures offer these actions:
-
-| Structure | Allowed actions |
-| --- | --- |
-| Priority Queue | Enqueue with priority, Dequeue highest priority, Peek, Clear |
-| Binary Max-Heap | Insert, Extract maximum, Peek maximum, Clear |
-| Binomial Heap | Insert, Extract minimum, Peek, Meld a donor, Clear |
-| Fibonacci Heap | Insert, Extract minimum, Decrease key by visible ID, Peek, Meld a donor, Clear |
-| Pairing Heap, Leftist Heap, Skew Heap | Insert, Extract minimum, Peek, Meld a donor, Clear |
-| Indexed Priority Queue | Insert key / priority, Change priority, Delete by key, Extract minimum, Peek, Clear |
-| Monotonic Queue | Push next window value, Peek window maximum, Clear window |
-
-Priority Queue uses a binary min-heap and FIFO tie-breaking. Binomial Heap links
-equal-degree trees through child/sibling pointers. Fibonacci Heap shows circular
-root lists, consolidation, loss marks, and cascading cuts; its numeric handle Map
-adds transfer work to meld. Pairing Heap uses two-pass extraction; Leftist Heap
-repairs null-path ranks, while Skew Heap swaps children unconditionally. Indexed
-Priority Queue updates an inverse key-to-position Map after every exchange.
-Monotonic Queue maintains a decreasing deque for the latest ten arrivals and
-shows candidate nodes separately from its circular window history.
-
-The existing binary min-heap remains a separate structure. New heap examples
-allow up to 64 nodes. Meld accepts 1–16 donor values and includes donor-building
-cost in its complexity information. Playback keeps at most 96 detailed frames,
-executes the complete operation, and reports any omitted events. Amortized bounds
-are identified explicitly in action information.
-
-Trie belongs to Fundamental > String / Text, with its model and actions under
-`FundamentalDataStructures/StringText/Trie/`. Gap Buffer, Rope, Radix Tree
-(Patricia Trie), Ternary Search Tree, and Suffix Tree belong to Advanced > Text /
-Search under `AdvancedDataStructures/TextSearch/`.
-
-The five additional text indexes have their own models, layouts, and actions:
-
-| Structure | Allowed actions |
-| --- | --- |
-| Suffix Array | Build from text, Find substring positions, Clear |
-| Suffix Automaton | Build from text, Append text, Contains substring, Clear |
-| Aho-Corasick Automaton | Build pattern dictionary, Scan text for all patterns, Clear |
-| Directed Acyclic Word Graph (DAWG) | Build word dictionary, Contains complete word, Clear |
-| FM-Index | Build text index, Find substring positions, Clear |
-
-Suffix Array, Suffix Automaton, and FM-Index start with ten source characters;
-Aho-Corasick and DAWG start with ten dictionary words. Build and pattern input
-accepts 1–32 lowercase letters. Dictionaries accept 1–16 distinct comma-separated
-words and at most 128 total letters. Aho-Corasick scans up to 128 letters and
-reports all overlaps using zero-based `[start, end)` ranges. Suffix Automaton
-supports online append up to 64 source characters, with actual clone states and
-suffix links. The dictionary DAWG merges equivalent right languages through
-bottom-up trie minimization; it is distinct from the single-text suffix automaton.
-
-Suffix Array uses comparison merge sort and adjacent LCP scans, with construction
-bounds shown in its info dialog. Its searches and FM-Index searches return all
-zero-based positions in suffix order. FM-Index shows BWT, cumulative counts, dense
-exclusive-prefix Occ counters, and suffix samples selected by position modulo four.
-It locates unsampled positions through LF steps and discards the full source and
-suffix array after construction. Dense Occ is an uncompressed teaching choice,
-not a claim of production FM-index compression. All actions reuse automatic
-playback, immutable snapshots, final-frame commits, and full Reset.
-
-The additional tree structures offer these actions:
-
-| Structure | Allowed actions |
-| --- | --- |
-| Trie | Insert a word, Search by word, Check a prefix, Delete a word, Clear |
-| Rope | Insert text, Concatenate text, Read character by index, Delete text, Clear |
-| Heap (min-heap) | Insert a value, Extract minimum, Peek minimum, Clear |
-| Segment Tree | Update a value, Range sum, Clear (reset to zero) |
-| Fenwick Tree (BIT) | Add to a value, Prefix sum, Range sum, Clear (reset to zero) |
-| R-Tree | Insert a rectangle, Search overlapping rectangles, Delete by rectangle ID, Clear |
-| LSM Tree | Insert / update, Look up a key, Delete a key (tombstone), Flush memtable, Compact all runs, Clear |
-| Abstract Syntax Tree (AST) | Build from expression, Traverse preorder, Traverse inorder, Traverse postorder, Evaluate expression, Clear |
-
-Segment and Fenwick queries use inclusive zero-based array indices and exact
-integer sums. Their Clear action preserves length and zeroes the values so
-point operations remain available. R-Tree uses order-4 pages with quadratic
-splitting and inclusive overlap, including touching edges. LSM Tree is an
-in-memory teaching model with a sorted-array memtable, a four-key flush threshold,
-immutable runs, and full compaction; it does not simulate disk I/O or a WAL.
-
-AST models arithmetic expressions with integer literals, unary signs, `+`, `-`,
-`*`, `/`, and parentheses (up to 128 characters). The default expression
-`-(8 + 2) * (9 - 3) / 2` has ten syntax nodes and evaluates to `-30`.
-Traversal results list node tokens, using `neg` and `pos` for unary signs;
-inorder does not reconstruct parentheses. Evaluation displays the computed value
-and reports division by zero or unsafe integer results without changing the tree.
-
-## Project layout
-
-The app's display name is **Computer Science Visualizer**. Its package and IntelliJ
-module use `computer_science_visualizer`. Use that name for the checkout folder
-as well; close apps using an existing checkout before renaming its directory.
-
-- `src/components/App/`: application shell and branding.
-- `src/components/FundamentalDataStructures/<Group>/<Structure>/`: fundamental
-  models, layouts, and ordinary operations, matching the menu hierarchy.
-- `src/components/AdvancedDataStructures/<Group>/<Structure>/`: advanced models,
-  layouts, and ordinary operations, matching the menu hierarchy.
-- `src/components/StructureFeatures/`: shared action dispatchers spanning subjects.
-- `src/components/DataStructuresAlgorithms/Sorting/Array/`: the 48 sorting actions
-  and their array-specific algorithm, trace, and layout helpers.
-- `src/components/DataStructuresAlgorithms/GraphsTraversal/<Graph>/`: BFS, DFS,
-  Dijkstra, and topological-sort actions for the supported graph variants.
-- `src/components/MainMenu/`: menu navigation and action selection.
-- `src/components/Renderer/`: shared diagram renderer and optional hints.
-- `src/components/ActionPlayback/`: animation progress and pseudocode display.
-- `src/visualization/`: shared scene contracts, catalogs, and playback classes.
-- `docs/rules/`: implementation rules.
-- `tests/`: models, sequences, input validation, navigation, and playback.
-- `public/`: static assets.
-
-Feature folders mirror the menu's main category, subcategory, structure, and
-action. Sorting and graph algorithms reuse the canonical Fundamental or Advanced models.
-
-## Development
-
-Use Node.js 22.12+ and npm. Run commands manually:
+Install dependencies and start the development server:
 
 ```sh
 npm install
 npm run dev
 ```
 
-Open the local URL printed by Vite.
+Open the local URL printed in the terminal. Use the menu or search to choose a
+visualization, then select an operation to get started.
 
-## Production build
+To create and preview a production build:
 
 ```sh
 npm run build
 npm run preview
 ```
 
-The build checks TypeScript before generating `dist/`.
+The production files are generated in `dist/`.
 
-## Checks
+To check types or run the automated tests:
 
 ```sh
 npm run typecheck
 npm test
 ```
 
-Tests use Node.js's built-in test runner and experimental TypeScript stripping.
-Coverage includes structure invariants, collision handling and rehashing, Bloom
-filter membership, independent animation snapshots, input validation, navigation,
-and playback cancellation.
+## Contacts
 
-See [AGENTS.md](AGENTS.md), [component structure](docs/rules/component-structure.md),
-and [visualization flow](docs/rules/visualization-flow.md) for project guidance.
-
-## Applied structure examples
-
-The original nineteen applied structures retain their menu categories;
-the seven storage, vector, and integrity indexes below extend this set to 26. All start with
-ten logical entries and use automatic playback, validated inputs, a full Reset,
-and independently recorded scenes. Structure information identifies the real
-technology and the implemented teaching variant. New graph BFS/DFS operations
-live under Algorithms > Graphs Traversal and reuse the same committed model.
-
-| Structure | Operations |
-| --- | --- |
-| Append-only Log | Append, read a retained offset, inspect segments, clear while preserving the next offset |
-| XArray | Store/read/erase an index, inspect radix branches, clear |
-| Sorted Array / Fanout Table | Insert/search/delete a key, inspect cumulative fanout, clear |
-| Flat Vector Array | Insert a 2D vector, exact nearest neighbor, inspect, clear |
-| Request Tag Array | Allocate, read by tag, complete/release, inspect bitmap and slots, clear |
-| Multiqueue / Request Queues | Enqueue in one of three FIFOs, round-robin dispatch, inspect, clear |
-| Lock-free Ring Buffer (SPSC) | Enqueue/publish, dequeue/release, inspect sequences, drain |
-| GiST | Insert an interval, overlap search, inspect balanced pages, clear |
-| BKD Tree | Build from points, inclusive box search, inspect block leaves, clear |
-| Ball Tree | Build from points, exact nearest neighbor, inspect balls, clear |
-| Maple Tree (Range Variant) | Store/erase an interval, read an index, find the first gap, inspect pivots, clear |
-| Checksummed Block Pointer Hierarchy | Update a data block, verify all checksums, inject corruption, inspect, reset values to zero |
-| GIN / Inverted Index | Index/replace a document, AND term search, delete a document, inspect postings, clear |
-| Locality-Sensitive Hashing (LSH) | Insert/encode a vector, approximate Hamming-code match, inspect, clear |
-| Minimizer Index | Build a DNA reference index, verify exact query matches, inspect selected seeds, clear |
-| Blocked Bloom Filter | Add, check possible membership, inspect blocks, clear |
-| HNSW Graph | Insert a vector, approximate nearest neighbor, find an ID, inspect layers, clear; BFS/DFS in Algorithms |
-| Compacted de Bruijn Graph | Build from DNA, check a graph walk, find a unitig ID, inspect, clear; BFS/DFS in Algorithms |
-| OPC UA AddressSpace Graph | Add/delete typed nodes, add/remove typed references, find/browse nodes, inspect, clear; BFS/DFS in Algorithms |
-
-Coordinates are integers in -1024..1024. Point builds accept 1..64 `x:y` pairs
-separated by commas. Most mutable examples allow 64 entries. Request tags and
-the SPSC ring have sixteen slots; XArray and Maple indices cover 0..4095;
-fanout keys cover 0..65535. The text index allows 32 documents and 64 terms.
-DNA inputs accept lowercase `a/c/g/t`: builds use at most 64 bases, queries at
-most 32; minimizers require at least five bases and de Bruijn graphs three.
-
-The ring illustrates a sequential SPSC publication protocol without actual
-threads. HNSW and LSH results are approximate. The Maple variant rebuilds pages
-after edits, GiST supplies one interval operator class, and the checksummed
-hierarchy uses its own serialized block format. It has no ZFS repair or disk I/O.
-Action information describes implementation-specific upper bounds and excludes
-playback snapshots. Traces retain at most 96 detailed events while executing all
-operation work, and reserve fixed maximum bounds for the full session.
-
-The remaining structures requiring new groups are recorded in
-[coverage.md](coverage.md) for future implementation.
-
-
-## Storage, vector, and integrity indexes
-
-The seven categorized entries formerly deferred in `coverage.md` are available
-under Advanced Data Structures. Each starts with ten records or vectors, uses
-validated inputs, and has action-owned animated playback and complexity information.
-All offer Inspect storage and incremental Clear.
-
-| Advanced subject | Structure | Additional operations and representation |
-| --- | --- | --- |
-| Storage Indexes | BRIN / Block Range Index | Append records; query inclusive value ranges. Three-record page-range min/max summaries prune candidates; all candidate records receive exact rechecks. Summaries are maintained eagerly. |
-| Storage Indexes | SSTable | Build a replacement sorted immutable key/value table; look up a key. Three-record blocks have last-key fences, encoded byte positions, and explicitly simulated data-block reads. |
-| Storage Indexes | Sparse Primary Index / Index Summary | Build replacement sorted key/value records; look up a key. Sample every third key and its byte position, then scan at most three records. This direct-data variant omits the extra primary-index level of Cassandra summaries. |
-| Storage Indexes | Sparse Offset Index | Append log records; read by logical offset. Every third record stores an offset-to-byte checkpoint, followed by a bounded scan. Clear preserves logical offset allocation. |
-| Storage Indexes | Time Index | Append timestamp/value records; find the earliest physical offset with timestamp at least the query. Nondecreasing prefix-maximum checkpoints at three-record boundaries handle duplicate and out-of-order timestamps. This conservative boundary variant differs from Kafka batch metadata. |
-| Spatial Indexes | Inverted File Index (IVF) | Train/build replacement vectors; query nearest neighbor with configurable list probes. Eight deterministic Lloyd iterations train up to eight centroids; actual inverted lists retain full 2D vectors. All-list probing is exact; partial probing may miss the global nearest vector. |
-| Integrity | Content-addressed layer references / hash chain | Add a layer with an existing parent or a new root; look up content; read ancestry; verify local identities. SHA-256 DiffIDs share payload blobs. ChainIDs include full parent and content digest strings with the Moby space-separated hash rule. Identical parent/content pairs reuse a reference. |
-
-Record builds accept 1..64 distinct safe-integer `key:value` pairs. Log and BRIN
-examples retain at most 64 records. Their UTF-8 numeric text encoding determines
-byte positions; storage reads are simulated without real files, disk I/O, caching,
-compression, or recovery. These SSTables do not offer mutable insert/delete or
-compaction. Offset IDs and layer IDs are not reused after Clear.
-
-IVF accepts 1..64 integer `x:y` vectors in -1024..1024 and 1..8 clusters, no more
-than the distinct input vector count. Queries request 1..trained-cluster-count
-probes. Empty centroids retain their prior coordinates; equal-distance ties use
-stable IDs. Displayed centroid coordinates are rounded but calculations retain
-full precision. This is IVF-flat coarse quantization, without product quantization.
-
-Layer payloads are decimal UTF-8 integers rather than tar archives. A root ChainID
-equals its DiffID; a child ChainID is SHA-256 of `parentChainID + ' ' + DiffID`,
-including each `sha256:` prefix. The diagram abbreviates hashes while identity
-checks use full digests. Verification checks local consistency; no filesystem
-layers, mounts, manifests, or external trusted-root protocol are implemented.
-
-Primary references: [PostgreSQL BRIN](https://www.postgresql.org/docs/current/brin.html),
-[RocksDB block-based tables](https://github.com/facebook/rocksdb/wiki/rocksdb-blockbasedtable-format),
-[Cassandra storage](https://cassandra.apache.org/doc/stable/cassandra/architecture/storage-engine.html),
-[Kafka OffsetIndex](https://github.com/apache/kafka/blob/trunk/storage/src/main/java/org/apache/kafka/storage/internals/log/OffsetIndex.java),
-[Kafka TimeIndex](https://github.com/apache/kafka/blob/trunk/storage/src/main/java/org/apache/kafka/storage/internals/log/TimeIndex.java),
-[FAISS IVF](https://github.com/facebookresearch/faiss/wiki/Faiss-indexes), and
-[Moby ChainIDs](https://github.com/moby/moby/blob/v28.0.0/layer/layer.go).
+[LinkedIn](https://www.linkedin.com/in/dmytro-g-360398142)
