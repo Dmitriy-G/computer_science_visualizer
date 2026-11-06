@@ -41,6 +41,9 @@ jobs:
         run: npm run build
         env:
           PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+          UMAMI_SCRIPT_URL: ${{ vars.UMAMI_SCRIPT_URL }}
+          UMAMI_WEBSITE_ID: ${{ vars.UMAMI_WEBSITE_ID }}
+          UMAMI_DOMAINS: ${{ vars.UMAMI_DOMAINS }}
 
       - name: Upload site
         uses: actions/upload-pages-artifact@v4
