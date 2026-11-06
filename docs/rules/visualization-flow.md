@@ -88,6 +88,15 @@ Set show their normalized modulo hash formula with the current bucket count;
 Bloom Filter shows its custom seeded FNV-1a-style hash formula, three seeds, and
 current bit-array size. The block wraps on narrow screens and stays outside the SVG.
 
+Fit the full diagram to the available width and a bounded viewport height by
+default, preserving its aspect ratio and top alignment. Offer Fit diagram and
+Actual size as view controls outside the SVG. Actual size allows horizontal and
+vertical scrolling and keeps the current node visible during playback. These
+controls never affect playback timing. On stacked layouts, bound the action list
+height so it does not consume the whole screen. Keep dialogs inside the visual
+viewport, including while a mobile keyboard is open, with internal scrolling,
+wrapping content, safe-area spacing, and reachable close controls.
+
 Do not render a bottom animation panel or speed selector. Use the shared input
 dialog for these actions:
 

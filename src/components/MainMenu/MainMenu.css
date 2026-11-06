@@ -1,13 +1,16 @@
 .main-menu {
   position: fixed;
-  inset: 0 auto 0 0;
-  width: min(420px, 100%);
-  height: 100%;
-  max-height: 100%;
-  max-width: 100%;
+  inset: var(--viewport-top, 0px) auto auto var(--viewport-left, 0px);
+  width: min(420px, var(--viewport-width, 100vw));
+  height: var(--viewport-height, 100dvh);
+  max-height: var(--viewport-height, 100dvh);
+  max-width: var(--viewport-width, 100vw);
   margin: 0;
   border: 0;
   padding: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  overflow-wrap: anywhere;
   color: var(--ink);
   background: #fff;
   box-shadow: 12px 0 60px #162c4a18;
@@ -17,7 +20,7 @@
   backdrop-filter: blur(3px);
 }
 .menu-content {
-  padding: 26px;
+  padding: max(26px, env(safe-area-inset-top)) max(26px, env(safe-area-inset-right)) max(26px, env(safe-area-inset-bottom)) max(26px, env(safe-area-inset-left));
   min-height: 100%;
   display: flex;
   flex-direction: column;
@@ -148,4 +151,12 @@
   font-size: 14px;
   line-height: 1.8;
   color: var(--muted);
+}
+@media (max-width: 650px) {
+  .menu-content {
+    padding: max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+  }
+  .main-menu h2 {
+    font-size: 25px;
+  }
 }

@@ -1,8 +1,5 @@
 .structure-info {
-  width: min(640px, calc(100% - 32px));
-  max-width: none;
-  max-height: calc(100dvh - 48px);
-  margin: auto;
+  --dialog-width: 640px;
   padding: 24px;
   overflow: auto;
   color: var(--ink);
@@ -105,8 +102,6 @@
 }
 @media (max-width: 650px) {
   .structure-info {
-    width: calc(100% - 24px);
-    max-height: calc(100dvh - 24px);
     padding: 18px;
   }
   .structure-use-cases th,

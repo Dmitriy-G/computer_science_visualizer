@@ -14,38 +14,60 @@ interface RendererProps {
   readonly children?: ReactNode
 }
 
+interface RendererState {
+  readonly actualSize: boolean
+}
+
 export default class Renderer extends Component<
   RendererProps,
-  Record<string, never>
+  RendererState
 > {
+  public state: RendererState = { actualSize: false }
   private readonly viewport = createRef<HTMLDivElement>()
   private readonly svg = createRef<SVGSVGElement>()
 
   public componentDidUpdate(previous: RendererProps): void {
     if (previous.scene?.kind !== this.props.scene?.kind) {
-      this.viewport.current?.scrollTo({ left: 0, behavior: 'instant' })
+      this.viewport.current?.scrollTo({ left: 0, top: 0, behavior: 'instant' })
+      if (this.state.actualSize) this.setState({ actualSize: false })
+      return
     }
     if (previous.scene !== this.props.scene) this.revealCurrentNode()
+  }
+
+  private fitDiagram = (): void => {
+    this.setState({ actualSize: false }, () => {
+      this.viewport.current?.scrollTo({ left: 0, top: 0, behavior: 'instant' })
+    })
+  }
+
+  private showActualSize = (): void => {
+    this.setState({ actualSize: true }, () => this.revealCurrentNode())
   }
 
   private revealCurrentNode(): void {
     const scene = this.props.scene
     const viewport = this.viewport.current
     const svg = this.svg.current
-    if (!scene || !viewport || !svg || !scene.focusId) return
+    if (!this.state.actualSize || !scene || !viewport || !svg || !scene.focusId) return
+    const transform = svg.getScreenCTM()
+    if (!transform) return
     for (const node of scene.nodes) {
       if (node.id !== scene.focusId) continue
-      const x =
-        svg.getBoundingClientRect().left -
-        viewport.getBoundingClientRect().left +
-        viewport.scrollLeft +
-        (node.x * svg.clientWidth) / scene.width
-      if (
-        x < viewport.scrollLeft + 70 ||
-        x > viewport.scrollLeft + viewport.clientWidth - 70
-      ) {
+      const point = new DOMPoint(node.x, node.y).matrixTransform(transform)
+      const bounds = viewport.getBoundingClientRect()
+      const x = point.x - bounds.left + viewport.scrollLeft
+      const y = point.y - bounds.top + viewport.scrollTop
+      const marginX = Math.min(70, viewport.clientWidth / 4)
+      const marginY = Math.min(70, viewport.clientHeight / 4)
+      const outsideX = x < viewport.scrollLeft + marginX ||
+        x > viewport.scrollLeft + viewport.clientWidth - marginX
+      const outsideY = y < viewport.scrollTop + marginY ||
+        y > viewport.scrollTop + viewport.clientHeight - marginY
+      if (outsideX || outsideY) {
         viewport.scrollTo({
-          left: Math.max(0, x - viewport.clientWidth / 2),
+          left: outsideX ? Math.max(0, x - viewport.clientWidth / 2) : viewport.scrollLeft,
+          top: outsideY ? Math.max(0, y - viewport.clientHeight / 2) : viewport.scrollTop,
           behavior: window.matchMedia('(prefers-reduced-motion: reduce)')
             .matches
             ? 'instant'
@@ -230,9 +252,12 @@ export default class Renderer extends Component<
     return (
       <svg
         ref={this.svg}
-        className="scene-svg"
+        className={`scene-svg${this.state.actualSize ? ' scene-svg--actual' : ''}`}
+        width={scene.width}
+        height={scene.height}
         viewBox={`0 0 ${scene.width} ${scene.height}`}
-        style={{ minWidth: scene.width * 0.8, maxWidth: scene.width * 1.2 }}
+        preserveAspectRatio="xMidYMin meet"
+        style={this.state.actualSize ? { width: scene.width, height: scene.height } : { maxWidth: scene.width }}
         role="img"
         aria-labelledby="scene-title scene-description"
       >
@@ -241,8 +266,8 @@ export default class Renderer extends Component<
         </title>
         <desc id="scene-description">
           {scene.count} {scene.countLabel ?? 'elements'}. Blue marks the current node, teal marks
-          visited nodes, and amber marks the new node. Scroll horizontally to
-          inspect the full structure on smaller screens.
+          visited nodes, and amber marks the new node. Use Fit diagram to see the
+          full structure, or Actual size to scroll through its details.
         </desc>
         <defs>
           <marker
@@ -304,11 +329,23 @@ export default class Renderer extends Component<
               </aside>
             )}
             <div id="renderer-code" className="renderer-code-host" />
+            {scene && (
+              <div className="diagram-tools">
+                <div className="diagram-size-controls" role="group" aria-label="Diagram size">
+                  <button type="button" onClick={this.fitDiagram} aria-pressed={!this.state.actualSize} aria-controls="diagram-viewport">Fit diagram</button>
+                  <button type="button" onClick={this.showActualSize} aria-pressed={this.state.actualSize} aria-controls="diagram-viewport">Actual size</button>
+                </div>
+                <span id="diagram-viewport-hint">{this.state.actualSize ? 'Scroll to explore the diagram.' : 'Showing the whole diagram.'}</span>
+              </div>
+            )}
             <div
+              id="diagram-viewport"
               className="renderer-viewport"
               ref={this.viewport}
               tabIndex={scene ? 0 : -1}
+              role={scene ? 'region' : undefined}
               aria-label={scene ? 'Scrollable data structure canvas' : undefined}
+              aria-describedby={scene ? 'diagram-viewport-hint' : undefined}
             >
               {scene ? (
                 this.renderScene(scene)

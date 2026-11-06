@@ -1,8 +1,5 @@
 .about-project {
-  width: min(560px, calc(100% - 32px));
-  max-width: none;
-  max-height: calc(100dvh - 48px);
-  margin: auto;
+  --dialog-width: 560px;
   padding: 24px;
   overflow: auto;
   color: var(--ink);
@@ -73,4 +70,9 @@
 }
 .about-project-footer a {
   color: var(--ink);
+}
+@media (max-width: 650px) {
+  .about-project {
+    padding: 18px;
+  }
 }

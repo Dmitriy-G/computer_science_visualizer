@@ -267,6 +267,7 @@ import { InsertionAnimation as LinkedListAddAtEndSequence } from '../Fundamental
 import LinkedListAddAtStart from '../FundamentalDataStructures/Linear/LinkedList/AddAtStart/AddAtStart.tsx'
 import { InsertionAnimation as LinkedListAddAtStartSequence } from '../FundamentalDataStructures/Linear/LinkedList/AddAtStart/InsertionAnimation.ts'
 import { Component, createRef } from 'react'
+import { AppViewport } from './AppViewport.ts'
 import MainMenu from '../MainMenu/MainMenu.tsx'
 import ActionMenu from '../MainMenu/ActionMenu/ActionMenu.tsx'
 import AlgorithmInfo from '../AlgorithmInfo/AlgorithmInfo.tsx'
@@ -336,6 +337,7 @@ interface AppState {
 }
 
 export default class App extends Component<Record<string, never>, AppState> {
+  private readonly viewport = new AppViewport()
   private probabilisticModels = ProbabilisticStructureCatalog.createModels()
   private hashModels = HashStructureCatalog.createModels()
   private extendedGraphs = ExtendedGraphCatalog.createModels()
@@ -387,6 +389,14 @@ export default class App extends Component<Record<string, never>, AppState> {
       overviewInformation: null,
       structureInformation: null,
     }
+  }
+
+  public componentDidMount(): void {
+    this.viewport.start()
+  }
+
+  public componentWillUnmount(): void {
+    this.viewport.stop()
   }
 
   private openMenu = (): void => {

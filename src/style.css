@@ -4,6 +4,7 @@
   --accent: #356fc0;
   --border: #e2e8f0;
   --menu-card-height: 112px;
+  --dialog-gutter: max(24px, env(safe-area-inset-top), env(safe-area-inset-right), env(safe-area-inset-bottom), env(safe-area-inset-left));
   --mono: 'Cascadia Code', 'SFMono-Regular', Consolas, monospace;
   font-family:
     'Segoe UI',
@@ -23,7 +24,29 @@
 }
 body {
   margin: 0;
-  min-width: 320px;
+  min-width: 0;
+}
+body:has(dialog[open]) {
+  overflow: hidden;
+}
+:is(.action-input-dialog, .algorithm-info, .structure-info, .about-project) {
+  position: fixed;
+  inset: calc(var(--viewport-top, 0px) + var(--viewport-height, 100dvh) / 2) auto auto calc(var(--viewport-left, 0px) + var(--viewport-width, 100vw) / 2);
+  width: min(var(--dialog-width), calc(var(--viewport-width, 100vw) - 2 * var(--dialog-gutter)));
+  max-width: none;
+  max-height: calc(var(--viewport-height, 100dvh) - 2 * var(--dialog-gutter));
+  margin: 0;
+  transform: translate(-50%, -50%);
+  overflow: auto;
+  overscroll-behavior: contain;
+  overflow-wrap: anywhere;
+  scrollbar-width: thin;
+}
+:is(.action-input-heading, .algorithm-dialog-heading, .structure-info-heading, .about-project-heading, .menu-topline) {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #fff;
 }
 button,
 input,
@@ -91,6 +114,21 @@ select,
 }
 .primary-button:hover:not(:disabled) {
   background: #285ca5;
+}
+@media (max-width: 650px) {
+  :root {
+    --dialog-gutter: max(12px, env(safe-area-inset-top), env(safe-area-inset-right), env(safe-area-inset-bottom), env(safe-area-inset-left));
+  }
+}
+@media (pointer: coarse) {
+  .icon-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .action-input-buttons button,
+  .menu-search-target label {
+    min-height: 44px;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   *,
