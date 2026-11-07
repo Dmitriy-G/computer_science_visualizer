@@ -4,6 +4,7 @@ import type { MenuStructureGroupKind } from './MenuStructureCatalog.ts'
 import { MenuNavigation } from './MenuNavigation.ts'
 import type { MenuCategoryKind, AlgorithmGroupKind } from './MenuNavigation.ts'
 import type { AdvancedAlgorithmGroupKind } from './AdvancedAlgorithmCatalog.ts'
+import type { DiskAlgorithmKind } from '../RealSystemsAlgorithms/Hardware/Fundamental/Disks/DiskWorkload.ts'
 import type { StructureKind } from '../../visualization/Scene.ts'
 import { ActionCatalog } from '../../visualization/ActionCatalog.ts'
 import { StructureInformation } from '../StructureInfo/StructureInformation.ts'
@@ -28,6 +29,7 @@ interface MainMenuProps {
   readonly onGroupSelected: (group: MenuStructureGroupKind) => void
   readonly onAlgorithmGroupSelected: (group: AlgorithmGroupKind) => void
   readonly onAdvancedAlgorithmGroupSelected: (group: AdvancedAlgorithmGroupKind) => void
+  readonly onDiskAlgorithmSelected: (algorithm: DiskAlgorithmKind) => void
   readonly onBack: () => void
   readonly describeSearchAlgorithm: DescribeSearchAlgorithm
   readonly onSearchResultSelected: (result: MenuSearchResult) => void
@@ -128,10 +130,26 @@ export default class MainMenu extends Component<MainMenuProps> {
   }
 
   private renderAdvancedAlgorithmGroups(): ReactNode {
+    const algorithms = this.props.navigation.getDiskAlgorithms()
+    if (algorithms.length) {
+      const buttons: ReactNode[] = []
+      for (const algorithm of algorithms) {
+        buttons.push(
+          <button type="button" className="structure-choice structure-choice--labeled" key={algorithm.kind} data-disk-algorithm={algorithm.kind} onClick={this.handleDiskAlgorithm}>
+            <span className="usage-tags"><span className="usage-tag usage-tag--real-systems">Real Systems</span></span>
+            <span className="choice-copy"><strong title={algorithm.name}>{algorithm.name}</strong><small title={algorithm.description}>{algorithm.description}</small></span>
+          </button>,
+        )
+      }
+      return buttons
+    }
     const groups = this.props.navigation.getAdvancedAlgorithmGroups()
     if (!groups.length) return <p className="menu-empty-state">No algorithms have been added to this category yet.</p>
     const buttons: ReactNode[] = []
-    for (const group of groups) {
+    const parent = this.props.navigation.advancedAlgorithmGroup
+    const fixedOrder = parent === 'hardware' || parent === 'network' || parent === 'network-fundamental'
+    const ordered = fixedOrder ? groups : this.orderChoices(groups)
+    for (const group of ordered) {
       buttons.push(
         <button className="structure-choice" key={group.kind} data-advanced-algorithm-group={group.kind} onClick={this.handleAdvancedAlgorithmGroup}>
           <span className="choice-copy">
@@ -142,6 +160,12 @@ export default class MainMenu extends Component<MainMenuProps> {
       )
     }
     return buttons
+  }
+
+  private handleDiskAlgorithm = (event: MouseEvent<HTMLButtonElement>): void => {
+    for (const algorithm of this.props.navigation.getDiskAlgorithms()) {
+      if (algorithm.kind === event.currentTarget.dataset.diskAlgorithm) this.props.onDiskAlgorithmSelected(algorithm.kind)
+    }
   }
 
   private renderAlgorithmGroups(): ReactNode[] {

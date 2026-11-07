@@ -51,7 +51,7 @@ export interface SceneHint {
 }
 
 export interface Scene {
-  readonly kind: StructureKind
+  readonly kind: StructureKind | 'disk-scheduling'
   readonly nodes: readonly SceneNode[]
   readonly edges: readonly SceneEdge[]
   readonly width: number

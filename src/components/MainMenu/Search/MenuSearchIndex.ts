@@ -6,11 +6,13 @@ import { AlgorithmTechnologyCatalog } from '../../../visualization/AlgorithmTech
 import type { AlgorithmInformation, AlgorithmTechnology } from '../../../visualization/AlgorithmInformation.ts'
 import type { StructureKind } from '../../../visualization/Scene.ts'
 import { StructureInformation } from '../../StructureInfo/StructureInformation.ts'
+import { DiskAlgorithmCatalog } from '../../RealSystemsAlgorithms/Hardware/Fundamental/Disks/DiskAlgorithmCatalog.ts'
+import type { DiskAlgorithmKind } from '../../RealSystemsAlgorithms/Hardware/Fundamental/Disks/DiskWorkload.ts'
 
 export type SearchTarget = 'structures' | 'algorithms'
 export type DescribeSearchAlgorithm = (structure: StructureKind, action: ActionKind, scope: ActionScope) => AlgorithmInformation | null
 
-export interface MenuSearchResult {
+export interface StructureSearchResult {
   readonly key: string
   readonly structure: StructureKind
   readonly scope: ActionScope
@@ -23,6 +25,19 @@ export interface MenuSearchResult {
   readonly popular: boolean
 }
 
+export interface DiskSearchResult {
+  readonly key: string
+  readonly diskAlgorithm: DiskAlgorithmKind
+  readonly name: string
+  readonly description: string
+  readonly context: string
+  readonly symbol: string
+  readonly realSystems: boolean
+  readonly popular: boolean
+}
+
+export type MenuSearchResult = StructureSearchResult | DiskSearchResult
+
 interface SearchDocument {
   readonly target: SearchTarget
   readonly result: MenuSearchResult
@@ -33,6 +48,23 @@ export class MenuSearchIndex {
   private readonly documents: SearchDocument[] = []
 
   constructor(describe: DescribeSearchAlgorithm) {
+    for (const algorithm of DiskAlgorithmCatalog.choices) {
+      const information = DiskAlgorithmCatalog.describe(algorithm.kind)
+      let text = `${algorithm.name} ${information.name}`
+      if (information.realWorldUsage) {
+        text += this.technologyNames(information.realWorldUsage.technologies)
+        text += this.technologyNames(information.realWorldUsage.products)
+      }
+      this.documents.push({
+        target: 'algorithms', text: this.normalize(text),
+        result: {
+          key: `disks:${algorithm.kind}`, diskAlgorithm: algorithm.kind,
+          name: algorithm.name, description: algorithm.description,
+          context: 'Real Systems Algorithms / Hardware / Fundamental / Disks', symbol: 'IO',
+          realSystems: true, popular: false,
+        },
+      })
+    }
     for (const structure of StructureCatalog.structures) {
       const information = StructureInformation.get(structure.kind)
       const group = MenuStructureCatalog.getGroupForStructure(structure.kind)

@@ -71,3 +71,17 @@ test('results use alphabetical order and searching again preserves the catalog',
   index.find('algorithms', 'sort')
   assert.deepEqual(index.find('structures', 'tree'), results)
 })
+
+test('disk scheduler search returns only sourced algorithm destinations', () => {
+  for (const name of ['BFQ', 'Kyber', 'mq-deadline']) {
+    const results = index.find('algorithms', name)
+    assert.equal(results.length, 1)
+    assert.equal(results[0].diskAlgorithm, name.toLowerCase())
+    assert.equal(results[0].realSystems, true)
+    assert.equal(results[0].context, 'Real Systems Algorithms / Hardware / Fundamental / Disks')
+    assert.deepEqual(index.find('structures', name), [])
+  }
+  const linux = index.find('algorithms', 'Linux').filter((result) => 'diskAlgorithm' in result)
+  assert.equal(linux.length, 3)
+  assert.deepEqual(index.find('algorithms', 'percentile').filter((result) => 'diskAlgorithm' in result), [])
+})

@@ -199,12 +199,23 @@ Algorithm-specific layouts stay beside their algorithm helpers under
 
 Keep the Real Systems Algorithms category hierarchy in
 `MainMenu/AdvancedAlgorithmCatalog.ts`, separate from structure membership and
-data-structure algorithm scopes. Hardware contains Disks, Memory, and CPU;
-Network contains Physical, Data Link, Network, Transport, Session, Presentation,
-and Application in OSI layer order. These requested category-only paths show an
-empty-state message until examples exist. Reuse MainMenu and MenuNavigation for
-selection and parent navigation; create implementation folders when examples are
-added rather than adding empty source directories.
+data-structure algorithm scopes. Hardware and Network each contain Fundamental
+and Complex, always displaying Fundamental first and Complex second rather than
+sorting that pair alphabetically. Hardware/Fundamental contains Disks, Memory, and CPU;
+Network/Fundamental contains Physical, Data Link, Network, Transport, Session,
+Presentation, and Application in OSI layer order. Complex categories describe
+cross-component hardware systems or systems spanning network layers. Unimplemented
+leaves show an empty-state message. Reuse MainMenu and MenuNavigation for parent
+navigation rather than adding empty implementation directories.
+
+Keep disk scheduler lessons under
+`RealSystemsAlgorithms/Hardware/Fundamental/Disks/`, with MqDeadline, BFQ, and Kyber
+component/CSS/sequence folders. DiskWorkload, DiskTrace, and DiskLayout share request
+contracts, deterministic recording, and scene geometry; scheduler decisions stay
+in their own sequence classes. Reuse Renderer, ActionView/ActionPlayback, and
+AlgorithmInfo. Keep disk destinations separate from StructureKind and action
+scopes; Scene supports a disk-scheduling kind. DiskAlgorithmCatalog supplies
+algorithm choices and read-only descriptions to menus and search.
 
 Keep the root menu's search component and catalog index in `MainMenu/Search/`.
 Place its search trigger in the app header between the menu button and brand

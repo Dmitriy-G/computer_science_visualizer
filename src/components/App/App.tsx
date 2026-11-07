@@ -278,6 +278,9 @@ import { ActionInputRequest } from '../../visualization/ActionInputRequest.ts'
 import { MenuNavigation } from '../MainMenu/MenuNavigation.ts'
 import type { MenuCategoryKind, AlgorithmGroupKind } from '../MainMenu/MenuNavigation.ts'
 import type { AdvancedAlgorithmGroupKind } from '../MainMenu/AdvancedAlgorithmCatalog.ts'
+import DiskWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Disks/DiskWorkspace.tsx'
+import { DiskAlgorithmCatalog } from '../RealSystemsAlgorithms/Hardware/Fundamental/Disks/DiskAlgorithmCatalog.ts'
+import type { DiskAlgorithmKind } from '../RealSystemsAlgorithms/Hardware/Fundamental/Disks/DiskWorkload.ts'
 import type { MenuSearchResult } from '../MainMenu/Search/MenuSearchIndex.ts'
 import type { MenuStructureGroupKind } from '../MainMenu/MenuStructureCatalog.ts'
 import Renderer from '../Renderer/Renderer.tsx'
@@ -317,6 +320,9 @@ import { ExtendedGraphTraversalFeatures } from '../DataStructuresAlgorithms/Grap
 import './App.css'
 
 interface AppState {
+  readonly diskAlgorithm: DiskAlgorithmKind | null
+  readonly diskSession: number
+  readonly diskActionActive: boolean
   readonly treeInput: TreeInputValues
   readonly selected: StructureKind | null
   readonly selectedScope: ActionScope
@@ -357,6 +363,7 @@ export default class App extends Component<Record<string, never>, AppState> {
   private readonly aboutButton = createRef<HTMLButtonElement>()
   private menuOpenedFromSearch = false
   private readonly actionMenu = createRef<ActionMenu>()
+  private readonly diskWorkspace = createRef<DiskWorkspace>()
   private graph = Graph.createDefault()
   private graphModels = GraphCatalog.createModels(this.graph)
   private stack = Stack.createDefault()
@@ -371,6 +378,9 @@ export default class App extends Component<Record<string, never>, AppState> {
   constructor(props: Record<string, never>) {
     super(props)
     this.state = {
+      diskAlgorithm: null,
+      diskSession: 0,
+      diskActionActive: false,
       treeInput: {},
       selected: null,
       selectedScope: 'overview',
@@ -405,7 +415,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.setState({
       menuOpen: true,
       searchOpen: false,
-      menu: this.state.selected ? MenuNavigation.forStructure(this.state.selected, this.state.selectedScope) : new MenuNavigation(),
+      menu: this.state.diskAlgorithm ? new MenuNavigation('advanced-algorithms', null, 'fundamental', 'disks') : this.state.selected ? MenuNavigation.forStructure(this.state.selected, this.state.selectedScope) : new MenuNavigation(),
     })
   }
 
@@ -447,6 +457,30 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.setState({ menu: this.state.menu.selectAdvancedAlgorithmGroup(group) })
   }
 
+  private selectDiskAlgorithm = (algorithm: DiskAlgorithmKind): void => {
+    if (!DiskAlgorithmCatalog.choices.some((choice) => choice.kind === algorithm)) return
+    this.setState({
+      diskAlgorithm: algorithm, diskSession: this.state.diskSession + 1, diskActionActive: true,
+      selected: null, scene: null, actionOpen: false, selectedAction: null, actionRunning: false,
+      actionValue: undefined, actionUpperValue: undefined,
+      inputRequest: null, overviewInformation: null, structureInformation: null,
+      algorithmInformation: null, menuOpen: false, searchOpen: false,
+      menu: new MenuNavigation('advanced-algorithms', null, 'fundamental', 'disks'),
+    })
+  }
+
+  private showDiskInformation = (algorithm: DiskAlgorithmKind): void => {
+    this.setState({ overviewInformation: DiskAlgorithmCatalog.describe(algorithm) })
+  }
+
+  private resetDisk = (): void => {
+    this.diskWorkspace.current?.reset()
+  }
+
+  private diskReset = (): void => {
+    this.setState({ diskActionActive: false, overviewInformation: null })
+  }
+
   private selectGroup = (group: MenuStructureGroupKind): void => {
     this.setState({ menu: this.state.menu.selectGroup(group) })
   }
@@ -461,6 +495,10 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private selectSearchResult = (result: MenuSearchResult): void => {
+    if ('diskAlgorithm' in result) {
+      this.selectDiskAlgorithm(result.diskAlgorithm)
+      return
+    }
     const menu = MenuNavigation.forStructure(result.structure, result.scope)
     this.loadStructure(result.structure, menu, result.action)
   }
@@ -493,6 +531,8 @@ export default class App extends Component<Record<string, never>, AppState> {
       this.buffer = CircularBuffer.createDefault()
     }
     this.setState({
+      diskAlgorithm: null,
+      diskActionActive: false,
       selected: kind,
       selectedScope: menu.actionScope,
       scene: StructureCatalog.createPreview(
@@ -1355,13 +1395,13 @@ export default class App extends Component<Record<string, never>, AppState> {
               <span className="brand-caption">Visualize the idea.</span>
             </span>
           </div>
-          {selected && (
+          {(selected || this.state.diskAlgorithm) && (
             <div className="header-playback">
-              {this.state.selectedAction !== null && (
+              {(this.state.selectedAction !== null || this.state.diskActionActive) && (
                 <button
                   className="primary-button header-action-button"
-                  onClick={this.resetStructure}
-                  aria-label="Reset structure"
+                  onClick={this.state.diskAlgorithm ? this.resetDisk : this.resetStructure}
+                  aria-label={this.state.diskAlgorithm ? 'Reset disk workload' : 'Reset structure'}
                 >
                   <svg
                     width="18"
@@ -1416,6 +1456,7 @@ export default class App extends Component<Record<string, never>, AppState> {
           onGroupSelected={this.selectGroup}
           onAlgorithmGroupSelected={this.selectAlgorithmGroup}
           onAdvancedAlgorithmGroupSelected={this.selectAdvancedAlgorithmGroup}
+          onDiskAlgorithmSelected={this.selectDiskAlgorithm}
           onBack={this.backInMenu}
         />
 
@@ -1439,26 +1480,37 @@ export default class App extends Component<Record<string, never>, AppState> {
         )}
 
         <main className="workspace">
-          <Renderer
-            scene={scene}
-            onOpenMenu={this.openMenu}
-          >
-            {selected && (
-              <ActionMenu
-                ref={this.actionMenu}
-                structure={selected}
-                scope={this.state.selectedScope}
-                selectedAction={this.state.selectedAction}
-                actionsDisabled={ActionInputRequest.supportsStructure(selected) && this.state.actionRunning}
-                onBack={this.openMenu}
-                onActionSelected={this.selectAction}
-                onActionInformationRequested={this.showActionInformation}
-                onStructureInformationRequested={this.showStructureInformation}
-                informationForAction={this.describeActionDetails}
-              />
-            )}
-          </Renderer>
-          {this.renderAction()}
+          {this.state.diskAlgorithm ? (
+            <DiskWorkspace
+              key={this.state.diskSession}
+              ref={this.diskWorkspace}
+              algorithm={this.state.diskAlgorithm}
+              onBack={this.openMenu}
+              onSelect={this.selectDiskAlgorithm}
+              onInformation={this.showDiskInformation}
+              onReset={this.diskReset}
+            />
+          ) : (
+            <>
+              <Renderer scene={scene} onOpenMenu={this.openMenu}>
+                {selected && (
+                  <ActionMenu
+                    ref={this.actionMenu}
+                    structure={selected}
+                    scope={this.state.selectedScope}
+                    selectedAction={this.state.selectedAction}
+                    actionsDisabled={ActionInputRequest.supportsStructure(selected) && this.state.actionRunning}
+                    onBack={this.openMenu}
+                    onActionSelected={this.selectAction}
+                    onActionInformationRequested={this.showActionInformation}
+                    onStructureInformationRequested={this.showStructureInformation}
+                    informationForAction={this.describeActionDetails}
+                  />
+                )}
+              </Renderer>
+              {this.renderAction()}
+            </>
+          )}
         </main>
       </div>
     )

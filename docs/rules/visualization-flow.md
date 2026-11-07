@@ -18,9 +18,12 @@
 2. Open the menu to see **Fundamental Data Structures**, **Data Structures Algorithms**,
    **Advanced Data Structures**, and **Real Systems Algorithms**, in that fixed order.
    Root categories are excluded from alphabetical menu ordering. Real Systems Algorithms
-   opens Hardware (Disks, Memory, CPU) or Network (Physical, Data Link, Network,
-   Transport, Session, Presentation, Application in OSI layer order). These
-   category-only leaves show that no algorithms have been added yet. Back returns
+   opens Hardware or Network, each containing Fundamental and Complex.
+   Hardware/Fundamental contains Disks, Memory, and CPU. Network/Fundamental
+   contains Physical, Data Link, Network, Transport, Session, Presentation, and
+   Application in OSI layer order. Complex covers systems combining components
+   or network layers. Disks offers mq-deadline, BFQ, and Kyber; other empty leaves
+   show that no algorithms have been added yet. Back returns
    through their parents without changing the current visualization or playback.
    Structure assignments are defined in `MainMenu/MenuStructureCatalog.ts`,
    and mirrored by canonical model folders under the matching root and subject.
@@ -323,6 +326,28 @@ concrete trigger, such as a head match versus a full traversal.
 
 Keep structure selection and action selection distinct. Only offer working actions;
 identify structures with previews but no animated actions clearly.
+
+## Real-system disk scheduler lessons
+
+Real Systems Algorithms > Hardware > Fundamental > Disks offers only mq-deadline,
+BFQ, and Kyber, with primary evidence of Linux implementations. Selecting one
+starts a deterministic ten-request simulation. Reuse shared automatic playback,
+header progress, pseudocode, Renderer, and algorithm information. Header Reset
+cancels playback and restores the workload without starting another run. Disable
+scheduler action buttons while running; keep their info buttons and Reset usable.
+Browsing and opening information do not restart or interrupt playback. Search
+includes scheduler names and verified technology/product names with distinct disk
+destinations. Reopening the menu restores the Disks path.
+
+Keep virtual device time separate from playback timers. Show request IDs,
+read/write types, process IDs, logical addresses, sizes, and text statuses in the
+diagram; put policy state in scene hints and event results in timeline text.
+mq-deadline shows sector batches, soft expiry, and write-starvation control.
+BFQ shows eligible virtual start/finish tags and weighted sector budgets.
+Kyber shows token acquisition/release and percentile-based domain depth feedback.
+Disclose scaled parameters and omitted kernel features in each algorithm overview;
+do not claim kernel implementation costs for the array-scanning teaching models.
+Workloads allow at most 16 requests with independent scenes and fixed bounds.
 
 ## Applied structure operations
 

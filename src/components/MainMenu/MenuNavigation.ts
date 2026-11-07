@@ -6,6 +6,8 @@ import type { StructureDefinition } from '../../visualization/StructureCatalog.t
 import type { ActionScope } from '../../visualization/ActionCatalog.ts'
 import { AdvancedAlgorithmCatalog } from './AdvancedAlgorithmCatalog.ts'
 import type { AdvancedAlgorithmGroup, AdvancedAlgorithmGroupKind } from './AdvancedAlgorithmCatalog.ts'
+import { DiskAlgorithmCatalog } from '../RealSystemsAlgorithms/Hardware/Fundamental/Disks/DiskAlgorithmCatalog.ts'
+import type { DiskAlgorithmChoice } from '../RealSystemsAlgorithms/Hardware/Fundamental/Disks/DiskAlgorithmCatalog.ts'
 
 export type MenuScreen = 'categories' | 'groups' | 'structures' | 'algorithms' | 'sorting' | 'algorithm-structures' | 'advanced-algorithms'
 export type MenuCategoryKind = StructureCategoryKind | 'algorithms' | 'advanced-algorithms'
@@ -84,6 +86,10 @@ export class MenuNavigation {
   public getAdvancedAlgorithmGroups(): readonly AdvancedAlgorithmGroup[] {
     if (this.screen !== 'advanced-algorithms') return []
     return AdvancedAlgorithmCatalog.getGroups(this.advancedAlgorithmGroup)
+  }
+
+  public getDiskAlgorithms(): readonly DiskAlgorithmChoice[] {
+    return this.screen === 'advanced-algorithms' && this.advancedAlgorithmGroup === 'disks' ? DiskAlgorithmCatalog.choices : []
   }
 
   public selectAdvancedAlgorithmGroup(kind: AdvancedAlgorithmGroupKind): MenuNavigation {
