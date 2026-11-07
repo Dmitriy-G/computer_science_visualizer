@@ -2,24 +2,8 @@
 
 ## Purpose and stack
 
-Build Computer Science Visualizer, an interactive app for computer science
-concepts with TypeScript and React, using Vite. Its features include data structures
-and real-system algorithm lessons.
-The app uses TypeScript and React class components. Linked list, array, binary
-search tree, graph, and stack operations have animated actions. Canonical model,
-layout, and ordinary-operation folders mirror the Fundamental Data Structures and
-Advanced Data Structures menu hierarchy. Their subjects and assignments are defined
-in MainMenu/MenuStructureCatalog.ts. Data Structures Algorithms contains Sorting
-(Array with forty-eight sorting algorithms) and Graphs Traversal; graph algorithm
-examples live in the latter.
-Real Systems Algorithms is a separate root branch for Hardware and Network, each
-with Fundamental and Complex subcategories. Fundamental contains individual
-hardware components (Disks, Memory, CPU) or the seven OSI layers. Complex covers
-algorithms combining components or layers into systems. The hierarchy lives in
-MainMenu/AdvancedAlgorithmCatalog.ts. Hardware/Fundamental/Disks implements
-mq-deadline, BFQ, and Kyber lessons under src/components/RealSystemsAlgorithms/,
-reusing Renderer and ActionPlayback. Other leaves are empty until implemented.
-Use npm for dependency management.
+Read the [project overview](docs/project-overview.md) for the app's purpose,
+stack, and current feature organization. It is part of these project instructions.
 
 ## Required project rules
 
@@ -34,6 +18,8 @@ These documents are part of this project's agent instructions.
 
 ## Agent restrictions
 
+- Do not modify `README.md` unless the user directly requests changes to that
+  file. Do not initiate README updates or ask for permission to make them.
 - Never run npm commands, including installs, development servers, builds,
   type checks, and tests. The user runs them manually.
 - Never open or use a browser to check the application. The user performs all

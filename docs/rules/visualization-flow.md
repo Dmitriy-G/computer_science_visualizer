@@ -22,7 +22,8 @@
    Hardware/Fundamental contains Disks, Memory, and CPU. Network/Fundamental
    contains Physical, Data Link, Network, Transport, Session, Presentation, and
    Application in OSI layer order. Complex covers systems combining components
-   or network layers. Disks offers mq-deadline, BFQ, and Kyber; other empty leaves
+   or network layers. Disks offers mq-deadline, BFQ, and Kyber; CPU offers four
+   hardware execution and prediction lessons. Other empty leaves
    show that no algorithms have been added yet. Back returns
    through their parents without changing the current visualization or playback.
    Structure assignments are defined in `MainMenu/MenuStructureCatalog.ts`,
@@ -348,6 +349,30 @@ Kyber shows token acquisition/release and percentile-based domain depth feedback
 Disclose scaled parameters and omitted kernel features in each algorithm overview;
 do not claim kernel implementation costs for the array-scanning teaching models.
 Workloads allow at most 16 requests with independent scenes and fixed bounds.
+
+## Real-system CPU hardware lessons
+
+Real Systems Algorithms > Hardware > Fundamental > CPU offers register renaming,
+out-of-order execution with in-order retirement, history-based branch prediction,
+and return-address stack prediction. Reuse shared playback, header Reset/progress,
+pseudocode, renderer, algorithm search, and information dialogs. Menu browsing and
+information preserve playback; selecting a different lesson or structure disposes
+the previous session. Header Reset clears the lesson without starting another run
+and returns focus to the first hardware choice.
+
+Each mechanism owns actual state transitions: physical source identities and
+renaming/retirement; dependency readiness, reorder-buffer completion and branch
+squashing; history/counter training; or bounded return prediction independent of
+actual return addresses. Record independent snapshots with fixed diagram bounds
+per lesson, at most 96 events, and no hardware timing claims.
+
+Reference the documented processor in information. Intel Core examples use
+illustrative register counts and execution events. Cortex-A53 documents global
+history and an eight-entry return stack; the small counter table, its exact
+indexing/training, and stack overflow/underflow policies are teaching choices.
+Show those distinctions in scene hints as well as information. Complexity bounds
+describe fixed visualizer examples, not production hardware latency. Leave
+coherence, memory barriers, and other cross-component topics planned for Complex.
 
 ## Applied structure operations
 

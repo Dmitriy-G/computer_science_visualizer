@@ -33,7 +33,7 @@ export class AdvancedAlgorithmCatalog {
     { kind: 'network-complex', parent: 'network', name: 'Complex', description: 'Combine network layers into working systems, such as secure web communication.' },
     { kind: 'disks', parent: 'hardware-fundamental', name: 'Disks', description: 'Disk scheduling, storage access, and data placement.' },
     { kind: 'memory', parent: 'hardware-fundamental', name: 'Memory', description: 'Memory allocation, paging, and replacement policies.' },
-    { kind: 'cpu', parent: 'hardware-fundamental', name: 'CPU', description: 'Processor scheduling and execution.' },
+    { kind: 'cpu', parent: 'hardware-fundamental', name: 'CPU', description: 'Instruction execution, register renaming, and branch prediction inside a processor core.' },
     { kind: 'physical', parent: 'network-fundamental', name: 'Physical', description: 'Layer 1: transmit bits as physical signals.' },
     { kind: 'data-link', parent: 'network-fundamental', name: 'Data Link', description: 'Layer 2: frames, link access, and error detection.' },
     { kind: 'network-layer', parent: 'network-fundamental', name: 'Network', description: 'Layer 3: packet addressing, routing, and forwarding.' },

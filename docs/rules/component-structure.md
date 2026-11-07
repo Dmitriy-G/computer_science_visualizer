@@ -217,6 +217,17 @@ AlgorithmInfo. Keep disk destinations separate from StructureKind and action
 scopes; Scene supports a disk-scheduling kind. DiskAlgorithmCatalog supplies
 algorithm choices and read-only descriptions to menus and search.
 
+Keep CPU hardware lessons under `RealSystemsAlgorithms/Hardware/Fundamental/CPU/`,
+with RegisterRenaming, OutOfOrder, BranchPrediction, and ReturnStack action folders.
+Each owns its mechanism model, component, CSS, animation, and sourced information.
+CpuModel, CpuLayout, CpuTrace, and CpuLesson share only visual-state snapshots,
+scene generation, and playback contracts. Use the cpu-hardware Scene kind and
+distinct CPU search/menu destinations, preserving data-structure and disk
+destinations. CpuWorkspace reuses Renderer, ActionView, ActionPlayback, and the
+shared information dialog and info icon styling. Keep CPU operating-system
+schedulers out of this branch. Cross-component cache/memory mechanisms belong
+under Hardware/Complex when implemented.
+
 Keep the root menu's search component and catalog index in `MainMenu/Search/`.
 Place its search trigger in the app header between the menu button and brand
 icon. It opens the existing search panel directly; do not show a search trigger

@@ -5,6 +5,7 @@ import { MenuNavigation } from './MenuNavigation.ts'
 import type { MenuCategoryKind, AlgorithmGroupKind } from './MenuNavigation.ts'
 import type { AdvancedAlgorithmGroupKind } from './AdvancedAlgorithmCatalog.ts'
 import type { DiskAlgorithmKind } from '../RealSystemsAlgorithms/Hardware/Fundamental/Disks/DiskWorkload.ts'
+import type { CpuAlgorithmKind } from '../RealSystemsAlgorithms/Hardware/Fundamental/CPU/CpuModel.ts'
 import type { StructureKind } from '../../visualization/Scene.ts'
 import { ActionCatalog } from '../../visualization/ActionCatalog.ts'
 import { StructureInformation } from '../StructureInfo/StructureInformation.ts'
@@ -30,6 +31,7 @@ interface MainMenuProps {
   readonly onAlgorithmGroupSelected: (group: AlgorithmGroupKind) => void
   readonly onAdvancedAlgorithmGroupSelected: (group: AdvancedAlgorithmGroupKind) => void
   readonly onDiskAlgorithmSelected: (algorithm: DiskAlgorithmKind) => void
+  readonly onCpuAlgorithmSelected: (algorithm: CpuAlgorithmKind) => void
   readonly onBack: () => void
   readonly describeSearchAlgorithm: DescribeSearchAlgorithm
   readonly onSearchResultSelected: (result: MenuSearchResult) => void
@@ -130,6 +132,17 @@ export default class MainMenu extends Component<MainMenuProps> {
   }
 
   private renderAdvancedAlgorithmGroups(): ReactNode {
+    const cpuAlgorithms = this.props.navigation.getCpuAlgorithms()
+    if (cpuAlgorithms.length) {
+      const buttons: ReactNode[] = []
+      for (const algorithm of cpuAlgorithms) buttons.push(
+        <button type="button" className="structure-choice structure-choice--labeled" key={algorithm.kind} data-cpu-algorithm={algorithm.kind} onClick={this.handleCpuAlgorithm}>
+          <span className="usage-tags"><span className="usage-tag usage-tag--real-systems">Real Systems</span></span>
+          <span className="choice-copy"><strong title={algorithm.name}>{algorithm.name}</strong><small title={algorithm.description}>{algorithm.description}</small></span>
+        </button>,
+      )
+      return buttons
+    }
     const algorithms = this.props.navigation.getDiskAlgorithms()
     if (algorithms.length) {
       const buttons: ReactNode[] = []
@@ -165,6 +178,12 @@ export default class MainMenu extends Component<MainMenuProps> {
   private handleDiskAlgorithm = (event: MouseEvent<HTMLButtonElement>): void => {
     for (const algorithm of this.props.navigation.getDiskAlgorithms()) {
       if (algorithm.kind === event.currentTarget.dataset.diskAlgorithm) this.props.onDiskAlgorithmSelected(algorithm.kind)
+    }
+  }
+
+  private handleCpuAlgorithm = (event: MouseEvent<HTMLButtonElement>): void => {
+    for (const algorithm of this.props.navigation.getCpuAlgorithms()) {
+      if (algorithm.kind === event.currentTarget.dataset.cpuAlgorithm) this.props.onCpuAlgorithmSelected(algorithm.kind)
     }
   }
 

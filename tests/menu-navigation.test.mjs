@@ -262,6 +262,7 @@ test('advanced hardware categories have reversible paths and no structure select
     assert.deepEqual(leaf.getGroups(), [])
     assert.throws(() => leaf.selectStructure('array'), /current group/)
     assert.deepEqual(leaf.getDiskAlgorithms().map((algorithm) => algorithm.kind), kind === 'disks' ? ['bfq', 'kyber', 'mq-deadline'] : [])
+    assert.equal(leaf.getCpuAlgorithms().length, kind === 'cpu' ? 4 : 0)
   }
   const complex = hardware.selectAdvancedAlgorithmGroup('hardware-complex')
   assert.equal(complex.title, 'Complex')
@@ -290,6 +291,7 @@ test('advanced network categories follow OSI layer order and preserve their pare
   const complex = network.selectAdvancedAlgorithmGroup('network-complex')
   assert.deepEqual(complex.getAdvancedAlgorithmGroups(), [])
   assert.deepEqual(complex.getDiskAlgorithms(), [])
+  assert.deepEqual(complex.getCpuAlgorithms(), [])
   assert.deepEqual(complex.back(), network)
 })
 

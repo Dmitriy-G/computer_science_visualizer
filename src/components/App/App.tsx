@@ -281,6 +281,9 @@ import type { AdvancedAlgorithmGroupKind } from '../MainMenu/AdvancedAlgorithmCa
 import DiskWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Disks/DiskWorkspace.tsx'
 import { DiskAlgorithmCatalog } from '../RealSystemsAlgorithms/Hardware/Fundamental/Disks/DiskAlgorithmCatalog.ts'
 import type { DiskAlgorithmKind } from '../RealSystemsAlgorithms/Hardware/Fundamental/Disks/DiskWorkload.ts'
+import CpuWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/CPU/CpuWorkspace.tsx'
+import { CpuAlgorithmCatalog } from '../RealSystemsAlgorithms/Hardware/Fundamental/CPU/CpuAlgorithmCatalog.ts'
+import type { CpuAlgorithmKind } from '../RealSystemsAlgorithms/Hardware/Fundamental/CPU/CpuModel.ts'
 import type { MenuSearchResult } from '../MainMenu/Search/MenuSearchIndex.ts'
 import type { MenuStructureGroupKind } from '../MainMenu/MenuStructureCatalog.ts'
 import Renderer from '../Renderer/Renderer.tsx'
@@ -320,6 +323,9 @@ import { ExtendedGraphTraversalFeatures } from '../DataStructuresAlgorithms/Grap
 import './App.css'
 
 interface AppState {
+  readonly cpuAlgorithm: CpuAlgorithmKind | null
+  readonly cpuSession: number
+  readonly cpuActionActive: boolean
   readonly diskAlgorithm: DiskAlgorithmKind | null
   readonly diskSession: number
   readonly diskActionActive: boolean
@@ -364,6 +370,7 @@ export default class App extends Component<Record<string, never>, AppState> {
   private menuOpenedFromSearch = false
   private readonly actionMenu = createRef<ActionMenu>()
   private readonly diskWorkspace = createRef<DiskWorkspace>()
+  private readonly cpuWorkspace = createRef<CpuWorkspace>()
   private graph = Graph.createDefault()
   private graphModels = GraphCatalog.createModels(this.graph)
   private stack = Stack.createDefault()
@@ -378,6 +385,9 @@ export default class App extends Component<Record<string, never>, AppState> {
   constructor(props: Record<string, never>) {
     super(props)
     this.state = {
+      cpuAlgorithm: null,
+      cpuSession: 0,
+      cpuActionActive: false,
       diskAlgorithm: null,
       diskSession: 0,
       diskActionActive: false,
@@ -415,7 +425,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.setState({
       menuOpen: true,
       searchOpen: false,
-      menu: this.state.diskAlgorithm ? new MenuNavigation('advanced-algorithms', null, 'fundamental', 'disks') : this.state.selected ? MenuNavigation.forStructure(this.state.selected, this.state.selectedScope) : new MenuNavigation(),
+      menu: this.state.cpuAlgorithm ? new MenuNavigation('advanced-algorithms', null, 'fundamental', 'cpu') : this.state.diskAlgorithm ? new MenuNavigation('advanced-algorithms', null, 'fundamental', 'disks') : this.state.selected ? MenuNavigation.forStructure(this.state.selected, this.state.selectedScope) : new MenuNavigation(),
     })
   }
 
@@ -460,6 +470,7 @@ export default class App extends Component<Record<string, never>, AppState> {
   private selectDiskAlgorithm = (algorithm: DiskAlgorithmKind): void => {
     if (!DiskAlgorithmCatalog.choices.some((choice) => choice.kind === algorithm)) return
     this.setState({
+      cpuAlgorithm: null, cpuActionActive: false,
       diskAlgorithm: algorithm, diskSession: this.state.diskSession + 1, diskActionActive: true,
       selected: null, scene: null, actionOpen: false, selectedAction: null, actionRunning: false,
       actionValue: undefined, actionUpperValue: undefined,
@@ -481,6 +492,29 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.setState({ diskActionActive: false, overviewInformation: null })
   }
 
+  private selectCpuAlgorithm = (algorithm: CpuAlgorithmKind): void => {
+    if (!CpuAlgorithmCatalog.choices.some((choice) => choice.kind === algorithm)) return
+    this.setState({
+      cpuAlgorithm: algorithm, cpuSession: this.state.cpuSession + 1, cpuActionActive: true,
+      diskAlgorithm: null, diskActionActive: false,
+      selected: null, scene: null, actionOpen: false, selectedAction: null, actionRunning: false,
+      actionValue: undefined, actionUpperValue: undefined,
+      inputRequest: null, overviewInformation: null, structureInformation: null,
+      algorithmInformation: null, menuOpen: false, searchOpen: false,
+      menu: new MenuNavigation('advanced-algorithms', null, 'fundamental', 'cpu'),
+    })
+  }
+
+  private showCpuInformation = (algorithm: CpuAlgorithmKind): void => {
+    this.setState({ overviewInformation: CpuAlgorithmCatalog.describe(algorithm) })
+  }
+
+  private resetCpu = (): void => { this.cpuWorkspace.current?.reset() }
+
+  private cpuReset = (): void => {
+    this.setState({ cpuActionActive: false, overviewInformation: null })
+  }
+
   private selectGroup = (group: MenuStructureGroupKind): void => {
     this.setState({ menu: this.state.menu.selectGroup(group) })
   }
@@ -495,6 +529,10 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private selectSearchResult = (result: MenuSearchResult): void => {
+    if ('cpuAlgorithm' in result) {
+      this.selectCpuAlgorithm(result.cpuAlgorithm)
+      return
+    }
     if ('diskAlgorithm' in result) {
       this.selectDiskAlgorithm(result.diskAlgorithm)
       return
@@ -533,6 +571,8 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.setState({
       diskAlgorithm: null,
       diskActionActive: false,
+      cpuAlgorithm: null,
+      cpuActionActive: false,
       selected: kind,
       selectedScope: menu.actionScope,
       scene: StructureCatalog.createPreview(
@@ -1395,13 +1435,13 @@ export default class App extends Component<Record<string, never>, AppState> {
               <span className="brand-caption">Visualize the idea.</span>
             </span>
           </div>
-          {(selected || this.state.diskAlgorithm) && (
+          {(selected || this.state.diskAlgorithm || this.state.cpuAlgorithm) && (
             <div className="header-playback">
-              {(this.state.selectedAction !== null || this.state.diskActionActive) && (
+              {(this.state.selectedAction !== null || this.state.diskActionActive || this.state.cpuActionActive) && (
                 <button
                   className="primary-button header-action-button"
-                  onClick={this.state.diskAlgorithm ? this.resetDisk : this.resetStructure}
-                  aria-label={this.state.diskAlgorithm ? 'Reset disk workload' : 'Reset structure'}
+                  onClick={this.state.cpuAlgorithm ? this.resetCpu : this.state.diskAlgorithm ? this.resetDisk : this.resetStructure}
+                  aria-label={this.state.cpuAlgorithm ? 'Reset CPU lesson' : this.state.diskAlgorithm ? 'Reset disk workload' : 'Reset structure'}
                 >
                   <svg
                     width="18"
@@ -1457,6 +1497,7 @@ export default class App extends Component<Record<string, never>, AppState> {
           onAlgorithmGroupSelected={this.selectAlgorithmGroup}
           onAdvancedAlgorithmGroupSelected={this.selectAdvancedAlgorithmGroup}
           onDiskAlgorithmSelected={this.selectDiskAlgorithm}
+          onCpuAlgorithmSelected={this.selectCpuAlgorithm}
           onBack={this.backInMenu}
         />
 
@@ -1480,7 +1521,17 @@ export default class App extends Component<Record<string, never>, AppState> {
         )}
 
         <main className="workspace">
-          {this.state.diskAlgorithm ? (
+          {this.state.cpuAlgorithm ? (
+            <CpuWorkspace
+              key={`cpu-${this.state.cpuSession}`}
+              ref={this.cpuWorkspace}
+              algorithm={this.state.cpuAlgorithm}
+              onBack={this.openMenu}
+              onSelect={this.selectCpuAlgorithm}
+              onInformation={this.showCpuInformation}
+              onReset={this.cpuReset}
+            />
+          ) : this.state.diskAlgorithm ? (
             <DiskWorkspace
               key={this.state.diskSession}
               ref={this.diskWorkspace}
