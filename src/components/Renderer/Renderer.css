@@ -344,6 +344,7 @@
 @media (max-width: 800px) {
   .renderer-content {
     flex-direction: column;
+    flex-wrap: nowrap;
   }
   .renderer-stage {
     flex-basis: auto;
