@@ -223,7 +223,7 @@ test('reopening the structure picker restores its group and prevents cross-group
 
 test('root categories split structures and reject groups from another category', () => {
   assert.deepEqual(MenuNavigation.categories.map((category) => category.name), [
-    'Fundamental Data Structures', 'Advanced Data Structures', 'Data Structures Algorithms',
+    'Fundamental Data Structures', 'Data Structures Algorithms', 'Advanced Data Structures', 'Real Systems Algorithms',
   ])
   const root = new MenuNavigation()
   const fundamental = root.selectCategory('fundamental')
@@ -235,6 +235,64 @@ test('root categories split structures and reject groups from another category',
   assert.throws(() => advanced.selectGroup('linear'), /current category/)
   assert.deepEqual(advanced.back(), root)
   assert.deepEqual(fundamental.back(), root)
+})
+
+test('advanced hardware categories have reversible paths and no structure selection', () => {
+  const root = new MenuNavigation()
+  const advanced = root.selectCategory('advanced-algorithms')
+  assert.equal(advanced.title, 'Real Systems Algorithms')
+  assert.deepEqual(advanced.getAdvancedAlgorithmGroups().map((group) => group.name), ['Hardware', 'Network'])
+  assert.deepEqual(advanced.getPath(), ['Real Systems Algorithms'])
+  assert.deepEqual(advanced.back(), root)
+  const hardware = advanced.selectAdvancedAlgorithmGroup('hardware')
+  assert.deepEqual(hardware.getAdvancedAlgorithmGroups().map((group) => group.name), ['Disks', 'Memory', 'CPU'])
+  assert.equal(hardware.backLabel, 'Real Systems Algorithms')
+  assert.deepEqual(hardware.back(), advanced)
+  for (const kind of ['disks', 'memory', 'cpu']) {
+    const leaf = hardware.selectAdvancedAlgorithmGroup(kind)
+    assert.deepEqual(leaf.getPath(), ['Real Systems Algorithms', 'Hardware', leaf.title])
+    assert.equal(leaf.backLabel, 'Hardware')
+    assert.deepEqual(leaf.back(), hardware)
+    assert.deepEqual(leaf.back().back().back(), root)
+    assert.deepEqual(leaf.getAdvancedAlgorithmGroups(), [])
+    assert.deepEqual(leaf.getStructures(), [])
+    assert.deepEqual(leaf.getGroups(), [])
+    assert.throws(() => leaf.selectStructure('array'), /current group/)
+  }
+})
+
+test('advanced network categories follow OSI layer order and preserve their parent', () => {
+  const advanced = new MenuNavigation().selectCategory('advanced-algorithms')
+  const network = advanced.selectAdvancedAlgorithmGroup('network')
+  assert.deepEqual(network.getAdvancedAlgorithmGroups().map((group) => group.name), [
+    'Physical', 'Data Link', 'Network', 'Transport', 'Session', 'Presentation', 'Application',
+  ])
+  for (const group of network.getAdvancedAlgorithmGroups()) {
+    const layer = network.selectAdvancedAlgorithmGroup(group.kind)
+    assert.equal(layer.title, group.name)
+    assert.deepEqual(layer.getPath(), ['Real Systems Algorithms', 'Network', group.name])
+    assert.equal(layer.backLabel, 'Network')
+    assert.deepEqual(layer.back(), network)
+    assert.deepEqual(layer.getAdvancedAlgorithmGroups(), [])
+    assert.deepEqual(layer.getStructures(), [])
+  }
+  assert.deepEqual(network.back(), advanced)
+})
+
+test('advanced algorithm navigation rejects skipped levels and unrelated branches', () => {
+  const root = new MenuNavigation()
+  const advanced = root.selectCategory('advanced-algorithms')
+  const hardware = advanced.selectAdvancedAlgorithmGroup('hardware')
+  const network = advanced.selectAdvancedAlgorithmGroup('network')
+  assert.throws(() => root.selectAdvancedAlgorithmGroup('hardware'), /Real Systems Algorithms/)
+  assert.throws(() => root.selectCategory('algorithms').selectAdvancedAlgorithmGroup('network'), /Real Systems Algorithms/)
+  assert.throws(() => advanced.selectAdvancedAlgorithmGroup('cpu'), /current category/)
+  assert.throws(() => hardware.selectAdvancedAlgorithmGroup('physical'), /current category/)
+  assert.throws(() => network.selectAdvancedAlgorithmGroup('memory'), /current category/)
+  assert.throws(() => advanced.selectGroup('linear'), /Overview/)
+  assert.throws(() => advanced.selectAlgorithmGroup('sorting'), /Algorithms/)
+  assert.deepEqual(root.getAdvancedAlgorithmGroups(), [])
+  assert.deepEqual(hardware.getPath(), ['Real Systems Algorithms', 'Hardware'])
 })
 
 test('every implemented structure belongs to one menu track and subject', () => {

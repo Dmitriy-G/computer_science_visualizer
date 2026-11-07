@@ -277,6 +277,7 @@ import ActionInput from '../ActionInput/ActionInput.tsx'
 import { ActionInputRequest } from '../../visualization/ActionInputRequest.ts'
 import { MenuNavigation } from '../MainMenu/MenuNavigation.ts'
 import type { MenuCategoryKind, AlgorithmGroupKind } from '../MainMenu/MenuNavigation.ts'
+import type { AdvancedAlgorithmGroupKind } from '../MainMenu/AdvancedAlgorithmCatalog.ts'
 import type { MenuSearchResult } from '../MainMenu/Search/MenuSearchIndex.ts'
 import type { MenuStructureGroupKind } from '../MainMenu/MenuStructureCatalog.ts'
 import Renderer from '../Renderer/Renderer.tsx'
@@ -440,6 +441,10 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private selectAlgorithmGroup = (group: AlgorithmGroupKind): void => {
     this.setState({ menu: this.state.menu.selectAlgorithmGroup(group) })
+  }
+
+  private selectAdvancedAlgorithmGroup = (group: AdvancedAlgorithmGroupKind): void => {
+    this.setState({ menu: this.state.menu.selectAdvancedAlgorithmGroup(group) })
   }
 
   private selectGroup = (group: MenuStructureGroupKind): void => {
@@ -1410,6 +1415,7 @@ export default class App extends Component<Record<string, never>, AppState> {
           onCategorySelected={this.selectCategory}
           onGroupSelected={this.selectGroup}
           onAlgorithmGroupSelected={this.selectAlgorithmGroup}
+          onAdvancedAlgorithmGroupSelected={this.selectAdvancedAlgorithmGroup}
           onBack={this.backInMenu}
         />
 

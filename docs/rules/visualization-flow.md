@@ -15,8 +15,14 @@
    beside Categories or a back button in search. Close search with the × icon
    or Escape and restore focus to the header search icon. Keep back buttons in
    ordinary category and group navigation.
-2. Open the menu to see **Fundamental Data Structures**, **Advanced Data Structures**,
-   and **Data Structures Algorithms**. Structure assignments are defined in `MainMenu/MenuStructureCatalog.ts`,
+2. Open the menu to see **Fundamental Data Structures**, **Data Structures Algorithms**,
+   **Advanced Data Structures**, and **Real Systems Algorithms**, in that fixed order.
+   Root categories are excluded from alphabetical menu ordering. Real Systems Algorithms
+   opens Hardware (Disks, Memory, CPU) or Network (Physical, Data Link, Network,
+   Transport, Session, Presentation, Application in OSI layer order). These
+   category-only leaves show that no algorithms have been added yet. Back returns
+   through their parents without changing the current visualization or playback.
+   Structure assignments are defined in `MainMenu/MenuStructureCatalog.ts`,
    and mirrored by canonical model folders under the matching root and subject.
    Fundamental contains Linear, Queue / Priority, Trees, String / Text, Graphs,
    Set / Union, and Hash-based. Advanced contains Sequences, Sparse Arrays / Matrices,

@@ -197,6 +197,15 @@ Algorithm-specific layouts stay beside their algorithm helpers under
 
 ## Main menu
 
+Keep the Real Systems Algorithms category hierarchy in
+`MainMenu/AdvancedAlgorithmCatalog.ts`, separate from structure membership and
+data-structure algorithm scopes. Hardware contains Disks, Memory, and CPU;
+Network contains Physical, Data Link, Network, Transport, Session, Presentation,
+and Application in OSI layer order. These requested category-only paths show an
+empty-state message until examples exist. Reuse MainMenu and MenuNavigation for
+selection and parent navigation; create implementation folders when examples are
+added rather than adding empty source directories.
+
 Keep the root menu's search component and catalog index in `MainMenu/Search/`.
 Place its search trigger in the app header between the menu button and brand
 icon. It opens the existing search panel directly; do not show a search trigger

@@ -11,6 +11,10 @@ Advanced Data Structures menu hierarchy. Their subjects and assignments are defi
 in MainMenu/MenuStructureCatalog.ts. Data Structures Algorithms contains Sorting
 (Array with forty-eight sorting algorithms) and Graphs Traversal; graph algorithm
 examples live in the latter.
+Real Systems Algorithms is a separate root menu branch for Hardware (Disks, Memory,
+CPU) and Network (the seven OSI layers). These are category-only navigation paths
+until algorithm examples are implemented; their catalog lives in
+MainMenu/AdvancedAlgorithmCatalog.ts.
 Use npm for dependency management.
 
 ## Required project rules

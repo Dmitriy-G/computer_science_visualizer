@@ -3,6 +3,7 @@ import type { MouseEvent, SyntheticEvent, ReactNode } from 'react'
 import type { MenuStructureGroupKind } from './MenuStructureCatalog.ts'
 import { MenuNavigation } from './MenuNavigation.ts'
 import type { MenuCategoryKind, AlgorithmGroupKind } from './MenuNavigation.ts'
+import type { AdvancedAlgorithmGroupKind } from './AdvancedAlgorithmCatalog.ts'
 import type { StructureKind } from '../../visualization/Scene.ts'
 import { ActionCatalog } from '../../visualization/ActionCatalog.ts'
 import { StructureInformation } from '../StructureInfo/StructureInformation.ts'
@@ -26,6 +27,7 @@ interface MainMenuProps {
   readonly onCategorySelected: (category: MenuCategoryKind) => void
   readonly onGroupSelected: (group: MenuStructureGroupKind) => void
   readonly onAlgorithmGroupSelected: (group: AlgorithmGroupKind) => void
+  readonly onAdvancedAlgorithmGroupSelected: (group: AdvancedAlgorithmGroupKind) => void
   readonly onBack: () => void
   readonly describeSearchAlgorithm: DescribeSearchAlgorithm
   readonly onSearchResultSelected: (result: MenuSearchResult) => void
@@ -116,6 +118,32 @@ export default class MainMenu extends Component<MainMenuProps> {
     return ordered
   }
 
+  private handleAdvancedAlgorithmGroup = (event: MouseEvent<HTMLButtonElement>): void => {
+    for (const group of this.props.navigation.getAdvancedAlgorithmGroups()) {
+      if (group.kind === event.currentTarget.dataset.advancedAlgorithmGroup) {
+        this.props.onAdvancedAlgorithmGroupSelected(group.kind)
+        return
+      }
+    }
+  }
+
+  private renderAdvancedAlgorithmGroups(): ReactNode {
+    const groups = this.props.navigation.getAdvancedAlgorithmGroups()
+    if (!groups.length) return <p className="menu-empty-state">No algorithms have been added to this category yet.</p>
+    const buttons: ReactNode[] = []
+    for (const group of groups) {
+      buttons.push(
+        <button className="structure-choice" key={group.kind} data-advanced-algorithm-group={group.kind} onClick={this.handleAdvancedAlgorithmGroup}>
+          <span className="choice-copy">
+            <strong title={group.name}>{group.name}</strong>
+            <small title={group.description}>{group.description}</small>
+          </span>
+        </button>,
+      )
+    }
+    return buttons
+  }
+
   private renderAlgorithmGroups(): ReactNode[] {
     const buttons: ReactNode[] = []
     for (const group of this.orderChoices(MenuNavigation.algorithmGroups)) {
@@ -130,7 +158,7 @@ export default class MainMenu extends Component<MainMenuProps> {
 
   private renderCategories(): ReactNode[] {
     const buttons: ReactNode[] = []
-    for (const category of this.orderChoices(MenuNavigation.categories)) {
+    for (const category of MenuNavigation.categories) {
       buttons.push(
         <button className="structure-choice" key={category.kind} data-category={category.kind} onClick={this.handleCategory}>
           <span className="choice-copy">
@@ -220,6 +248,7 @@ export default class MainMenu extends Component<MainMenuProps> {
       case 'algorithms': return null
       case 'algorithm-structures': return null
       case 'sorting': return null
+      case 'advanced-algorithms': return null
     }
   }
 
@@ -231,6 +260,7 @@ export default class MainMenu extends Component<MainMenuProps> {
       case 'algorithm-structures': return this.renderStructures()
       case 'algorithms': return this.renderAlgorithmGroups()
       case 'sorting': return this.renderStructures()
+      case 'advanced-algorithms': return this.renderAdvancedAlgorithmGroups()
     }
   }
 
