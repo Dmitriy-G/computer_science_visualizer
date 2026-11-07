@@ -31,18 +31,23 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: 8px 12px;
   color: var(--muted);
   font-size: 12px;
 }
 .diagram-size-controls {
   display: flex;
-  flex-wrap: wrap;
+  flex-shrink: 0;
+  margin-left: auto;
   gap: 6px;
 }
 .diagram-size-controls button {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
   min-height: 36px;
-  padding: 8px 12px;
+  padding: 7px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: #fff;
@@ -235,7 +240,6 @@
 .scene-legend {
   display: flex;
   flex-wrap: wrap;
-  align-self: flex-start;
   gap: 12px 22px;
   color: #7b8c9e;
   font: 10px var(--mono);
@@ -359,6 +363,7 @@
 }
 @media (pointer: coarse) {
   .diagram-size-controls button {
+    min-width: 44px;
     min-height: 44px;
   }
 }

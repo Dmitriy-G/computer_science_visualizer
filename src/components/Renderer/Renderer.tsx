@@ -16,23 +16,60 @@ interface RendererProps {
 
 interface RendererState {
   readonly actualSize: boolean
+  readonly showSizeControls: boolean
 }
 
 export default class Renderer extends Component<
   RendererProps,
   RendererState
 > {
-  public state: RendererState = { actualSize: false }
+  public state: RendererState = { actualSize: false, showSizeControls: false }
   private readonly viewport = createRef<HTMLDivElement>()
   private readonly svg = createRef<SVGSVGElement>()
+  private resizeObserver: ResizeObserver | null = null
+
+  public componentDidMount(): void {
+    this.resizeObserver = new ResizeObserver(this.updateSizeControls)
+    if (this.viewport.current) this.resizeObserver.observe(this.viewport.current)
+    window.addEventListener('resize', this.updateSizeControls)
+    this.updateSizeControls()
+  }
 
   public componentDidUpdate(previous: RendererProps): void {
+    if (previous.scene?.width !== this.props.scene?.width ||
+      previous.scene?.height !== this.props.scene?.height) {
+      this.updateSizeControls()
+    }
     if (previous.scene?.kind !== this.props.scene?.kind) {
       this.viewport.current?.scrollTo({ left: 0, top: 0, behavior: 'instant' })
       if (this.state.actualSize) this.setState({ actualSize: false })
       return
     }
     if (previous.scene !== this.props.scene) this.revealCurrentNode()
+  }
+
+  public componentWillUnmount(): void {
+    this.resizeObserver?.disconnect()
+    this.resizeObserver = null
+    window.removeEventListener('resize', this.updateSizeControls)
+  }
+
+  private updateSizeControls = (): void => {
+    const scene = this.props.scene
+    const viewport = this.viewport.current
+    let showSizeControls = false
+    if (scene && viewport) {
+      // Use the fit limits in either mode so actual-size scrollbars do not
+      // change whether the controls are needed.
+      const availableWidth = viewport.getBoundingClientRect().width
+      const maximumHeight = Number.parseFloat(window.getComputedStyle(viewport).maxHeight)
+      showSizeControls = availableWidth > 0 &&
+        (scene.width > availableWidth + 1 || scene.height > maximumHeight + 1)
+    }
+    const actualSize = showSizeControls && this.state.actualSize
+    if (showSizeControls !== this.state.showSizeControls || actualSize !== this.state.actualSize) {
+      this.setState({ showSizeControls, actualSize })
+    }
   }
 
   private fitDiagram = (): void => {
@@ -266,8 +303,8 @@ export default class Renderer extends Component<
         </title>
         <desc id="scene-description">
           {scene.count} {scene.countLabel ?? 'elements'}. Blue marks the current node, teal marks
-          visited nodes, and amber marks the new node. Use Fit diagram to see the
-          full structure, or Actual size to scroll through its details.
+          visited nodes, and amber marks the new node.
+          {this.state.showSizeControls && ' Use Fit diagram to see the full structure, or Actual size to scroll through its details.'}
         </desc>
         <defs>
           <marker
@@ -306,19 +343,50 @@ export default class Renderer extends Component<
           {scene && this.props.children}
           <div className="renderer-stage">
             {scene && (
-              <div className="scene-legend" role="group" aria-label="Node states">
-                <span>
-                  <i className="legend-dot current" />
-                  Current
-                </span>
-                <span>
-                  <i className="legend-dot visited" />
-                  Visited
-                </span>
-                <span>
-                  <i className="legend-dot added" />
-                  New node
-                </span>
+              <div className="diagram-tools">
+                <div className="scene-legend" role="group" aria-label="Node states">
+                  <span>
+                    <i className="legend-dot current" />
+                    Current
+                  </span>
+                  <span>
+                    <i className="legend-dot visited" />
+                    Visited
+                  </span>
+                  <span>
+                    <i className="legend-dot added" />
+                    New node
+                  </span>
+                </div>
+                {this.state.showSizeControls && (
+                  <div className="diagram-size-controls" role="group" aria-label="Diagram size">
+                    <button
+                      type="button"
+                      onClick={this.fitDiagram}
+                      aria-label="Fit diagram"
+                      title="Fit diagram"
+                      aria-pressed={!this.state.actualSize}
+                      aria-controls="diagram-viewport"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5" />
+                        <rect x="7" y="7" width="10" height="10" rx="1" />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={this.showActualSize}
+                      aria-label="Actual size"
+                      title="Actual size"
+                      aria-pressed={this.state.actualSize}
+                      aria-controls="diagram-viewport"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M14 4h6v6M20 4l-7 7M10 20H4v-6M4 20l7-7" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
               </div>
             )}
             {scene?.hint && (
@@ -329,15 +397,6 @@ export default class Renderer extends Component<
               </aside>
             )}
             <div id="renderer-code" className="renderer-code-host" />
-            {scene && (
-              <div className="diagram-tools">
-                <div className="diagram-size-controls" role="group" aria-label="Diagram size">
-                  <button type="button" onClick={this.fitDiagram} aria-pressed={!this.state.actualSize} aria-controls="diagram-viewport">Fit diagram</button>
-                  <button type="button" onClick={this.showActualSize} aria-pressed={this.state.actualSize} aria-controls="diagram-viewport">Actual size</button>
-                </div>
-                <span id="diagram-viewport-hint">{this.state.actualSize ? 'Scroll to explore the diagram.' : 'Showing the whole diagram.'}</span>
-              </div>
-            )}
             <div
               id="diagram-viewport"
               className="renderer-viewport"
@@ -345,7 +404,6 @@ export default class Renderer extends Component<
               tabIndex={scene ? 0 : -1}
               role={scene ? 'region' : undefined}
               aria-label={scene ? 'Scrollable data structure canvas' : undefined}
-              aria-describedby={scene ? 'diagram-viewport-hint' : undefined}
             >
               {scene ? (
                 this.renderScene(scene)
