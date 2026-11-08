@@ -355,7 +355,7 @@ test('Complex exposes twelve lessons directly, with reversible navigation and se
   const complex = hardware.selectAdvancedAlgorithmGroup('hardware-complex')
   assert.deepEqual(complex.getAdvancedAlgorithmGroups(), [])
   assert.equal(complex.getHardwareAlgorithms().length, 12)
-  assert.deepEqual(complex.getPath(), ['Real Systems Algorithms', 'Hardware', 'Complex'])
+  assert.deepEqual(complex.getPath(), ['System Components Overview', 'Hardware', 'Complex'])
   assert.deepEqual(complex.back(), hardware)
   assert.equal(hardware.getHardwareAlgorithms().length, 0)
   const network = new MenuNavigation().selectCategory('advanced-algorithms').selectAdvancedAlgorithmGroup('network').selectAdvancedAlgorithmGroup('network-complex')
@@ -364,7 +364,8 @@ test('Complex exposes twelve lessons directly, with reversible navigation and se
   for (const choice of HardwareAlgorithmCatalog.choices) {
     const result = index.find('algorithms', choice.name).find((entry) => entry.hardwareAlgorithm === choice.kind)
     assert.ok(result, choice.name)
-    assert.equal(result.context, 'Real Systems Algorithms / Hardware / Complex')
+    assert.equal(result.context, 'System Components Overview / Hardware / Complex')
+    assert.deepEqual(result.components, ['CPU', 'RAM', 'Bus'])
   }
   assert.ok(index.find('algorithms', 'Neoverse N1').some((entry) => entry.hardwareAlgorithm === 'lse-atomics'))
   assert.equal(index.find('structures', 'MFENCE').length, 0)

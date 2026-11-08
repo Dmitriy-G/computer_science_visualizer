@@ -2,6 +2,7 @@ import { PureComponent, createRef } from 'react'
 import type { ChangeEvent, MouseEvent, ReactNode } from 'react'
 import { MenuSearchIndex } from './MenuSearchIndex.ts'
 import type { DescribeSearchAlgorithm, MenuSearchResult, SearchTarget } from './MenuSearchIndex.ts'
+import OverviewTags from '../../OverviewTags/OverviewTags.tsx'
 import './MenuSearch.css'
 
 interface MenuSearchProps {
@@ -51,12 +52,16 @@ export default class MenuSearch extends PureComponent<MenuSearchProps, MenuSearc
       const description = `${result.context} · ${result.description}`
       buttons.push(
         <button className="structure-choice structure-choice--labeled" key={result.key} data-result={result.key} onClick={this.selectResult}>
-          <span className="usage-tags">
-            <span className={`usage-tag usage-tag--${result.realSystems ? 'real-systems' : 'educational'}`}>
-              {result.realSystems ? 'Real Systems' : 'Educational'}
+          {'components' in result ? (
+            <OverviewTags components={result.components} architectures={result.architectures} />
+          ) : (
+            <span className="usage-tags">
+              <span className={`usage-tag usage-tag--${result.realSystems ? 'real-systems' : 'educational'}`}>
+                {result.realSystems ? 'Real Systems' : 'Educational'}
+              </span>
+              {result.popular && <span className="usage-tag usage-tag--popular" title="Has at least three documented real examples.">Popular</span>}
             </span>
-            {result.popular && <span className="usage-tag usage-tag--popular" title="Has at least three documented real examples.">Popular</span>}
-          </span>
+          )}
           <span className="choice-copy">
             <strong title={result.name}>{result.name}</strong>
             <small title={description}>{description}</small>

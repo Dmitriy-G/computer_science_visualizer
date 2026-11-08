@@ -1,6 +1,6 @@
-import type { ActionDefinition, ActionPlan } from '../../../../../visualization/ActionDefinition.ts'
-import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
-import type { AnimationStep } from '../../../../../visualization/Scene.ts'
+import type { ActionDefinition, ActionPlan } from '../../../../visualization/ActionDefinition.ts'
+import type { AlgorithmInformation } from '../../../../visualization/AlgorithmInformation.ts'
+import type { AnimationStep } from '../../../../visualization/Scene.ts'
 import type { CpuModel } from './CpuModel.ts'
 import { CpuTrace } from './CpuTrace.ts'
 

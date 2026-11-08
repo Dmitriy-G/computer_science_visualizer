@@ -227,7 +227,7 @@ test('rewind and replay restore the original stack and do not repeat mutations',
 test('stack joins Linear with five actions and top-only mutation choices', () => {
   assert.equal(StructureCatalog.getGroupForStructure('stack'), 'linear')
   const navigation = new MenuNavigation().selectCategory().selectGroup('linear').selectStructure('stack')
-  assert.deepEqual(navigation.getPath(), [MenuNavigation.categoryName, 'Linear'])
+  assert.deepEqual(navigation.getPath(), ['Algorithms', MenuNavigation.categoryName, 'Linear'])
   const actions = ActionCatalog.getActions('stack')
   assert.deepEqual(actions.map((action) => action.kind), ['push', 'pop', 'peek', 'clear', 'search-value'])
   const scene = StructureCatalog.createPreview('stack', LinkedList.createDefault())

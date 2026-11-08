@@ -2,7 +2,9 @@
 
 All React components belong under `src/components/`.
 `App` is the root of Computer Science Visualizer. Feature folders mirror the
-menu hierarchy: root category, subject, structure, then action. Use
+data-structure category hierarchy: category, subject, structure, then action. The
+menu groups these categories under the Algorithms root; this extra navigation
+level does not add an Algorithms wrapper directory. Use
 `FundamentalDataStructures`, `AdvancedDataStructures`, and `DataStructuresAlgorithms`
 with exact PascalCase spelling. MainMenu/MenuStructureCatalog.ts defines structure
 membership. Do not retain a separate Overview folder or duplicate canonical models.
@@ -197,23 +199,79 @@ Algorithm-specific layouts stay beside their algorithm helpers under
 
 ## Main menu
 
-Keep the Real Systems Algorithms category hierarchy in
+Show Algorithms and System Components Overview at the root, in that order. Algorithms
+contains Fundamental Data Structures, Data Structures Algorithms, and Advanced
+Data Structures in that fixed order. Back navigation and restored selection paths
+include this Algorithms parent. Keep existing feature source directory names.
+
+Hardware overviews use their own component tags: CPU, RAM, Disk, and Bus. Store
+the relevant components in each overview's catalog choice and reuse
+`RealSystemsAlgorithms/OverviewTags/` across menu cards, workspace cards, and
+search results. Keep its styles separate from algorithm usage tags. Fundamental
+CPU mechanisms use CPU; current Complex lessons use CPU, RAM, and Bus for their
+processor, memory-system, and interconnect coverage. Disk is available for future
+device lessons. Overviews do not show Real Systems, Educational, or Popular tags.
+
+CPU-related overview cards may also show architecture tags from their catalog's
+`architectures` metadata. Use x86 for the named x86 fence and locked-instruction
+overviews, and ARM for the named Arm barrier, acquire/release, exclusive, LSE, and
+instruction-synchronization overviews. Architecture-independent mechanisms have an empty
+architecture list and show no architecture tag: this includes register renaming,
+out-of-order execution, history/return prediction, store buffering, cache-coherence
+protocols, and general TLB/table walking. A product cited as an example does not
+make the mechanism exclusive to that product's architecture. Render architecture
+tags alongside component tags in workspaces and search results. Add other
+architecture labels only when a corresponding specific overview exists. An empty
+architecture list does not imply that every processor implements the mechanism.
+For coherence protocols, distinguish MESI, MESIF, and MOESI and cite the exact
+protocol and cache/interconnect implementation. Keep only verified examples:
+MESIF currently cites Intel Xeon 7500-series; MOESI cites Arm Cortex-A53 and AMD
+Ryzen. Optional implementation notes explain this distinction in Real technologies.
+Use the overview-specific descriptions for search technology names so newly
+verified examples appear consistently in the popup and search results.
+
+Overview descriptions use the dedicated class-based dialog and stylesheet in
+`RealSystemsAlgorithms/SystemOverviewInfo/`, with the heading System Components
+overview. Its information contract contains the name, a short definition, the
+problem solved, an ordered flow, and sourced real technology/product usage. Show
+What it is, Problem it solves, Step-by-step flow, and Real technologies. Omit the
+Real products section from component overviews. Author each flow in no more than ten steps, combining related events
+when needed rather than dropping later steps. Keep each lesson's class-based
+overview description beside its animation in a matching `*Overview.ts` file.
+The CPU and Complex catalogs expose these through `describeOverview`; do not
+construct an animation to obtain popup text. Omit complexity tables and
+explanations, Teaching model, and Terms used in this action. Both hardware
+workspaces target `system-components-overview`.
+Keep AlgorithmInfo for data-structure actions and algorithms. Reuse global dialog
+viewport sizing, scrolling, and sticky close-control rules for the overview popup.
+
+Keep the System Components Overview category hierarchy in
 `MainMenu/AdvancedAlgorithmCatalog.ts`, separate from structure membership and
 data-structure algorithm scopes. Hardware and Network each contain Fundamental
 and Complex, always displaying Fundamental first and Complex second rather than
-sorting that pair alphabetically. Hardware/Fundamental contains Disks, Memory, and CPU;
+sorting that pair alphabetically. Choosing Hardware/Fundamental or Hardware/Complex
+opens its workspace action panel directly and closes MainMenu; do not render a
+second lesson list inside the menu. Each workspace can open with no lesson selected,
+showing all overview cards and their separate info buttons while the diagram waits
+for selection. The Renderer supports action children without a scene and accepts
+an optional empty-state message. Selecting an overview starts playback; its info
+button only opens information. Workspace Back and header menu reopen Hardware,
+where selecting the current group preserves its session. Hardware/Fundamental
+includes all implemented fundamental overviews without CPU, Disks, or Memory cards;
 Network/Fundamental contains Physical, Data Link, Network, Transport, Session,
 Presentation, and Application in OSI layer order. Complex categories describe
 cross-component hardware systems or systems spanning network layers. Unimplemented
 leaves show an empty-state message. Reuse MainMenu and MenuNavigation for parent
 navigation rather than adding empty implementation directories.
 
-Hardware/Fundamental/Disks is reserved for device/controller mechanisms and
-currently has no lessons. Do not place operating-system disk scheduling policies
-there. The former mq-deadline, BFQ, and Kyber lessons and destinations were removed.
+Do not add empty hardware-component categories or operating-system disk scheduling
+policies. The former mq-deadline, BFQ, and Kyber lessons and destinations were removed.
 
 Keep CPU hardware lessons under `RealSystemsAlgorithms/Hardware/Fundamental/CPU/`,
 with RegisterRenaming, OutOfOrder, BranchPrediction, and ReturnStack action folders.
+This source grouping is not a menu level. Search selections open the Fundamental
+workspace and start the selected lesson. Menu reopening and workspace Back lead to
+Hardware, without an intermediate lesson picker.
 Each owns its mechanism model, component, CSS, animation, layout, and sourced
 information. Diagrams show the enclosing CPU core, register files or history/
 return registers, instruction cache, and data-cache context. Highlight actual
@@ -223,14 +281,14 @@ CpuModel, CpuLayout, CpuTrace, and CpuLesson share only visual-state snapshots,
 scene generation, and playback contracts. Use the cpu-hardware Scene kind and
 distinct CPU search/menu destinations, preserving data-structure and Complex
 destinations. CpuWorkspace reuses Renderer, ActionView, ActionPlayback, and the
-shared information dialog and info icon styling. Keep CPU operating-system
+SystemOverviewInfo dialog and shared info icon styling. Keep CPU operating-system
 schedulers out of this branch. Cross-component cache/memory mechanisms belong
 directly under `RealSystemsAlgorithms/Hardware/Complex/`, without CPU, cache,
 or memory subcategory folders. Its twelve lesson folders own their models,
 components, CSS, animations, and sourced descriptions. HardwareModel,
 HardwareLayout, and HardwareLesson share snapshots, bounded recording, scene
 geometry, and playback contracts; HardwareWorkspace reuses Renderer,
-ActionView/ActionPlayback, and AlgorithmInfo. Use the hardware-system Scene kind
+ActionView/ActionPlayback, and SystemOverviewInfo. Use the hardware-system Scene kind
 and distinct HardwareAlgorithmCatalog menu/search destinations. CoherenceModel
 shares line-transfer primitives with explicit MOESI/MESIF state policies;
 PublicationModel shares data/flag observation primitives. Keep instruction and

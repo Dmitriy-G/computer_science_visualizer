@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { CpuModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CPU/CpuModel.ts'
-import { CpuAlgorithmCatalog } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CPU/CpuAlgorithmCatalog.ts'
-import { RegisterRenameModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CPU/RegisterRenaming/RegisterRenameModel.ts'
-import { OutOfOrderModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CPU/OutOfOrder/OutOfOrderModel.ts'
-import { BranchPredictorModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CPU/BranchPrediction/BranchPredictorModel.ts'
-import { ReturnStackModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CPU/ReturnStack/ReturnStackModel.ts'
+import { CpuModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CpuModel.ts'
+import { CpuAlgorithmCatalog } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CpuAlgorithmCatalog.ts'
+import { RegisterRenameModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/RegisterRenaming/RegisterRenameModel.ts'
+import { OutOfOrderModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/OutOfOrder/OutOfOrderModel.ts'
+import { BranchPredictorModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/BranchPrediction/BranchPredictorModel.ts'
+import { ReturnStackModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/ReturnStack/ReturnStackModel.ts'
 
 test('four hardware lessons have deterministic independent snapshots and leave their source unchanged', () => {
   assert.equal(CpuAlgorithmCatalog.choices.length, 4)

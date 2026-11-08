@@ -5,9 +5,10 @@ import type { ActionKind, ActionScope } from '../../../visualization/ActionCatal
 import { AlgorithmTechnologyCatalog } from '../../../visualization/AlgorithmTechnologyCatalog.ts'
 import type { AlgorithmInformation, AlgorithmTechnology } from '../../../visualization/AlgorithmInformation.ts'
 import type { StructureKind } from '../../../visualization/Scene.ts'
+import type { OverviewArchitectureKind, OverviewComponentKind } from '../../../visualization/OverviewComponent.ts'
 import { StructureInformation } from '../../StructureInfo/StructureInformation.ts'
-import { CpuAlgorithmCatalog } from '../../RealSystemsAlgorithms/Hardware/Fundamental/CPU/CpuAlgorithmCatalog.ts'
-import type { CpuAlgorithmKind } from '../../RealSystemsAlgorithms/Hardware/Fundamental/CPU/CpuModel.ts'
+import { CpuAlgorithmCatalog } from '../../RealSystemsAlgorithms/Hardware/Fundamental/CpuAlgorithmCatalog.ts'
+import type { CpuAlgorithmKind } from '../../RealSystemsAlgorithms/Hardware/Fundamental/CpuModel.ts'
 import { HardwareAlgorithmCatalog } from '../../RealSystemsAlgorithms/Hardware/Complex/HardwareAlgorithmCatalog.ts'
 import type { HardwareAlgorithmKind } from '../../RealSystemsAlgorithms/Hardware/Complex/HardwareModel.ts'
 
@@ -34,8 +35,8 @@ export interface CpuSearchResult {
   readonly description: string
   readonly context: string
   readonly symbol: string
-  readonly realSystems: boolean
-  readonly popular: boolean
+  readonly components: readonly OverviewComponentKind[]
+  readonly architectures: readonly OverviewArchitectureKind[]
 }
 
 export interface HardwareSearchResult {
@@ -45,8 +46,8 @@ export interface HardwareSearchResult {
   readonly description: string
   readonly context: string
   readonly symbol: string
-  readonly realSystems: boolean
-  readonly popular: boolean
+  readonly components: readonly OverviewComponentKind[]
+  readonly architectures: readonly OverviewArchitectureKind[]
 }
 
 export type MenuSearchResult = StructureSearchResult | CpuSearchResult | HardwareSearchResult
@@ -62,7 +63,7 @@ export class MenuSearchIndex {
 
   constructor(describe: DescribeSearchAlgorithm) {
     for (const algorithm of HardwareAlgorithmCatalog.choices) {
-      const information = HardwareAlgorithmCatalog.describe(algorithm.kind)
+      const information = HardwareAlgorithmCatalog.describeOverview(algorithm.kind)
       let text = `${algorithm.name} ${information.name}`
       if (information.realWorldUsage) text += this.technologyNames(information.realWorldUsage.technologies) + this.technologyNames(information.realWorldUsage.products)
       this.documents.push({
@@ -70,13 +71,13 @@ export class MenuSearchIndex {
         result: {
           key: `hardware:${algorithm.kind}`, hardwareAlgorithm: algorithm.kind,
           name: algorithm.name, description: algorithm.description,
-          context: 'Real Systems Algorithms / Hardware / Complex', symbol: 'HW',
-          realSystems: true, popular: false,
+          context: 'System Components Overview / Hardware / Complex', symbol: 'HW',
+          components: algorithm.components, architectures: algorithm.architectures,
         },
       })
     }
     for (const algorithm of CpuAlgorithmCatalog.choices) {
-      const information = CpuAlgorithmCatalog.describe(algorithm.kind)
+      const information = CpuAlgorithmCatalog.describeOverview(algorithm.kind)
       let text = `${algorithm.name} ${information.name}`
       if (information.realWorldUsage) text += this.technologyNames(information.realWorldUsage.technologies) + this.technologyNames(information.realWorldUsage.products)
       this.documents.push({
@@ -84,8 +85,8 @@ export class MenuSearchIndex {
         result: {
           key: `cpu:${algorithm.kind}`, cpuAlgorithm: algorithm.kind,
           name: algorithm.name, description: algorithm.description,
-          context: 'Real Systems Algorithms / Hardware / Fundamental / CPU', symbol: 'CPU',
-          realSystems: true, popular: false,
+          context: 'System Components Overview / Hardware / Fundamental', symbol: 'CPU',
+          components: algorithm.components, architectures: algorithm.architectures,
         },
       })
     }

@@ -5,14 +5,14 @@ import type { StructureKind } from '../../visualization/Scene.ts'
 import type { StructureDefinition } from '../../visualization/StructureCatalog.ts'
 import type { ActionScope } from '../../visualization/ActionCatalog.ts'
 import { AdvancedAlgorithmCatalog } from './AdvancedAlgorithmCatalog.ts'
-import type { AdvancedAlgorithmGroup, AdvancedAlgorithmGroupKind } from './AdvancedAlgorithmCatalog.ts'
-import { CpuAlgorithmCatalog } from '../RealSystemsAlgorithms/Hardware/Fundamental/CPU/CpuAlgorithmCatalog.ts'
-import type { CpuAlgorithmChoice } from '../RealSystemsAlgorithms/Hardware/Fundamental/CPU/CpuAlgorithmCatalog.ts'
+import type { AdvancedAlgorithmGroup, AdvancedAlgorithmGroupKind, HardwareOverviewGroupKind } from './AdvancedAlgorithmCatalog.ts'
+import { CpuAlgorithmCatalog } from '../RealSystemsAlgorithms/Hardware/Fundamental/CpuAlgorithmCatalog.ts'
+import type { CpuAlgorithmChoice } from '../RealSystemsAlgorithms/Hardware/Fundamental/CpuAlgorithmCatalog.ts'
 import { HardwareAlgorithmCatalog } from '../RealSystemsAlgorithms/Hardware/Complex/HardwareAlgorithmCatalog.ts'
 import type { HardwareAlgorithmChoice } from '../RealSystemsAlgorithms/Hardware/Complex/HardwareAlgorithmCatalog.ts'
 
-export type MenuScreen = 'categories' | 'groups' | 'structures' | 'algorithms' | 'sorting' | 'algorithm-structures' | 'advanced-algorithms'
-export type MenuCategoryKind = StructureCategoryKind | 'algorithms' | 'advanced-algorithms'
+export type MenuScreen = 'categories' | 'algorithm-categories' | 'groups' | 'structures' | 'algorithms' | 'sorting' | 'algorithm-structures' | 'advanced-algorithms'
+export type MenuCategoryKind = StructureCategoryKind | 'algorithm-categories' | 'algorithms' | 'advanced-algorithms'
 export type AlgorithmGroupKind = 'sorting' | 'graph-traversal'
 
 export interface MenuCategory {
@@ -34,17 +34,21 @@ export class MenuNavigation {
   public static readonly categoryName = 'Fundamental Data Structures'
   public static readonly advancedCategoryName = 'Advanced Data Structures'
   public static readonly algorithmsCategoryName = 'Data Structures Algorithms'
-  public static readonly advancedAlgorithmsCategoryName = 'Real Systems Algorithms'
+  public static readonly algorithmsRootName = 'Algorithms'
+  public static readonly advancedAlgorithmsCategoryName = 'System Components Overview'
   public static readonly algorithmGroups: readonly AlgorithmGroup[] = [
     { kind: 'sorting', name: 'Sorting', description: 'Sorting algorithms for data structures', symbol: '[]' },
     { kind: 'graph-traversal', name: 'Graphs Traversal', description: 'Reachability, shortest paths, ordering, and maximum flow', symbol: '→' },
   ]
   // Root categories follow this fixed order instead of alphabetical ordering.
   public static readonly categories: readonly MenuCategory[] = [
+    { kind: 'algorithm-categories', name: MenuNavigation.algorithmsRootName, description: 'Explore data structures, their operations, and algorithms', symbol: '+' },
+    { kind: 'advanced-algorithms', name: MenuNavigation.advancedAlgorithmsCategoryName, description: 'Explore hardware and network system overviews', symbol: '+' },
+  ]
+  public static readonly algorithmCategories: readonly MenuCategory[] = [
     { kind: 'fundamental', name: MenuNavigation.categoryName, description: 'Explore fundamental structures and their common operations', symbol: '≡' },
     { kind: 'algorithms', name: MenuNavigation.algorithmsCategoryName, description: 'Explore algorithms that work with data structures', symbol: '↔' },
     { kind: 'advanced', name: MenuNavigation.advancedCategoryName, description: 'Explore specialized structures, indexes, and storage techniques', symbol: '+' },
-    { kind: 'advanced-algorithms', name: MenuNavigation.advancedAlgorithmsCategoryName, description: 'Explore hardware and network algorithm categories', symbol: '+' },
   ]
   public readonly screen: MenuScreen
   public readonly group: MenuStructureGroupKind | null
@@ -55,7 +59,7 @@ export class MenuNavigation {
     if (screen === 'structures' && group === null)
       throw new Error('Structure menus require a group')
     if (advancedAlgorithmGroup !== null) {
-      if (screen !== 'advanced-algorithms') throw new Error('Advanced algorithm groups require Real Systems Algorithms')
+      if (screen !== 'advanced-algorithms') throw new Error('Advanced algorithm groups require System Components Overview')
       AdvancedAlgorithmCatalog.getGroup(advancedAlgorithmGroup)
     }
     this.screen = screen
@@ -80,6 +84,11 @@ export class MenuNavigation {
     return this.category === 'advanced' ? MenuNavigation.advancedCategoryName : MenuNavigation.categoryName
   }
 
+  public getCategories(): readonly MenuCategory[] {
+    if (this.screen === 'categories') return MenuNavigation.categories
+    return this.screen === 'algorithm-categories' ? MenuNavigation.algorithmCategories : []
+  }
+
   public getGroups(): readonly MenuStructureGroup[] {
     if (this.screen === 'advanced-algorithms') return []
     return MenuStructureCatalog.getGroups(this.category)
@@ -90,16 +99,22 @@ export class MenuNavigation {
     return AdvancedAlgorithmCatalog.getGroups(this.advancedAlgorithmGroup)
   }
 
+  public get hardwareOverviewGroup(): HardwareOverviewGroupKind | null {
+    if (this.screen !== 'advanced-algorithms') return null
+    const group = this.advancedAlgorithmGroup
+    return group === 'hardware-fundamental' || group === 'hardware-complex' ? group : null
+  }
+
   public getHardwareAlgorithms(): readonly HardwareAlgorithmChoice[] {
     return this.screen === 'advanced-algorithms' && this.advancedAlgorithmGroup === 'hardware-complex' ? HardwareAlgorithmCatalog.choices : []
   }
 
   public getCpuAlgorithms(): readonly CpuAlgorithmChoice[] {
-    return this.screen === 'advanced-algorithms' && this.advancedAlgorithmGroup === 'cpu' ? CpuAlgorithmCatalog.choices : []
+    return this.screen === 'advanced-algorithms' && this.advancedAlgorithmGroup === 'hardware-fundamental' ? CpuAlgorithmCatalog.choices : []
   }
 
   public selectAdvancedAlgorithmGroup(kind: AdvancedAlgorithmGroupKind): MenuNavigation {
-    if (this.screen !== 'advanced-algorithms') throw new Error('Choose a group from Real Systems Algorithms')
+    if (this.screen !== 'advanced-algorithms') throw new Error('Choose a group from System Components Overview')
     const group = AdvancedAlgorithmCatalog.getGroup(kind)
     if (group.parent !== this.advancedAlgorithmGroup) throw new Error('Choose a group from the current category')
     return new MenuNavigation('advanced-algorithms', null, 'fundamental', kind)
@@ -133,6 +148,7 @@ export class MenuNavigation {
 
   public selectCategory(kind: MenuCategoryKind = 'fundamental'): MenuNavigation {
     switch (kind) {
+      case 'algorithm-categories': return new MenuNavigation('algorithm-categories')
       case 'fundamental': return new MenuNavigation('groups', null, 'fundamental')
       case 'advanced': return new MenuNavigation('groups', null, 'advanced')
       case 'algorithms': return new MenuNavigation('algorithms')
@@ -163,11 +179,13 @@ export class MenuNavigation {
     }
     if (this.screen === 'algorithm-structures' || this.screen === 'sorting') return new MenuNavigation('algorithms')
     if (this.screen === 'structures') return new MenuNavigation('groups', null, this.category)
+    if (this.screen === 'groups' || this.screen === 'algorithms') return new MenuNavigation('algorithm-categories')
     return new MenuNavigation()
   }
 
   public get title(): string {
     if (this.screen === 'categories') return 'Categories'
+    if (this.screen === 'algorithm-categories') return MenuNavigation.algorithmsRootName
     if (this.screen === 'algorithms') return MenuNavigation.algorithmsCategoryName
     if (this.screen === 'advanced-algorithms') {
       return this.advancedAlgorithmGroup === null ? MenuNavigation.advancedAlgorithmsCategoryName : AdvancedAlgorithmCatalog.getGroup(this.advancedAlgorithmGroup).name
@@ -183,13 +201,15 @@ export class MenuNavigation {
       const parent = AdvancedAlgorithmCatalog.getGroup(this.advancedAlgorithmGroup).parent
       return parent === null ? MenuNavigation.advancedAlgorithmsCategoryName : AdvancedAlgorithmCatalog.getGroup(parent).name
     }
-    if (this.screen === 'algorithm-structures' || this.screen === 'sorting') return 'Algorithms'
+    if (this.screen === 'algorithm-structures' || this.screen === 'sorting') return MenuNavigation.algorithmsCategoryName
     if (this.screen === 'structures') return 'Structure groups'
+    if (this.screen === 'groups' || this.screen === 'algorithms') return MenuNavigation.algorithmsRootName
     return 'Categories'
   }
 
   public getPath(): readonly string[] {
     if (this.screen === 'categories') return []
+    if (this.screen === 'algorithm-categories') return [MenuNavigation.algorithmsRootName]
     if (this.screen === 'advanced-algorithms') {
       const path: string[] = []
       let group = this.advancedAlgorithmGroup
@@ -201,9 +221,9 @@ export class MenuNavigation {
       path.unshift(MenuNavigation.advancedAlgorithmsCategoryName)
       return path
     }
-    if (this.screen === 'algorithms') return [MenuNavigation.algorithmsCategoryName]
-    if (this.screen === 'algorithm-structures' || this.screen === 'sorting') return [MenuNavigation.algorithmsCategoryName, this.title]
-    const path = [this.categoryName]
+    if (this.screen === 'algorithms') return [MenuNavigation.algorithmsRootName, MenuNavigation.algorithmsCategoryName]
+    if (this.screen === 'algorithm-structures' || this.screen === 'sorting') return [MenuNavigation.algorithmsRootName, MenuNavigation.algorithmsCategoryName, this.title]
+    const path = [MenuNavigation.algorithmsRootName, this.categoryName]
     if (this.group) path.push(MenuStructureCatalog.getGroup(this.group).name)
     return path
   }

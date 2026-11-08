@@ -4,8 +4,6 @@ import type { MenuStructureGroupKind } from './MenuStructureCatalog.ts'
 import { MenuNavigation } from './MenuNavigation.ts'
 import type { MenuCategoryKind, AlgorithmGroupKind } from './MenuNavigation.ts'
 import type { AdvancedAlgorithmGroupKind } from './AdvancedAlgorithmCatalog.ts'
-import type { HardwareAlgorithmKind } from '../RealSystemsAlgorithms/Hardware/Complex/HardwareModel.ts'
-import type { CpuAlgorithmKind } from '../RealSystemsAlgorithms/Hardware/Fundamental/CPU/CpuModel.ts'
 import type { StructureKind } from '../../visualization/Scene.ts'
 import { ActionCatalog } from '../../visualization/ActionCatalog.ts'
 import { StructureInformation } from '../StructureInfo/StructureInformation.ts'
@@ -30,8 +28,6 @@ interface MainMenuProps {
   readonly onGroupSelected: (group: MenuStructureGroupKind) => void
   readonly onAlgorithmGroupSelected: (group: AlgorithmGroupKind) => void
   readonly onAdvancedAlgorithmGroupSelected: (group: AdvancedAlgorithmGroupKind) => void
-  readonly onHardwareAlgorithmSelected: (algorithm: HardwareAlgorithmKind) => void
-  readonly onCpuAlgorithmSelected: (algorithm: CpuAlgorithmKind) => void
   readonly onBack: () => void
   readonly describeSearchAlgorithm: DescribeSearchAlgorithm
   readonly onSearchResultSelected: (result: MenuSearchResult) => void
@@ -96,7 +92,7 @@ export default class MainMenu extends Component<MainMenuProps> {
   }
 
   private handleCategory = (event: MouseEvent<HTMLButtonElement>): void => {
-    for (const category of MenuNavigation.categories) {
+    for (const category of this.props.navigation.getCategories()) {
       if (category.kind === event.currentTarget.dataset.category) {
         this.props.onCategorySelected(category.kind)
         return
@@ -132,30 +128,8 @@ export default class MainMenu extends Component<MainMenuProps> {
   }
 
   private renderAdvancedAlgorithmGroups(): ReactNode {
-    const hardwareAlgorithms = this.props.navigation.getHardwareAlgorithms()
-    if (hardwareAlgorithms.length) {
-      const buttons: ReactNode[] = []
-      for (const algorithm of hardwareAlgorithms) buttons.push(
-        <button type="button" className="structure-choice structure-choice--labeled" key={algorithm.kind} data-hardware-algorithm={algorithm.kind} onClick={this.handleHardwareAlgorithm}>
-          <span className="usage-tags"><span className="usage-tag usage-tag--real-systems">Real Systems</span></span>
-          <span className="choice-copy"><strong title={algorithm.name}>{algorithm.name}</strong><small title={algorithm.description}>{algorithm.description}</small></span>
-        </button>,
-      )
-      return buttons
-    }
-    const cpuAlgorithms = this.props.navigation.getCpuAlgorithms()
-    if (cpuAlgorithms.length) {
-      const buttons: ReactNode[] = []
-      for (const algorithm of cpuAlgorithms) buttons.push(
-        <button type="button" className="structure-choice structure-choice--labeled" key={algorithm.kind} data-cpu-algorithm={algorithm.kind} onClick={this.handleCpuAlgorithm}>
-          <span className="usage-tags"><span className="usage-tag usage-tag--real-systems">Real Systems</span></span>
-          <span className="choice-copy"><strong title={algorithm.name}>{algorithm.name}</strong><small title={algorithm.description}>{algorithm.description}</small></span>
-        </button>,
-      )
-      return buttons
-    }
     const groups = this.props.navigation.getAdvancedAlgorithmGroups()
-    if (!groups.length) return <p className="menu-empty-state">No algorithms have been added to this category yet.</p>
+    if (!groups.length) return <p className="menu-empty-state">No overviews have been added to this category yet.</p>
     const buttons: ReactNode[] = []
     const parent = this.props.navigation.advancedAlgorithmGroup
     const fixedOrder = parent === 'hardware' || parent === 'network' || parent === 'network-fundamental'
@@ -173,18 +147,6 @@ export default class MainMenu extends Component<MainMenuProps> {
     return buttons
   }
 
-  private handleHardwareAlgorithm = (event: MouseEvent<HTMLButtonElement>): void => {
-    for (const algorithm of this.props.navigation.getHardwareAlgorithms()) {
-      if (algorithm.kind === event.currentTarget.dataset.hardwareAlgorithm) this.props.onHardwareAlgorithmSelected(algorithm.kind)
-    }
-  }
-
-  private handleCpuAlgorithm = (event: MouseEvent<HTMLButtonElement>): void => {
-    for (const algorithm of this.props.navigation.getCpuAlgorithms()) {
-      if (algorithm.kind === event.currentTarget.dataset.cpuAlgorithm) this.props.onCpuAlgorithmSelected(algorithm.kind)
-    }
-  }
-
   private renderAlgorithmGroups(): ReactNode[] {
     const buttons: ReactNode[] = []
     for (const group of this.orderChoices(MenuNavigation.algorithmGroups)) {
@@ -199,7 +161,7 @@ export default class MainMenu extends Component<MainMenuProps> {
 
   private renderCategories(): ReactNode[] {
     const buttons: ReactNode[] = []
-    for (const category of MenuNavigation.categories) {
+    for (const category of this.props.navigation.getCategories()) {
       buttons.push(
         <button className="structure-choice" key={category.kind} data-category={category.kind} onClick={this.handleCategory}>
           <span className="choice-copy">
@@ -284,6 +246,7 @@ export default class MainMenu extends Component<MainMenuProps> {
   private getDescription(): string | null {
     switch (this.props.navigation.screen) {
       case 'categories': return 'Choose a category to explore.'
+      case 'algorithm-categories': return null
       case 'groups': return null
       case 'structures': return null
       case 'algorithms': return null
@@ -296,6 +259,7 @@ export default class MainMenu extends Component<MainMenuProps> {
   private renderChoices(): ReactNode {
     switch (this.props.navigation.screen) {
       case 'categories': return this.renderCategories()
+      case 'algorithm-categories': return this.renderCategories()
       case 'groups': return this.renderGroups()
       case 'structures': return this.renderStructures()
       case 'algorithm-structures': return this.renderStructures()

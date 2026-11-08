@@ -1,0 +1,87 @@
+.system-overview-info {
+  --dialog-width: 640px;
+  padding: 24px;
+  color: var(--ink);
+  border: 1px solid #dce5f0;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 18px #25374c08;
+}
+.system-overview-info::backdrop {
+  background: #15273b47;
+  backdrop-filter: blur(3px);
+}
+.system-overview-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.system-overview-heading .icon-button {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+.system-overview-info h2 {
+  margin: 10px 0 8px;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+.system-overview-summary,
+.system-overview-section p,
+.system-overview-section li {
+  color: #5c7088;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.system-overview-summary {
+  margin: 0;
+}
+.system-overview-section {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.system-overview-introduction {
+  padding-top: 0;
+  border-top: 0;
+}
+.system-overview-section h3 {
+  margin: 0 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.system-overview-section p {
+  margin: 0;
+}
+.system-overview-section .system-overview-implementation-note {
+  margin-bottom: 12px;
+}
+.system-overview-section ul,
+.system-overview-section ol {
+  margin: 0;
+  padding-left: 20px;
+}
+.system-overview-section ol li::marker {
+  color: var(--ink);
+  font-weight: 600;
+}
+.system-overview-section li + li {
+  margin-top: 10px;
+}
+.system-overview-section a {
+  color: #2e66b1;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.system-overview-section a:focus-visible {
+  outline: 2px solid #2e66b1;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+@media (max-width: 650px) {
+  .system-overview-info {
+    padding: 18px;
+  }
+}

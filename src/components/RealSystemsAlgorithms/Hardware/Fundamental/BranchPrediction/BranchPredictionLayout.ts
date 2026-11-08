@@ -1,4 +1,4 @@
-import { HardwareDiagram } from '../../../../../../visualization/HardwareDiagram.ts'
+import { HardwareDiagram } from '../../../../../visualization/HardwareDiagram.ts'
 
 export class BranchPredictionLayout {
   public static create(flow: string, index: number, predicted: boolean | null, actual: boolean | null, correct: number, resolved: number): HardwareDiagram {

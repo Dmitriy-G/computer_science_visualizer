@@ -1,20 +1,21 @@
 import { Component, createRef } from 'react'
 import type { MouseEvent, ReactNode } from 'react'
-import type { Scene } from '../../../../../visualization/Scene.ts'
-import Renderer from '../../../../Renderer/Renderer.tsx'
+import type { Scene } from '../../../../visualization/Scene.ts'
+import Renderer from '../../../Renderer/Renderer.tsx'
 import { CpuAlgorithmCatalog } from './CpuAlgorithmCatalog.ts'
 import { CpuModel } from './CpuModel.ts'
 import type { CpuAlgorithmKind } from './CpuModel.ts'
 import { CpuLayout } from './CpuLayout.ts'
+import OverviewTags from '../../../OverviewTags/OverviewTags.tsx'
 import BranchPrediction from './BranchPrediction/BranchPrediction.tsx'
 import OutOfOrder from './OutOfOrder/OutOfOrder.tsx'
 import RegisterRenaming from './RegisterRenaming/RegisterRenaming.tsx'
 import ReturnStack from './ReturnStack/ReturnStack.tsx'
-import '../../../../MainMenu/ActionMenu/ActionMenu.css'
+import '../../../MainMenu/ActionMenu/ActionMenu.css'
 import './CpuWorkspace.css'
 
 interface CpuWorkspaceProps {
-  readonly algorithm: CpuAlgorithmKind
+  readonly algorithm: CpuAlgorithmKind | null
   readonly onBack: () => void
   readonly onSelect: (algorithm: CpuAlgorithmKind) => void
   readonly onInformation: (algorithm: CpuAlgorithmKind) => void
@@ -22,7 +23,7 @@ interface CpuWorkspaceProps {
 }
 
 interface CpuWorkspaceState {
-  readonly scene: Scene
+  readonly scene: Scene | null
   readonly active: boolean
   readonly running: boolean
 }
@@ -32,14 +33,23 @@ export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorksp
   private readonly heading = createRef<HTMLHeadingElement>()
   private readonly firstAlgorithm = createRef<HTMLButtonElement>()
   public state: CpuWorkspaceState = {
-    scene: this.preview(), active: true, running: true,
+    scene: this.props.algorithm ? this.preview() : null,
+    active: this.props.algorithm !== null, running: this.props.algorithm !== null,
   }
 
   private preview(): Scene {
     return CpuLayout.create(this.model)
   }
 
-  public componentDidMount(): void { this.heading.current?.focus() }
+  public componentDidMount(): void {
+    if (this.props.algorithm === null) this.focusFirstAction()
+    else this.heading.current?.focus()
+  }
+
+  public focusFirstAction(): void {
+    if (this.state.running) this.heading.current?.focus()
+    else this.firstAlgorithm.current?.focus()
+  }
 
   public reset(): void {
     this.setState({ active: false, running: false, scene: this.preview() }, () => {
@@ -65,11 +75,11 @@ export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorksp
     for (const choice of CpuAlgorithmCatalog.choices) rows.push(
       <div className="canvas-action-row" key={choice.kind}>
         <button type="button" className="canvas-action canvas-action--labeled" ref={rows.length === 0 ? this.firstAlgorithm : undefined} data-algorithm={choice.kind} onClick={this.select} disabled={this.state.running} aria-current={this.state.active && this.props.algorithm === choice.kind ? 'true' : undefined}>
-          <span className="usage-tags"><span className="usage-tag usage-tag--real-systems">Real Systems</span></span>
+          <OverviewTags components={choice.components} architectures={choice.architectures} />
           <span className="canvas-action-heading"><strong title={choice.name}>{choice.name}</strong></span>
           <span className="canvas-action-description" title={choice.description}>{choice.description}</span>
         </button>
-        <button type="button" className="action-info-button" data-algorithm={choice.kind} onClick={this.information} aria-label={`About ${choice.name}`} aria-haspopup="dialog" aria-controls="algorithm-overview">
+        <button type="button" className="action-info-button" data-algorithm={choice.kind} onClick={this.information} aria-label={`About ${choice.name}`} aria-haspopup="dialog" aria-controls="system-components-overview">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
             <circle cx="12" cy="12" r="9" />
             <path d="M12 11v6" strokeLinecap="round" />
@@ -82,7 +92,7 @@ export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorksp
   }
 
   private renderPlayback(): ReactNode {
-    if (!this.state.active) return null
+    if (!this.state.active || this.props.algorithm === null) return null
     const props = { model: this.model, onSceneChange: this.updateScene, onComplete: this.complete }
     switch (this.props.algorithm) {
       case 'branch-prediction': return <BranchPrediction {...props} />
@@ -94,11 +104,13 @@ export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorksp
 
   public render(): ReactNode {
     return <>
-      <Renderer scene={this.state.scene} onOpenMenu={this.props.onBack}>
+      <Renderer scene={this.state.scene} onOpenMenu={this.props.onBack} emptyState={<>
+        <h1>Choose a fundamental overview.</h1>
+        <p>Select an overview from the panel to start, or use its info button to learn more.</p>
+      </>}>
         <aside className="action-menu" aria-label="CPU hardware algorithms">
-          <button type="button" className="text-button action-menu-back-button" onClick={this.props.onBack}>← CPU</button>
-          <h2 ref={this.heading} tabIndex={-1}>CPU Hardware</h2>
-          <p className="action-menu-summary">Explore registers, caches, and execution inside one CPU core. Directional arrows show instruction, operand, result, and prediction flows. Information explains each processor example and the teaching model’s limits.</p>
+          <button type="button" className="text-button action-menu-back-button" onClick={this.props.onBack}>← Hardware</button>
+          <h2 ref={this.heading} tabIndex={-1}>Hardware / Fundamental</h2>
           <nav aria-label="CPU hardware mechanisms">{this.renderAlgorithms()}</nav>
         </aside>
       </Renderer>

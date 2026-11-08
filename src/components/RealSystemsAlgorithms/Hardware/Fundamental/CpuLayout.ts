@@ -1,5 +1,5 @@
-import type { Scene } from '../../../../../visualization/Scene.ts'
-import { HardwareSceneLayout } from '../../../../../visualization/HardwareSceneLayout.ts'
+import type { Scene } from '../../../../visualization/Scene.ts'
+import { HardwareSceneLayout } from '../../../../visualization/HardwareSceneLayout.ts'
 import type { CpuModel } from './CpuModel.ts'
 
 export class CpuLayout {

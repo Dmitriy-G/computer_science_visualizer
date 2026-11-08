@@ -1,13 +1,11 @@
+export type HardwareOverviewGroupKind = 'hardware-fundamental' | 'hardware-complex'
+
 export type AdvancedAlgorithmGroupKind =
   | 'hardware'
   | 'network'
-  | 'hardware-fundamental'
-  | 'hardware-complex'
+  | HardwareOverviewGroupKind
   | 'network-fundamental'
   | 'network-complex'
-  | 'disks'
-  | 'memory'
-  | 'cpu'
   | 'physical'
   | 'data-link'
   | 'network-layer'
@@ -25,15 +23,12 @@ export interface AdvancedAlgorithmGroup {
 
 export class AdvancedAlgorithmCatalog {
   public static readonly groups: readonly AdvancedAlgorithmGroup[] = [
-    { kind: 'hardware', parent: null, name: 'Hardware', description: 'Explore individual hardware components and algorithms that combine them into working systems.' },
-    { kind: 'network', parent: null, name: 'Network', description: 'Explore individual OSI layers and algorithms that combine layers into working networks.' },
-    { kind: 'hardware-fundamental', parent: 'hardware', name: 'Fundamental', description: 'Algorithms focused on one hardware component: disks, memory, or CPU.' },
+    { kind: 'hardware', parent: null, name: 'Hardware', description: 'Explore individual hardware components and mechanisms that combine them into working systems.' },
+    { kind: 'network', parent: null, name: 'Network', description: 'Explore individual OSI layers and mechanisms that combine layers into working networks.' },
+    { kind: 'hardware-fundamental', parent: 'hardware', name: 'Fundamental', description: 'Overviews focused on one hardware component: disks, memory, or CPU.' },
     { kind: 'hardware-complex', parent: 'hardware', name: 'Complex', description: 'Combine hardware components into systems, such as caching between CPU and memory.' },
-    { kind: 'network-fundamental', parent: 'network', name: 'Fundamental', description: 'Algorithms focused on one OSI layer and the tasks it performs.' },
+    { kind: 'network-fundamental', parent: 'network', name: 'Fundamental', description: 'Overviews focused on one OSI layer and the tasks it performs.' },
     { kind: 'network-complex', parent: 'network', name: 'Complex', description: 'Combine network layers into working systems, such as secure web communication.' },
-    { kind: 'disks', parent: 'hardware-fundamental', name: 'Disks', description: 'Storage devices, controllers, and hardware data paths.' },
-    { kind: 'memory', parent: 'hardware-fundamental', name: 'Memory', description: 'Memory allocation, paging, and replacement policies.' },
-    { kind: 'cpu', parent: 'hardware-fundamental', name: 'CPU', description: 'Processor cores, registers, caches, and the hardware flows that execute and predict instructions.' },
     { kind: 'physical', parent: 'network-fundamental', name: 'Physical', description: 'Layer 1: transmit bits as physical signals.' },
     { kind: 'data-link', parent: 'network-fundamental', name: 'Data Link', description: 'Layer 2: frames, link access, and error detection.' },
     { kind: 'network-layer', parent: 'network-fundamental', name: 'Network', description: 'Layer 3: packet addressing, routing, and forwarding.' },

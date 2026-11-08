@@ -1,5 +1,5 @@
-import type { NodeTone } from '../../../../../visualization/Scene.ts'
-import type { HardwareDiagram } from '../../../../../visualization/HardwareDiagram.ts'
+import type { NodeTone } from '../../../../visualization/Scene.ts'
+import type { HardwareDiagram } from '../../../../visualization/HardwareDiagram.ts'
 
 export type CpuAlgorithmKind = 'register-renaming' | 'out-of-order' | 'branch-prediction' | 'return-stack'
 

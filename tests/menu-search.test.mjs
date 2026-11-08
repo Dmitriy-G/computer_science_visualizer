@@ -83,10 +83,10 @@ test('CPU hardware search provides distinct fundamental algorithm destinations',
   for (const name of ['Register renaming', 'Out-of-order execution', 'History-based branch prediction', 'Return-address stack prediction']) {
     const results = index.find('algorithms', name).filter((result) => 'cpuAlgorithm' in result)
     assert.equal(results.length, 1)
-    assert.equal(results[0].realSystems, true)
-    assert.equal(results[0].context, 'Real Systems Algorithms / Hardware / Fundamental / CPU')
+    assert.deepEqual(results[0].components, ['CPU'])
+    assert.equal(results[0].context, 'System Components Overview / Hardware / Fundamental')
   }
-  assert.equal(index.find('algorithms', 'Intel Core').filter((result) => 'cpuAlgorithm' in result).length, 2)
+  assert.equal(index.find('algorithms', 'Intel Core').filter((result) => 'cpuAlgorithm' in result).length, 3)
   assert.equal(index.find('algorithms', 'Arm Cortex-A53').filter((result) => 'cpuAlgorithm' in result).length, 2)
   for (const name of ['EEVDF', 'CFS', 'SCHED_FIFO', 'SCHED_RR', 'SCHED_DEADLINE', 'ULE', 'FreeRTOS', 'Windows Priority', 'MOESI', 'DMB']) {
     assert.deepEqual(index.find('algorithms', name).filter((result) => 'cpuAlgorithm' in result), [])

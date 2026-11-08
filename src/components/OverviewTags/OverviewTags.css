@@ -1,0 +1,47 @@
+.overview-component-tags {
+  position: absolute;
+  top: 6px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+.overview-component-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 6px;
+  border: 1px solid;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 14px;
+  letter-spacing: 0.015em;
+  white-space: nowrap;
+}
+.overview-component-tag[data-component='CPU'] {
+  border-color: #c9d5ee;
+  background: #edf2fc;
+  color: #3a5689;
+}
+.overview-component-tag[data-component='RAM'] {
+  border-color: #bfdccc;
+  background: #eaf5ee;
+  color: #315e45;
+}
+.overview-component-tag[data-component='Disk'] {
+  border-color: #e6d1aa;
+  background: #fff4df;
+  color: #765025;
+}
+.overview-component-tag[data-component='Bus'] {
+  border-color: #d9c8e9;
+  background: #f4edfa;
+  color: #694484;
+}
+.overview-architecture-tag {
+  border-color: #cbd5e1;
+  background: #f1f5f9;
+  color: #475569;
+}

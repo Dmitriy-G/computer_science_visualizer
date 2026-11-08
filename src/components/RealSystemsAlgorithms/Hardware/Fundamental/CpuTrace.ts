@@ -1,4 +1,4 @@
-import type { AnimationStep } from '../../../../../visualization/Scene.ts'
+import type { AnimationStep } from '../../../../visualization/Scene.ts'
 import { CpuLayout } from './CpuLayout.ts'
 import { CpuModel } from './CpuModel.ts'
 

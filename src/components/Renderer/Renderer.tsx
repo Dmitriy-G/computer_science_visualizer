@@ -13,6 +13,7 @@ interface RendererProps {
   readonly scene: Scene | null
   readonly onOpenMenu: () => void
   readonly children?: ReactNode
+  readonly emptyState?: ReactNode
 }
 
 interface RendererState {
@@ -362,7 +363,7 @@ export default class Renderer extends Component<
     return (
       <section className="renderer" aria-label="Visualization workspace">
         <div className="renderer-content">
-          {scene && this.props.children}
+          {this.props.children}
           <div className="renderer-stage">
             {scene && (
               <div className="diagram-tools">
@@ -431,14 +432,18 @@ export default class Renderer extends Component<
                 this.renderScene(scene)
               ) : (
                 <div className="empty-canvas">
-                  <span className="empty-diagram" aria-hidden="true">
-                    □<span>—</span>□<span>—</span>□
-                  </span>
-                  <h1>Make the invisible visible.</h1>
-                  <p>Choose a data structure to bring it to life.</p>
-                  <button className="text-button" onClick={this.props.onOpenMenu}>
-                    Open the menu <span aria-hidden="true">↗</span>
-                  </button>
+                  {this.props.emptyState ?? (
+                    <>
+                      <span className="empty-diagram" aria-hidden="true">
+                        □<span>—</span>□<span>—</span>□
+                      </span>
+                      <h1>Make the invisible visible.</h1>
+                      <p>Choose a data structure to bring it to life.</p>
+                      <button className="text-button" onClick={this.props.onOpenMenu}>
+                        Open the menu <span aria-hidden="true">↗</span>
+                      </button>
+                    </>
+                  )}
                 </div>
               )}
             </div>

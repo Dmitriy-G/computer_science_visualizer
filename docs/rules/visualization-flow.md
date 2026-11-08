@@ -15,20 +15,44 @@
    beside Categories or a back button in search. Close search with the × icon
    or Escape and restore focus to the header search icon. Keep back buttons in
    ordinary category and group navigation.
-2. Open the menu to see **Fundamental Data Structures**, **Data Structures Algorithms**,
-   **Advanced Data Structures**, and **Real Systems Algorithms**, in that fixed order.
-   Root categories are excluded from alphabetical menu ordering. Real Systems Algorithms
+2. Open the menu to see **Algorithms** and **System Components Overview**, in that
+   fixed order. Algorithms contains **Fundamental Data Structures**,
+   **Data Structures Algorithms**, and **Advanced Data Structures**, in that order.
+   These category lists are excluded from alphabetical menu ordering. System Components Overview
    opens Hardware or Network, each containing Fundamental and Complex.
-   Hardware/Fundamental contains Disks, Memory, and CPU. Network/Fundamental
+   Choosing Hardware/Fundamental or Hardware/Complex closes the menu and opens
+   its workspace panel directly, with overview cards, component tags, and separate
+   information buttons. Show no intermediate lesson picker and start no animation
+   until an overview is selected. Fundamental includes four hardware execution and
+   prediction overviews without CPU, Disks, or Memory subcategories. Network/Fundamental
    contains Physical, Data Link, Network, Transport, Session, Presentation, and
    Application in OSI layer order. Complex covers systems combining components
-   or network layers. Disks is empty after removing OS scheduler lessons; CPU offers four
-   hardware execution and prediction lessons. Hardware/Complex directly lists twelve
+   or network layers. OS scheduler lessons have been removed. The Complex workspace lists twelve
    cross-component lessons for ordering, barriers, atomic updates, coherence,
    translation, and instruction synchronization, without CPU/memory subcategories.
-   Selecting a lesson starts its bounded trace in the shared renderer; its action
-   card offers the other Complex lessons and separate information buttons. Other empty leaves
-   show that no algorithms have been added yet. Back returns
+   Selecting a lesson starts its bounded trace in the shared renderer. Workspace
+   Back and the header menu reopen Hardware. Returning to the current group keeps
+   its playback session; selecting another group opens that group's idle panel.
+   Hardware overview cards in Fundamental and Complex workspace action lists and
+   search show component tags (CPU, RAM, Disk, Bus) from their catalog metadata,
+   instead of Real Systems, Educational, or Popular usage tags. Tag the existing
+   Fundamental CPU lessons with CPU and current Complex lessons with CPU, RAM,
+   and Bus. Reserve Disk for overviews that cover a disk.
+   Add x86 or ARM tags beside component tags for architecture-specific CPU
+   instruction overviews. Architecture-independent mechanisms receive no
+   architecture tag, regardless of the architecture of a cited example product.
+   This does not imply implementation by every processor. Real technologies lists
+   verified examples of the exact mechanism; optional implementation notes clarify
+   protocol distinctions and implementation coverage.
+   Overview info buttons open the dedicated System Components overview popup
+   with the name, What it is, Problem it solves, Step-by-step flow, Real
+   technologies. Do not show a Real products section in component overviews.
+   Give every overview a short definition, a
+   concrete explanation of the problem solved, and at most ten numbered flow
+   steps. Combine related events into one step for longer processes. Omit time and
+   memory complexities and explanations, Teaching model, and Terms used in this
+   action. Algorithm action dialogs retain their existing content.
+   Other empty leaves show that no overviews have been added yet. Back returns
    through their parents without changing the current visualization or playback.
    Structure assignments are defined in `MainMenu/MenuStructureCatalog.ts`,
    and mirrored by canonical model folders under the matching root and subject.
@@ -37,12 +61,12 @@
    Queues / Heaps, Search Trees, Multiway Trees, Range Queries, Spatial Indexes,
    Storage Indexes, Memory / I/O, Text / Search, Syntax, Hashing, Specialized Graphs,
    Integrity, and Probabilistic. Choose a group to see only its assigned structures.
-   Algorithms retains Sorting (Array with forty-eight sorting actions) and
+   Data Structures Algorithms retains Sorting (Array with forty-eight sorting actions) and
    Graphs Traversal (all eighteen graph entries), including BFS/DFS, Dijkstra for
    Weighted Graph, topological sorting for DAG, and maximum flow for Flow Network.
    Graph editing and value search remain in the structure categories. Browsing
    preserves the current visualization and playback. Back returns through the
-   selected subject and its root category. Reopening a selected structure restores
+   selected subject, its data-structure category, and Algorithms. Reopening a selected structure restores
    that same path, including after a search selection. Do not show a breadcrumb
    path or instruction text on the structure list.
 3. Selecting a structure loads an example containing 10 elements in the shared
@@ -340,7 +364,7 @@ entries have been removed from this branch.
 
 ## Real-system CPU hardware lessons
 
-Real Systems Algorithms > Hardware > Fundamental > CPU offers register renaming,
+System Components Overview > Hardware > Fundamental offers register renaming,
 out-of-order execution with in-order retirement, history-based branch prediction,
 and return-address stack prediction. Reuse shared playback, header Reset/progress,
 pseudocode, renderer, algorithm search, and information dialogs. Menu browsing and

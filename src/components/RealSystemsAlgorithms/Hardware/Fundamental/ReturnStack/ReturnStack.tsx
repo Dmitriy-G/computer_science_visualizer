@@ -1,4 +1,4 @@
-import ActionView from '../../../../../ActionPlayback/ActionView.tsx'
+import ActionView from '../../../../ActionPlayback/ActionView.tsx'
 import type { CpuModel } from '../CpuModel.ts'
 import { ReturnStackAnimation } from './ReturnStackAnimation.ts'
 import './ReturnStack.css'

@@ -1,4 +1,4 @@
-import { HardwareDiagram } from '../../../../../../visualization/HardwareDiagram.ts'
+import { HardwareDiagram } from '../../../../../visualization/HardwareDiagram.ts'
 
 export class OutOfOrderLayout {
   public static create(flow: string, id: string, unit: string, registers: string, head: string, loadPending: boolean): HardwareDiagram {

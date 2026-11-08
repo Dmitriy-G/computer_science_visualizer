@@ -1,4 +1,4 @@
-import { HardwareDiagram } from '../../../../../../visualization/HardwareDiagram.ts'
+import { HardwareDiagram } from '../../../../../visualization/HardwareDiagram.ts'
 
 export interface ReturnDiagramState {
   readonly flow: string

@@ -261,7 +261,7 @@ for (const definition of SetUnionStructureDefinitions.structures) {
     const picker = MenuNavigation.forStructure(definition.kind)
     const advanced = definition.kind === 'interval-set'
     assert.equal(picker.group, advanced ? 'range-queries-persistence' : 'set-union')
-    assert.deepEqual(picker.getPath(), advanced ? ['Advanced Data Structures', 'Range Queries'] : ['Fundamental Data Structures', 'Set / Union'])
+    assert.deepEqual(picker.getPath(), advanced ? ['Algorithms', 'Advanced Data Structures', 'Range Queries'] : ['Algorithms', 'Fundamental Data Structures', 'Set / Union'])
     assert.ok(StructureInformation.get(definition.kind).useCases.length >= 4)
     assert.ok(StructureInformation.get(definition.kind).technologies.every((technology) => technology.url.startsWith('https://')))
     const choices = ActionCatalog.getScopedActions(definition.kind, 'overview')
