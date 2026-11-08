@@ -27,12 +27,98 @@ test('four hardware lessons have deterministic independent snapshots and leave t
       const ids = new Set(step.scene.nodes.map((node) => node.id))
       assert.equal(ids.size, step.scene.nodes.length)
       assert.ok(step.scene.focusId === null || ids.has(step.scene.focusId))
+      assert.ok(step.scene.regions.some((region) => region.label === 'CPU / Core 0'))
+      assert.ok(step.scene.regions.some((region) => region.role === 'cache' && region.label.toLowerCase().includes('instruction')))
+      assert.ok(step.scene.regions.some((region) => region.role === 'cache' && region.label.toLowerCase().includes('data')))
+      assert.ok(step.scene.regions.some((region) => region.label.toLowerCase().includes('register')))
+      assert.ok(step.scene.edges.length > 0)
+      for (const edge of step.scene.edges) {
+        assert.ok(ids.has(edge.from), `${choice.kind}: missing ${edge.from}`)
+        assert.ok(ids.has(edge.to), `${choice.kind}: missing ${edge.to}`)
+        assert.equal(edge.directed, true)
+        assert.ok(edge.label.length > 0)
+      }
     }
     const firstValue = plan.steps[0].scene.nodes[0].displayValue
     plan.steps.at(-1).scene.nodes[0].displayValue = 'changed final snapshot'
     assert.equal(plan.steps[0].scene.nodes[0].displayValue, firstValue)
     assert.ok(CpuAlgorithmCatalog.describe(choice.kind).realWorldUsage.technologies.length > 0)
+    assert.ok(plan.steps.some((step) => step.scene.edges.some((edge) => edge.highlighted)))
+    assert.ok(CpuAlgorithmCatalog.describe(choice.kind).modelNotes.includes('not simulated'))
   }
+})
+
+test('rename operand arrows retain the captured physical source after a later write renames r1', () => {
+  const model = new RegisterRenameModel()
+  for (let index = 0; index < 4; index += 1) model.renameNext()
+  model.execute('I1')
+  model.execute('I2')
+  const snapshot = model.snapshot('I2')
+  const operands = snapshot.diagram.edges.filter((edge) => edge.highlighted && edge.id.startsWith('operand-'))
+  assert.deepEqual(operands.map((edge) => edge.from), ['physical-3'])
+  assert.equal(model.renameMap.get('r1'), 5)
+  assert.equal(model.physical[4], 8)
+  const copy = snapshot.clone()
+  copy.diagram.regions[0].label = 'mutated copied core'
+  assert.equal(snapshot.diagram.regions[0].label, 'CPU / Core 0')
+})
+
+test('out-of-order flow separates a load request, speculative execution, and architectural commit', () => {
+  const model = new OutOfOrderModel()
+  const active = (id) => model.snapshot().diagram.edges.find((edge) => edge.id === id).highlighted
+  model.requestLoad()
+  assert.equal(active('load-request'), true)
+  model.execute('I2')
+  assert.equal(active('complete'), true)
+  assert.equal(active('commit'), false)
+  assert.equal(model.architectural.get('r2'), 4)
+  assert.equal(model.retireNext(), null)
+  assert.equal(active('commit'), false)
+  model.execute('I1')
+  assert.equal(active('load-response'), true)
+  model.retireNext()
+  assert.equal(active('commit'), true)
+  assert.equal(model.architectural.get('r1'), 10)
+})
+
+test('branch training flows to the entry chosen before the history register changes', () => {
+  const model = new BranchPredictorModel()
+  model.predict('0x100')
+  assert.equal(model.snapshot().diagram.edges.find((edge) => edge.id === 'select').to, 'counter-0')
+  model.resolve(true)
+  assert.equal(model.history, 1)
+  const diagram = model.snapshot().diagram
+  const training = diagram.edges.find((edge) => edge.id === 'train')
+  assert.equal(training.to, 'counter-0')
+  assert.equal(training.highlighted, true)
+  assert.equal(diagram.edges.find((edge) => edge.id === 'history-update').highlighted, true)
+})
+
+test('return-stack underflow cannot produce a predicted-fetch transfer', () => {
+  const model = new ReturnStackModel()
+  for (let depth = 0; depth < 9; depth += 1) model.call(0x104 + depth * 0x100)
+  assert.equal(model.snapshot().diagram.edges.find((edge) => edge.id === 'push').highlighted, true)
+  for (let depth = 0; depth < 9; depth += 1) model.returnFromCall()
+  const snapshot = model.snapshot()
+  assert.equal(snapshot.diagram.edges.find((edge) => edge.id === 'pop').highlighted, false)
+  assert.equal(snapshot.diagram.edges.find((edge) => edge.id === 'predict-fetch').highlighted, false)
+  assert.equal(snapshot.diagram.edges.find((edge) => edge.id === 'resolve').highlighted, true)
+  assert.equal(snapshot.diagram.edges.find((edge) => edge.id === 'validate').highlighted, true)
+})
+
+test('return prediction steers fetch before the actual target is resolved', () => {
+  const model = new ReturnStackModel()
+  model.call(0x104)
+  assert.equal(model.predictReturn(), 0x104)
+  assert.equal(model.actual, null)
+  assert.equal(model.actualReturns.length, 1)
+  assert.equal(model.snapshot().diagram.edges.find((edge) => edge.id === 'predict-fetch').highlighted, true)
+  assert.equal(model.snapshot().diagram.edges.find((edge) => edge.id === 'resolve').highlighted, false)
+  assert.throws(() => model.predictReturn(), /pending/)
+  assert.equal(model.resolveReturn(), true)
+  assert.equal(model.actual, 0x104)
+  assert.equal(model.snapshot().diagram.edges.find((edge) => edge.id === 'resolve').highlighted, true)
+  assert.throws(() => model.resolveReturn(), /Predict/)
 })
 
 test('renaming preserves an older source when a younger instruction overwrites its architectural name', () => {

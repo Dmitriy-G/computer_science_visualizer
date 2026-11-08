@@ -14,10 +14,10 @@ export interface CpuAlgorithmChoice {
 
 export class CpuAlgorithmCatalog {
   public static readonly choices: readonly CpuAlgorithmChoice[] = [
-    { kind: 'branch-prediction', name: 'History-based branch prediction', description: 'Predict branch direction from earlier outcomes.' },
-    { kind: 'out-of-order', name: 'Out-of-order execution', description: 'Execute ready operations and retire results in order.' },
-    { kind: 'register-renaming', name: 'Register renaming', description: 'Separate register names from physical operand storage.' },
-    { kind: 'return-stack', name: 'Return-address stack prediction', description: 'Predict return targets with a hardware stack.' },
+    { kind: 'branch-prediction', name: 'History-based branch prediction', description: 'Avoid fetch stalls by predicting unresolved branch direction.' },
+    { kind: 'out-of-order', name: 'Out-of-order execution', description: 'Keep ready work moving while an older instruction waits.' },
+    { kind: 'register-renaming', name: 'Register renaming', description: 'Remove false dependencies caused by reused register names.' },
+    { kind: 'return-stack', name: 'Return-address stack prediction', description: 'Predict changing return targets by tracking nested calls.' },
   ]
 
   public static definition(kind: CpuAlgorithmKind): ActionDefinition<CpuModel> {

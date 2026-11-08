@@ -1,4 +1,5 @@
 import { CpuModel } from '../CpuModel.ts'
+import { RegisterRenamingLayout } from './RegisterRenamingLayout.ts'
 import type { CpuBank, CpuCell } from '../CpuModel.ts'
 
 interface RenameInstruction {
@@ -31,6 +32,8 @@ export class RegisterRenameModel {
   private readonly allocated = new Set<number>([0, 1, 2])
   private readonly instructions: RenamedInstruction[] = []
   private retired = 0
+  private phase = 'initial'
+  private currentId = 'I1'
 
   public renameNext(): string {
     const instruction = RegisterRenameModel.program[this.instructions.length]
@@ -45,6 +48,8 @@ export class RegisterRenameModel {
     this.physical[destination] = null
     this.renameMap.set(instruction.destination, destination)
     this.instructions.push({ instruction, sources, destination, previous, done: false, retired: false })
+    this.phase = 'rename'
+    this.currentId = instruction.id
     return instruction.id
   }
 
@@ -59,6 +64,8 @@ export class RegisterRenameModel {
     }
     this.physical[entry.destination] = value
     entry.done = true
+    this.phase = 'execute'
+    this.currentId = id
   }
 
   public retireNext(): string {
@@ -69,6 +76,8 @@ export class RegisterRenameModel {
     this.physical[entry.previous] = null
     entry.retired = true
     this.retired += 1
+    this.phase = 'retire'
+    this.currentId = entry.instruction.id
     return entry.instruction.id
   }
 
@@ -100,6 +109,19 @@ export class RegisterRenameModel {
       { name: 'Operation', cells: instructions }, { name: 'Rename map', cells: mappings },
       { name: 'Physical', cells: values }, { name: 'Committed', cells: committed },
     ]
-    return new CpuModel(banks, 'Renamed sources keep their physical identities. Reusing the name r1 does not change I2’s input. A small illustrative register file models the Intel Core mechanism; it is not a cycle-accurate core.', focus)
+    const current = this.instructions.find((entry) => entry.instruction.id === this.currentId)
+    const program = current?.instruction ?? RegisterRenameModel.program[0]
+    const mapping: string[] = []
+    const architectural: string[] = []
+    for (const [name, physical] of this.renameMap) mapping.push(`${name}:p${physical}`)
+    for (const [name, value] of this.architectural) architectural.push(`${name}:${value}`)
+    const diagram = RegisterRenamingLayout.create({
+      phase: this.phase, id: program.id, text: program.text,
+      sources: current?.sources ?? [], destination: current?.destination ?? 0,
+      previous: current?.previous ?? 0, mapping: mapping.join(' '), committed: architectural.join(' '),
+      result: current?.done ? `${program.id}: ${this.physical[current.destination] ?? 'retired'}` : 'waiting for operands',
+    })
+    const focusId = focus === null ? null : this.phase === 'rename' ? 'rename-map' : this.phase === 'execute' ? 'alu' : 'committed-registers'
+    return new CpuModel(banks, 'Renamed sources keep their physical identities. Reusing the name r1 does not change I2’s input. A small illustrative register file models the Intel Core mechanism; it is not a cycle-accurate core. Instruction-cache and idle data-cache boxes provide core context; cache behavior is not simulated.', focusId, 0, diagram)
   }
 }

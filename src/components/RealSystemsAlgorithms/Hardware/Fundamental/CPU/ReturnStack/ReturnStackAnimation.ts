@@ -7,7 +7,7 @@ export class ReturnStackAnimation extends CpuLesson {
 
   public static describe() {
     return CpuLessonInformation.create('Return-address stack prediction',
-      'Predict nested procedure returns by pushing return addresses on recognized calls and popping them on recognized returns.',
+      'A return instruction can have different targets after different calls, making its next fetch address hard to predict. Track nested calls in a hardware stack to predict the matching return target.',
       'Arm Cortex-A53', 'https://documentation-service.arm.com/static/5e9075f9c8052b1608761519',
       'The Cortex-A53 TRM documents an eight-entry hardware return stack in its instruction-fetch unit.',
       'Overflow discards the oldest entry in this teaching model; underflow reports no prediction. These policies are not claims about undocumented A53 boundary behavior. Correct architectural return targets are represented separately.')
@@ -21,8 +21,10 @@ export class ReturnStackAnimation extends CpuLesson {
       trace.record(model.snapshot(), 'Recognized call', 'Push the address after the call. Nested calls place their return addresses above earlier ones.', 'actual_returns.push(return_address)\nreturn_predictor.push(return_address)')
     }
     for (let depth = 0; depth < 3; depth += 1) {
-      model.returnFromCall()
-      trace.record(model.snapshot(), 'Predict nested return', 'Pop the most recent prediction and compare it with the actual return target. The last call returns first.', 'predicted = return_predictor.pop()\nactual = actual_returns.pop(); compare(predicted, actual)')
+      model.predictReturn()
+      trace.record(model.snapshot(), 'Predict nested return before resolution', 'The hardware stack supplies a predicted target to instruction fetch. The actual program return target is still unresolved.', 'predicted = return_predictor.pop()\nsteer_fetch(predicted)')
+      model.resolveReturn()
+      trace.record(model.snapshot(), 'Resolve and validate the actual target', 'The program-supplied register target reaches the execution path and confirms the earlier prediction. The last call returns first.', 'actual = actual_returns.pop()\ncompare(predicted, actual)')
     }
     for (let depth = 0; depth < 9; depth += 1) {
       model.call(0x1004 + depth * 0x100)
@@ -31,7 +33,9 @@ export class ReturnStackAnimation extends CpuLesson {
         'if predictor.size == 8: discard_oldest()  // teaching policy\npush(return_address)')
     }
     for (let depth = 0; depth < 9; depth += 1) {
-      const matched = model.returnFromCall()
+      const predicted = model.predictReturn()
+      trace.record(model.snapshot(), predicted === null ? 'No stack prediction remains' : 'Stack prediction steers fetch', predicted === null ? 'The oldest prediction was discarded on overflow. Fetch must wait for the actual program target.' : 'Pop the most recent hardware prediction and send it to fetch before resolving the program return.', 'predicted = pop_or_unavailable()\nif available: steer_fetch(predicted)')
+      const matched = model.resolveReturn()
       trace.record(model.snapshot(), matched ? 'Return target matched' : 'Predictor empty',
         matched ? 'The newest outstanding call has a matching prediction.' : 'No prediction remains for the oldest call. Its actual return target is still correct; a real core recovers fetch using resolved control flow.',
         'predicted = pop_or_unavailable()\nactual = actual_returns.pop(); resolve_return(actual)')

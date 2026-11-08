@@ -1,5 +1,6 @@
 import type { ActionDefinition, ActionPlan } from '../../../../../visualization/ActionDefinition.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
+import type { AnimationStep } from '../../../../../visualization/Scene.ts'
 import type { CpuModel } from './CpuModel.ts'
 import { CpuTrace } from './CpuTrace.ts'
 
@@ -14,7 +15,15 @@ export abstract class CpuLesson implements ActionDefinition<CpuModel> {
   public create(_source: CpuModel): ActionPlan<CpuModel> {
     const trace = new CpuTrace()
     this.build(trace)
-    return { steps: trace.steps, result: trace.result.clone() }
+    let width = 745
+    let height = 250
+    for (const step of trace.steps) {
+      width = Math.max(width, step.scene.width)
+      height = Math.max(height, step.scene.height)
+    }
+    const steps: AnimationStep[] = []
+    for (const step of trace.steps) steps.push({ ...step, scene: { ...step.scene, width, height } })
+    return { steps, result: trace.result.clone() }
   }
 }
 
@@ -22,7 +31,7 @@ export class CpuLessonInformation {
   public static create(name: string, summary: string, product: string, url: string, usage: string, limits: string): AlgorithmInformation {
     const bound = { best: 'O(1)', average: 'O(1)', worst: 'O(1)' }
     return {
-      name, summary,
+      name, summary, modelNotes: `${limits} Diagrams locate the mechanism inside one CPU core with registers, instruction cache, and data-cache context. Cache lookup, replacement, hit/miss behavior, and exact wiring are not simulated. Arrows show the current logical instruction, operand, result, prediction, or retirement flow.`,
       time: { ...bound, explanation: 'This lesson executes a fixed, bounded example. These bounds describe the visualizer, not hardware latency or processor throughput.' },
       memory: { ...bound, explanation: 'Fixed-size teaching state and a bounded sequence of independent scene snapshots. No claim about a production processor’s storage cost.' },
       terms: [

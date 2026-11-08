@@ -7,7 +7,7 @@ export class OutOfOrderAnimation extends CpuLesson {
 
   public static describe() {
     return CpuLessonInformation.create('Out-of-order execution',
-      'Execute independent instructions while an older operation waits, then retire in order and discard wrong-path results.',
+      'A slow instruction can stall unrelated work and leave execution units idle. Execute ready independent instructions early, then retire results in program order and discard wrong-path results.',
       'Intel Core', 'https://cdrdv2-public.intel.com/814198/248966-Optimization-Reference-Manual-V1-049.pdf',
       'Intel documents out-of-order execution and in-order retirement in its processor architecture descriptions.',
       'Five illustrative operations model a reorder buffer and branch recovery. Execution widths, memory latency, and physical renaming are omitted here; the register-renaming lesson covers operand identities.')
@@ -16,6 +16,8 @@ export class OutOfOrderAnimation extends CpuLesson {
   protected build(trace: CpuTrace): void {
     const model = new OutOfOrderModel()
     trace.record(model.snapshot(), 'Dispatch in program order', 'I1 is a slow load. I4 is predicted not taken, so I5 enters the speculative window.', 'ROB = [I1, I2, I3, I4, I5]\npredict(I4) = not_taken', 0)
+    model.requestLoad()
+    trace.record(model.snapshot('I1'), 'Issue I1 to the data-access path', 'The load-request arrow goes from I1 in the reorder buffer to the data-cache path. Hold this teaching load pending while independent work executes.', 'I1 -> data access: load [A]')
     model.execute('I3')
     trace.record(model.snapshot('I3'), 'True dependency blocks I3', 'I3 cannot execute until I1 supplies r1. Out-of-order execution must preserve data dependencies.', 'if !ready(I1.result): wait(I3)')
     for (const id of ['I2', 'I5']) {

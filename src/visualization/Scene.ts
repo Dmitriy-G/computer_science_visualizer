@@ -42,6 +42,19 @@ export interface SceneEdge {
   readonly bend?: number
   readonly curveOffset?: number
   readonly loopRadius?: number
+  readonly flow?: boolean
+}
+
+export interface SceneRegion {
+  readonly id: string
+  readonly label: string
+  readonly role: 'cpu' | 'cache' | 'memory' | 'interconnect' | 'observer'
+  readonly x: number
+  readonly y: number
+  readonly width: number
+  readonly height: number
+  readonly level?: 'system' | 'component'
+  readonly parentId?: string
 }
 
 export interface SceneHint {
@@ -51,7 +64,7 @@ export interface SceneHint {
 }
 
 export interface Scene {
-  readonly kind: StructureKind | 'disk-scheduling' | 'cpu-hardware'
+  readonly kind: StructureKind | 'cpu-hardware' | 'hardware-system'
   readonly nodes: readonly SceneNode[]
   readonly edges: readonly SceneEdge[]
   readonly width: number
@@ -61,6 +74,7 @@ export interface Scene {
   readonly countLabel?: string
   readonly hint?: SceneHint
   readonly slots?: readonly SceneSlot[]
+  readonly regions?: readonly SceneRegion[]
 }
 
 export interface AnimationStep {

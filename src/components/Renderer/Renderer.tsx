@@ -5,6 +5,7 @@ import type {
   SceneEdge,
   SceneNode,
   SceneSlot,
+  SceneRegion,
 } from '../../visualization/Scene.ts'
 import './Renderer.css'
 
@@ -149,7 +150,7 @@ export default class Renderer extends Component<
     return (
       <g key={edge.id} className="scene-edge-group" style={{ opacity: edge.opacity }}>
         <path
-          className={`scene-edge${edge.highlighted ? ' scene-edge-highlighted' : ''}`}
+          className={`scene-edge${edge.highlighted ? ' scene-edge-highlighted' : ''}${edge.flow ? ' scene-edge-flow' : ''}`}
           d={curve ? `M ${x1} ${y1} Q ${middleX + normalX * curve * 2} ${middleY + normalY * curve * 2} ${x2} ${y2}` : bend ? `M ${x1} ${y1} Q ${middleX} ${middleY + bend * 2} ${x2} ${y2}` : `M ${x1} ${y1} L ${x2} ${y2}`}
           markerEnd={
             edge.directed
@@ -192,7 +193,7 @@ export default class Renderer extends Component<
     return elements
   }
 
-  private renderNode(node: SceneNode, circular: boolean): ReactNode {
+  private renderNode(node: SceneNode, circular: boolean, showExplicitStatus = false): ReactNode {
     const width = node.width ?? 66
     const height = node.height ?? 66
     const sideLabels = node.labelPlacement === 'right'
@@ -205,7 +206,7 @@ export default class Renderer extends Component<
         key={node.id}
         className={`scene-node tone-${node.tone}${node.nodeColor ? ` tree-color-${node.nodeColor}` : ''}`}
         style={style}
-        aria-label={`${node.keys ? node.keys.length ? node.keys.join(', ') : 'empty page' : node.displayValue ?? node.value}, ${node.label}${node.tone === 'active' ? ', current node' : ''}`}
+        aria-label={`${node.keys ? node.keys.length ? node.keys.join(', ') : 'empty page' : node.displayValue ?? node.value}, ${node.label}${node.tone === 'active' ? ', current node' : ''}${showExplicitStatus && node.status ? `, ${node.status}` : ''}`}
       >
         <rect
           className="node-halo"
@@ -239,7 +240,7 @@ export default class Renderer extends Component<
         >
           {node.label}
         </text>
-        {node.tone !== 'default' && (
+        {(node.tone !== 'default' || showExplicitStatus && node.status !== undefined) && (
           <text
             className="node-status"
             textAnchor={sideLabels ? 'end' : 'middle'}
@@ -279,13 +280,17 @@ export default class Renderer extends Component<
   private renderScene(scene: Scene): ReactNode {
     const nodeMap = new Map<string, SceneNode>()
     const elements: ReactNode[] = []
+    for (const region of scene.regions ?? []) elements.push(this.renderRegion(region))
     for (const slot of scene.slots ?? []) elements.push(this.renderSlot(slot))
     for (const node of scene.nodes) nodeMap.set(node.id, node)
     for (const edge of scene.edges)
       elements.push(this.renderEdge(edge, nodeMap))
+    for (const region of scene.regions ?? []) elements.push(
+      <text key={`region-title-${region.id}`} className={`scene-region-title${region.level === 'system' ? ' scene-region-title--system' : ''}`} x={region.x + 16} y={region.y + 29}>{region.label}</text>,
+    )
     const circular = scene.kind === 'directed-graph' || scene.kind === 'weighted-graph' || scene.kind === 'dag' || scene.kind === 'multigraph' || scene.kind === 'graph' || scene.kind === 'binary-tree' || scene.kind === 'avl-tree' || scene.kind === 'red-black-tree'
     for (const node of scene.nodes)
-      elements.push(this.renderNode(node, circular || scene.countLabel === 'vertices' && node.id.startsWith(`${scene.kind}-v`)))
+      elements.push(this.renderNode(node, circular || scene.countLabel === 'vertices' && node.id.startsWith(`${scene.kind}-v`), scene.kind === 'hardware-system' || scene.kind === 'cpu-hardware'))
     return (
       <svg
         ref={this.svg}
@@ -304,6 +309,7 @@ export default class Renderer extends Component<
         <desc id="scene-description">
           {scene.count} {scene.countLabel ?? 'elements'}. Blue marks the current node, teal marks
           visited nodes, and amber marks the new node.
+          {this.describeHardwareFlow(scene, nodeMap)}
           {this.state.showSizeControls && ' Use Fit diagram to see the full structure, or Actual size to scroll through its details.'}
         </desc>
         <defs>
@@ -333,6 +339,22 @@ export default class Renderer extends Component<
         {elements}
       </svg>
     )
+  }
+
+  private renderRegion(region: SceneRegion): ReactNode {
+    return <g key={`region-${region.id}`} className={`scene-region scene-region--${region.role}${region.level === 'system' ? ' scene-region--system' : ''}`} role="group" aria-label={region.label}>
+      <rect x={region.x} y={region.y} width={region.width} height={region.height} rx="16" />
+    </g>
+  }
+
+  private describeHardwareFlow(scene: Scene, nodes: ReadonlyMap<string, SceneNode>): string {
+    if (!scene.regions) return ''
+    const descriptions: string[] = []
+    for (const region of scene.regions) descriptions.push(region.label)
+    for (const edge of scene.edges) {
+      if (edge.highlighted) descriptions.push(`${edge.label}: ${nodes.get(edge.from)?.label} to ${nodes.get(edge.to)?.label}`)
+    }
+    return ` Hardware regions and current transactions: ${descriptions.join('. ')}.`
   }
 
   public render() {

@@ -208,25 +208,51 @@ cross-component hardware systems or systems spanning network layers. Unimplement
 leaves show an empty-state message. Reuse MainMenu and MenuNavigation for parent
 navigation rather than adding empty implementation directories.
 
-Keep disk scheduler lessons under
-`RealSystemsAlgorithms/Hardware/Fundamental/Disks/`, with MqDeadline, BFQ, and Kyber
-component/CSS/sequence folders. DiskWorkload, DiskTrace, and DiskLayout share request
-contracts, deterministic recording, and scene geometry; scheduler decisions stay
-in their own sequence classes. Reuse Renderer, ActionView/ActionPlayback, and
-AlgorithmInfo. Keep disk destinations separate from StructureKind and action
-scopes; Scene supports a disk-scheduling kind. DiskAlgorithmCatalog supplies
-algorithm choices and read-only descriptions to menus and search.
+Hardware/Fundamental/Disks is reserved for device/controller mechanisms and
+currently has no lessons. Do not place operating-system disk scheduling policies
+there. The former mq-deadline, BFQ, and Kyber lessons and destinations were removed.
 
 Keep CPU hardware lessons under `RealSystemsAlgorithms/Hardware/Fundamental/CPU/`,
 with RegisterRenaming, OutOfOrder, BranchPrediction, and ReturnStack action folders.
-Each owns its mechanism model, component, CSS, animation, and sourced information.
+Each owns its mechanism model, component, CSS, animation, layout, and sourced
+information. Diagrams show the enclosing CPU core, register files or history/
+return registers, instruction cache, and data-cache context. Highlight actual
+instruction, operand, result, retirement, and prediction flows. Cache accesses,
+hit/miss timing, and precise physical wiring are outside these bounded models.
 CpuModel, CpuLayout, CpuTrace, and CpuLesson share only visual-state snapshots,
 scene generation, and playback contracts. Use the cpu-hardware Scene kind and
-distinct CPU search/menu destinations, preserving data-structure and disk
+distinct CPU search/menu destinations, preserving data-structure and Complex
 destinations. CpuWorkspace reuses Renderer, ActionView, ActionPlayback, and the
 shared information dialog and info icon styling. Keep CPU operating-system
 schedulers out of this branch. Cross-component cache/memory mechanisms belong
-under Hardware/Complex when implemented.
+directly under `RealSystemsAlgorithms/Hardware/Complex/`, without CPU, cache,
+or memory subcategory folders. Its twelve lesson folders own their models,
+components, CSS, animations, and sourced descriptions. HardwareModel,
+HardwareLayout, and HardwareLesson share snapshots, bounded recording, scene
+geometry, and playback contracts; HardwareWorkspace reuses Renderer,
+ActionView/ActionPlayback, and AlgorithmInfo. Use the hardware-system Scene kind
+and distinct HardwareAlgorithmCatalog menu/search destinations. CoherenceModel
+shares line-transfer primitives with explicit MOESI/MESIF state policies;
+PublicationModel shares data/flag observation primitives. Keep instruction and
+protocol semantics separate from scene recording and timing.
+HardwareDiagram and HardwareSceneLayout live in `src/visualization/` and share
+only placements, labeled CPU/cache/memory regions, connections, and scene
+geometry across Fundamental CPU and Complex lessons. Keep each mechanism's topology in its own layout (shared publication
+and coherence layouts stay at Complex level). Snapshots carry independent diagram
+metadata; CpuLayout and HardwareLayout delegate scene geometry to the shared
+HardwareSceneLayout. Render
+region boundaries behind nodes and connections, with region titles above paths.
+Complex/HardwareSystemLayout groups the logical components into large CPU,
+Bus/Interconnect, and Memory-system blocks. Cores, private caches, registers, and
+MMU units stay inside CPU; shared memory and PoU/backing state stay outside it.
+Route cross-block paths through the CPU, bus-side, and memory-side interfaces,
+including visible flows inside the bus and memory blocks. Preserve model values
+and transaction meaning while arranging the hierarchy. These are logical
+subsystem boundaries, not claims about physical chip/package wiring. Identify
+coherent state versus actual RAM contents explicitly. Add Disk or other device
+blocks only for mechanisms that actually include those devices.
+Highlight the actual request, data, invalidation, or completion transaction; do
+not infer transfers just because two displayed values changed.
 
 Keep the root menu's search component and catalog index in `MainMenu/Search/`.
 Place its search trigger in the app header between the menu button and brand

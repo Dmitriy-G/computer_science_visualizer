@@ -25,6 +25,7 @@ export interface AlgorithmUsage {
 export interface AlgorithmInformation {
   readonly name: string
   readonly summary: string
+  readonly modelNotes?: string
   readonly time: ComplexityInformation
   readonly memory: ComplexityInformation
   readonly terms: readonly AlgorithmTerm[]

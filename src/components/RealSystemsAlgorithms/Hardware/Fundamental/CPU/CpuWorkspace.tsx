@@ -98,7 +98,7 @@ export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorksp
         <aside className="action-menu" aria-label="CPU hardware algorithms">
           <button type="button" className="text-button action-menu-back-button" onClick={this.props.onBack}>← CPU</button>
           <h2 ref={this.heading} tabIndex={-1}>CPU Hardware</h2>
-          <p className="action-menu-summary">Explore execution and prediction inside one core. Information explains each processor example and the teaching model’s limits.</p>
+          <p className="action-menu-summary">Explore registers, caches, and execution inside one CPU core. Directional arrows show instruction, operand, result, and prediction flows. Information explains each processor example and the teaching model’s limits.</p>
           <nav aria-label="CPU hardware mechanisms">{this.renderAlgorithms()}</nav>
         </aside>
       </Renderer>

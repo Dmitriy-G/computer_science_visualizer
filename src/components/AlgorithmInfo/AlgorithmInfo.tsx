@@ -106,6 +106,12 @@ export default class AlgorithmInfo extends PureComponent<
         <p className="complexity-explanation">
           <strong>Memory.</strong> {information.memory.explanation}
         </p>
+        {information.modelNotes && (
+          <>
+            <h3>Teaching model</h3>
+            <p className="complexity-explanation">{information.modelNotes}</p>
+          </>
+        )}
         {information.terms.length > 0 && (
           <>
             <h3>Terms used in this action</h3>

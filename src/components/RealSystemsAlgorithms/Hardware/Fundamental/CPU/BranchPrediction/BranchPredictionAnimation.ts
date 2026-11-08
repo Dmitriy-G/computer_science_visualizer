@@ -7,7 +7,7 @@ export class BranchPredictionAnimation extends CpuLesson {
 
   public static describe() {
     return CpuLessonInformation.create('History-based branch prediction',
-      'Use previous branch outcomes to predict direction, then train prediction state when the branch resolves.',
+      'Instruction fetch cannot yet know which way a branch will go, potentially stalling the pipeline. Predict direction from earlier outcomes, then train prediction state when the branch resolves.',
       'Arm Cortex-A53', 'https://documentation-service.arm.com/static/5e9075f9c8052b1608761519',
       'The Cortex-A53 TRM documents global branch-history registers and a 3072-entry pattern-history prediction table.',
       'Illustrative global-history predictor: three history bits, eight two-bit saturating counters, and history-only indexing. Arm does not identify these exact rules as the Cortex-A53 implementation. The lesson explains the documented mechanism without claiming a replica.')

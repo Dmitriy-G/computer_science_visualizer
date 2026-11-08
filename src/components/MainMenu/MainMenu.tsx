@@ -4,7 +4,7 @@ import type { MenuStructureGroupKind } from './MenuStructureCatalog.ts'
 import { MenuNavigation } from './MenuNavigation.ts'
 import type { MenuCategoryKind, AlgorithmGroupKind } from './MenuNavigation.ts'
 import type { AdvancedAlgorithmGroupKind } from './AdvancedAlgorithmCatalog.ts'
-import type { DiskAlgorithmKind } from '../RealSystemsAlgorithms/Hardware/Fundamental/Disks/DiskWorkload.ts'
+import type { HardwareAlgorithmKind } from '../RealSystemsAlgorithms/Hardware/Complex/HardwareModel.ts'
 import type { CpuAlgorithmKind } from '../RealSystemsAlgorithms/Hardware/Fundamental/CPU/CpuModel.ts'
 import type { StructureKind } from '../../visualization/Scene.ts'
 import { ActionCatalog } from '../../visualization/ActionCatalog.ts'
@@ -30,7 +30,7 @@ interface MainMenuProps {
   readonly onGroupSelected: (group: MenuStructureGroupKind) => void
   readonly onAlgorithmGroupSelected: (group: AlgorithmGroupKind) => void
   readonly onAdvancedAlgorithmGroupSelected: (group: AdvancedAlgorithmGroupKind) => void
-  readonly onDiskAlgorithmSelected: (algorithm: DiskAlgorithmKind) => void
+  readonly onHardwareAlgorithmSelected: (algorithm: HardwareAlgorithmKind) => void
   readonly onCpuAlgorithmSelected: (algorithm: CpuAlgorithmKind) => void
   readonly onBack: () => void
   readonly describeSearchAlgorithm: DescribeSearchAlgorithm
@@ -132,6 +132,17 @@ export default class MainMenu extends Component<MainMenuProps> {
   }
 
   private renderAdvancedAlgorithmGroups(): ReactNode {
+    const hardwareAlgorithms = this.props.navigation.getHardwareAlgorithms()
+    if (hardwareAlgorithms.length) {
+      const buttons: ReactNode[] = []
+      for (const algorithm of hardwareAlgorithms) buttons.push(
+        <button type="button" className="structure-choice structure-choice--labeled" key={algorithm.kind} data-hardware-algorithm={algorithm.kind} onClick={this.handleHardwareAlgorithm}>
+          <span className="usage-tags"><span className="usage-tag usage-tag--real-systems">Real Systems</span></span>
+          <span className="choice-copy"><strong title={algorithm.name}>{algorithm.name}</strong><small title={algorithm.description}>{algorithm.description}</small></span>
+        </button>,
+      )
+      return buttons
+    }
     const cpuAlgorithms = this.props.navigation.getCpuAlgorithms()
     if (cpuAlgorithms.length) {
       const buttons: ReactNode[] = []
@@ -141,19 +152,6 @@ export default class MainMenu extends Component<MainMenuProps> {
           <span className="choice-copy"><strong title={algorithm.name}>{algorithm.name}</strong><small title={algorithm.description}>{algorithm.description}</small></span>
         </button>,
       )
-      return buttons
-    }
-    const algorithms = this.props.navigation.getDiskAlgorithms()
-    if (algorithms.length) {
-      const buttons: ReactNode[] = []
-      for (const algorithm of algorithms) {
-        buttons.push(
-          <button type="button" className="structure-choice structure-choice--labeled" key={algorithm.kind} data-disk-algorithm={algorithm.kind} onClick={this.handleDiskAlgorithm}>
-            <span className="usage-tags"><span className="usage-tag usage-tag--real-systems">Real Systems</span></span>
-            <span className="choice-copy"><strong title={algorithm.name}>{algorithm.name}</strong><small title={algorithm.description}>{algorithm.description}</small></span>
-          </button>,
-        )
-      }
       return buttons
     }
     const groups = this.props.navigation.getAdvancedAlgorithmGroups()
@@ -175,9 +173,9 @@ export default class MainMenu extends Component<MainMenuProps> {
     return buttons
   }
 
-  private handleDiskAlgorithm = (event: MouseEvent<HTMLButtonElement>): void => {
-    for (const algorithm of this.props.navigation.getDiskAlgorithms()) {
-      if (algorithm.kind === event.currentTarget.dataset.diskAlgorithm) this.props.onDiskAlgorithmSelected(algorithm.kind)
+  private handleHardwareAlgorithm = (event: MouseEvent<HTMLButtonElement>): void => {
+    for (const algorithm of this.props.navigation.getHardwareAlgorithms()) {
+      if (algorithm.kind === event.currentTarget.dataset.hardwareAlgorithm) this.props.onHardwareAlgorithmSelected(algorithm.kind)
     }
   }
 

@@ -6,10 +6,10 @@ import { AlgorithmTechnologyCatalog } from '../../../visualization/AlgorithmTech
 import type { AlgorithmInformation, AlgorithmTechnology } from '../../../visualization/AlgorithmInformation.ts'
 import type { StructureKind } from '../../../visualization/Scene.ts'
 import { StructureInformation } from '../../StructureInfo/StructureInformation.ts'
-import { DiskAlgorithmCatalog } from '../../RealSystemsAlgorithms/Hardware/Fundamental/Disks/DiskAlgorithmCatalog.ts'
-import type { DiskAlgorithmKind } from '../../RealSystemsAlgorithms/Hardware/Fundamental/Disks/DiskWorkload.ts'
 import { CpuAlgorithmCatalog } from '../../RealSystemsAlgorithms/Hardware/Fundamental/CPU/CpuAlgorithmCatalog.ts'
 import type { CpuAlgorithmKind } from '../../RealSystemsAlgorithms/Hardware/Fundamental/CPU/CpuModel.ts'
+import { HardwareAlgorithmCatalog } from '../../RealSystemsAlgorithms/Hardware/Complex/HardwareAlgorithmCatalog.ts'
+import type { HardwareAlgorithmKind } from '../../RealSystemsAlgorithms/Hardware/Complex/HardwareModel.ts'
 
 export type SearchTarget = 'structures' | 'algorithms'
 export type DescribeSearchAlgorithm = (structure: StructureKind, action: ActionKind, scope: ActionScope) => AlgorithmInformation | null
@@ -19,17 +19,6 @@ export interface StructureSearchResult {
   readonly structure: StructureKind
   readonly scope: ActionScope
   readonly action?: ActionKind
-  readonly name: string
-  readonly description: string
-  readonly context: string
-  readonly symbol: string
-  readonly realSystems: boolean
-  readonly popular: boolean
-}
-
-export interface DiskSearchResult {
-  readonly key: string
-  readonly diskAlgorithm: DiskAlgorithmKind
   readonly name: string
   readonly description: string
   readonly context: string
@@ -49,7 +38,18 @@ export interface CpuSearchResult {
   readonly popular: boolean
 }
 
-export type MenuSearchResult = StructureSearchResult | DiskSearchResult | CpuSearchResult
+export interface HardwareSearchResult {
+  readonly key: string
+  readonly hardwareAlgorithm: HardwareAlgorithmKind
+  readonly name: string
+  readonly description: string
+  readonly context: string
+  readonly symbol: string
+  readonly realSystems: boolean
+  readonly popular: boolean
+}
+
+export type MenuSearchResult = StructureSearchResult | CpuSearchResult | HardwareSearchResult
 
 interface SearchDocument {
   readonly target: SearchTarget
@@ -61,6 +61,20 @@ export class MenuSearchIndex {
   private readonly documents: SearchDocument[] = []
 
   constructor(describe: DescribeSearchAlgorithm) {
+    for (const algorithm of HardwareAlgorithmCatalog.choices) {
+      const information = HardwareAlgorithmCatalog.describe(algorithm.kind)
+      let text = `${algorithm.name} ${information.name}`
+      if (information.realWorldUsage) text += this.technologyNames(information.realWorldUsage.technologies) + this.technologyNames(information.realWorldUsage.products)
+      this.documents.push({
+        target: 'algorithms', text: this.normalize(text),
+        result: {
+          key: `hardware:${algorithm.kind}`, hardwareAlgorithm: algorithm.kind,
+          name: algorithm.name, description: algorithm.description,
+          context: 'Real Systems Algorithms / Hardware / Complex', symbol: 'HW',
+          realSystems: true, popular: false,
+        },
+      })
+    }
     for (const algorithm of CpuAlgorithmCatalog.choices) {
       const information = CpuAlgorithmCatalog.describe(algorithm.kind)
       let text = `${algorithm.name} ${information.name}`
@@ -71,23 +85,6 @@ export class MenuSearchIndex {
           key: `cpu:${algorithm.kind}`, cpuAlgorithm: algorithm.kind,
           name: algorithm.name, description: algorithm.description,
           context: 'Real Systems Algorithms / Hardware / Fundamental / CPU', symbol: 'CPU',
-          realSystems: true, popular: false,
-        },
-      })
-    }
-    for (const algorithm of DiskAlgorithmCatalog.choices) {
-      const information = DiskAlgorithmCatalog.describe(algorithm.kind)
-      let text = `${algorithm.name} ${information.name}`
-      if (information.realWorldUsage) {
-        text += this.technologyNames(information.realWorldUsage.technologies)
-        text += this.technologyNames(information.realWorldUsage.products)
-      }
-      this.documents.push({
-        target: 'algorithms', text: this.normalize(text),
-        result: {
-          key: `disks:${algorithm.kind}`, diskAlgorithm: algorithm.kind,
-          name: algorithm.name, description: algorithm.description,
-          context: 'Real Systems Algorithms / Hardware / Fundamental / Disks', symbol: 'IO',
           realSystems: true, popular: false,
         },
       })

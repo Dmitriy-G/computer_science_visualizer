@@ -22,8 +22,12 @@
    Hardware/Fundamental contains Disks, Memory, and CPU. Network/Fundamental
    contains Physical, Data Link, Network, Transport, Session, Presentation, and
    Application in OSI layer order. Complex covers systems combining components
-   or network layers. Disks offers mq-deadline, BFQ, and Kyber; CPU offers four
-   hardware execution and prediction lessons. Other empty leaves
+   or network layers. Disks is empty after removing OS scheduler lessons; CPU offers four
+   hardware execution and prediction lessons. Hardware/Complex directly lists twelve
+   cross-component lessons for ordering, barriers, atomic updates, coherence,
+   translation, and instruction synchronization, without CPU/memory subcategories.
+   Selecting a lesson starts its bounded trace in the shared renderer; its action
+   card offers the other Complex lessons and separate information buttons. Other empty leaves
    show that no algorithms have been added yet. Back returns
    through their parents without changing the current visualization or playback.
    Structure assignments are defined in `MainMenu/MenuStructureCatalog.ts`,
@@ -328,27 +332,11 @@ concrete trigger, such as a head match versus a full traversal.
 Keep structure selection and action selection distinct. Only offer working actions;
 identify structures with previews but no animated actions clearly.
 
-## Real-system disk scheduler lessons
+## Hardware disk scope
 
-Real Systems Algorithms > Hardware > Fundamental > Disks offers only mq-deadline,
-BFQ, and Kyber, with primary evidence of Linux implementations. Selecting one
-starts a deterministic ten-request simulation. Reuse shared automatic playback,
-header progress, pseudocode, Renderer, and algorithm information. Header Reset
-cancels playback and restores the workload without starting another run. Disable
-scheduler action buttons while running; keep their info buttons and Reset usable.
-Browsing and opening information do not restart or interrupt playback. Search
-includes scheduler names and verified technology/product names with distinct disk
-destinations. Reopening the menu restores the Disks path.
-
-Keep virtual device time separate from playback timers. Show request IDs,
-read/write types, process IDs, logical addresses, sizes, and text statuses in the
-diagram; put policy state in scene hints and event results in timeline text.
-mq-deadline shows sector batches, soft expiry, and write-starvation control.
-BFQ shows eligible virtual start/finish tags and weighted sector budgets.
-Kyber shows token acquisition/release and percentile-based domain depth feedback.
-Disclose scaled parameters and omitted kernel features in each algorithm overview;
-do not claim kernel implementation costs for the array-scanning teaching models.
-Workloads allow at most 16 requests with independent scenes and fixed bounds.
+Hardware > Fundamental > Disks is reserved for device/controller mechanisms and
+currently shows the empty state. OS disk scheduler lessons, routing, and search
+entries have been removed from this branch.
 
 ## Real-system CPU hardware lessons
 
@@ -364,15 +352,23 @@ Each mechanism owns actual state transitions: physical source identities and
 renaming/retirement; dependency readiness, reorder-buffer completion and branch
 squashing; history/counter training; or bounded return prediction independent of
 actual return addresses. Record independent snapshots with fixed diagram bounds
-per lesson, at most 96 events, and no hardware timing claims.
+per lesson, at most 96 events, and no hardware timing claims. Use labeled CPU
+core regions with registers, cache context, and mechanism-specific units. Connect
+those components with directed paths and highlight the current logical transfer.
+Renaming shows captured operands, physical destinations, and retirement; the
+out-of-order lesson separates load request/response, execution, commitment, and
+fetch recovery. Branch prediction shows history lookup, direction selection,
+training, and redirect; return prediction shows push/pop and actual-target
+validation. The predictor tables and return stack are not data/instruction caches.
+Keep cache lookup/replacement and exact physical wiring explicitly out of scope.
 
 Reference the documented processor in information. Intel Core examples use
 illustrative register counts and execution events. Cortex-A53 documents global
 history and an eight-entry return stack; the small counter table, its exact
 indexing/training, and stack overflow/underflow policies are teaching choices.
 Show those distinctions in scene hints as well as information. Complexity bounds
-describe fixed visualizer examples, not production hardware latency. Leave
-coherence, memory barriers, and other cross-component topics planned for Complex.
+describe fixed visualizer examples, not production hardware latency. Keep
+coherence, memory barriers, and other cross-component topics in Complex.
 
 ## Applied structure operations
 

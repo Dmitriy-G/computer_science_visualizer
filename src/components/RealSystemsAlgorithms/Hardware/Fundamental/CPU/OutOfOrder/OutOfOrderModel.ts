@@ -1,4 +1,5 @@
 import { CpuModel } from '../CpuModel.ts'
+import { OutOfOrderLayout } from './OutOfOrderLayout.ts'
 import type { CpuCell } from '../CpuModel.ts'
 
 interface ReorderEntry {
@@ -25,6 +26,15 @@ export class OutOfOrderModel {
   public nextPc = '0x114'
   public mispredicted = false
   private head = 0
+  private flow = 'dispatch'
+  private currentId = 'I1'
+  private unit = 'not executing'
+
+  public requestLoad(): void {
+    this.flow = 'load-request'
+    this.currentId = 'I1'
+    this.unit = 'I1 waiting for data'
+  }
 
   public execute(id: string): boolean {
     const index = this.entries.findIndex((entry) => entry.id === id)
@@ -33,12 +43,21 @@ export class OutOfOrderModel {
     let input = entry.input
     if (entry.producer) {
       const producer = this.entries.find((candidate) => candidate.id === entry.producer)!
-      if (producer.state !== 'complete' && producer.state !== 'retired') return false
+      if (producer.state !== 'complete' && producer.state !== 'retired') {
+        this.flow = 'wait'
+        this.currentId = id
+        this.unit = `wait for ${entry.producer}`
+        return false
+      }
       input = producer.result!
     }
     entry.result = entry.branch ? Number(input > 0) : input + entry.addend
     entry.state = 'complete'
+    this.flow = id === 'I1' ? 'load-response' : 'execute'
+    this.currentId = id
+    this.unit = `${id}: ${entry.result}`
     if (entry.branch && entry.result === 1) {
+      this.flow = 'redirect'
       this.mispredicted = true
       this.nextPc = '0x200'
       for (let younger = index + 1; younger < this.entries.length; younger += 1) this.entries[younger].state = 'squashed'
@@ -48,10 +67,16 @@ export class OutOfOrderModel {
 
   public retireNext(): string | null {
     const entry = this.entries[this.head]
-    if (!entry || entry.state !== 'complete') return null
+    if (!entry || entry.state !== 'complete') {
+      this.flow = 'retire-wait'
+      this.currentId = entry?.id ?? this.currentId
+      return null
+    }
     if (entry.destination) this.architectural.set(entry.destination, entry.result!)
     entry.state = 'retired'
     this.head += 1
+    this.flow = 'retire'
+    this.currentId = entry.id
     return entry.id
   }
 
@@ -69,9 +94,12 @@ export class OutOfOrderModel {
     }
     const committed: CpuCell[] = []
     for (const [name, value] of this.architectural) committed.push({ id: `arch-${name}`, label: name, value: String(value) })
+    const registers: string[] = []
+    for (const [name, value] of this.architectural) registers.push(`${name}:${value}`)
+    const diagram = OutOfOrderLayout.create(this.flow, this.currentId, this.unit, registers.join(' '), this.entries[this.head]?.id ?? 'empty', this.entries[0].state === 'waiting')
     return new CpuModel([
       { name: 'Program', cells: program }, { name: 'ROB', cells: reorder }, { name: 'Committed', cells: committed },
-      { name: 'Fetch', cells: [{ id: 'pc', label: 'next PC', value: this.nextPc }, { id: 'prediction', label: 'I4', value: this.mispredicted ? 'redirected' : 'predict not taken' }] },
-    ], 'A small conceptual reorder buffer demonstrates Intel Core execution and retirement. A slow load and fixed event order illustrate dependencies; these are not measured cycle counts. Squashed results never enter committed registers.', focus)
+      { name: 'Fetch', cells: [{ id: 'pc', label: 'next PC register', value: this.nextPc, status: this.mispredicted ? 'redirected' : 'predict not taken' }, { id: 'prediction', label: 'I4', value: this.mispredicted ? 'redirected' : 'predict not taken' }] },
+    ], 'A small conceptual reorder buffer demonstrates Intel Core execution and retirement. A slow load and fixed event order illustrate dependencies; these are not measured cycle counts. Squashed results never enter committed registers. Cache boxes locate instruction fetch and the load-data path; no hit/miss or replacement behavior is simulated.', focus, 0, diagram)
   }
 }

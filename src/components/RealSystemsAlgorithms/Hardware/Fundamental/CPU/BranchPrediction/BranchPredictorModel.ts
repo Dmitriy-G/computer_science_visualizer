@@ -1,4 +1,5 @@
 import { CpuModel } from '../CpuModel.ts'
+import { BranchPredictionLayout } from './BranchPredictionLayout.ts'
 import type { CpuCell } from '../CpuModel.ts'
 
 export class BranchPredictorModel {
@@ -10,10 +11,12 @@ export class BranchPredictorModel {
   public predicted: boolean | null = null
   public actual: boolean | null = null
   private pending = false
+  private flow = 'none'
   private pc = '—'
 
   public predict(pc: string): boolean {
     if (this.pending) throw new RangeError('Resolve the previous prediction first')
+    this.flow = 'predict'
     this.pc = pc
     this.lastIndex = this.history
     this.predicted = this.counters[this.lastIndex] >= 2
@@ -24,6 +27,7 @@ export class BranchPredictorModel {
 
   public resolve(taken: boolean): boolean {
     if (!this.pending) throw new RangeError('No prediction to resolve')
+    this.flow = 'resolve'
     const matched = this.predicted === taken
     if (matched) this.correct += 1
     const counter = this.counters[this.lastIndex]
@@ -40,7 +44,7 @@ export class BranchPredictorModel {
     const labels = ['strong N', 'weak N', 'weak T', 'strong T']
     for (let index = 0; index < this.counters.length; index += 1) counters.push({
       id: `counter-${index}`, label: index.toString(2).padStart(3, '0'), value: `${this.counters[index]} · ${labels[this.counters[index]]}`,
-      tone: this.predicted !== null && index === this.lastIndex ? 'active' : 'default', status: 'SELECTED ENTRY',
+      tone: this.predicted !== null && index === this.lastIndex ? 'active' : 'default', status: this.predicted !== null && index === this.lastIndex ? 'SELECTED ENTRY' : undefined,
     })
     return new CpuModel([
       { name: 'Predictor', cells: [
@@ -55,6 +59,6 @@ export class BranchPredictorModel {
         { id: 'correct', label: 'correct', value: String(this.correct) },
         { id: 'misses', label: 'mispredictions', value: String(this.resolved - this.correct) },
       ] },
-    ], 'Arm Cortex-A53 documents a global-history predictor with a 3072-entry pattern-history table. This teaching model uses three history bits and eight two-bit saturating counters; its indexing and training rules are illustrative, not disclosed A53 internals. T = taken; N = not taken.', this.predicted === null ? null : `counter-${this.lastIndex}`)
+    ], 'Arm Cortex-A53 documents a global-history predictor with a 3072-entry pattern-history table. This teaching model uses three history bits and eight two-bit saturating counters; its indexing and training rules are illustrative, not disclosed A53 internals. T = taken; N = not taken.', this.predicted === null ? null : `counter-${this.lastIndex}`, 0, BranchPredictionLayout.create(this.flow, this.lastIndex, this.predicted, this.actual, this.correct, this.resolved))
   }
 }

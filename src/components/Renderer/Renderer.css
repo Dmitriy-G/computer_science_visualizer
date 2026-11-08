@@ -385,3 +385,36 @@
   stroke-width: 5px;
   stroke-linejoin: round;
 }
+
+.scene-region rect {
+  fill: #eef4fc;
+  fill-opacity: 0.72;
+  stroke: #b5c9e3;
+  stroke-width: 1.5;
+}
+.scene-region-title {
+  fill: #314e73;
+  font: 600 14px var(--mono);
+  paint-order: stroke;
+  stroke: #f8fafc;
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+.scene-region--system > rect { fill-opacity: 0.28; stroke-width: 2.5; }
+.scene-region-title--system { font-size: 18px; font-weight: 700; }
+.scene-region--cache rect { fill: #fff7e7; stroke: #d8bd85; }
+.scene-region--memory rect { fill: #eaf6f0; stroke: #92bba9; }
+.scene-region--interconnect rect { fill: #f3effa; stroke: #baa9d2; }
+.scene-region--observer rect { fill: #f1f3f6; stroke: #bfc8d2; stroke-dasharray: 6 5; }
+.scene-edge-flow {
+  stroke: #2563bd;
+  stroke-width: 2.5;
+  stroke-dasharray: 8 5;
+  animation: hardware-flow 900ms linear 1;
+}
+@keyframes hardware-flow {
+  to { stroke-dashoffset: -26; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene-edge-flow { animation: none; }
+}

@@ -1,4 +1,5 @@
 import type { NodeTone } from '../../../../../visualization/Scene.ts'
+import type { HardwareDiagram } from '../../../../../visualization/HardwareDiagram.ts'
 
 export type CpuAlgorithmKind = 'register-renaming' | 'out-of-order' | 'branch-prediction' | 'return-stack'
 
@@ -20,12 +21,14 @@ export class CpuModel {
   public readonly detail: string
   public readonly focusId: string | null
   public readonly events: number
+  public readonly diagram: HardwareDiagram | null
 
-  constructor(banks: readonly CpuBank[] = [], detail = 'Choose a CPU mechanism to inspect its hardware state.', focusId: string | null = null, events = 0) {
+  constructor(banks: readonly CpuBank[] = [], detail = 'Choose a CPU mechanism to inspect its hardware state.', focusId: string | null = null, events = 0, diagram: HardwareDiagram | null = null) {
     this.banks = banks
     this.detail = detail
     this.focusId = focusId
     this.events = events
+    this.diagram = diagram
   }
 
   public clone(): CpuModel {
@@ -35,6 +38,6 @@ export class CpuModel {
       for (const cell of bank.cells) cells.push({ ...cell })
       banks.push({ name: bank.name, cells })
     }
-    return new CpuModel(banks, this.detail, this.focusId, this.events)
+    return new CpuModel(banks, this.detail, this.focusId, this.events, this.diagram?.clone() ?? null)
   }
 }

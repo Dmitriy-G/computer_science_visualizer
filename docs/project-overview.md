@@ -16,13 +16,27 @@ Real Systems Algorithms is a separate root branch for Hardware and Network, each
 with Fundamental and Complex subcategories. Fundamental contains individual
 hardware components (Disks, Memory, CPU) or the seven OSI layers. Complex covers
 algorithms combining components or layers into systems. The hierarchy lives in
-MainMenu/AdvancedAlgorithmCatalog.ts. Hardware/Fundamental/Disks implements
-mq-deadline, BFQ, and Kyber lessons under src/components/RealSystemsAlgorithms/,
-reusing Renderer and ActionPlayback. Hardware/Fundamental/CPU implements hardware
+MainMenu/AdvancedAlgorithmCatalog.ts. Hardware/Fundamental/Disks is empty;
+operating-system disk schedulers have been removed from the hardware branch.
+Hardware/Fundamental/CPU implements hardware
 lessons for register renaming, out-of-order execution with in-order retirement,
 history-based branch prediction, and return-address stack prediction. Each owns
-its mechanism model; shared CPU helpers handle scene snapshots and playback.
-Operating-system CPU scheduler lessons have been removed. Cross-component CPU,
-cache, and memory topics in coverage.md remain planned for Hardware/Complex.
-Other leaves are empty until implemented.
+its mechanism model and layout. Diagrams show the CPU core, instruction/data
+cache context, registers, and the current operand, result, retirement, or
+prediction flow. Cache behavior and exact wiring are not simulated. Shared CPU
+helpers handle scene snapshots and playback.
+Operating-system CPU scheduler lessons have been removed. Hardware/Complex
+implements the twelve cross-component lessons from coverage.md directly in one
+flat list: store buffering, x86 fences, DMB, DSB, acquire/release, exclusive loops,
+LSE and locked atomics, MOESI, MESIF, TLB/table walks, and instruction-cache
+synchronization. Each lesson owns its mechanism model and animation; shared
+HardwareModel, HardwareLayout, and HardwareLesson provide visual snapshots and
+playback contracts. Each Complex lesson diagrams its CPU cores, caches or MMU,
+and shared memory roles with directional transaction paths. Complex diagrams use
+large CPU, Bus/Interconnect, and Memory-system boundaries. Each has internal
+interfaces and component flows, with routed transfers between the large blocks. DSB distinguishes
+CPU-to-cache requests, cache-to-PoU data transfer, completion responses, and CPU
+continuation. HardwareDiagram and HardwareSceneLayout in src/visualization share
+region geometry and flow metadata across Fundamental CPU and Complex lessons; they
+do not imply a vendor's exact physical wiring. Other leaves are empty until implemented.
 Use npm for dependency management.

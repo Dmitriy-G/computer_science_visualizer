@@ -7,7 +7,7 @@ export class RegisterRenamingAnimation extends CpuLesson {
 
   public static describe() {
     return CpuLessonInformation.create('Register renaming',
-      'Give different writes to one architectural register different physical destinations, while preserving true data dependencies.',
+      'Reusing a register name creates false dependencies that restrict parallel execution. Give separate writes different physical destinations while preserving true data dependencies.',
       'Intel Core', 'https://cdrdv2-public.intel.com/814198/248966-Optimization-Reference-Manual-V1-049.pdf',
       'Intel documents physical-register renaming in its processor architecture descriptions.',
       'The lesson uses three architectural registers and seven physical registers. Register counts, instruction selection, and event ordering are illustrative.')

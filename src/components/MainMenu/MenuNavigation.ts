@@ -6,10 +6,10 @@ import type { StructureDefinition } from '../../visualization/StructureCatalog.t
 import type { ActionScope } from '../../visualization/ActionCatalog.ts'
 import { AdvancedAlgorithmCatalog } from './AdvancedAlgorithmCatalog.ts'
 import type { AdvancedAlgorithmGroup, AdvancedAlgorithmGroupKind } from './AdvancedAlgorithmCatalog.ts'
-import { DiskAlgorithmCatalog } from '../RealSystemsAlgorithms/Hardware/Fundamental/Disks/DiskAlgorithmCatalog.ts'
-import type { DiskAlgorithmChoice } from '../RealSystemsAlgorithms/Hardware/Fundamental/Disks/DiskAlgorithmCatalog.ts'
 import { CpuAlgorithmCatalog } from '../RealSystemsAlgorithms/Hardware/Fundamental/CPU/CpuAlgorithmCatalog.ts'
 import type { CpuAlgorithmChoice } from '../RealSystemsAlgorithms/Hardware/Fundamental/CPU/CpuAlgorithmCatalog.ts'
+import { HardwareAlgorithmCatalog } from '../RealSystemsAlgorithms/Hardware/Complex/HardwareAlgorithmCatalog.ts'
+import type { HardwareAlgorithmChoice } from '../RealSystemsAlgorithms/Hardware/Complex/HardwareAlgorithmCatalog.ts'
 
 export type MenuScreen = 'categories' | 'groups' | 'structures' | 'algorithms' | 'sorting' | 'algorithm-structures' | 'advanced-algorithms'
 export type MenuCategoryKind = StructureCategoryKind | 'algorithms' | 'advanced-algorithms'
@@ -90,8 +90,8 @@ export class MenuNavigation {
     return AdvancedAlgorithmCatalog.getGroups(this.advancedAlgorithmGroup)
   }
 
-  public getDiskAlgorithms(): readonly DiskAlgorithmChoice[] {
-    return this.screen === 'advanced-algorithms' && this.advancedAlgorithmGroup === 'disks' ? DiskAlgorithmCatalog.choices : []
+  public getHardwareAlgorithms(): readonly HardwareAlgorithmChoice[] {
+    return this.screen === 'advanced-algorithms' && this.advancedAlgorithmGroup === 'hardware-complex' ? HardwareAlgorithmCatalog.choices : []
   }
 
   public getCpuAlgorithms(): readonly CpuAlgorithmChoice[] {
