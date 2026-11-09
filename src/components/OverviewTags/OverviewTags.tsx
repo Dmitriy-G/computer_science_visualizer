@@ -1,11 +1,12 @@
 import { PureComponent } from 'react'
 import type { ReactNode } from 'react'
-import type { OverviewArchitectureKind, OverviewComponentKind } from '../../visualization/OverviewComponent.ts'
+import type { OverviewArchitectureKind, OverviewComponentKind, OverviewDeviceKind } from '../../visualization/OverviewComponent.ts'
 import './OverviewTags.css'
 
 interface OverviewTagsProps {
   readonly components: readonly OverviewComponentKind[]
   readonly architectures: readonly OverviewArchitectureKind[]
+  readonly devices?: readonly OverviewDeviceKind[]
 }
 
 export default class OverviewTags extends PureComponent<OverviewTagsProps> {
@@ -25,6 +26,13 @@ export default class OverviewTags extends PureComponent<OverviewTagsProps> {
         </span>,
       )
     }
-    return <span className="overview-component-tags" aria-label="Components and architectures covered">{tags}</span>
+    for (const device of this.props.devices ?? []) {
+      tags.push(
+        <span className="overview-component-tag overview-device-tag" data-device={device} key={device} title={`Storage device: ${device}`}>
+          {device}
+        </span>,
+      )
+    }
+    return <span className="overview-component-tags" aria-label="Components, architectures, and devices covered">{tags}</span>
   }
 }

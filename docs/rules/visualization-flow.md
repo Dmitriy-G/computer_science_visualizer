@@ -356,11 +356,31 @@ concrete trigger, such as a head match versus a full traversal.
 Keep structure selection and action selection distinct. Only offer working actions;
 identify structures with previews but no animated actions clearly.
 
-## Hardware disk scope
+## Fundamental memory and storage scope
 
-Hardware > Fundamental > Disks is reserved for device/controller mechanisms and
-currently shows the empty state. OS disk scheduler lessons, routing, and search
-entries have been removed from this branch.
+Hardware > Fundamental includes latch, SRAM cell, DRAM row access, HDD sector
+access, NAND cell/page/block operations, SSD FTL, garbage collection, and wear
+leveling. Use RAM or Disk tags in the existing flat workspace; do not add memory
+or disk menu subcategories. Keep OS disk scheduling outside these overviews.
+
+Each lesson owns a mechanism model, layout, class component, stylesheet, animation,
+and sourced overview. Reuse the existing workspace, automatic playback, reset,
+information dialog, and search destinations. ComponentLesson shares CpuTrace and
+CpuModel as visual snapshot adapters using hardware-component scenes, without
+inventing CPU/cache context for local memory or device mechanisms. Component
+traces preserve explicit transactions even when successive payload values match.
+HardwareDiagram paths support latch waveforms and HDD tracks inside the shared
+Renderer; do not introduce a separate renderer or timing loop.
+
+Follow the boundaries in coverage.md: distinguish transparent latches from edge
+triggered flip-flops; identify conventional 6T SRAM and SLC NAND; restore DRAM
+through sensing while the row is open; precharge bit lines after recovery; keep
+host LBAs separate from HDD geometry; erase complete NAND blocks; publish flash
+mapping changes only after successful programming; preserve live pages before
+garbage collection erases; track erase counts separately from validity. Show
+relocation write costs and distinguish space reclamation from wear balancing.
+All time intervals are symbolic. Mapping durability, analog transistor behavior,
+vendor firmware, and bit-level controller ECC are outside these bounded examples.
 
 ## Real-system CPU hardware lessons
 

@@ -8,8 +8,9 @@ import { BranchPredictorModel } from '../src/components/RealSystemsAlgorithms/Ha
 import { ReturnStackModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/ReturnStack/ReturnStackModel.ts'
 
 test('four hardware lessons have deterministic independent snapshots and leave their source unchanged', () => {
-  assert.equal(CpuAlgorithmCatalog.choices.length, 4)
-  for (const choice of CpuAlgorithmCatalog.choices) {
+  const cpuChoices = CpuAlgorithmCatalog.choices.filter((choice) => choice.components.includes('CPU'))
+  assert.equal(cpuChoices.length, 4)
+  for (const choice of cpuChoices) {
     const source = new CpuModel()
     const before = source.clone()
     const definition = CpuAlgorithmCatalog.definition(choice.kind)

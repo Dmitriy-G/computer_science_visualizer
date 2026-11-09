@@ -15,7 +15,7 @@ export interface HardwareSceneState {
 }
 
 export class HardwareSceneLayout {
-  public static create(model: HardwareSceneState, kind: 'cpu-hardware' | 'hardware-system'): Scene {
+  public static create(model: HardwareSceneState, kind: 'cpu-hardware' | 'hardware-system' | 'hardware-component'): Scene {
     if (model.diagram) return this.createSystem(model, kind)
     const nodes: SceneNode[] = []
     let y = 85
@@ -39,7 +39,7 @@ export class HardwareSceneLayout {
     }
   }
 
-  private static createSystem(model: HardwareSceneState, kind: 'cpu-hardware' | 'hardware-system'): Scene {
+  private static createSystem(model: HardwareSceneState, kind: 'cpu-hardware' | 'hardware-system' | 'hardware-component'): Scene {
     const diagram = model.diagram!
     const cells = new Map<string, HardwareVisualCell>()
     for (const bank of model.banks) for (const cell of bank.cells) cells.set(cell.id, cell)
@@ -59,10 +59,12 @@ export class HardwareSceneLayout {
     for (const edge of diagram.edges) edges.push({ ...edge })
     const regions = []
     for (const region of diagram.regions) regions.push({ ...region })
+    const paths = []
+    for (const path of diagram.paths) paths.push({ ...path })
     return {
-      kind, nodes, edges, regions, width: diagram.width, height: diagram.height,
+      kind, nodes, edges, regions, paths, width: diagram.width, height: diagram.height,
       focusId: model.focusId, count: model.events, countLabel: 'hardware events',
-      hint: { title: kind === 'cpu-hardware' ? 'Inside one CPU core / current flow' : 'Hardware and current flow', description: model.detail },
+      hint: { title: kind === 'cpu-hardware' ? 'Inside one CPU core / current flow' : kind === 'hardware-component' ? 'Inside one component / current flow' : 'Hardware and current flow', description: model.detail },
     }
   }
 }

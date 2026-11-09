@@ -45,3 +45,13 @@
   background: #f1f5f9;
   color: #475569;
 }
+.overview-device-tag[data-device='HDD'] {
+  border-color: #d9c7b0;
+  background: #f7efe5;
+  color: #70502f;
+}
+.overview-device-tag[data-device='SSD'] {
+  border-color: #b6d8df;
+  background: #eaf5f8;
+  color: #2e6170;
+}

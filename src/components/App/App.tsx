@@ -1470,7 +1470,7 @@ export default class App extends Component<Record<string, never>, AppState> {
                 <button
                   className="primary-button header-action-button"
                   onClick={this.state.hardwareAlgorithm ? this.resetHardware : this.state.cpuAlgorithm ? this.resetCpu : this.resetStructure}
-                  aria-label={this.state.hardwareAlgorithm ? 'Reset hardware lesson' : this.state.cpuAlgorithm ? 'Reset CPU lesson' : 'Reset structure'}
+                  aria-label={this.state.hardwareAlgorithm || this.state.cpuAlgorithm ? 'Reset hardware lesson' : 'Reset structure'}
                 >
                   <svg
                     width="18"

@@ -1,7 +1,10 @@
 import type { NodeTone } from '../../../../visualization/Scene.ts'
 import type { HardwareDiagram } from '../../../../visualization/HardwareDiagram.ts'
 
-export type CpuAlgorithmKind = 'register-renaming' | 'out-of-order' | 'branch-prediction' | 'return-stack'
+export type ComponentAlgorithmKind = 'latch' | 'sram-cell' | 'dram-row' | 'hdd-sector' | 'nand-cell' | 'ssd-ftl' | 'ssd-garbage-collection' | 'ssd-wear-leveling'
+
+// The Fundamental workspace retains its original CPU adapter names.
+export type CpuAlgorithmKind = 'register-renaming' | 'out-of-order' | 'branch-prediction' | 'return-stack' | ComponentAlgorithmKind
 
 export interface CpuCell {
   readonly id: string
@@ -23,7 +26,7 @@ export class CpuModel {
   public readonly events: number
   public readonly diagram: HardwareDiagram | null
 
-  constructor(banks: readonly CpuBank[] = [], detail = 'Choose a CPU mechanism to inspect its hardware state.', focusId: string | null = null, events = 0, diagram: HardwareDiagram | null = null) {
+  constructor(banks: readonly CpuBank[] = [], detail = 'Choose a fundamental overview to inspect its hardware state.', focusId: string | null = null, events = 0, diagram: HardwareDiagram | null = null) {
     this.banks = banks
     this.detail = detail
     this.focusId = focusId

@@ -284,6 +284,9 @@ export default class Renderer extends Component<
     for (const region of scene.regions ?? []) elements.push(this.renderRegion(region))
     for (const slot of scene.slots ?? []) elements.push(this.renderSlot(slot))
     for (const node of scene.nodes) nodeMap.set(node.id, node)
+    for (const path of scene.paths ?? []) elements.push(
+      <path key={`path-${path.id}`} className={`scene-edge${path.highlighted ? ' scene-edge-highlighted' : ''}`} d={path.d} role="img" aria-label={path.label}><title>{path.label}</title></path>,
+    )
     for (const edge of scene.edges)
       elements.push(this.renderEdge(edge, nodeMap))
     for (const region of scene.regions ?? []) elements.push(
@@ -291,7 +294,7 @@ export default class Renderer extends Component<
     )
     const circular = scene.kind === 'directed-graph' || scene.kind === 'weighted-graph' || scene.kind === 'dag' || scene.kind === 'multigraph' || scene.kind === 'graph' || scene.kind === 'binary-tree' || scene.kind === 'avl-tree' || scene.kind === 'red-black-tree'
     for (const node of scene.nodes)
-      elements.push(this.renderNode(node, circular || scene.countLabel === 'vertices' && node.id.startsWith(`${scene.kind}-v`), scene.kind === 'hardware-system' || scene.kind === 'cpu-hardware'))
+      elements.push(this.renderNode(node, circular || scene.countLabel === 'vertices' && node.id.startsWith(`${scene.kind}-v`), scene.kind === 'hardware-system' || scene.kind === 'cpu-hardware' || scene.kind === 'hardware-component'))
     return (
       <svg
         ref={this.svg}

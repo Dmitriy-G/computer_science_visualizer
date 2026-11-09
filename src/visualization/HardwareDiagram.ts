@@ -1,4 +1,4 @@
-import type { NodeTone, SceneEdge, SceneRegion } from './Scene.ts'
+import type { NodeTone, SceneEdge, ScenePath, SceneRegion } from './Scene.ts'
 
 export interface HardwareVisualCell {
   readonly id: string
@@ -21,6 +21,7 @@ export class HardwareDiagram {
   public readonly positions: HardwarePosition[] = []
   public readonly fixtures: HardwareVisualCell[] = []
   public readonly edges: SceneEdge[] = []
+  public readonly paths: ScenePath[] = []
   public readonly width: number
   public readonly height: number
 
@@ -55,6 +56,7 @@ export class HardwareDiagram {
     for (const position of this.positions) copy.positions.push({ ...position })
     for (const fixture of this.fixtures) copy.fixtures.push({ ...fixture })
     for (const edge of this.edges) copy.edges.push({ ...edge })
+    for (const path of this.paths) copy.paths.push({ ...path })
     return copy
   }
 }

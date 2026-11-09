@@ -5,7 +5,7 @@ import type { ActionKind, ActionScope } from '../../../visualization/ActionCatal
 import { AlgorithmTechnologyCatalog } from '../../../visualization/AlgorithmTechnologyCatalog.ts'
 import type { AlgorithmInformation, AlgorithmTechnology } from '../../../visualization/AlgorithmInformation.ts'
 import type { StructureKind } from '../../../visualization/Scene.ts'
-import type { OverviewArchitectureKind, OverviewComponentKind } from '../../../visualization/OverviewComponent.ts'
+import type { OverviewArchitectureKind, OverviewComponentKind, OverviewDeviceKind } from '../../../visualization/OverviewComponent.ts'
 import { StructureInformation } from '../../StructureInfo/StructureInformation.ts'
 import { CpuAlgorithmCatalog } from '../../RealSystemsAlgorithms/Hardware/Fundamental/CpuAlgorithmCatalog.ts'
 import type { CpuAlgorithmKind } from '../../RealSystemsAlgorithms/Hardware/Fundamental/CpuModel.ts'
@@ -37,6 +37,7 @@ export interface CpuSearchResult {
   readonly symbol: string
   readonly components: readonly OverviewComponentKind[]
   readonly architectures: readonly OverviewArchitectureKind[]
+  readonly devices?: readonly OverviewDeviceKind[]
 }
 
 export interface HardwareSearchResult {
@@ -48,6 +49,7 @@ export interface HardwareSearchResult {
   readonly symbol: string
   readonly components: readonly OverviewComponentKind[]
   readonly architectures: readonly OverviewArchitectureKind[]
+  readonly devices?: readonly OverviewDeviceKind[]
 }
 
 export type MenuSearchResult = StructureSearchResult | CpuSearchResult | HardwareSearchResult
@@ -85,8 +87,8 @@ export class MenuSearchIndex {
         result: {
           key: `cpu:${algorithm.kind}`, cpuAlgorithm: algorithm.kind,
           name: algorithm.name, description: algorithm.description,
-          context: 'System Components Overview / Hardware / Fundamental', symbol: 'CPU',
-          components: algorithm.components, architectures: algorithm.architectures,
+          context: 'System Components Overview / Hardware / Fundamental', symbol: algorithm.components[0] ?? 'CPU',
+          components: algorithm.components, architectures: algorithm.architectures, devices: algorithm.devices,
         },
       })
     }

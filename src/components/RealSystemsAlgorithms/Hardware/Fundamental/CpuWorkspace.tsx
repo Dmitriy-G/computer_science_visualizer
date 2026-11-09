@@ -5,12 +5,19 @@ import Renderer from '../../../Renderer/Renderer.tsx'
 import { CpuAlgorithmCatalog } from './CpuAlgorithmCatalog.ts'
 import { CpuModel } from './CpuModel.ts'
 import type { CpuAlgorithmKind } from './CpuModel.ts'
-import { CpuLayout } from './CpuLayout.ts'
 import OverviewTags from '../../../OverviewTags/OverviewTags.tsx'
 import BranchPrediction from './BranchPrediction/BranchPrediction.tsx'
 import OutOfOrder from './OutOfOrder/OutOfOrder.tsx'
 import RegisterRenaming from './RegisterRenaming/RegisterRenaming.tsx'
 import ReturnStack from './ReturnStack/ReturnStack.tsx'
+import Latch from './Latch/Latch.tsx'
+import SramCell from './SramCell/SramCell.tsx'
+import DramRow from './DramRow/DramRow.tsx'
+import HddSector from './HddSector/HddSector.tsx'
+import NandCell from './NandCell/NandCell.tsx'
+import SsdFtl from './SsdFtl/SsdFtl.tsx'
+import SsdGarbageCollection from './SsdGarbageCollection/SsdGarbageCollection.tsx'
+import SsdWearLeveling from './SsdWearLeveling/SsdWearLeveling.tsx'
 import '../../../MainMenu/ActionMenu/ActionMenu.css'
 import './CpuWorkspace.css'
 
@@ -33,12 +40,8 @@ export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorksp
   private readonly heading = createRef<HTMLHeadingElement>()
   private readonly firstAlgorithm = createRef<HTMLButtonElement>()
   public state: CpuWorkspaceState = {
-    scene: this.props.algorithm ? this.preview() : null,
+    scene: null,
     active: this.props.algorithm !== null, running: this.props.algorithm !== null,
-  }
-
-  private preview(): Scene {
-    return CpuLayout.create(this.model)
   }
 
   public componentDidMount(): void {
@@ -52,7 +55,7 @@ export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorksp
   }
 
   public reset(): void {
-    this.setState({ active: false, running: false, scene: this.preview() }, () => {
+    this.setState({ active: false, running: false, scene: null }, () => {
       this.props.onReset()
       this.firstAlgorithm.current?.focus()
     })
@@ -75,7 +78,7 @@ export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorksp
     for (const choice of CpuAlgorithmCatalog.choices) rows.push(
       <div className="canvas-action-row" key={choice.kind}>
         <button type="button" className="canvas-action canvas-action--labeled" ref={rows.length === 0 ? this.firstAlgorithm : undefined} data-algorithm={choice.kind} onClick={this.select} disabled={this.state.running} aria-current={this.state.active && this.props.algorithm === choice.kind ? 'true' : undefined}>
-          <OverviewTags components={choice.components} architectures={choice.architectures} />
+          <OverviewTags components={choice.components} architectures={choice.architectures} devices={choice.devices} />
           <span className="canvas-action-heading"><strong title={choice.name}>{choice.name}</strong></span>
           <span className="canvas-action-description" title={choice.description}>{choice.description}</span>
         </button>
@@ -95,6 +98,14 @@ export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorksp
     if (!this.state.active || this.props.algorithm === null) return null
     const props = { model: this.model, onSceneChange: this.updateScene, onComplete: this.complete }
     switch (this.props.algorithm) {
+      case 'latch': return <Latch {...props} />
+      case 'sram-cell': return <SramCell {...props} />
+      case 'dram-row': return <DramRow {...props} />
+      case 'hdd-sector': return <HddSector {...props} />
+      case 'nand-cell': return <NandCell {...props} />
+      case 'ssd-ftl': return <SsdFtl {...props} />
+      case 'ssd-garbage-collection': return <SsdGarbageCollection {...props} />
+      case 'ssd-wear-leveling': return <SsdWearLeveling {...props} />
       case 'branch-prediction': return <BranchPrediction {...props} />
       case 'out-of-order': return <OutOfOrder {...props} />
       case 'register-renaming': return <RegisterRenaming {...props} />
@@ -108,10 +119,10 @@ export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorksp
         <h1>Choose a fundamental overview.</h1>
         <p>Select an overview from the panel to start, or use its info button to learn more.</p>
       </>}>
-        <aside className="action-menu" aria-label="CPU hardware algorithms">
+        <aside className="action-menu" aria-label="Fundamental hardware overviews">
           <button type="button" className="text-button action-menu-back-button" onClick={this.props.onBack}>← Hardware</button>
           <h2 ref={this.heading} tabIndex={-1}>Hardware / Fundamental</h2>
-          <nav aria-label="CPU hardware mechanisms">{this.renderAlgorithms()}</nav>
+          <nav aria-label="Fundamental hardware mechanisms">{this.renderAlgorithms()}</nav>
         </aside>
       </Renderer>
       {this.renderPlayback()}

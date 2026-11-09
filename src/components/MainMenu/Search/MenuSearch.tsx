@@ -53,7 +53,7 @@ export default class MenuSearch extends PureComponent<MenuSearchProps, MenuSearc
       buttons.push(
         <button className="structure-choice structure-choice--labeled" key={result.key} data-result={result.key} onClick={this.selectResult}>
           {'components' in result ? (
-            <OverviewTags components={result.components} architectures={result.architectures} />
+            <OverviewTags components={result.components} architectures={result.architectures} devices={result.devices} />
           ) : (
             <span className="usage-tags">
               <span className={`usage-tag usage-tag--${result.realSystems ? 'real-systems' : 'educational'}`}>

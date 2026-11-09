@@ -212,6 +212,13 @@ CPU mechanisms use CPU; current Complex lessons use CPU, RAM, and Bus for their
 processor, memory-system, and interconnect coverage. Disk is available for future
 device lessons. Overviews do not show Real Systems, Educational, or Popular tags.
 
+Storage overview cards can also show HDD or SSD from optional `devices` metadata,
+alongside the Disk component tag. HDD sector access uses HDD; the SSD FTL, garbage
+collection, and wear-leveling lessons use SSD. Universal storage mechanisms such
+as the NAND cell lesson omit device tags. Propagate device metadata to workspace
+cards and search results through the shared OverviewTags component. Device tags
+are separate from CPU architecture tags.
+
 CPU-related overview cards may also show architecture tags from their catalog's
 `architectures` metadata. Use x86 for the named x86 fence and locked-instruction
 overviews, and ARM for the named Arm barrier, acquire/release, exclusive, LSE, and

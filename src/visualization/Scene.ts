@@ -63,8 +63,15 @@ export interface SceneHint {
   readonly code?: string
 }
 
+export interface ScenePath {
+  readonly id: string
+  readonly d: string
+  readonly label: string
+  readonly highlighted: boolean
+}
+
 export interface Scene {
-  readonly kind: StructureKind | 'cpu-hardware' | 'hardware-system'
+  readonly kind: StructureKind | 'cpu-hardware' | 'hardware-system' | 'hardware-component'
   readonly nodes: readonly SceneNode[]
   readonly edges: readonly SceneEdge[]
   readonly width: number
@@ -75,6 +82,7 @@ export interface Scene {
   readonly hint?: SceneHint
   readonly slots?: readonly SceneSlot[]
   readonly regions?: readonly SceneRegion[]
+  readonly paths?: readonly ScenePath[]
 }
 
 export interface AnimationStep {

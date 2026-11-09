@@ -1,0 +1,26 @@
+import type { AlgorithmInformation } from '../../../../visualization/AlgorithmInformation.ts'
+import type { SystemOverviewInformation } from '../../../../visualization/SystemOverviewInformation.ts'
+import { CpuLesson } from './CpuLesson.ts'
+import { CpuTrace } from './CpuTrace.ts'
+
+// CpuModel/CpuTrace are the existing workspace's snapshot and playback adapters.
+// Mechanism state belongs to each component model, independently of these adapters.
+export abstract class ComponentLesson extends CpuLesson {
+  public readonly context = 'Hardware / Fundamental'
+  public readonly summary = 'A deterministic example inside a memory or storage component.'
+  public readonly timelineHint = 'Conceptual events, not measured device cycles'
+
+  protected createTrace(): CpuTrace { return new CpuTrace('hardware-component') }
+}
+
+export class ComponentInformation {
+  public static describe(overview: SystemOverviewInformation): AlgorithmInformation {
+    const bound = { best: 'O(1)', average: 'O(1)', worst: 'O(1)' }
+    return {
+      name: overview.name, summary: overview.summary, modelNotes: overview.implementationNote,
+      time: { ...bound, explanation: 'A fixed, bounded demonstration; these are visualizer costs, not device latency or throughput.' },
+      memory: { ...bound, explanation: 'Fixed teaching state and bounded independent snapshots; not a production device storage bound.' },
+      terms: [], realWorldUsage: overview.realWorldUsage,
+    }
+  }
+}

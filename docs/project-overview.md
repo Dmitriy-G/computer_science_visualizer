@@ -20,6 +20,14 @@ Hardware/Complex closes the menu and opens its workspace action panel with overv
 cards and separate information buttons. No intermediate lesson picker is shown;
 the diagram waits for an overview selection. Hardware/Fundamental includes its
 implemented overviews without CPU, Disks, or Memory subcategories.
+Alongside the four CPU overviews, Fundamental implements the latch, conventional
+6T SRAM cell, DRAM row access, conventional HDD sector access, SLC NAND, page-mapped
+SSD FTL, SSD garbage collection, and SSD wear-leveling lessons from coverage.md.
+Each owns its model, layout, animation, and sourced overview in a named folder
+under Hardware/Fundamental. ComponentLesson reuses the existing CpuModel/CpuTrace
+snapshot and playback adapters with hardware-component scenes. FlashStorage and
+FlashLayout share flash media/mapping primitives and geometry; the FTL,
+garbage-collection, and wear-leveling models own their distinct policies.
 Network/Fundamental contains the seven OSI layers. Complex covers mechanisms
 combining components or layers into systems. The hierarchy lives in
 MainMenu/AdvancedAlgorithmCatalog.ts. Operating-system disk schedulers have been
