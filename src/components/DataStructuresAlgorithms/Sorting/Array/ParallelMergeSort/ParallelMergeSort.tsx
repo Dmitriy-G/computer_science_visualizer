@@ -1,3 +1,4 @@
+import { ArraySortingPseudocode } from '../ArraySortingPseudocode.ts'
 import ActionView from '../../../../ActionPlayback/ActionView.tsx'
 import type { ActionDefinition } from '../../../../../visualization/ActionDefinition.ts'
 import { FixedArray } from '../../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
@@ -5,6 +6,7 @@ import { ParallelMergeSortAnimation } from './ParallelMergeSortAnimation.ts'
 import './ParallelMergeSort.css'
 
 class ParallelMergeSortDefinition implements ActionDefinition<FixedArray> {
+  public readonly pseudocode = ArraySortingPseudocode.parallelMergeSort
   public readonly title = 'Parallel Merge Sort'
   public readonly context = 'Sorting / Array / Parallel Merge Sort'
   public readonly summary = ParallelMergeSortAnimation.describe(0).summary

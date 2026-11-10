@@ -29,7 +29,7 @@ body {
 body:has(dialog[open]) {
   overflow: hidden;
 }
-:is(.action-input-dialog, .algorithm-info, .system-overview-info, .structure-info, .about-project) {
+:is(.action-input-dialog, .algorithm-info, .system-overview-info, .structure-info, .about-project, .pseudocode-dialog) {
   position: fixed;
   inset: calc(var(--viewport-top, 0px) + var(--viewport-height, 100dvh) / 2) auto auto calc(var(--viewport-left, 0px) + var(--viewport-width, 100vw) / 2);
   width: min(var(--dialog-width), calc(var(--viewport-width, 100vw) - 2 * var(--dialog-gutter)));
@@ -42,7 +42,7 @@ body:has(dialog[open]) {
   overflow-wrap: anywhere;
   scrollbar-width: thin;
 }
-:is(.action-input-heading, .algorithm-dialog-heading, .system-overview-heading, .structure-info-heading, .about-project-heading, .menu-topline) {
+:is(.action-input-heading, .algorithm-dialog-heading, .system-overview-heading, .structure-info-heading, .about-project-heading, .menu-topline, .pseudocode-heading) {
   position: sticky;
   top: 0;
   z-index: 1;

@@ -1,3 +1,4 @@
+import { ArraySortingPseudocode } from '../ArraySortingPseudocode.ts'
 import ActionView from '../../../../ActionPlayback/ActionView.tsx'
 import type { ActionDefinition } from '../../../../../visualization/ActionDefinition.ts'
 import { FixedArray } from '../../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
@@ -5,6 +6,7 @@ import { DualPivotQuickSortAnimation } from './DualPivotQuickSortAnimation.ts'
 import './DualPivotQuickSort.css'
 
 class DualPivotQuickSortDefinition implements ActionDefinition<FixedArray> {
+  public readonly pseudocode = ArraySortingPseudocode.dualPivotQuickSort
   public readonly title = 'Dual-Pivot QuickSort'
   public readonly context = 'Sorting / Array / Dual-Pivot QuickSort'
   public readonly summary = DualPivotQuickSortAnimation.describe(0).summary

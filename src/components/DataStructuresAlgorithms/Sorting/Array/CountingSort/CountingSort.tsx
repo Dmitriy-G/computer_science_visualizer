@@ -1,3 +1,4 @@
+import { ArraySortingPseudocode } from '../ArraySortingPseudocode.ts'
 import ActionView from '../../../../ActionPlayback/ActionView.tsx'
 import type { ActionDefinition } from '../../../../../visualization/ActionDefinition.ts'
 import { FixedArray } from '../../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
@@ -5,6 +6,7 @@ import { CountingSortAnimation } from './CountingSortAnimation.ts'
 import './CountingSort.css'
 
 class CountingSortDefinition implements ActionDefinition<FixedArray> {
+  public readonly pseudocode = ArraySortingPseudocode.countingSort
   public readonly title = 'Counting Sort'
   public readonly context = 'Sorting / Array / Counting Sort'
   public readonly summary = CountingSortAnimation.describe(0).summary

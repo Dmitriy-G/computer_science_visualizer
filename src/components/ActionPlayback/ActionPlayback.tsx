@@ -8,6 +8,7 @@ import type {
   ActionPlan,
   ActionPlaybackProps,
 } from '../../visualization/ActionDefinition.ts'
+import PseudocodeDialog from '../PseudocodeDialog/PseudocodeDialog.tsx'
 import './ActionPlayback.css'
 
 interface ActionPlaybackState {
@@ -87,14 +88,12 @@ export default class ActionPlayback<TModel extends ActionModel<TModel>>
   }
 
   public render() {
-    const step = this.animation.steps[this.state.index]
+    const pseudocode = this.props.definition.pseudocode
     return (
       <>
         {this.state.toolbarHost && createPortal(this.renderToolbar(), this.state.toolbarHost)}
-        {this.state.codeHost && createPortal(
-          <pre className="step-code" role="region" aria-label="Current step pseudocode" tabIndex={0}>
-            <code>{step.code}</code>
-          </pre>,
+        {this.state.codeHost && pseudocode && createPortal(
+          <PseudocodeDialog title={this.props.definition.title} code={pseudocode} />,
           this.state.codeHost,
         )}
       </>

@@ -164,10 +164,10 @@ Keep data structure operations separate from rendering and animation timing.
 Keep the algorithm overview dialog in `src/components/AlgorithmInfo/`, outside
 the renderer. The app supplies its action information and open/close state.
 
-Scenes can supply an optional `hint` with a title, description, and optional code.
-The renderer displays it in a small block below the node-state legend and above
-the action pseudocode, outside the SVG. Omit the block entirely when no hint is
-supplied. Keep structure-specific hint content in its layout, not in the renderer.
+Do not render inline scene hints or step pseudocode. Use the shared Show pseudocode
+button below the node-state legend only for Data Structures Algorithms actions in
+Sorting and Graphs Traversal. Keep each static listing with its algorithm code
+under `DataStructuresAlgorithms/`.
 
 ## Shared action playback
 
@@ -184,9 +184,10 @@ its step description and noninteractive progress bar there through a React porta
 connected to the same controller without adding a bottom-panel wrapper.
 Actions start automatically and run to completion. The header's full structure
 Reset is the only playback control; do not add pause, play, or seeking controls.
-The renderer provides the `renderer-code` host above the diagram in its center
-column. `ActionPlayback` renders the current step's pseudocode there through a
-second portal, using the same playback index as the scene and timeline.
+In Sorting and Graphs Traversal, the renderer provides the `renderer-code` host
+below the legend for `ActionPlayback` to render the `PseudocodeDialog` trigger
+and dialog. Each action in those groups supplies a static listing directly or
+through a structured action adapter.
 
 ## Shared visualization infrastructure
 

@@ -118,13 +118,18 @@ their input dialog when applicable and using the latest committed model. Disable
 operation buttons while an animation runs; keep info buttons and full Reset
 available. Every graph action can be repeated after completion.
 Place the Current / Visited / New node legend at the top-left of the renderer's
-center area, beside the actions panel and above the code snippet. Let the legend
+center area, beside the actions panel and above the pseudocode button. Let the legend
 wrap on narrow screens; do not keep it in the canvas footer.
-An optional scene hint appears directly below this legend and above action
-pseudocode. Hide it by default when the scene supplies no hint. Hash Map and Hash
-Set show their normalized modulo hash formula with the current bucket count;
-Bloom Filter shows its custom seeded FNV-1a-style hash formula, three seeds, and
-current bit-array size. The block wraps on narrow screens and stays outside the SVG.
+Hide scene hints and inline step pseudocode in all workspaces. Only in Data
+Structures Algorithms (Sorting and Graphs Traversal), show a Show pseudocode
+icon button below the legend for the active action.
+It opens a scrollable modal with the action name and its complete static listing,
+available during playback and after completion. Limit each listing to 50 lines.
+Keep the main control flow and use named helper operations for lower-level detail.
+Keep runtime values and results in the timeline description. Close, Escape, and
+backdrop dismissal return focus to the
+button without interrupting playback. Reset or selecting another action disposes
+the popup with the old session.
 
 Fit the full diagram to the available width and a bounded viewport height by
 default, preserving its aspect ratio and top alignment. Offer Fit diagram and
@@ -260,16 +265,9 @@ Center the current step's description above the timeline, replacing the visible
 width and keep the text on a single line so it never changes header height or
 shifts the diagram. On narrow screens, truncate overflow with an ellipsis and
 provide the full description as a tooltip and accessible text. Retain an
-accessible name for the progress indicator. Keep the description and code in separate rows.
-Show the current step's pseudocode in a separate bar above the diagram in the
-renderer center column beside the action card.
-On narrow screens, place it above the diagram after the cards and allow long
-snippets to scroll.
-Hide the empty snippet area before an action is selected. During playback,
-reserve a fixed-height snippet area so changing code line counts does not resize
-or reposition the diagram. Align diagrams to the top of their viewport instead
-of vertically centering them in unused canvas space. Center short code
-within the bar and scroll longer snippets inside it.
+accessible name for the progress indicator. Hide the pseudocode trigger before an
+action is selected. Align diagrams to the top of their viewport instead of
+vertically centering them in unused canvas space.
 Omit the step heading, action introduction, phase progress bar, step counter,
 playback status badges, and previous/next/reset buttons.
 
@@ -387,7 +385,7 @@ vendor firmware, and bit-level controller ECC are outside these bounded examples
 System Components Overview > Hardware > Fundamental offers register renaming,
 out-of-order execution with in-order retirement, history-based branch prediction,
 and return-address stack prediction. Reuse shared playback, header Reset/progress,
-pseudocode, renderer, algorithm search, and information dialogs. Menu browsing and
+renderer, algorithm search, and information dialogs. Menu browsing and
 information preserve playback; selecting a different lesson or structure disposes
 the previous session. Header Reset clears the lesson without starting another run
 and returns focus to the first hardware choice.
@@ -410,7 +408,7 @@ Reference the documented processor in information. Intel Core examples use
 illustrative register counts and execution events. Cortex-A53 documents global
 history and an eight-entry return stack; the small counter table, its exact
 indexing/training, and stack overflow/underflow policies are teaching choices.
-Show those distinctions in scene hints as well as information. Complexity bounds
+Show those distinctions in overview information. Complexity bounds
 describe fixed visualizer examples, not production hardware latency. Keep
 coherence, memory barriers, and other cross-component topics in Complex.
 
@@ -468,9 +466,9 @@ playback, independent scenes, final clone commits, and full Reset.
 
 Each action describes its own ordered animation sequence. Define the sequence in
 a TypeScript class next to its `.tsx` component and `.css` file in the action folder.
-Each step includes a phase, title, explanation, relevant pseudocode, duration, and
-scene snapshot. Keep scene snapshots independent so stepping backward and replaying
-are deterministic.
+Each step includes a phase, title, explanation, duration, and scene snapshot.
+Keep trace code separate from the static listing in the pseudocode dialog. Keep
+scene snapshots independent so stepping backward and replaying are deterministic.
 Searches and membership checks end on their result frame, without an extra
 commit, no-mutation, or generic completion step. Report whether the value was
 found and include its location when available (index, bucket and collision-chain
@@ -945,7 +943,7 @@ after duplicate rejection, a missing key, an empty tree, and clear/reinsert.
 
 Keep actual algorithms in the structure model and expose synchronous trace
 events, without timers or rendering dependencies. Each action owns its sequence
-class, descriptions, pseudocode, and complexity information. Shared trace playback
+class, descriptions, and complexity information. Shared trace playback
 records independent scenes from a cloned result. Intermediate steps retain the
 original committed key count; commit only the final result, restoring the source
 on rewind. Continue to use the shared Renderer and ActionPlayback controls.
@@ -1050,7 +1048,7 @@ inorder visits a unary sign before its operand and does not recreate parentheses
 Evaluation uses finite JavaScript numbers, supports fractional division results,
 and reports division by zero or unsafe integer results at the offending node.
 Queries leave syntax intact and finish with their actual numeric or token-list
-return value in the code bar; arithmetic failures display their error there.
+return value in the timeline description; arithmetic failures display their error there.
 Empty traversal returns `[]`, empty evaluation returns `null`, and empty clear is
 safe. Use the shared input, playback, reset, renderer, and info dialogs.
 
@@ -1070,7 +1068,7 @@ Graph API for legacy model consumers. New UI vertex values are unique so numeric
 endpoint selection is unambiguous. All five default examples have ten vertices.
 Render directed arrows, perpendicular curves for reciprocal/parallel edges,
 visible self-loops, and e-number labels (plus weights where appropriate). Final
-query pseudocode must show the actual returned traversal, ordering, distance, or
+query descriptions must show the actual returned traversal, ordering, distance, or
 boolean. Snapshots are independent and model/count changes commit at the final
 frame; Reset disposes playback. GraphActionInput validates current vertex and
 edge IDs through ActionInputRequest in the shared dialog.
@@ -1600,7 +1598,7 @@ patterns. Dictionary builds accept 1–16 distinct CSV words, at most 32 letters
 and 128 letters total; trim whitespace around words. Scan text accepts 1–128
 letters. Clear runs without input, including on empty models. Empty searches
 return no positions, no pattern matches, or false, as appropriate. Report results
-in descriptions/pseudocode rather than standalone diagram annotations. Give
+in timeline descriptions rather than standalone diagram annotations. Give
 captions and status markers enough space between rows.
 
 Structure information includes verified primary-source technology examples and

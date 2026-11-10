@@ -1,3 +1,4 @@
+import { ArraySortingPseudocode } from '../ArraySortingPseudocode.ts'
 import ActionView from '../../../../ActionPlayback/ActionView.tsx'
 import type { ActionDefinition } from '../../../../../visualization/ActionDefinition.ts'
 import { FixedArray } from '../../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
@@ -5,6 +6,7 @@ import { PolyphaseMergeSortAnimation } from './PolyphaseMergeSortAnimation.ts'
 import './PolyphaseMergeSort.css'
 
 class PolyphaseMergeSortDefinition implements ActionDefinition<FixedArray> {
+  public readonly pseudocode = ArraySortingPseudocode.polyphaseMergeSort
   public readonly title = 'Polyphase Merge Sort'
   public readonly context = 'Sorting / Array / Polyphase Merge Sort'
   public readonly summary = PolyphaseMergeSortAnimation.describe(0).summary

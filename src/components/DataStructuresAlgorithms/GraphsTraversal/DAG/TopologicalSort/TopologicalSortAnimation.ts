@@ -1,9 +1,11 @@
+import { DAGPseudocode } from '../DAGPseudocode.ts'
 import { GraphAnimation } from '../../../../../visualization/GraphAnimation.ts'
 import { GraphSceneLayout } from '../../../../../visualization/GraphSceneLayout.ts'
 import type { GraphModel, GraphInputValues } from '../../../../../visualization/GraphModel.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
 
 export class TopologicalSortAnimation extends GraphAnimation {
+  public static readonly pseudocode = DAGPseudocode.topologicalSort
   public static readonly title = 'Topological sort'
   public static readonly summary = 'Use the Kahn algorithm: emit zero-indegree vertices and release their outgoing dependencies.'
 

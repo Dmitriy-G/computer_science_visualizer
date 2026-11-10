@@ -1,3 +1,4 @@
+import { ArraySortingPseudocode } from '../ArraySortingPseudocode.ts'
 import ActionView from '../../../../ActionPlayback/ActionView.tsx'
 import type { ActionDefinition } from '../../../../../visualization/ActionDefinition.ts'
 import { FixedArray } from '../../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
@@ -5,6 +6,7 @@ import { BinaryInsertionSortAnimation } from './BinaryInsertionSortAnimation.ts'
 import './BinaryInsertionSort.css'
 
 class BinaryInsertionSortDefinition implements ActionDefinition<FixedArray> {
+  public readonly pseudocode = ArraySortingPseudocode.binaryInsertionSort
   public readonly title = 'Binary Insertion Sort'
   public readonly context = 'Sorting / Array / Binary Insertion Sort'
   public readonly summary = BinaryInsertionSortAnimation.describe(0).summary

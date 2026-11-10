@@ -1,9 +1,11 @@
+import { WeightedGraphPseudocode } from '../WeightedGraphPseudocode.ts'
 import { GraphAnimation } from '../../../../../visualization/GraphAnimation.ts'
 import { GraphSceneLayout } from '../../../../../visualization/GraphSceneLayout.ts'
 import type { GraphModel, GraphInputValues } from '../../../../../visualization/GraphModel.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
 
 export class ShortestPathAnimation extends GraphAnimation {
+  public static readonly pseudocode = WeightedGraphPseudocode.shortestPath
   public static readonly title = 'Dijkstra shortest path'
   public static readonly summary = 'Settle the nearest unsettled vertex and relax nonnegative edges; return distance and path.'
 

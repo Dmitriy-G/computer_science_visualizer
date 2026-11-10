@@ -1,9 +1,11 @@
+import { BipartiteGraphPseudocode } from '../BipartiteGraphPseudocode.ts'
 import { LinearAnimation } from '../../../../../visualization/LinearAnimation.ts'
 import type { LinearModel, LinearInputValues } from '../../../../../visualization/LinearModel.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
 import { BipartiteGraphLayout } from '../../../../FundamentalDataStructures/Graphs/BipartiteGraph/BipartiteGraphLayout.ts'
 
 export class BreadthFirstAnimation extends LinearAnimation {
+  public static readonly pseudocode = BipartiteGraphPseudocode.breadthFirst
   public static readonly title = 'Breadth-first traversal'
   public static readonly summary = 'Visit reachable vertices in queue order from a chosen start.'
 

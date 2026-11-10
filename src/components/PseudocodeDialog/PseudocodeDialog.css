@@ -1,0 +1,65 @@
+.pseudocode-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  color: #36658f;
+  font: 12px var(--mono);
+}
+.pseudocode-trigger:hover {
+  border-color: var(--accent);
+  background: #e9f2ff;
+}
+.pseudocode-trigger svg {
+  flex-shrink: 0;
+}
+.pseudocode-dialog {
+  --dialog-width: 800px;
+  padding: 24px;
+  color: var(--ink);
+  border: 1px solid #dce5f0;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 18px #25374c08;
+}
+.pseudocode-dialog::backdrop {
+  background: #15273b47;
+  backdrop-filter: blur(3px);
+}
+.pseudocode-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.pseudocode-heading .icon-button {
+  flex-shrink: 0;
+}
+.pseudocode-dialog h2 {
+  margin: 12px 0 18px;
+  font-size: 19px;
+  font-weight: 600;
+}
+.pseudocode-listing {
+  margin: 0;
+  padding: 16px;
+  border: 1px solid #e5ecf4;
+  border-radius: 8px;
+  background: #f5f8fc;
+  color: #36658f;
+  font: 12px/1.7 var(--mono);
+  overflow-x: auto;
+  white-space: pre;
+  overflow-wrap: normal;
+  scrollbar-width: thin;
+  tab-size: 2;
+}
+@media (pointer: coarse) {
+  .pseudocode-trigger {
+    min-height: 44px;
+  }
+}

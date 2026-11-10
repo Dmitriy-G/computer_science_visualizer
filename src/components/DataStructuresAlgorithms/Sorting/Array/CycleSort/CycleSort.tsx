@@ -1,3 +1,4 @@
+import { ArraySortingPseudocode } from '../ArraySortingPseudocode.ts'
 import ActionView from '../../../../ActionPlayback/ActionView.tsx'
 import type { ActionDefinition } from '../../../../../visualization/ActionDefinition.ts'
 import { FixedArray } from '../../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
@@ -5,6 +6,7 @@ import { CycleSortAnimation } from './CycleSortAnimation.ts'
 import './CycleSort.css'
 
 class CycleSortDefinition implements ActionDefinition<FixedArray> {
+  public readonly pseudocode = ArraySortingPseudocode.cycleSort
   public readonly title = 'Cycle Sort'
   public readonly context = 'Sorting / Array / Cycle Sort'
   public readonly summary = CycleSortAnimation.describe(0).summary

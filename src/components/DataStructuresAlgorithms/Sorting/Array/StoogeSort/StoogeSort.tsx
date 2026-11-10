@@ -1,3 +1,4 @@
+import { ArraySortingPseudocode } from '../ArraySortingPseudocode.ts'
 import ActionView from '../../../../ActionPlayback/ActionView.tsx'
 import type { ActionDefinition } from '../../../../../visualization/ActionDefinition.ts'
 import { FixedArray } from '../../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
@@ -5,6 +6,7 @@ import { StoogeSortAnimation } from './StoogeSortAnimation.ts'
 import './StoogeSort.css'
 
 class StoogeSortDefinition implements ActionDefinition<FixedArray> {
+  public readonly pseudocode = ArraySortingPseudocode.stoogeSort
   public readonly title = 'Stooge Sort'
   public readonly context = 'Sorting / Array / Stooge Sort'
   public readonly summary = StoogeSortAnimation.describe(0).summary

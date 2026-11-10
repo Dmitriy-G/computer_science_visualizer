@@ -1,9 +1,11 @@
+import { MultigraphPseudocode } from '../MultigraphPseudocode.ts'
 import { GraphAnimation } from '../../../../../visualization/GraphAnimation.ts'
 import { GraphSceneLayout } from '../../../../../visualization/GraphSceneLayout.ts'
 import type { GraphModel, GraphInputValues } from '../../../../../visualization/GraphModel.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
 
 export class DepthFirstAnimation extends GraphAnimation {
+  public static readonly pseudocode = MultigraphPseudocode.depthFirst
   public static readonly title = 'Depth-first traversal'
   public static readonly summary = 'Traverse reachable vertices with an explicit stack, backtracking when a branch ends.'
 

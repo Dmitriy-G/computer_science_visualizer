@@ -1,9 +1,11 @@
+import { TreeGraphPseudocode } from '../TreeGraphPseudocode.ts'
 import { LinearAnimation } from '../../../../../visualization/LinearAnimation.ts'
 import type { LinearModel, LinearInputValues } from '../../../../../visualization/LinearModel.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
 import { TreeGraphLayout } from '../../../../FundamentalDataStructures/Graphs/TreeGraph/TreeGraphLayout.ts'
 
 export class BreadthFirstAnimation extends LinearAnimation {
+  public static readonly pseudocode = TreeGraphPseudocode.breadthFirst
   public static readonly title = 'Breadth-first traversal'
   public static readonly summary = 'Visit reachable vertices in queue order from a chosen start.'
 

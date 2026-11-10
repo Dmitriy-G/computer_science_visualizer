@@ -1575,7 +1575,11 @@ export default class App extends Component<Record<string, never>, AppState> {
             />
           ) : (
             <>
-              <Renderer scene={scene} onOpenMenu={this.openMenu}>
+              <Renderer
+                scene={scene}
+                onOpenMenu={this.openMenu}
+                showPseudocode={this.state.selectedScope === 'sorting' || this.state.selectedScope === 'graph-traversal'}
+              >
                 {selected && (
                   <ActionMenu
                     ref={this.actionMenu}

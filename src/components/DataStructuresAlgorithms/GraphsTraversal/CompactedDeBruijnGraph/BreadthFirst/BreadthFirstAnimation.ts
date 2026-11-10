@@ -1,9 +1,11 @@
+import { CompactedDeBruijnGraphPseudocode } from '../CompactedDeBruijnGraphPseudocode.ts'
 import { LinearAnimation } from '../../../../../visualization/LinearAnimation.ts'
 import type { LinearModel, LinearInputValues } from '../../../../../visualization/LinearModel.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
 import { CompactedDeBruijnGraphLayout } from '../../../../AdvancedDataStructures/SpecializedGraphs/CompactedDeBruijnGraph/CompactedDeBruijnGraphLayout.ts'
 
 export class BreadthFirstAnimation extends LinearAnimation {
+  public static readonly pseudocode = CompactedDeBruijnGraphPseudocode.breadthFirst
   public static readonly title = 'Breadth-first traversal'
   public static readonly summary = 'Visit the reachable outgoing neighbors from an existing vertex ID.'
 

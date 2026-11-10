@@ -1,3 +1,4 @@
+import { ArraySortingPseudocode } from '../ArraySortingPseudocode.ts'
 import ActionView from '../../../../ActionPlayback/ActionView.tsx'
 import type { ActionDefinition } from '../../../../../visualization/ActionDefinition.ts'
 import { FixedArray } from '../../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
@@ -5,6 +6,7 @@ import { PairwiseSortingNetworkAnimation } from './PairwiseSortingNetworkAnimati
 import './PairwiseSortingNetwork.css'
 
 class PairwiseSortingNetworkDefinition implements ActionDefinition<FixedArray> {
+  public readonly pseudocode = ArraySortingPseudocode.pairwiseSortingNetwork
   public readonly title = 'Pairwise Sorting Network'
   public readonly context = 'Sorting / Array / Pairwise Sorting Network'
   public readonly summary = PairwiseSortingNetworkAnimation.describe(0).summary

@@ -1,3 +1,4 @@
+import { ArraySortingPseudocode } from '../ArraySortingPseudocode.ts'
 import ActionView from '../../../../ActionPlayback/ActionView.tsx'
 import type { ActionDefinition } from '../../../../../visualization/ActionDefinition.ts'
 import { FixedArray } from '../../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
@@ -5,6 +6,7 @@ import { BurstsortAnimation } from './BurstsortAnimation.ts'
 import './Burstsort.css'
 
 class BurstsortDefinition implements ActionDefinition<FixedArray> {
+  public readonly pseudocode = ArraySortingPseudocode.burstsort
   public readonly title = 'Burstsort'
   public readonly context = 'Sorting / Array / Burstsort'
   public readonly summary = BurstsortAnimation.describe(0).summary

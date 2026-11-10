@@ -1,3 +1,4 @@
+import { ArraySortingPseudocode } from '../ArraySortingPseudocode.ts'
 import ActionView from '../../../../ActionPlayback/ActionView.tsx'
 import type { ActionDefinition } from '../../../../../visualization/ActionDefinition.ts'
 import { FixedArray } from '../../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
@@ -5,6 +6,7 @@ import { OddEvenSortAnimation } from './OddEvenSortAnimation.ts'
 import './OddEvenSort.css'
 
 class OddEvenSortDefinition implements ActionDefinition<FixedArray> {
+  public readonly pseudocode = ArraySortingPseudocode.oddEvenSort
   public readonly title = 'Odd-Even Sort'
   public readonly context = 'Sorting / Array / Odd-Even Sort'
   public readonly summary = OddEvenSortAnimation.describe(0).summary

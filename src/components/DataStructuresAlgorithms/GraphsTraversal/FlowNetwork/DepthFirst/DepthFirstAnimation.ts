@@ -1,9 +1,11 @@
+import { FlowNetworkPseudocode } from '../FlowNetworkPseudocode.ts'
 import { LinearAnimation } from '../../../../../visualization/LinearAnimation.ts'
 import type { LinearModel, LinearInputValues } from '../../../../../visualization/LinearModel.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
 import { FlowNetworkLayout } from '../../../../AdvancedDataStructures/SpecializedGraphs/FlowNetwork/FlowNetworkLayout.ts'
 
 export class DepthFirstAnimation extends LinearAnimation {
+  public static readonly pseudocode = FlowNetworkPseudocode.depthFirst
   public static readonly title = 'Depth-first traversal'
   public static readonly summary = 'Visit reachable vertices recursively before backtracking.'
 

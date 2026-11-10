@@ -15,6 +15,7 @@ export interface ActionDefinition<TModel> {
   readonly summary: string
   readonly phases: readonly string[]
   readonly timelineHint: string
+  readonly pseudocode?: string
   readonly inputLabel?: string
   readonly initialValue?: number
   readonly inputMinimum?: number

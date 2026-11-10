@@ -1,3 +1,4 @@
+import { ArraySortingPseudocode } from '../ArraySortingPseudocode.ts'
 import ActionView from '../../../../ActionPlayback/ActionView.tsx'
 import type { ActionDefinition } from '../../../../../visualization/ActionDefinition.ts'
 import { FixedArray } from '../../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
@@ -5,6 +6,7 @@ import { BogoSortAnimation } from './BogoSortAnimation.ts'
 import './BogoSort.css'
 
 class BogoSortDefinition implements ActionDefinition<FixedArray> {
+  public readonly pseudocode = ArraySortingPseudocode.bogoSort
   public readonly title = 'Bogo Sort'
   public readonly context = 'Sorting / Array / Bogo Sort'
   public readonly summary = BogoSortAnimation.describe(0).summary

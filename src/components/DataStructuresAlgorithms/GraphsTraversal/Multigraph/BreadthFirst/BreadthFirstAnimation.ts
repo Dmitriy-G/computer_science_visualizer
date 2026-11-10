@@ -1,9 +1,11 @@
+import { MultigraphPseudocode } from '../MultigraphPseudocode.ts'
 import { GraphAnimation } from '../../../../../visualization/GraphAnimation.ts'
 import { GraphSceneLayout } from '../../../../../visualization/GraphSceneLayout.ts'
 import type { GraphModel, GraphInputValues } from '../../../../../visualization/GraphModel.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
 
 export class BreadthFirstAnimation extends GraphAnimation {
+  public static readonly pseudocode = MultigraphPseudocode.breadthFirst
   public static readonly title = 'Breadth-first traversal'
   public static readonly summary = 'Traverse only vertices reachable from the chosen start using a queue.'
 

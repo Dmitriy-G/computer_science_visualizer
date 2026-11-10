@@ -14,6 +14,7 @@ interface RendererProps {
   readonly onOpenMenu: () => void
   readonly children?: ReactNode
   readonly emptyState?: ReactNode
+  readonly showPseudocode?: boolean
 }
 
 interface RendererState {
@@ -415,14 +416,7 @@ export default class Renderer extends Component<
                 )}
               </div>
             )}
-            {scene?.hint && (
-              <aside className="structure-hint" aria-label={scene.hint.title}>
-                <strong>{scene.hint.title}</strong>
-                {scene.hint.code && <pre><code>{scene.hint.code}</code></pre>}
-                <p>{scene.hint.description}</p>
-              </aside>
-            )}
-            <div id="renderer-code" className="renderer-code-host" />
+            {this.props.showPseudocode && <div id="renderer-code" className="renderer-code-host" />}
             <div
               id="diagram-viewport"
               className="renderer-viewport"

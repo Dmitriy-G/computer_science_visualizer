@@ -1,9 +1,11 @@
+import { EdgeListPseudocode } from '../EdgeListPseudocode.ts'
 import { LinearAnimation } from '../../../../../visualization/LinearAnimation.ts'
 import type { LinearModel, LinearInputValues } from '../../../../../visualization/LinearModel.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
 import { EdgeListLayout } from '../../../../FundamentalDataStructures/Graphs/EdgeList/EdgeListLayout.ts'
 
 export class BreadthFirstAnimation extends LinearAnimation {
+  public static readonly pseudocode = EdgeListPseudocode.breadthFirst
   public static readonly title = 'Breadth-first traversal'
   public static readonly summary = 'Visit reachable vertices in queue order from a chosen start.'
 

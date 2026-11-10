@@ -1,3 +1,4 @@
+import { ArraySortingPseudocode } from '../ArraySortingPseudocode.ts'
 import ActionView from '../../../../ActionPlayback/ActionView.tsx'
 import type { ActionDefinition } from '../../../../../visualization/ActionDefinition.ts'
 import { FixedArray } from '../../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
@@ -5,6 +6,7 @@ import { SlowSortAnimation } from './SlowSortAnimation.ts'
 import './SlowSort.css'
 
 class SlowSortDefinition implements ActionDefinition<FixedArray> {
+  public readonly pseudocode = ArraySortingPseudocode.slowSort
   public readonly title = 'Slow Sort'
   public readonly context = 'Sorting / Array / Slow Sort'
   public readonly summary = SlowSortAnimation.describe(0).summary

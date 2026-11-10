@@ -1,3 +1,4 @@
+import { ArraySortingPseudocode } from '../ArraySortingPseudocode.ts'
 import ActionView from '../../../../ActionPlayback/ActionView.tsx'
 import type { ActionDefinition } from '../../../../../visualization/ActionDefinition.ts'
 import { FixedArray } from '../../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
@@ -5,6 +6,7 @@ import { WikiSortAnimation } from './WikiSortAnimation.ts'
 import './WikiSort.css'
 
 class WikiSortDefinition implements ActionDefinition<FixedArray> {
+  public readonly pseudocode = ArraySortingPseudocode.wikiSort
   public readonly title = 'WikiSort'
   public readonly context = 'Sorting / Array / WikiSort'
   public readonly summary = WikiSortAnimation.describe(0).summary

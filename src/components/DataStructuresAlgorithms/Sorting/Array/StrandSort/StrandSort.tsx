@@ -1,3 +1,4 @@
+import { ArraySortingPseudocode } from '../ArraySortingPseudocode.ts'
 import ActionView from '../../../../ActionPlayback/ActionView.tsx'
 import type { ActionDefinition } from '../../../../../visualization/ActionDefinition.ts'
 import { FixedArray } from '../../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
@@ -5,6 +6,7 @@ import { StrandSortAnimation } from './StrandSortAnimation.ts'
 import './StrandSort.css'
 
 class StrandSortDefinition implements ActionDefinition<FixedArray> {
+  public readonly pseudocode = ArraySortingPseudocode.strandSort
   public readonly title = 'Strand Sort'
   public readonly context = 'Sorting / Array / Strand Sort'
   public readonly summary = StrandSortAnimation.describe(0).summary

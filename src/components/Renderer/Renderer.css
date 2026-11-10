@@ -60,31 +60,10 @@
 }
 .renderer-code-host {
   min-width: 0;
-  height: 80px;
   flex-shrink: 0;
 }
 .renderer-code-host:empty {
   display: none;
-}
-.step-code {
-  display: flex;
-  width: min(100%, var(--snippet-width));
-  height: 100%;
-  margin: 0 auto;
-  padding: 12px 15px;
-  background: #f5f8fc;
-  color: #36658f;
-  border: 1px solid #e5ecf4;
-  border-radius: 7px;
-  font: 12px var(--mono);
-  overflow: auto;
-}
-.step-code code {
-  display: block;
-  flex-shrink: 0;
-  max-width: 100%;
-  margin: auto;
-  text-align: left;
 }
 .renderer-viewport {
   width: 100%;
@@ -249,37 +228,6 @@
   align-items: center;
   gap: 7px;
   white-space: nowrap;
-}
-.structure-hint {
-  align-self: flex-start;
-  width: min(100%, 680px);
-  min-width: 0;
-  padding: 10px 12px;
-  border: 1px solid #e0eaf7;
-  border-radius: 8px;
-  background: #f3f7fd;
-  color: #5c7088;
-  font-size: 12px;
-  line-height: 1.6;
-  overflow-wrap: anywhere;
-}
-.structure-hint strong {
-  color: var(--ink);
-  font-size: 11px;
-  font-weight: 600;
-}
-.structure-hint pre {
-  margin: 6px 0;
-  color: #36658f;
-  font: 11px var(--mono);
-  line-height: 1.6;
-  white-space: pre-wrap;
-}
-.structure-hint code {
-  font: inherit;
-}
-.structure-hint p {
-  margin: 6px 0 0;
 }
 .legend-dot {
   width: 7px;

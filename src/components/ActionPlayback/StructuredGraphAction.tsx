@@ -16,11 +16,13 @@ export interface GraphSequenceConstructor {
   new(model: GraphModel, input: GraphInputValues): GraphAnimation
   readonly title: string
   readonly summary: string
+  readonly pseudocode?: string
 }
 
 class StructuredGraphDefinition implements ActionDefinition<GraphModel> {
   public readonly title: string
   public readonly summary: string
+  public readonly pseudocode?: string
   public readonly context = 'Graph operation'
   public readonly phases = ['Inspect', 'Traverse / modify', 'Finish']
   public readonly timelineHint = 'Follow vertices and highlighted edges'
@@ -32,6 +34,7 @@ class StructuredGraphDefinition implements ActionDefinition<GraphModel> {
     this.input = input
     this.title = sequence.title
     this.summary = sequence.summary
+    this.pseudocode = sequence.pseudocode
   }
 
   public create(model: GraphModel): GraphAnimation { return new this.sequence(model, this.input) }

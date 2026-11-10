@@ -1,9 +1,11 @@
+import { AdjacencyMatrixPseudocode } from '../AdjacencyMatrixPseudocode.ts'
 import { LinearAnimation } from '../../../../../visualization/LinearAnimation.ts'
 import type { LinearModel, LinearInputValues } from '../../../../../visualization/LinearModel.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
 import { AdjacencyMatrixLayout } from '../../../../FundamentalDataStructures/Graphs/AdjacencyMatrix/AdjacencyMatrixLayout.ts'
 
 export class DepthFirstAnimation extends LinearAnimation {
+  public static readonly pseudocode = AdjacencyMatrixPseudocode.depthFirst
   public static readonly title = 'Depth-first traversal'
   public static readonly summary = 'Visit reachable vertices recursively before backtracking.'
 

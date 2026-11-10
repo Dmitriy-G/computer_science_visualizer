@@ -1,6 +1,5 @@
 .application {
   --action-menu-width: 280px;
-  --snippet-width: 560px;
   --renderer-inset: 32px;
   --renderer-column-gap: 24px;
   --header-inset: 28px;

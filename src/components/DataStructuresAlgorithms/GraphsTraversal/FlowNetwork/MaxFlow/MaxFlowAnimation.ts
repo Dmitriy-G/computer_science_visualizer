@@ -1,9 +1,11 @@
+import { FlowNetworkPseudocode } from '../FlowNetworkPseudocode.ts'
 import { LinearAnimation } from '../../../../../visualization/LinearAnimation.ts'
 import type { LinearModel, LinearInputValues } from '../../../../../visualization/LinearModel.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
 import { FlowNetworkLayout } from '../../../../AdvancedDataStructures/SpecializedGraphs/FlowNetwork/FlowNetworkLayout.ts'
 
 export class MaxFlowAnimation extends LinearAnimation {
+  public static readonly pseudocode = FlowNetworkPseudocode.maxFlow
   public static readonly title = 'Edmonds–Karp maximum flow'
   public static readonly summary = 'Reset flow, find residual paths with BFS, and augment until no source-to-sink path remains.'
 

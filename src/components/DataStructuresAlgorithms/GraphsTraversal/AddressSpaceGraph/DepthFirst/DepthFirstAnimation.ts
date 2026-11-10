@@ -1,9 +1,11 @@
+import { AddressSpaceGraphPseudocode } from '../AddressSpaceGraphPseudocode.ts'
 import { LinearAnimation } from '../../../../../visualization/LinearAnimation.ts'
 import type { LinearModel, LinearInputValues } from '../../../../../visualization/LinearModel.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
 import { AddressSpaceGraphLayout } from '../../../../AdvancedDataStructures/SpecializedGraphs/AddressSpaceGraph/AddressSpaceGraphLayout.ts'
 
 export class DepthFirstAnimation extends LinearAnimation {
+  public static readonly pseudocode = AddressSpaceGraphPseudocode.depthFirst
   public static readonly title = 'Depth-first traversal'
   public static readonly summary = 'Visit the reachable outgoing neighbors from an existing vertex ID.'
 

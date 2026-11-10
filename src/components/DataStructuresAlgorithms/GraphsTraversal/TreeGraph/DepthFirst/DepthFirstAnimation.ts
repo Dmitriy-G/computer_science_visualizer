@@ -1,9 +1,11 @@
+import { TreeGraphPseudocode } from '../TreeGraphPseudocode.ts'
 import { LinearAnimation } from '../../../../../visualization/LinearAnimation.ts'
 import type { LinearModel, LinearInputValues } from '../../../../../visualization/LinearModel.ts'
 import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
 import { TreeGraphLayout } from '../../../../FundamentalDataStructures/Graphs/TreeGraph/TreeGraphLayout.ts'
 
 export class DepthFirstAnimation extends LinearAnimation {
+  public static readonly pseudocode = TreeGraphPseudocode.depthFirst
   public static readonly title = 'Depth-first traversal'
   public static readonly summary = 'Visit reachable vertices recursively before backtracking.'
 
