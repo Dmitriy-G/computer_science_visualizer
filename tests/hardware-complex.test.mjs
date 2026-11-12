@@ -452,20 +452,20 @@ test('code maintenance synchronizes caches but each executing core still needs i
 })
 
 test('Complex exposes twelve lessons directly, with reversible navigation and search destinations', () => {
-  const hardware = new MenuNavigation().selectCategory('advanced-algorithms').selectAdvancedAlgorithmGroup('hardware')
-  const complex = hardware.selectAdvancedAlgorithmGroup('hardware-complex')
+  const overview = new MenuNavigation().selectCategory('advanced-algorithms')
+  const complex = overview.selectAdvancedAlgorithmGroup('hardware-complex')
   assert.deepEqual(complex.getAdvancedAlgorithmGroups(), [])
   assert.equal(complex.getHardwareAlgorithms().length, 12)
-  assert.deepEqual(complex.getPath(), ['System Components Overview', 'Hardware', 'Complex'])
-  assert.deepEqual(complex.back(), hardware)
-  assert.equal(hardware.getHardwareAlgorithms().length, 0)
+  assert.deepEqual(complex.getPath(), ['System Components Overview', 'Complex'])
+  assert.deepEqual(complex.back(), overview)
+  assert.equal(overview.getHardwareAlgorithms().length, 0)
   const network = new MenuNavigation().selectCategory('advanced-algorithms').selectAdvancedAlgorithmGroup('network').selectAdvancedAlgorithmGroup('network-complex')
   assert.equal(network.getHardwareAlgorithms().length, 0)
   const index = new MenuSearchIndex(() => null)
   for (const choice of HardwareAlgorithmCatalog.choices) {
     const result = index.find('algorithms', choice.name).find((entry) => entry.hardwareAlgorithm === choice.kind)
     assert.ok(result, choice.name)
-    assert.equal(result.context, 'System Components Overview / Hardware / Complex')
+    assert.equal(result.context, 'System Components Overview / Complex')
     assert.deepEqual(result.components, ['CPU', 'RAM', 'Bus'])
   }
   assert.ok(index.find('algorithms', 'Neoverse N1').some((entry) => entry.hardwareAlgorithm === 'lse-atomics'))

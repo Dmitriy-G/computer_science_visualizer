@@ -19,21 +19,23 @@
    fixed order. Algorithms contains **Fundamental Data Structures**,
    **Data Structures Algorithms**, and **Advanced Data Structures**, in that order.
    These category lists are excluded from alphabetical menu ordering. System Components Overview
-   opens Hardware or Network, each containing Fundamental and Complex.
-   Hardware/Fundamental opens CPU, Disk, and RAM subcategories in that order.
+   opens Hardware Fundamental, Complex, and Network in that fixed order.
+   Hardware Fundamental opens CPU, HDD, SSD, and RAM directly in that order.
+   Network retains Fundamental and Complex subcategories.
    Choosing a component closes the menu and opens its workspace with overview
-   cards filtered by the corresponding component tag. CPU contains the four
-   execution and prediction overviews sharing one CPU-core map; Disk contains
-   five storage overviews, and RAM contains the three memory overviews. No static
-   test entry is offered. Hardware/Complex opens its flat workspace directly.
+   cards filtered by component and device tags. CPU contains four execution and
+   prediction overviews sharing one CPU-core map; HDD contains sector access;
+   SSD contains NAND, FTL, garbage collection, and wear leveling; RAM contains
+   three memory overviews. No static test entry is offered. Root Complex opens
+   its flat workspace directly.
    Keep separate information buttons and start no lesson playback until an overview
    is selected. Category navigation renders a client, abstract network, and server
-   at System Components Overview. Hardware zooms into that server to reveal CPU,
+   at System Components Overview. Hardware Fundamental zooms into that server to reveal CPU,
    RAM, bus, HDD, SSD, GPU, and network adapter; CPU zooms into the same CPU block
    to reveal the common core map. Use continuous SVG camera movement and reveal
    nested details as they grow, with reduced-motion support. Algorithms browsing
-   leaves the diagram unchanged. Hardware, Fundamental, and Complex share the
-   server hardware preview. Network, Disk, and RAM initially
+   leaves the diagram unchanged. Hardware Fundamental and Complex share the
+   server hardware preview. Network, HDD, SSD, and RAM initially
    show a blank renderer. Selecting a lesson uses its existing scene and playback.
    Network/Fundamental
    contains Physical, Data Link, Network, Transport, Session, Presentation, and
@@ -42,9 +44,10 @@
    cross-component lessons for ordering, barriers, atomic updates, coherence,
    translation, and instruction synchronization, without CPU/memory subcategories.
    Selecting a lesson starts its bounded trace in the shared renderer. Workspace
-   Back and the header menu reopen Fundamental for CPU, Disk, and RAM workspaces,
-   and Hardware for Complex, ending the lesson and restoring the hardware preview.
-   Returning from CPU to Fundamental zooms out to hardware; returning to System
+   Back and the header menu reopen Hardware Fundamental for CPU, HDD, SSD, and RAM,
+   ending the lesson and restoring the hardware preview. Complex returns directly
+   to System Components Overview and its system preview.
+   Returning from CPU to Hardware Fundamental zooms out to hardware; returning to System
    Components Overview zooms out to client/network/server. CPU category selection
    returns to its core map. Changing groups opens
    the corresponding category preview without starting lesson playback.
@@ -70,7 +73,7 @@
    memory complexities and explanations, Teaching model, and Terms used in this
    action. Algorithm action dialogs retain their existing content.
    Other empty leaves show that no overviews have been added yet. Back follows
-   their parents; returning to Hardware or System Components Overview zooms to
+   their parents; returning to Hardware Fundamental or System Components Overview zooms to
    that category's preview, while other parent lists preserve the diagram.
    Structure assignments are defined in `MainMenu/MenuStructureCatalog.ts`,
    and mirrored by canonical model folders under the matching root and subject.

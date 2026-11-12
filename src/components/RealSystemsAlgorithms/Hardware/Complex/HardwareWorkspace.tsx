@@ -123,8 +123,8 @@ export default class HardwareWorkspace extends Component<HardwareWorkspaceProps,
     return <>
       <Renderer ref={this.renderer} scene={this.state.scene ?? this.props.previewScene} onOpenMenu={this.props.onBack} emptyState={<></>}>
         <aside className="action-menu" aria-label="Complex hardware mechanisms">
-          <button type="button" className="text-button action-menu-back-button" onClick={this.props.onBack}>← Hardware</button>
-          <h2 ref={this.heading} tabIndex={-1}>Hardware / Complex</h2>
+          <button type="button" className="text-button action-menu-back-button" onClick={this.props.onBack}>← System Components Overview</button>
+          <h2 ref={this.heading} tabIndex={-1}>Complex</h2>
           <nav aria-label="Complex hardware mechanisms">{this.renderAlgorithms()}</nav>
         </aside>
       </Renderer>

@@ -51,8 +51,9 @@ test('eight component lessons retain independent deterministic scenes and fundam
     const results = index.find('algorithms', choice.name).filter((result) => result.cpuAlgorithm === choice.kind)
     assert.equal(results.length, 1)
     assert.deepEqual(results[0].components, choice.components)
-    assert.equal(results[0].context, `System Components Overview / Hardware / Fundamental / ${choice.components[0]}`)
-    assert.equal(results[0].symbol, choice.components[0])
+    const category = choice.devices?.[0] ?? choice.components[0]
+    assert.equal(results[0].context, `System Components Overview / Hardware Fundamental / ${category}`)
+    assert.equal(results[0].symbol, category)
   }
 })
 

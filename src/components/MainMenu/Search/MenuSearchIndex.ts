@@ -74,7 +74,7 @@ export class MenuSearchIndex {
         result: {
           key: `hardware:${algorithm.kind}`, hardwareAlgorithm: algorithm.kind,
           name: algorithm.name, description: algorithm.description,
-          context: 'System Components Overview / Hardware / Complex', symbol: 'HW',
+          context: 'System Components Overview / Complex', symbol: 'HW',
           components: algorithm.components, architectures: algorithm.architectures,
         },
       })
@@ -89,7 +89,7 @@ export class MenuSearchIndex {
         result: {
           key: `cpu:${algorithm.kind}`, cpuAlgorithm: algorithm.kind,
           name: algorithm.name, description: algorithm.description,
-          context: `System Components Overview / Hardware / Fundamental / ${group.name}`, symbol: group.component ?? 'CPU',
+          context: `System Components Overview / Hardware Fundamental / ${group.name}`, symbol: group.device ?? group.component ?? 'CPU',
           components: algorithm.components, architectures: algorithm.architectures, devices: algorithm.devices,
         },
       })

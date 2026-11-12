@@ -261,29 +261,32 @@ viewport sizing, scrolling, and sticky close-control rules for the overview popu
 
 Keep the System Components Overview category hierarchy in
 `MainMenu/AdvancedAlgorithmCatalog.ts`, separate from structure membership and
-data-structure algorithm scopes. Hardware and Network each contain Fundamental
-and Complex, always displaying Fundamental first and Complex second rather than
-sorting that pair alphabetically. Hardware/Fundamental opens CPU, Disk, and RAM
-subcategory cards in that fixed order. Each component subcategory closes MainMenu
-and opens its own workspace, filtered from CpuAlgorithmCatalog by the matching
-CPU, Disk, or RAM component tag. Keep lesson source folders in their existing
+data-structure algorithm scopes. The overview root contains Hardware Fundamental,
+Complex, and Network in that fixed order. Hardware Fundamental opens CPU, HDD,
+SSD, and RAM directly in that fixed order. Network retains Fundamental and Complex,
+in that order. Each hardware component subcategory closes MainMenu and opens its
+own workspace, filtered from CpuAlgorithmCatalog by component and device tags.
+HDD contains sector access; SSD contains NAND, FTL, garbage collection, and wear
+leveling. Both retain Disk component tags and use HDD or SSD device tags.
+Keep lesson source folders in their existing
 Fundamental locations; category membership comes from tags rather than copies.
-Hardware/Complex opens its existing flat workspace directly. Do not render a
+Root Complex opens its existing flat workspace directly. Do not render a
 second lesson list inside the menu. Each workspace can open with no lesson selected,
 showing all overview cards and their separate info buttons. SystemOverviewLayout
 under RealSystemsAlgorithms/SystemOverview supplies nested category previews:
 client/network/server, server hardware, and the shared CPU core. Scene camera
 bounds and detail layers let Renderer animate one continuous zoom and progressively
 reveal nested internals. Respect reduced motion and cancel animation frames on
-unmount or replacement. Hardware, Fundamental, and Complex share the server
-hardware preview. Returning from CPU to Fundamental zooms out to hardware;
+unmount or replacement. Hardware Fundamental and Complex share the server
+hardware preview. Returning from CPU to Hardware Fundamental zooms out to hardware;
 returning to System Components Overview zooms out to client/network/server.
-Network, Disk, and RAM
+Network, HDD, SSD, and RAM
 begin with blank renderers. Existing lesson scenes and playback stay unchanged.
 The Renderer supports action children without a scene and accepts
 an optional empty-state message. Selecting an animated overview starts playback; its info
-button only opens information. Fundamental workspace Back and header menu reopen
-Hardware/Fundamental with the CPU, Disk, and RAM cards; Complex returns to Hardware.
+button only opens information. Component workspace Back and header menu reopen
+Hardware Fundamental with CPU, HDD, SSD, and RAM; Complex returns directly to
+System Components Overview and its system preview.
 Returning to a parent category ends lesson playback and restores that category's
 preview. CPU category selection returns to its core preview. Changing groups opens
 their preview without starting a lesson. Search routes each fundamental lesson to the
@@ -299,9 +302,9 @@ policies. The former mq-deadline, BFQ, and Kyber lessons and destinations were r
 
 Keep CPU hardware lessons under `RealSystemsAlgorithms/Hardware/Fundamental/`,
 with RegisterRenaming, OutOfOrder, BranchPrediction, and ReturnStack action folders.
-Search selections open Hardware/Fundamental/CPU and start the selected CPU lesson.
-Menu reopening and workspace Back lead to Hardware/Fundamental; its Back leads
-to Hardware. Disk and RAM lessons follow the same component navigation pattern.
+Search selections open Hardware Fundamental / CPU and start the selected CPU lesson.
+Menu reopening and workspace Back lead to Hardware Fundamental; its Back leads
+to System Components Overview. HDD, SSD, and RAM follow the same navigation pattern.
 Each owns its mechanism model, component, CSS, animation, layout, and sourced
 information. CpuCoreLayout supplies one enclosing square CPU-core boundary and
 the same seventeen internal component regions for all four CPU lessons. Group

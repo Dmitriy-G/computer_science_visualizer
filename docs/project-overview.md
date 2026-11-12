@@ -14,13 +14,15 @@ Advanced Data Structures menu hierarchy. Their subjects and assignments are defi
 in MainMenu/MenuStructureCatalog.ts. Data Structures Algorithms contains Sorting
 (Array with forty-eight sorting algorithms) and Graphs Traversal; graph algorithm
 examples live in the latter.
-System Components Overview is a separate root branch for Hardware and Network, each
-with Fundamental and Complex subcategories. Hardware/Fundamental contains CPU,
-Disk, and RAM subcategories in that order. Choosing one opens a workspace whose
-overview cards are filtered by the matching component tag, with separate info
-buttons. CPU contains four lessons, Disk five, and RAM three. Hardware/Complex
-opens its existing flat workspace directly. System Components Overview displays
-a client, abstract network, and server. Hardware moves the SVG camera into that
+System Components Overview opens Hardware Fundamental, Complex, and Network in
+that order. Hardware Fundamental directly contains CPU, HDD, SSD, and RAM in
+that order. Choosing one opens a workspace whose overview cards are filtered by
+component and storage device tags, with separate info buttons. CPU contains four
+lessons, HDD one, SSD four, and RAM three. NAND belongs to SSD alongside FTL,
+garbage collection, and wear leveling. Complex opens its flat workspace directly
+from the overview root; Network retains Fundamental and Complex subcategories.
+System Components Overview displays a client, abstract network, and server.
+Hardware Fundamental moves the SVG camera into that
 server, revealing CPU, RAM, bus, HDD, SSD, GPU, and network adapter. CPU moves
 closer into the same nested CPU block, progressively revealing the shared core
 map. SystemOverviewLayout owns these navigation scenes; Renderer animates the
@@ -30,13 +32,14 @@ connections; zooming out restores its context.
 Category previews open in Fit mode and reset scrolling, including after Actual size.
 Their layout always reserves the left menu's width, scaling elements to fit beside
 it and keeping the diagram in place when the menu opens or closes.
-Algorithms browsing preserves the current diagram. Hardware, Fundamental, and
-Complex share the server hardware preview. Returning from CPU to Fundamental
+Algorithms browsing preserves the current diagram. Hardware Fundamental and
+Complex share the server hardware preview. Returning from CPU to Hardware Fundamental
 zooms out to that hardware view; returning to System Components Overview zooms
-out to the client/network/server view. Network, Disk, and RAM
+out to the client/network/server view. Network, HDD, SSD, and RAM
 start with a blank renderer. Selecting a lesson uses its existing diagram and
-playback. Fundamental workspace Back and header menu return to the three
-component categories and restore the hardware preview, ending the current lesson.
+playback. Component workspace Back and header menu return to the four categories
+in Hardware Fundamental and restore the hardware preview, ending the current lesson.
+Complex returns directly to System Components Overview and its system preview.
 Search selections open the matching component workspace and lesson.
 The four CPU overviews share a square CPU-core boundary with the same seventeen
 component locations. Each supplies its own dataflow; unused units remain idle.
@@ -66,7 +69,7 @@ receiver values updated on arrival and an arrow-content caption below the legend
 CPU traces are bounded to 256 interactions with fixed scene bounds; memory/storage
 component lessons retain their existing trace and playback behavior. The common
 core map is conceptual and does not claim that all units exist in every cited CPU.
-Operating-system CPU scheduler lessons have been removed. Hardware/Complex
+Operating-system CPU scheduler lessons have been removed. Root Complex
 implements the twelve cross-component lessons from coverage.md directly in one
 flat list: store buffering, x86 fences, DMB, DSB, acquire/release, exclusive loops,
 LSE and locked atomics, MOESI, MESIF, TLB/table walks, and instruction-cache

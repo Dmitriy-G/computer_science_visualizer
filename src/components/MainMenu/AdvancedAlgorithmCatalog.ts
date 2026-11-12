@@ -1,10 +1,9 @@
-import type { OverviewComponentKind } from '../../visualization/OverviewComponent.ts'
+import type { OverviewComponentKind, OverviewDeviceKind } from '../../visualization/OverviewComponent.ts'
 
-export type HardwareFundamentalGroupKind = 'hardware-cpu' | 'hardware-disk' | 'hardware-ram'
+export type HardwareFundamentalGroupKind = 'hardware-cpu' | 'hardware-hdd' | 'hardware-ssd' | 'hardware-ram'
 export type HardwareOverviewGroupKind = HardwareFundamentalGroupKind | 'hardware-complex'
 
 export type AdvancedAlgorithmGroupKind =
-  | 'hardware'
   | 'network'
   | 'hardware-fundamental'
   | HardwareOverviewGroupKind
@@ -24,16 +23,17 @@ export interface AdvancedAlgorithmGroup {
   readonly name: string
   readonly description: string
   readonly component?: OverviewComponentKind
+  readonly device?: OverviewDeviceKind
 }
 
 export class AdvancedAlgorithmCatalog {
   public static readonly groups: readonly AdvancedAlgorithmGroup[] = [
-    { kind: 'hardware', parent: null, name: 'Hardware', description: 'Explore individual hardware components and mechanisms that combine them into working systems.' },
+    { kind: 'hardware-fundamental', parent: null, name: 'Hardware Fundamental', description: 'Explore CPU, HDD, SSD, and RAM components and their mechanisms.' },
+    { kind: 'hardware-complex', parent: null, name: 'Complex', description: 'Combine hardware components into systems, such as caching between CPU and memory.' },
     { kind: 'network', parent: null, name: 'Network', description: 'Explore individual OSI layers and mechanisms that combine layers into working networks.' },
-    { kind: 'hardware-fundamental', parent: 'hardware', name: 'Fundamental', description: 'Explore CPU, Disk, and RAM components and their mechanisms.' },
-    { kind: 'hardware-complex', parent: 'hardware', name: 'Complex', description: 'Combine hardware components into systems, such as caching between CPU and memory.' },
     { kind: 'hardware-cpu', parent: 'hardware-fundamental', name: 'CPU', description: 'Explore instruction execution, register renaming, and prediction inside a CPU core.', component: 'CPU' },
-    { kind: 'hardware-disk', parent: 'hardware-fundamental', name: 'Disk', description: 'Explore HDD access, NAND storage, and SSD controller mechanisms.', component: 'Disk' },
+    { kind: 'hardware-hdd', parent: 'hardware-fundamental', name: 'HDD', description: 'Explore magnetic storage, sector access, and read/write mechanisms.', component: 'Disk', device: 'HDD' },
+    { kind: 'hardware-ssd', parent: 'hardware-fundamental', name: 'SSD', description: 'Explore NAND storage, flash translation, garbage collection, and wear leveling.', component: 'Disk', device: 'SSD' },
     { kind: 'hardware-ram', parent: 'hardware-fundamental', name: 'RAM', description: 'Explore latches, SRAM cells, and DRAM row access.', component: 'RAM' },
     { kind: 'network-fundamental', parent: 'network', name: 'Fundamental', description: 'Overviews focused on one OSI layer and the tasks it performs.' },
     { kind: 'network-complex', parent: 'network', name: 'Complex', description: 'Combine network layers into working systems, such as secure web communication.' },
@@ -62,13 +62,13 @@ export class AdvancedAlgorithmCatalog {
   }
 
   public static isHardwareFundamentalGroup(kind: AdvancedAlgorithmGroupKind | null): kind is HardwareFundamentalGroupKind {
-    return kind === 'hardware-cpu' || kind === 'hardware-disk' || kind === 'hardware-ram'
+    return kind === 'hardware-cpu' || kind === 'hardware-hdd' || kind === 'hardware-ssd' || kind === 'hardware-ram'
   }
 
-  public static fundamentalGroupFor(components: readonly OverviewComponentKind[]): HardwareFundamentalGroupKind {
+  public static fundamentalGroupFor(components: readonly OverviewComponentKind[], devices: readonly OverviewDeviceKind[] = []): HardwareFundamentalGroupKind {
     for (const group of this.getGroups('hardware-fundamental')) {
-      if (this.isHardwareFundamentalGroup(group.kind) && group.component && components.includes(group.component)) return group.kind
+      if (this.isHardwareFundamentalGroup(group.kind) && group.component && components.includes(group.component) && (!group.device || devices.includes(group.device))) return group.kind
     }
-    throw new RangeError('Fundamental overviews require a CPU, Disk, or RAM component tag')
+    throw new RangeError('Fundamental overviews require CPU or RAM coverage, or Disk coverage with an HDD or SSD device tag')
   }
 }

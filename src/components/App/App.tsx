@@ -434,7 +434,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     if (this.state.hardwareOverview) {
       const parent = AdvancedAlgorithmCatalog.getGroup(this.state.hardwareOverview).parent
       const menu = new MenuNavigation('advanced-algorithms', null, 'fundamental', parent)
-      this.showSystemCategory(menu, SystemOverviewLayout.create('hardware', this.currentDiagram()))
+      this.showSystemCategory(menu, SystemOverviewLayout.create(parent === null ? 'system' : 'hardware', this.currentDiagram()))
       return
     }
     this.setState({
@@ -486,11 +486,11 @@ export default class App extends Component<Record<string, never>, AppState> {
   private selectAdvancedAlgorithmGroup = (group: AdvancedAlgorithmGroupKind): void => {
     const menu = this.state.menu.selectAdvancedAlgorithmGroup(group)
     const hardwareOverview = menu.hardwareOverviewGroup
-    if (group === 'hardware' || group === 'hardware-fundamental' || group === 'hardware-complex' || group === 'hardware-cpu') {
+    if (group === 'hardware-fundamental' || group === 'hardware-complex' || group === 'hardware-cpu') {
       this.showSystemCategory(menu, SystemOverviewLayout.create(group === 'hardware-cpu' ? 'cpu' : 'hardware', this.currentDiagram()), group === 'hardware-cpu' || group === 'hardware-complex')
       return
     }
-    if (group === 'network' || group === 'hardware-disk' || group === 'hardware-ram') {
+    if (group === 'network' || group === 'hardware-hdd' || group === 'hardware-ssd' || group === 'hardware-ram') {
       this.showSystemCategory(menu, null, hardwareOverview !== null)
       return
     }
@@ -523,7 +523,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       hardwareOverview: 'hardware-complex',
       hardwareAlgorithm: algorithm, hardwareSession: this.state.hardwareSession + 1, hardwareActionActive: true,
       cpuAlgorithm: null, cpuActionActive: false,
-      selected: null, scene: SystemOverviewLayout.still(this.state.scene), actionOpen: false, selectedAction: null, actionRunning: false,
+      selected: null, scene: SystemOverviewLayout.still(SystemOverviewLayout.create('hardware', null)), actionOpen: false, selectedAction: null, actionRunning: false,
       actionValue: undefined, actionUpperValue: undefined,
       inputRequest: null, overviewInformation: null, structureInformation: null,
       algorithmInformation: null, menuOpen: false, searchOpen: false,
@@ -572,7 +572,7 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private backInMenu = (): void => {
     const menu = this.state.menu.back()
-    if (menu.screen === 'advanced-algorithms' && (menu.advancedAlgorithmGroup === null || menu.advancedAlgorithmGroup === 'hardware' || menu.advancedAlgorithmGroup === 'hardware-fundamental')) {
+    if (menu.screen === 'advanced-algorithms' && (menu.advancedAlgorithmGroup === null || menu.advancedAlgorithmGroup === 'hardware-fundamental')) {
       this.showSystemCategory(menu, SystemOverviewLayout.create(menu.advancedAlgorithmGroup === null ? 'system' : 'hardware', this.currentDiagram()))
     } else this.setState({ menu })
   }

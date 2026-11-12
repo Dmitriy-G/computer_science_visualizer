@@ -132,7 +132,7 @@ export default class MainMenu extends Component<MainMenuProps> {
     if (!groups.length) return <p className="menu-empty-state">No overviews have been added to this category yet.</p>
     const buttons: ReactNode[] = []
     const parent = this.props.navigation.advancedAlgorithmGroup
-    const fixedOrder = parent === 'hardware' || parent === 'hardware-fundamental' || parent === 'network' || parent === 'network-fundamental'
+    const fixedOrder = parent === null || parent === 'hardware-fundamental' || parent === 'network' || parent === 'network-fundamental'
     const ordered = fixedOrder ? groups : this.orderChoices(groups)
     for (const group of ordered) {
       buttons.push(

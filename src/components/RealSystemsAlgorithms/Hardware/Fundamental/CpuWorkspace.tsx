@@ -125,11 +125,12 @@ export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorksp
 
   public render(): ReactNode {
     const group = AdvancedAlgorithmCatalog.getGroup(this.props.group)
+    const parent = AdvancedAlgorithmCatalog.getGroup('hardware-fundamental')
     return <>
       <Renderer ref={this.renderer} scene={this.state.scene ?? this.props.previewScene} onOpenMenu={this.props.onBack} emptyState={<></>}>
         <aside className="action-menu" aria-label={`${group.name} hardware overviews`}>
-          <button type="button" className="text-button action-menu-back-button" onClick={this.props.onBack}>← Fundamental</button>
-          <h2 ref={this.heading} tabIndex={-1}>Hardware / Fundamental / {group.name}</h2>
+          <button type="button" className="text-button action-menu-back-button" onClick={this.props.onBack}>← {parent.name}</button>
+          <h2 ref={this.heading} tabIndex={-1}>{parent.name} / {group.name}</h2>
           <nav aria-label={`${group.name} hardware mechanisms`}>{this.renderAlgorithms()}</nav>
         </aside>
       </Renderer>

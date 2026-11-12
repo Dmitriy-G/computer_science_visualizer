@@ -45,7 +45,7 @@ export class CpuAlgorithmCatalog {
     { kind: 'sram-cell', name: 'SRAM cell: hold, read, and write', description: 'A conventional six-transistor SRAM cell stores complementary states using feedback and accesses them through two transistors.', components: ['RAM'], architectures: [] },
     { kind: 'dram-row', name: 'DRAM cell and row access: activate, sense, restore, precharge', description: 'A DRAM bank senses small capacitor signals into a row buffer, restores the open row, and selects columns for data transfer.', components: ['RAM'], architectures: [] },
     { kind: 'hdd-sector', name: 'HDD: locating a sector and recording magnetic data', description: 'A rotating magnetic platter, positioning servo, head, and read/write channel cooperate to store and recover sector data.', components: ['Disk'], architectures: [], devices: ['HDD'] },
-    { kind: 'nand-cell', name: 'NAND: charge storage, page access, and block erase', description: 'Stored charge shifts a NAND cell threshold; page access and whole-block erase expose that physical storage to a controller.', components: ['Disk'], architectures: [] },
+    { kind: 'nand-cell', name: 'NAND: charge storage, page access, and block erase', description: 'Stored charge shifts a NAND cell threshold; page access and whole-block erase expose that physical storage to a controller.', components: ['Disk'], architectures: [], devices: ['SSD'] },
     { kind: 'ssd-ftl', name: 'SSD FTL: logical-to-physical mapping and out-of-place updates', description: 'A Flash Translation Layer maps logical pages to flash locations and redirects updates to erased space.', components: ['Disk'], architectures: [], devices: ['SSD'] },
     { kind: 'ssd-garbage-collection', name: 'SSD garbage collection: reclaiming invalid pages', description: 'A flash controller preserves live pages and erases blocks containing obsolete copies to replenish erased space.', components: ['Disk'], architectures: [], devices: ['SSD'] },
     { kind: 'ssd-wear-leveling', name: 'SSD wear leveling: balancing block erases', description: 'Controller allocation and relocation spread erase use among usable flash blocks, including blocks occupied by cold data.', components: ['Disk'], architectures: [], devices: ['SSD'] },
@@ -73,17 +73,17 @@ export class CpuAlgorithmCatalog {
   }
 
   public static forGroup(group: HardwareFundamentalGroupKind): readonly CpuAlgorithmChoice[] {
-    const component = AdvancedAlgorithmCatalog.getGroup(group).component
+    const { component, device } = AdvancedAlgorithmCatalog.getGroup(group)
     const choices: CpuAlgorithmChoice[] = []
     for (const choice of this.choices) {
-      if (component && choice.components.includes(component)) choices.push(choice)
+      if (component && choice.components.includes(component) && (!device || choice.devices?.includes(device))) choices.push(choice)
     }
     return choices
   }
 
   public static groupFor(kind: CpuAlgorithmKind): HardwareFundamentalGroupKind {
     for (const choice of this.choices) {
-      if (choice.kind === kind) return AdvancedAlgorithmCatalog.fundamentalGroupFor(choice.components)
+      if (choice.kind === kind) return AdvancedAlgorithmCatalog.fundamentalGroupFor(choice.components, choice.devices)
     }
     throw new RangeError('Unknown fundamental hardware overview')
   }
