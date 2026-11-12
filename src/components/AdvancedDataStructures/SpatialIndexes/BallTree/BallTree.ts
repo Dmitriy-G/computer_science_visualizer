@@ -89,7 +89,6 @@ export class BallTree extends AppliedModel {
     const lowerBound = (node: BallNode): number => Math.max(0, Math.sqrt(PointData.distance(node, query)) - node.radius)
     const visit = (node: BallNode): void => {
       const lower = lowerBound(node)
-      // A small tolerance keeps floating-point rounding from causing false pruning.
       if (lower > Math.sqrt(distance) + 1e-9) {
         LinearModel.emit(observer, `ball-${node.id}`, 'Prune this ball: its nearest possible point is farther than the current best.', 'max(0, distance(center, query) - radius) > bestDistance')
         return

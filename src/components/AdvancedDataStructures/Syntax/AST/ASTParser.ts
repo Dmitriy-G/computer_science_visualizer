@@ -6,7 +6,6 @@ export interface ParsedExpression {
   readonly children: readonly ParsedExpression[]
 }
 
-// Arithmetic grammar only: this parser never executes source text.
 export class ASTParser {
   public static readonly maximumLength = 128
   private readonly expression: string

@@ -4,6 +4,6 @@ import type { TreeFrame } from '../../../../visualization/TreeActionAnimation.ts
 import type { Scene } from '../../../../visualization/Scene.ts'
 export class BoundingVolumeHierarchyLayout extends HierarchyLayout {
   public create(model: AdditionalTreeModel, frame: TreeFrame = {}): Scene {
-    return { ...super.create(model, frame), countLabel: 'rectangles', hint: { title: 'Bounding Volume Hierarchy (BVH)', description: 'A 2D AABB hierarchy with primitive leaves and refitted ancestor bounds.' } }
+    return { ...super.create(model, frame), countLabel: 'rectangles' }
   }
 }

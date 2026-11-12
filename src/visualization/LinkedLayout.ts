@@ -22,8 +22,6 @@ export interface LinkedFrame {
   readonly edges?: readonly SceneEdge[]
 }
 
-// Shared scene construction for the linked queue, deque, and doubly linked list.
-// Algorithms choose the links and positions for every intermediate frame.
 export class LinkedLayout {
   private readonly kind: StructureKind
   private readonly firstRole: string

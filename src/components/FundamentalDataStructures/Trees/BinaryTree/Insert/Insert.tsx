@@ -15,18 +15,6 @@ interface InsertProps {
 
 class BinaryTreeInsertionDefinition implements ActionDefinition<BinaryTree> {
   public readonly title = 'Insert a key'
-  public readonly context = 'Binary search tree / insertion'
-  public readonly summary =
-    'Smaller goes left. Larger goes right. Duplicate keys are rejected.'
-  public readonly phases = [
-    'Start',
-    'Compare',
-    'Locate',
-    'Create',
-    'Connect',
-    'Finish',
-  ]
-  public readonly timelineHint = 'O(h) traversal · O(1) extra memory'
 
   public create(tree: BinaryTree, value: number): InsertionAnimation {
     return new InsertionAnimation(tree, value)

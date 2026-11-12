@@ -3,7 +3,6 @@ import { AdditionalTreeModel } from '../../../../visualization/AdditionalTreeMod
 import type { TreeInputValues, TreeOperationResult } from '../../../../visualization/AdditionalTreeModel.ts'
 import type { ActionKind } from '../../../../visualization/ActionCatalog.ts'
 import type { TreeTraceObserver } from '../../../../visualization/TreeTrace.ts'
-// Reuses binary links and metadata only: values have no search ordering.
 export class UnorderedBinaryTree extends SearchTreeModel {
   public readonly kind = 'unordered-binary-tree'
   protected empty(): UnorderedBinaryTree { return new UnorderedBinaryTree() }

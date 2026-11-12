@@ -6,10 +6,6 @@ import { CpuTrace } from './CpuTrace.ts'
 
 export abstract class CpuLesson implements ActionDefinition<CpuModel> {
   public abstract readonly title: string
-  public readonly context: string = 'CPU hardware'
-  public readonly summary: string = 'A deterministic hardware-state example inside one processor core.'
-  public readonly phases = ['Initial state', 'Hardware events', 'Result']
-  public readonly timelineHint: string = 'Hardware events, not measured processor cycles'
   protected abstract build(trace: CpuTrace): void
 
   protected createTrace(): CpuTrace { return new CpuTrace() }

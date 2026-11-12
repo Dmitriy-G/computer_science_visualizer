@@ -60,11 +60,6 @@ export class HashBucketLayout {
     return {
       kind: this.kind, nodes, edges, width: columns * spacing + 120,
       height: y, count: model.length,
-      hint: {
-        title: 'Hash function',
-        code: 'h(key) = ((key % b) + b) % b',
-        description: `Division hashing with b = ${model.bucketCount} buckets. Normalize the remainder so negative keys also map to a valid bucket; recalculate after resizing.`,
-      },
       focusId: event?.id && event.type !== 'remove' ? event.id : event?.bucket !== undefined ? `${this.kind}-bucket-${event.bucket}` : null,
     }
   }

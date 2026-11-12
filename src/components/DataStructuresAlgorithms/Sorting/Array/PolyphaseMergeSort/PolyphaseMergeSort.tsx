@@ -8,11 +8,6 @@ import './PolyphaseMergeSort.css'
 class PolyphaseMergeSortDefinition implements ActionDefinition<FixedArray> {
   public readonly pseudocode = ArraySortingPseudocode.polyphaseMergeSort
   public readonly title = 'Polyphase Merge Sort'
-  public readonly context = 'Sorting / Array / Polyphase Merge Sort'
-  public readonly summary = PolyphaseMergeSortAnimation.describe(0).summary
-  public readonly phases = ['Inspect', 'Locate', 'Move', 'Finish range', 'Commit']
-  public readonly timelineHint = 'Deterministic sorting steps in the shared renderer'
-  public readonly acceptsValue = false
 
   public create(model: FixedArray): PolyphaseMergeSortAnimation {
     return new PolyphaseMergeSortAnimation(model)

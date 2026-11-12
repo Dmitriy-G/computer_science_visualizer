@@ -260,12 +260,11 @@ on narrow screens; resetting cancels playback and restores the default structure
 Show Reset only when an action is selected; hide it in the initial structure view
 and after resetting or selecting another structure.
 Use an icon-only Reset button with an accessible label.
-Center the current step's description above the timeline, replacing the visible
-"Animation timeline" label and generic hint. Use the full available timeline
-width and keep the text on a single line so it never changes header height or
-shifts the diagram. On narrow screens, truncate overflow with an ellipsis and
-provide the full description as a tooltip and accessible text. Retain an
-accessible name for the progress indicator. Hide the pseudocode trigger before an
+Show only the progress bar in the timeline across data structures, algorithms,
+and overviews. Do not render a step description, label, hint, or tooltip above
+the bar. Retain an accessible name and the current step's description in the
+progress indicator's accessible value text. Hardware arrow captions remain
+below the renderer legend. Hide the pseudocode trigger before an
 action is selected. Align diagrams to the top of their viewport instead of
 vertically centering them in unused canvas space.
 Omit the step heading, action introduction, phase progress bar, step counter,

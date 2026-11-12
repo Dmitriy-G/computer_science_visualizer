@@ -4,6 +4,6 @@ import type { TreeFrame } from '../../../../visualization/TreeActionAnimation.ts
 import type { Scene } from '../../../../visualization/Scene.ts'
 export class SplayTreeLayout extends HierarchyLayout {
   public create(model: AdditionalTreeModel, frame: TreeFrame = {}): Scene {
-    return { ...super.create(model, frame), countLabel: 'keys', hint: { title: 'Splay Tree', description: 'Accessed keys move to the root through zig, zig-zig, and zig-zag rotations.' } }
+    return { ...super.create(model, frame), countLabel: 'keys' }
   }
 }

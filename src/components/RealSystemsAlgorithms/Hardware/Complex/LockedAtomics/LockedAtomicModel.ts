@@ -56,6 +56,6 @@ export class LockedAtomicModel {
       { id: 'owner', label: 'atomic access', value: this.owner === null ? 'available' : `Core ${this.owner}` },
       { id: 'old-0', label: 'core 0 old', value: `${this.old[0] ?? '?'}`, status: `ZF: ${this.zeroFlag[0] ?? '?'}` },
       { id: 'old-1', label: 'core 1 old', value: `${this.old[1] ?? '?'}`, status: `ZF: ${this.zeroFlag[1] ?? '?'}` },
-    ] }], 'Intel x86 LOCK XADD / LOCK CMPXCHG, aligned WB operand wholly within one cache line. Exclusive cache access illustrates cache locking; it is not an external bus lock. Atomicity and locked-operation memory ordering are architectural; ownership timing is illustrative. No persistence guarantee.', null, 0, LockedAtomicLayout.create(this.flow, this.flowCore, this.instructions, this.old, this.requests))
+    ] }], null, 0, LockedAtomicLayout.create(this.flow, this.flowCore, this.instructions, this.old, this.requests))
   }
 }

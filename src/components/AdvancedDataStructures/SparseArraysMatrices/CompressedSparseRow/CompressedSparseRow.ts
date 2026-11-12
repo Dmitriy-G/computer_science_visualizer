@@ -15,7 +15,6 @@ export class CompressedSparseRow extends ExtendedGraphModel {
   private columns: number[] = []
   private edgeNumbers: number[] = []
   public get edgeCount(): number { return this.columns.length }
-  public get hint(): string { return 'Canonical CSR storage uses offsets[V + 1] and columns[E], with implicit value 1 for every edge. Row r occupies columns[offsets[r]..offsets[r + 1]). Columns are sorted per row. A parallel edge-ID array preserves identity while packed entries and row offsets shift on edits.' }
   protected empty(): CompressedSparseRow { return new CompressedSparseRow() }
 
   public static createDefault(): CompressedSparseRow {

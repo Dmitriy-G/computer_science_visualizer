@@ -10,7 +10,7 @@ export class SleepSortAnimation extends ArraySortingAnimation {
   }
 
   constructor(model: FixedArray) {
-    super(model, 'Sleep Sort', { counterHint: 'Simulated Sleep Sort: exact virtual deadlines and an explicit heap; no real delays.' })
+    super(model, 'Sleep Sort')
     this.result.sleepSort((event) => this.recordTrace(event))
     this.finish(true)
     this.fitScenes()

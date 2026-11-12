@@ -2,12 +2,9 @@ import { ArraySortOperations } from './ArraySortOperations.ts'
 import type { ArrayEntry } from '../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
 import type { ArraySortEvent, ArraySortFrame } from './ArraySortTrace.ts'
 
-// Exact integer bounds and an in-place histogram permutation shared by the
-// MSD radix and adaptive spread lessons. No JavaScript 32-bit key coercions.
 export class IntegerDistributionSort extends ArraySortOperations {
   protected cells: number[] = []
   protected cellStatus = 'COUNT'
-  protected hint = ''
 
   protected bounds(start = 0, end = this.entries.length): { minimum: bigint, maximum: bigint, maximumIndex: number, ordered: boolean } {
     let minimum = BigInt(this.entries[start].value)
@@ -30,7 +27,7 @@ export class IntegerDistributionSort extends ArraySortOperations {
     if (!this.observer) return extra
     const counters = []
     for (let index = 0; index < this.cells.length; index += 1) counters.push({ label: `bin ${index}`, count: this.cells[index], status: this.cellStatus, active: index === active })
-    return { counters, counterHint: this.hint, ...extra }
+    return { counters, ...extra }
   }
 
   protected step(kind: ArraySortEvent['kind'], label: string, detail: string, code: string, extra: ArraySortFrame = {}, index = 0, other?: number, active = -1): void {

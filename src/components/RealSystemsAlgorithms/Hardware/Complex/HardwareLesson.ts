@@ -33,7 +33,7 @@ export class HardwareTrace {
       if (!interactions.length) this.explain(description, phase)
     }
     if (this.steps.length > 256) throw new RangeError('Hardware lesson exceeds its interaction bound')
-    this.result = new HardwareModel(copy.banks, copy.detail, copy.focusId, this.steps.length, copy.diagram)
+    this.result = new HardwareModel(copy.banks, copy.focusId, this.steps.length, copy.diagram)
   }
 
   public explain(description: string, phase?: number): void {
@@ -46,10 +46,6 @@ export class HardwareTrace {
 
 export abstract class HardwareLesson implements ActionDefinition<HardwareModel> {
   public abstract readonly title: string
-  public readonly context = 'Hardware / Complex'
-  public readonly summary = 'A bounded instruction trace through interacting hardware components.'
-  public readonly phases = ['Initial state', 'Hardware events', 'Result']
-  public readonly timelineHint = 'One diagram interaction per step, not processor cycles'
   protected abstract build(trace: HardwareTrace): void
 
   public create(_source: HardwareModel): ActionPlan<HardwareModel> {

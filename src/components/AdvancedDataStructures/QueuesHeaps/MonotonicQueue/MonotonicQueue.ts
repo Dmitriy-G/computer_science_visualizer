@@ -25,7 +25,6 @@ export class MonotonicQueue extends PriorityModel {
   private arrivals = 0
   private count = 0
   public get length(): number { return this.count }
-  public get hint(): string { return 'A decreasing candidate deque reports the maximum of the latest ten arrivals. Each push expires old indices at the front and removes dominated values at the back. Equal values keep the newest candidate. The lower row shows window history, not additional queue nodes.' }
 
   public static createDefault(): MonotonicQueue {
     const model = new MonotonicQueue()

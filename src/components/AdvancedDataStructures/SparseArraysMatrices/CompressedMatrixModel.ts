@@ -4,7 +4,6 @@ import { NumericalModel } from '../../../visualization/NumericalModel.ts'
 import type { NumericalStorageRow } from '../../../visualization/NumericalModel.ts'
 import type { LinearObserver, LinearResult } from '../../../visualization/LinearModel.ts'
 
-// CSC and CSR share the actual compressed-major-axis algorithm, with opposite axes.
 export abstract class CompressedMatrixModel extends SparseMatrixModel {
   protected abstract readonly columnMajor: boolean
   protected pointers: number[] = [0, 0, 0]

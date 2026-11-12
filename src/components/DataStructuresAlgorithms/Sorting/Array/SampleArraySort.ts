@@ -2,7 +2,6 @@ import { ArraySortOperations } from './ArraySortOperations.ts'
 import type { ArrayEntry } from '../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
 import type { ArraySortEvent, ArraySortFrame } from './ArraySortTrace.ts'
 
-// Sequential Sample Sort with bounded fan-out and stable local merge sorting.
 export class SampleArraySort extends ArraySortOperations {
   private readonly samples: ArrayEntry[] = []
   private readonly splitters: ArrayEntry[] = []
@@ -70,8 +69,6 @@ export class SampleArraySort extends ArraySortOperations {
           const source = second === end || first < middle && values[first].value <= values[second].value ? first++ : second++
           work[destination] = values[source]
         }
-        // Publish the entire local merge together: the displayed sample/bucket
-        // never contains transient duplicate primary IDs from partial writes.
         for (let index = start; index < end; index += 1) values[index] = work[index]
         this.step('merge', bucket < 0 ? 'Sample pieces merged' : 'Bucket pieces merged', `The local range [${start}, ${end}) is merged stably through a temporary buffer.`, `copy merged range [${start}, ${end}) back`, {}, start)
       }

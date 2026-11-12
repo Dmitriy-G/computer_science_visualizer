@@ -1,4 +1,3 @@
-// Static listings for graph algorithms.
 export class TreeGraphPseudocode {
   public static readonly breadthFirst = `BREADTH_FIRST(start):
   validate that start exists

@@ -16,7 +16,6 @@ class SortTreeNode {
   }
 }
 
-// An unbalanced BST with one node per entry; equal keys always descend right.
 export class TreeArraySort extends ArraySortOperations {
   private root: SortTreeNode | null = null
 
@@ -37,7 +36,6 @@ export class TreeArraySort extends ArraySortOperations {
       else parent.right = node
       this.emit('place', 'Attach the entry to the BST', `Store key ${entry.value} in its own search-tree node. Equal keys keep their arrival order along rightward search paths.`, 'attach node under its search parent', { activeIndices: [index], tree: this.snapshot(node), treeRoot: this.root!.entry.id }, index)
     }
-    // Parent links allow inorder traversal without recursion, even on a chain.
     let node: SortTreeNode | null = this.root
     while (node?.left) node = node.left
     let destination = 0

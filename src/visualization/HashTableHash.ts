@@ -1,5 +1,3 @@
-// Exact arithmetic keeps distinct safe integers distinct before range reduction.
-// The seeded family is deterministic; theoretical randomized bounds require independent parameters.
 export class HashTableHash {
   public static readonly prime = (1n << 61n) - 1n
 

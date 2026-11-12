@@ -10,7 +10,7 @@ export class InterpolationSortAnimation extends ArraySortingAnimation {
   }
 
   constructor(model: FixedArray) {
-    super(model, 'Interpolation Sort', { counterHint: 'Stable interpolation histogram plus collision cleanup; exact integer arithmetic.' })
+    super(model, 'Interpolation Sort')
     this.result.interpolationSort((event) => this.recordTrace(event))
     this.finish(true)
     this.fitScenes()

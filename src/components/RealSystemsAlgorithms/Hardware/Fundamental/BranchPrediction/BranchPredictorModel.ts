@@ -59,6 +59,6 @@ export class BranchPredictorModel {
         { id: 'correct', label: 'correct', value: String(this.correct) },
         { id: 'misses', label: 'mispredictions', value: String(this.resolved - this.correct) },
       ] },
-    ], 'Arm Cortex-A53 documents a global-history predictor with a 3072-entry pattern-history table. This teaching model uses three history bits and eight two-bit saturating counters; its indexing and training rules are illustrative, not disclosed A53 internals. T = taken; N = not taken.', this.predicted === null ? null : `counter-${this.lastIndex}`, 0, BranchPredictionLayout.create(this.flow, this.lastIndex, this.predicted, this.actual, this.correct, this.resolved))
+    ], this.predicted === null ? null : `counter-${this.lastIndex}`, 0, BranchPredictionLayout.create(this.flow, this.lastIndex, this.predicted, this.actual, this.correct, this.resolved))
   }
 }

@@ -8,7 +8,6 @@ export interface NumericalStorageRow {
   readonly values: readonly number[]
 }
 
-// Shared validation and trace contracts, independent of each storage representation.
 export abstract class NumericalModel extends LinearModel {
   public abstract readonly kind: NumericalStructureKind
   protected dimensions: number[] = [2, 5]

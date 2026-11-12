@@ -20,7 +20,6 @@ export class PatienceArraySort extends ArraySortOperations {
       piles[low].push(entry)
       this.emit('place', 'Place the entry on its pile', `Push key ${entry.value} onto pile ${low}. Each pile is nonincreasing from bottom to top.`, `piles[${low}].push(array[${index}])`, { activeIndices: [index], buckets: this.snapshot(piles), activeBucket: low, activeBucketIndices: [piles[low].length - 1], bucketStatus: 'TOP' }, index, low)
     }
-    // A heap of pile indices avoids rescanning every top for each output entry.
     const heap: number[] = []
     for (let pile = 0; pile < piles.length; pile += 1) heap.push(pile)
     for (let parent = Math.floor(heap.length / 2) - 1; parent >= 0; parent -= 1) this.sift(heap, parent, piles)

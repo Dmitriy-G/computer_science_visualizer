@@ -20,8 +20,6 @@ export interface TracedTreeModel<TModel> extends ActionModel<TModel> {
   readonly length: number
 }
 
-// Models emit synchronous algorithm events; this adapter records independent scenes.
-// Each action chooses the operation, explanations, result, and algorithm information.
 export abstract class TreeActionAnimation<TModel extends TracedTreeModel<TModel>>
   extends AnimationSequence implements TreeTraceObserver {
   public readonly result: TModel
@@ -77,7 +75,6 @@ export abstract class TreeActionAnimation<TModel extends TracedTreeModel<TModel>
       visitedIds: this.visited,
       hideMetadata: this.clearing,
     })
-    // The first creation frame floats the pending binary leaf and hides its incoming link.
     if (event.phase === 'create' && event.pendingId) {
       const nodes = []
       const edges = []

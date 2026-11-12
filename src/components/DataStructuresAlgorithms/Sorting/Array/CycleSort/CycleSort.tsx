@@ -8,11 +8,6 @@ import './CycleSort.css'
 class CycleSortDefinition implements ActionDefinition<FixedArray> {
   public readonly pseudocode = ArraySortingPseudocode.cycleSort
   public readonly title = 'Cycle Sort'
-  public readonly context = 'Sorting / Array / Cycle Sort'
-  public readonly summary = CycleSortAnimation.describe(0).summary
-  public readonly phases = ['Inspect', 'Locate', 'Move', 'Finish range', 'Commit']
-  public readonly timelineHint = 'Deterministic sorting steps in the shared renderer'
-  public readonly acceptsValue = false
 
   public create(model: FixedArray): CycleSortAnimation {
     return new CycleSortAnimation(model)

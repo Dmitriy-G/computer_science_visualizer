@@ -8,11 +8,6 @@ import './GnomeSort.css'
 class GnomeSortDefinition implements ActionDefinition<FixedArray> {
   public readonly pseudocode = ArraySortingPseudocode.gnomeSort
   public readonly title = 'Gnome Sort'
-  public readonly context = 'Sorting / Array / Gnome Sort'
-  public readonly summary = GnomeSortAnimation.describe(0).summary
-  public readonly phases = ['Inspect', 'Locate', 'Move', 'Finish range', 'Commit']
-  public readonly timelineHint = 'Deterministic sorting steps in the shared renderer'
-  public readonly acceptsValue = false
 
   public create(model: FixedArray): GnomeSortAnimation {
     return new GnomeSortAnimation(model)

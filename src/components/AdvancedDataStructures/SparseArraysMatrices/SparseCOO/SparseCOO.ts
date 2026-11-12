@@ -117,7 +117,6 @@ export class SparseCOO extends SparseMatrixModel {
     }
     if (action === 'coalesce') {
       const entries = [...this.getEntries()]
-      // Explicit insertion sort makes this small teaching variant's cost unambiguous.
       for (let index = 1; index < entries.length; index += 1) {
         const entry = entries[index]
         let target = index

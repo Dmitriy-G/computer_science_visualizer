@@ -11,7 +11,7 @@ export class NaturalMergeSortAnimation extends ArraySortingAnimation {
   }
 
   constructor(model: FixedArray) {
-    super(model, 'Natural Merge Sort', { counterHint: 'Detect natural runs; reverse strict descents; merge adjacent pairs.' })
+    super(model, 'Natural Merge Sort')
     this.result.naturalMergeSort((event) => this.recordTrace(event))
     this.finish(true)
     this.fitScenes()

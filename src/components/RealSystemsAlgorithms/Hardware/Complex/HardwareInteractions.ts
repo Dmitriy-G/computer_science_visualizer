@@ -5,7 +5,6 @@ export interface HardwareInteraction {
   readonly description: string
 }
 
-// Presentation stages of a logical event, not extra processor operations or cycles.
 export class HardwareInteractions {
   public static create(previous: Scene, target: Scene): HardwareInteraction[] {
     const before = new Map<string, SceneNode>()
@@ -42,8 +41,6 @@ export class HardwareInteractions {
         description: `${edge.message ?? edge.label}: ${from.label} → ${to.label}.`,
       })
     }
-    // Retire side effects after the transfer, e.g. release atomic ownership only
-    // after the update and response, rather than exposing an early release.
     for (const node of local) {
       current.set(node.id, { ...node })
       interactions.push({
@@ -63,13 +60,12 @@ export class HardwareInteractions {
     const edges: SceneEdge[] = []
     for (const edge of target.edges) {
       const highlighted = edge.id === active?.id
-      // Keep the route topology, but only display the current interaction.
       edges.push({ ...edge, highlighted, flow: highlighted, opacity: highlighted ? 1 : 0 })
     }
     const regions = []
     for (const region of target.regions ?? []) regions.push({ ...region })
     const paths = []
     for (const path of target.paths ?? []) paths.push({ ...path })
-    return { ...target, nodes, edges, regions, paths, hint: target.hint ? { ...target.hint } : undefined, focusId }
+    return { ...target, nodes, edges, regions, paths, focusId }
   }
 }

@@ -47,7 +47,6 @@ export class SplayTree extends SearchTreeModel {
     if (left) {
       let maximum = left
       while (maximum.right) maximum = maximum.right
-      // Join before emitting: the right tree must remain visible in every frame.
       this.splay(maximum)
       maximum.right = right
       if (right) right.parent = maximum

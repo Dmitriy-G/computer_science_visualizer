@@ -7,7 +7,6 @@ export class CombArraySort extends ArraySortOperations {
     let gap = length
     let swapped = true
     while (gap > 1 || swapped) {
-      // Use the basic 1.3 shrink rule, without the optional CombSort11 rule.
       gap = Math.max(1, Math.floor(gap * 10 / 13))
       swapped = false
       this.observer?.({ kind: 'gap', index: 0, amount: gap, label: 'Shrink the comparison gap', detail: `Compare entries ${gap} slots apart. Continue shrinking even after a pass without swaps, until gap 1 also has a clean pass.`, code: `gap = max(1, floor(gap * 10 / 13)) // ${gap}`, frame: {} })

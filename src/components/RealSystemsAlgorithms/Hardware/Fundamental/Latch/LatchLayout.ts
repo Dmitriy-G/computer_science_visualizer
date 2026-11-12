@@ -31,6 +31,6 @@ export class LatchLayout {
       diagram.fixture(`wave-${row}`, signals[row], row === 0 ? String(model.data) : row === 1 ? String(Number(model.enabled)) : String(model.stored), 95, baseline, undefined, 70)
       if (path) diagram.paths.push({ id: `waveform-${row}`, d: path, label: `${signals[row]} waveform; upper level is one, lower level is zero`, highlighted: row === 2 })
     }
-    return new CpuModel([], 'A level-sensitive latch follows D throughout enable, then holds Q. Setup/hold requirements are assumed satisfied; analog timing is not simulated. /OE changes only the external connection. This is not an edge-triggered flip-flop or a DRAM cell.', 'stored', 0, diagram)
+    return new CpuModel([], 'stored', 0, diagram)
   }
 }

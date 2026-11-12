@@ -15,18 +15,6 @@ interface AddInTheMiddleProps {
 
 class ArrayInsertionDefinition implements ActionDefinition<FixedArray> {
   public readonly title = 'Insert in the middle'
-  public readonly context = 'Fixed array / insertion'
-  public readonly summary = 'Allocate a new array. Copy each value into place.'
-  public readonly phases = [
-    'Locate',
-    'Allocate',
-    'Prefix',
-    'Insert',
-    'Suffix',
-    'Replace',
-    'Finish',
-  ]
-  public readonly timelineHint = 'O(n) copying · O(n) additional memory'
 
   public create(array: FixedArray, value: number): InsertionAnimation {
     return new InsertionAnimation(array, value)

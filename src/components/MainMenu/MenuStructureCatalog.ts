@@ -36,8 +36,6 @@ export interface MenuStructureGroup {
   readonly structures: readonly StructureKind[]
 }
 
-// Source folders mirror these root categories and subjects. Model families in
-// StructureCatalog remain stable for algorithm routing and shared adapters.
 export class MenuStructureCatalog {
   public static readonly groups: readonly MenuStructureGroup[] = [
     {

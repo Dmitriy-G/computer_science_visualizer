@@ -8,7 +8,6 @@ export class AdjacencyList extends ExtendedGraphModel {
   private readonly rows = new Map<string, ExtendedEdge[]>()
   private count = 0
   public get edgeCount(): number { return this.count }
-  public get hint(): string { return 'Canonical storage is one outgoing-edge list per vertex. Empty rows remain visible for isolated vertices. Neighbor iteration reads only a source row; incoming-edge deletion inspects the other rows. Self-loops are allowed, duplicate directed pairs are rejected.' }
   protected empty(): AdjacencyList { return new AdjacencyList() }
 
   public static createDefault(): AdjacencyList {

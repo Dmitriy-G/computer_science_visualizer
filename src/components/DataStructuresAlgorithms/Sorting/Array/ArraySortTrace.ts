@@ -74,7 +74,6 @@ export interface ArraySortFrame {
   readonly bucketStatus?: string
   readonly output?: readonly (ArrayEntry | null)[]
   readonly counters?: readonly ArraySortCounter[]
-  readonly counterHint?: string
   readonly tree?: readonly ArraySortTreeNode[]
   readonly treeRoot?: string | null
   readonly piles?: boolean

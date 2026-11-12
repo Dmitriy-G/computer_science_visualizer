@@ -18,6 +18,6 @@ export class SkipListLayout {
         if (level > 0) edges.push(LinearScene.edge(id, `${entry.id}-level-${level - 1}`, 'down'))
       }
     }
-    return LinearScene.create(model, nodes, edges, frame, { title: 'Skip List', description: 'Sorted unique keys; search moves right and down. A fixed-seed geometric height generator makes examples reproducible. Six levels and 64 keys bound this teaching model.' }, 'keys')
+    return LinearScene.create(model, nodes, edges, frame, 'keys')
   }
 }

@@ -10,7 +10,7 @@ export class PancakeSortAnimation extends ArraySortingAnimation {
   }
 
   constructor(model: FixedArray) {
-    super(model, 'Pancake Sort', { counterHint: 'Pancake Sort uses prefix reversals; the sorted suffix is never flipped.' })
+    super(model, 'Pancake Sort')
     this.result.pancakeSort((event) => this.recordTrace(event))
     this.finish(false)
     this.fitScenes()

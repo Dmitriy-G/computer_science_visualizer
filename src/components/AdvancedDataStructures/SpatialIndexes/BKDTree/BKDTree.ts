@@ -34,7 +34,6 @@ export class BKDTree extends AppliedModel {
   }
   public clone(): BKDTree {
     const copy = new BKDTree()
-    // Immutable nodes and points are shared safely; a rebuild never mutates them.
     copy.points = [...this.points]
     copy.root = this.root
     copy.nextId = this.nextId

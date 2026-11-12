@@ -5,7 +5,6 @@ import type { LinearObserver } from '../../../../visualization/LinearModel.ts'
 export class SkewHeap extends MeldableBinaryHeap {
   public readonly kind = 'skew-heap'
   protected readonly leftist = false
-  public get hint(): string { return 'A self-adjusting meldable min-heap with no rank metadata. Meld recursively combines right subtrees and swaps children on every return. Logarithmic bounds are amortized; one operation can follow a linear chain. Up to 64 nodes.' }
   protected empty(): SkewHeap { return new SkewHeap() }
 
   public static createDefault(): SkewHeap {

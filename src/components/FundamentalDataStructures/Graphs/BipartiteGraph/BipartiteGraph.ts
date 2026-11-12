@@ -7,7 +7,6 @@ import type { ActionKind } from '../../../../visualization/ActionCatalog.ts'
 export class BipartiteGraph extends StoredEdgeGraph {
   public readonly kind = 'bipartite-graph'
   public readonly directed = false
-  public get hint(): string { return 'Vertices belong to explicit partitions L and R. Every undirected edge crosses partitions; same-side edges and self-loops are rejected. Vertex partitions do not change. At most 16 vertices and 128 edges.' }
   protected empty(): BipartiteGraph { return new BipartiteGraph() }
 
   public static createDefault(): BipartiteGraph {

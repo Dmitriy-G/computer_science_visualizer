@@ -3,13 +3,7 @@ import type { SystemOverviewInformation } from '../../../../visualization/System
 import { CpuLesson } from './CpuLesson.ts'
 import { CpuTrace } from './CpuTrace.ts'
 
-// CpuModel/CpuTrace are the existing workspace's snapshot and playback adapters.
-// Mechanism state belongs to each component model, independently of these adapters.
 export abstract class ComponentLesson extends CpuLesson {
-  public readonly context = 'Hardware / Fundamental'
-  public readonly summary = 'A deterministic example inside a memory or storage component.'
-  public readonly timelineHint = 'Conceptual events, not measured device cycles'
-
   protected createTrace(): CpuTrace { return new CpuTrace('hardware-component') }
 }
 

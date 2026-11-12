@@ -1,6 +1,6 @@
 import { LinearScene } from './LinearScene.ts'
 import type { LinearModel, LinearFrame } from './LinearModel.ts'
-import type { Scene, SceneNode, SceneHint } from './Scene.ts'
+import type { Scene, SceneNode } from './Scene.ts'
 import type { HashRecord } from './HashTableModel.ts'
 
 export interface HashSlotGroup {
@@ -25,7 +25,7 @@ export class HashTableScene {
     const state = slot === null ? 'EMPTY' : slot === 'deleted' ? 'DELETED' : 'OCCUPIED'
     return `${group.role} ${index}; ${state}${group.labels?.[index] ? `; ${group.labels[index]}` : ''}`
   }
-  public static grid(model: LinearModel, groups: readonly HashSlotGroup[], frame: LinearFrame, hint: SceneHint, held: HashRecord | null = null): Scene {
+  public static grid(model: LinearModel, groups: readonly HashSlotGroup[], frame: LinearFrame, held: HashRecord | null = null): Scene {
     const nodes: SceneNode[] = []
     let cellWidth = 180
     for (const group of groups) {
@@ -45,13 +45,12 @@ export class HashTableScene {
         const slot = group.slots[index]
         const x = 70 + pitch * (index % 4) + cellWidth / 2
         const y = firstY + Math.floor(index / 4) * this.rowHeight
-        // Reserve separate bands for the slot caption, entry status, body, and entry caption.
         nodes.push({ ...LinearScene.node(`${group.prefix}-${index}`, String(index), this.slotLabel(group, index), x, y, cellWidth), height: this.slotHeight })
         if (slot && slot !== 'deleted') nodes.push({ ...this.record(slot, group.recordLabels?.[index] ?? 'key : value', x, y + this.recordOffset), width: cellWidth })
       }
       firstY += Math.ceil(group.slots.length / 4) * this.rowHeight + 60
     }
     if (held) nodes.push({ ...this.record(held, 'HELD; awaiting a legal slot', 70 + cellWidth / 2, firstY), width: cellWidth, tone: 'active', status: 'HELD' })
-    return LinearScene.create(model, nodes, [], frame, hint, 'entries')
+    return LinearScene.create(model, nodes, [], frame, 'entries')
   }
 }

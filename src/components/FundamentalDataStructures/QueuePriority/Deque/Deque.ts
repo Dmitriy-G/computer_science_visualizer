@@ -3,7 +3,6 @@ import type { DoublyLinkedListEntry } from '../../Linear/DoublyLinkedList/Doubly
 
 export type DequeEntry = DoublyLinkedListEntry
 
-// Reuse the doubly linked representation, exposing only the deque operations.
 export class Deque {
   private list = new DoublyLinkedList('deque-node')
 

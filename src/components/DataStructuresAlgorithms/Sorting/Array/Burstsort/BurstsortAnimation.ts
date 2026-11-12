@@ -11,7 +11,7 @@ export class BurstsortAnimation extends ArraySortingAnimation {
   }
 
   constructor(model: FixedArray) {
-    super(model, 'Burstsort', { counterHint: 'Integer Burstsort adaptation: order-preserving hexadecimal keys and prefix containers.' })
+    super(model, 'Burstsort')
     this.result.burstSort((event) => this.recordTrace(event))
     this.finish(true)
     this.fitScenes()

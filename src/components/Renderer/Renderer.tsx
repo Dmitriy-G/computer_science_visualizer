@@ -62,8 +62,6 @@ export default class Renderer extends Component<
     const viewport = this.viewport.current
     let showSizeControls = false
     if (scene && viewport) {
-      // Use the fit limits in either mode so actual-size scrollbars do not
-      // change whether the controls are needed.
       const availableWidth = viewport.getBoundingClientRect().width
       const maximumHeight = Number.parseFloat(window.getComputedStyle(viewport).maxHeight)
       showSizeControls = availableWidth > 0 &&

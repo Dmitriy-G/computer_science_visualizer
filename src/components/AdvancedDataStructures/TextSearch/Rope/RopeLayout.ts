@@ -26,6 +26,6 @@ export class RopeLayout {
     this.leafIndex = 0
     const root = model.getRoot()
     if (root) this.place(root, 0, nodes, edges)
-    return LinearScene.create(model, nodes, edges, frame, { title: 'Rope', description: 'An AVL-balanced tree of immutable text chunks, each at most four characters. Internal weights count characters on the left. Edits split and join subtrees; unchanged subtrees are shared. ASCII text is limited to 256 characters.' }, 'characters')
+    return LinearScene.create(model, nodes, edges, frame, 'characters')
   }
 }

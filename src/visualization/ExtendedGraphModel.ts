@@ -29,7 +29,6 @@ export abstract class ExtendedGraphModel extends LinearModel {
   protected nextEdge = 0
   public get length(): number { return this.vertices.length }
   public abstract readonly directed: boolean
-  public abstract get hint(): string
   public abstract getEdges(): readonly ExtendedEdge[]
   public abstract getNeighbors(id: string): readonly string[]
   protected abstract empty(): ExtendedGraphModel
@@ -199,7 +198,6 @@ export abstract class ExtendedGraphModel extends LinearModel {
     if (action === 'inspect-storage') return this.inspect(observer)
     if (action !== 'clear') throw new RangeError('Unsupported graph action')
     this.beforeMutation()
-    // Clear bypasses leaf-only deletion policies while releasing canonical storage.
     while (this.vertices.length) {
       const index = this.vertices.length - 1
       const vertex = this.vertices[index]

@@ -1,4 +1,3 @@
-// Static operation listings. Keep these in sync with the model's algorithms.
 export class ArraySortingPseudocode {
   public static readonly americanFlagSort = `// FixedArray: AmericanFlagSort
 
@@ -401,7 +400,6 @@ FixedArray.countingSort() {
   }
   range = Number(span)
   counts = new Array(range).fill(0)
-  hint = \`\${range} count cells represent keys \${minimum} through \${maximum}. Only observed keys are drawn; omitted keys have frequency zero.\`
   for (index = 0; index < this.length; index += 1) {
     key = Number(BigInt(this.items[index].value) - minimum)
     counts[key] += 1

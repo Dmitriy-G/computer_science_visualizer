@@ -7,7 +7,6 @@ import type { ActionKind } from '../../../../visualization/ActionCatalog.ts'
 export class TreeGraph extends StoredEdgeGraph {
   public readonly kind = 'tree-graph'
   public readonly directed = false
-  public get hint(): string { return 'An undirected connected acyclic graph: nonempty trees have E = V − 1. Add a new leaf by naming an existing parent; delete only leaves. The first vertex names itself as parent. There is no numeric search-key ordering, unlike a binary search tree.' }
   protected empty(): TreeGraph { return new TreeGraph() }
 
   public static createDefault(): TreeGraph {

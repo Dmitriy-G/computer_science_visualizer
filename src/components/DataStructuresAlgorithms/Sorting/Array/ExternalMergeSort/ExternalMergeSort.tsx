@@ -8,11 +8,6 @@ import './ExternalMergeSort.css'
 class ExternalMergeSortDefinition implements ActionDefinition<FixedArray> {
   public readonly pseudocode = ArraySortingPseudocode.externalMergeSort
   public readonly title = 'External Merge Sort'
-  public readonly context = 'Sorting / Array / External Merge Sort'
-  public readonly summary = ExternalMergeSortAnimation.describe(0).summary
-  public readonly phases = ['Inspect', 'Locate', 'Move', 'Finish range', 'Commit']
-  public readonly timelineHint = 'Deterministic sorting steps in the shared renderer'
-  public readonly acceptsValue = false
 
   public create(model: FixedArray): ExternalMergeSortAnimation {
     return new ExternalMergeSortAnimation(model)

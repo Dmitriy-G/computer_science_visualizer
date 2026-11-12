@@ -15,7 +15,6 @@ export interface HardwarePosition {
   readonly width: number
 }
 
-// Geometry and visual wiring only. Each mechanism owns the active transactions.
 export class HardwareDiagram {
   public readonly regions: SceneRegion[] = []
   public readonly positions: HardwarePosition[] = []

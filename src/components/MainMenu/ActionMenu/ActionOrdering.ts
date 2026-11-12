@@ -12,9 +12,6 @@ export class ActionOrdering {
 
   public static readonly complexityHint = 'Orders asymptotic growth classes, not measured speed. Bounded digit, radix, and key-range parameters are held fixed; equal bounds use A–Z. Unestablished or unavailable bounds appear last.'
 
-  // Growth families used by algorithm descriptions. In this app d is bounded
-  // by safe-integer key width, radix b is fixed (or linear in n), and counting
-  // range k is capped. Graph linear bounds include both vertices and edges.
   private static readonly growth: Readonly<Record<string, number>> = {
     'O(1)': 0,
     'O(d)': 0,

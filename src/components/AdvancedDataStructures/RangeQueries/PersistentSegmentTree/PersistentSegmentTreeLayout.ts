@@ -35,8 +35,7 @@ export class PersistentSegmentTreeLayout extends HierarchyLayout {
     for (const [depth, ids] of rows) for (let index = 0; index < ids.length; index += 1) positions.set(ids[index], { x: (width - ids.length * 240) / 2 + index * 240 + 120, y: 90 + depth * 140 })
     const nodes = []
     for (const node of scene.nodes) nodes.push({ ...node, ...positions.get(node.id), width: 210 })
-    return { ...scene, nodes, width, height: Math.max(340, 230 + maximumDepth * 140), countLabel: 'array values',
-      hint: { title: 'Persistent Segment Tree', description: 'Every canonical immutable node is drawn once. Multiple incoming links show branches actually shared between versions. Updates copy one path; up to eight versions can coexist.' }
+    return { ...scene, nodes, width, height: Math.max(340, 230 + maximumDepth * 140), countLabel: 'array values'
     }
   }
 }

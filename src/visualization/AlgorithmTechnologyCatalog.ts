@@ -9,7 +9,6 @@ export interface AlgorithmUsageLabel {
   readonly description: string
 }
 
-// Only algorithm scopes receive real-world examples. Overview operations do not.
 export class AlgorithmTechnologyCatalog {
   private static readonly realSystemsLabel: AlgorithmUsageLabel = {
     kind: 'real-systems',
@@ -476,7 +475,6 @@ export class AlgorithmTechnologyCatalog {
     const usage = this.get(structure, action, scope)
     if (!usage) return false
     const sources = new Set<string>()
-    // A product and its technology entry can describe the same sourced example.
     for (const example of usage.technologies) sources.add(example.url)
     for (const example of usage.products) sources.add(example.url)
     return sources.size >= 3

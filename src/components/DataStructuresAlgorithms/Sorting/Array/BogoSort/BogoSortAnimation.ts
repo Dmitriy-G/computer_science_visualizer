@@ -14,7 +14,7 @@ export class BogoSortAnimation extends ArraySortingAnimation {
   }
 
   constructor(model: FixedArray) {
-    super(model, 'Bogo Sort', { counterHint: 'At most 24 seeded shuffles; exhaustion restores input and reports an unfinished sort.' })
+    super(model, 'Bogo Sort')
     let rejection = ''
     const accepted = this.result.bogoSort((event) => {
       if (event.kind === 'reject') rejection = event.detail!

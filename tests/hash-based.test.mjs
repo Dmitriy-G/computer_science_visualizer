@@ -204,7 +204,6 @@ test('every hash action produces independent scenes and commits its count only i
             assert.ok(!plan.steps.some((step) => step.code === 'commit completed result'))
             assert.deepEqual(finalScene.nodes.map(({ tone, status, ...node }) => node), expectedScene.nodes.map(({ tone, status, ...node }) => node))
             assert.deepEqual(finalScene.edges.map(({ highlighted, ...edge }) => edge), expectedScene.edges.map(({ highlighted, ...edge }) => edge))
-            assert.deepEqual(finalScene.hint, expectedScene.hint)
           } else {
             assert.equal(plan.steps.at(-1).code, 'commit completed result')
             assert.deepEqual(finalScene, expectedScene)

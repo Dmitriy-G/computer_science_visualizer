@@ -19,7 +19,6 @@ export class LSMTreeLayout {
       })
       let x = 300
       for (const record of row.records) {
-        // The same immutable record may also appear in a compaction output.
         const id = row.pending ? `${row.id}-v-${record.version}` : `lsm-v-${record.version}`
         const recordActive = frame.activeId === `lsm-v-${record.version}` || active
         const pending = frame.pendingId === `lsm-v-${record.version}`
@@ -35,7 +34,6 @@ export class LSMTreeLayout {
     }
     return { kind: model.kind, nodes, edges: [], width, height: Math.max(340, y + 60), focusId: frame.activeId ?? null, count: frame.count ?? model.length,
       countLabel: 'live keys',
-      hint: { title: 'LSM storage', description: 'Sorted-array memtable, capacity 4; immutable runs shown newest first. DEL is a tombstone. Full compaction merges all runs. This is an in-memory model without a write-ahead log.' },
     }
   }
 }

@@ -61,7 +61,6 @@ export class AST extends AdditionalTreeModel {
   }
 
   public build(expression: string, observer?: TreeTraceObserver): void {
-    // Validate the whole expression before replacing a tree or consuming IDs.
     const parsed = new ASTParser(expression).parse()
     this.roots = []
     this.count = 0

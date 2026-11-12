@@ -35,9 +35,6 @@ export class LinearHashingLayout {
       }
       rowY += rowPages * 470 + 100
     }
-    return LinearScene.create(model, nodes, edges, frame, { title: 'Linear growth through a split pointer',
-      code: `b = hash(key) mod ${model.roundBase}; if b < ${model.splitPointer}: b = hash(key) mod ${2 * model.roundBase}`,
-      description: 'Three-record primary pages have linked overflow pages. Above 0.75 primary-page load, split exactly the next pointed bucket and advance the pointer, regardless of which bucket overflowed. The modulus doubles only after a complete split round. No directory is stored; deletion does not shrink the table.',
-    }, 'entries')
+    return LinearScene.create(model, nodes, edges, frame, 'entries')
   }
 }

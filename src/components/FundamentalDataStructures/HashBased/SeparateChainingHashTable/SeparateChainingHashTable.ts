@@ -5,7 +5,6 @@ import { LinearModel } from '../../../../visualization/LinearModel.ts'
 import type { LinearObserver, LinearResult } from '../../../../visualization/LinearModel.ts'
 import type { HashTrace, HashObserver } from '../../../../visualization/Hashing.ts'
 
-// The existing Hash Map already implements this exact collision policy.
 export class SeparateChainingHashTable extends HashTableModel {
   public readonly kind = 'separate-chaining-hash-table'
   private table = new HashMap()

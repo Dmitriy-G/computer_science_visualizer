@@ -20,8 +20,6 @@ class SortTask {
   }
 }
 
-// Deterministic fork/join simulation. Two virtual lanes share a sequential
-// trace; actual browser execution uses no threads, workers, or timers here.
 export class ParallelArraySort extends ArrayMergeOperations {
   private readonly tasks: SortTask[] = []
   private readonly ready: SortTask[] = []
@@ -132,7 +130,6 @@ export class ParallelArraySort extends ArrayMergeOperations {
 
   private taskSwap(first: number, second: number): void {
     if (first === second) return
-    // Include the dependency snapshot on every exchange frame.
     const entry = this.entries[first]
     this.entries[first] = this.entries[second]
     this.entries[second] = entry

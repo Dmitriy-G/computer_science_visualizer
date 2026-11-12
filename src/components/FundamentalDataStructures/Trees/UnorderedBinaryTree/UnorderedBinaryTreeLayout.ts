@@ -4,6 +4,6 @@ import type { TreeFrame } from '../../../../visualization/TreeActionAnimation.ts
 import type { Scene } from '../../../../visualization/Scene.ts'
 export class UnorderedBinaryTreeLayout extends HierarchyLayout {
   public create(model: AdditionalTreeModel, frame: TreeFrame = {}): Scene {
-    return { ...super.create(model, frame), countLabel: 'nodes', hint: { title: 'Binary Tree', description: 'Explicit left/right child placement without search-key ordering. The first insertion creates a root and ignores parent placement.' } }
+    return { ...super.create(model, frame), countLabel: 'nodes' }
   }
 }

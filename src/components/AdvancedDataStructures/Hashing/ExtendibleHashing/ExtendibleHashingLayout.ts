@@ -32,9 +32,6 @@ export class ExtendibleHashingLayout {
       }
       firstY += 510
     }
-    return LinearScene.create(model, nodes, edges, frame, { title: 'Extendible directory and local bucket depths',
-      code: `directoryIndex = affineHash(key) mod 2^${model.globalDepth}`,
-      description: 'Directory entries store actual shared bucket references. Multiple arrows can alias the same bucket, which is drawn once. Full three-record buckets split on the next low hash bit; the directory doubles only when local depth equals global depth. Depth is capped at eight; deletion retains directory size.',
-    }, 'entries')
+    return LinearScene.create(model, nodes, edges, frame, 'entries')
   }
 }

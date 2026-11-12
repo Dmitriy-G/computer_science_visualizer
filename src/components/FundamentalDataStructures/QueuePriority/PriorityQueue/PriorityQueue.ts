@@ -5,7 +5,6 @@ import type { ActionKind } from '../../../../visualization/ActionCatalog.ts'
 
 export class PriorityQueue extends BinaryPriorityHeap {
   public readonly kind = 'priority-queue'
-  public get hint(): string { return 'A binary min-heap stores value/priority pairs. Smaller numeric priorities leave first; equal priorities preserve FIFO insertion order. This example allows 64 entries.' }
 
   public static createDefault(): PriorityQueue {
     const model = new PriorityQueue()

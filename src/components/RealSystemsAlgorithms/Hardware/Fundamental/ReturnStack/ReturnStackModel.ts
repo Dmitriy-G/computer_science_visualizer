@@ -86,7 +86,7 @@ export class ReturnStackModel {
         { id: 'lost', label: 'overflow losses', value: String(this.lost) },
         { id: 'underflow', label: 'empty predictions', value: String(this.underflows) },
       ] },
-    ], 'Cortex-A53 documents an eight-entry hardware return stack. This model drops the oldest prediction when full and reports no prediction when empty; those boundary rules are teaching choices, not documented A53 behavior. Prediction steers fetch before the program supplies its actual target. Actual return targets are tracked separately and do not depend on predictor success.', this.flow === 'return-predict' ? 'predicted' : this.flow === 'return-resolve' ? 'actual' : this.predictions.length ? `return-${this.predictions.length - 1}` : null, 0, ReturnStackLayout.create({
+    ], this.flow === 'return-predict' ? 'predicted' : this.flow === 'return-resolve' ? 'actual' : this.predictions.length ? `return-${this.predictions.length - 1}` : null, 0, ReturnStackLayout.create({
       flow: this.flow, slot: this.lastSlot, register: this.register,
       predicted: this.predicted === null ? 'unavailable' : this.hex(this.predicted),
       actual: this.actual === null ? 'pending' : this.hex(this.actual),

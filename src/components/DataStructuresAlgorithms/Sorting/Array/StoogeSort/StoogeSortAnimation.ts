@@ -10,7 +10,7 @@ export class StoogeSortAnimation extends ArraySortingAnimation {
   }
 
   constructor(model: FixedArray) {
-    super(model, 'Stooge Sort', { counterHint: 'Stooge Sort: at most 12 entries; repeated recursive operations are summarized.' })
+    super(model, 'Stooge Sort')
     let rejection = ''
     const accepted = this.result.stoogeSort((event) => {
       if (event.kind === 'reject') rejection = event.detail!

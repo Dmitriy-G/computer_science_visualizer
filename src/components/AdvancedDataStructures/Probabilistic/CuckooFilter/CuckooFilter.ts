@@ -6,7 +6,6 @@ import type { LinearInputValues, LinearObserver, LinearResult } from '../../../.
 export class CuckooFilter extends ProbabilisticModel {
   public readonly kind = 'cuckoo-filter' as const
   private buckets: (number | null)[][] = Array.from({ length: 8 }, () => [null, null])
-  // Extra exact-key ledger guards deletions, never membership queries.
   private occurrences = new Map<number, number>()
 
   public static createDefault(): CuckooFilter {
@@ -64,8 +63,6 @@ export class CuckooFilter extends ProbabilisticModel {
       return { description: `${value} is definitely absent.`, value: false }
     }
     if (action !== 'insert') throw new RangeError('Unsupported cuckoo filter operation')
-    // Find a complete relocation path before changing storage. This bounded BFS
-    // variant replaces random kicks and guarantees transactional failure.
     const parents = new Map<number, { bucket: number, slot: number } | null>()
     const queue: number[] = []
     for (const bucket of candidates) { parents.set(bucket, null); queue.push(bucket) }

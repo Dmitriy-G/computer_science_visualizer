@@ -1,7 +1,6 @@
 import type { ArrayEntry } from '../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
 import type { ArraySortEvent, ArraySortFrame, ArraySortObserver } from './ArraySortTrace.ts'
 
-// Shared trace primitives only. Algorithms own their storage and control flow.
 export class ArraySortOperations {
   protected readonly entries: ArrayEntry[]
   protected readonly observer?: ArraySortObserver

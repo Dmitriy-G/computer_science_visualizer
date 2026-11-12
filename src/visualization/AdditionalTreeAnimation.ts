@@ -10,7 +10,6 @@ export class AdditionalTreeAnimation extends TreeActionAnimation<AdditionalTreeM
     const result = this.result.execute(action, input, this)
     const query = action === 'search-value' || action === 'starts-with' || action === 'peek' || action === 'prefix-sum' || action === 'range-sum' || action === 'search-overlap' || action === 'evaluate' || action === 'traverse-preorder' || action === 'traverse-inorder' || action === 'traverse-postorder'
     if (query) {
-      // End on the result itself and retain the visited path and result highlight.
       const returnValue = this.formatValue(result.returnValue)
       const code = result.error ? `throw Error(${JSON.stringify(result.error)})` : `return ${returnValue}`
       this.add(5, title, result.description, code, layout.create(this.result, {

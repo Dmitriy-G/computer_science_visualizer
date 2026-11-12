@@ -26,7 +26,6 @@ export class RemovalAnimation extends AnimationSequence {
     this.removed = model.isEmpty() ? null : this.result.dequeue()
     const layout = new QueueLayout()
     const frame = { count: model.length }
-    const visited: string[] = []
     this.add(1, 'Inspect the structure', 'Check for an empty structure before reading or changing a node.', 'if count == 0: return empty', layout.create(entries, frame))
     this.add(2, 'Read the cached end', 'No traversal is needed for an end removal.', 'current = front', layout.create(entries, { ...frame, activeId: entries[targetIndex]?.id }))
     if (this.removed) {

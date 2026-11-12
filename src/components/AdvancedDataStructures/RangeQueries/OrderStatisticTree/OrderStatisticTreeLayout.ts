@@ -4,6 +4,6 @@ import type { TreeFrame } from '../../../../visualization/TreeActionAnimation.ts
 import type { Scene } from '../../../../visualization/Scene.ts'
 export class OrderStatisticTreeLayout extends HierarchyLayout {
   public create(model: AdditionalTreeModel, frame: TreeFrame = {}): Scene {
-    return { ...super.create(model, frame), countLabel: 'keys', hint: { title: 'Order Statistic Tree', description: 'AVL-balanced keys with cached subtree sizes for rank and selection.' } }
+    return { ...super.create(model, frame), countLabel: 'keys' }
   }
 }

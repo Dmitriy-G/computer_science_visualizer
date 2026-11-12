@@ -15,17 +15,12 @@ export interface StructuredLinearActionProps {
 export interface LinearSequenceConstructor {
   new(model: LinearModel, input: LinearInputValues): LinearAnimation
   readonly title: string
-  readonly summary: string
   readonly pseudocode?: string
 }
 
 class LinearDefinition implements ActionDefinition<LinearModel> {
   public readonly title: string
-  public readonly summary: string
   public readonly pseudocode?: string
-  public readonly context = 'Linear structure operation'
-  public readonly phases = ['Inspect', 'Traverse', 'Modify', 'Finish']
-  public readonly timelineHint = 'Follow the current operation'
   private readonly sequence: LinearSequenceConstructor
   private readonly input: LinearInputValues
 
@@ -33,7 +28,6 @@ class LinearDefinition implements ActionDefinition<LinearModel> {
     this.sequence = sequence
     this.input = input
     this.title = sequence.title
-    this.summary = sequence.summary
     this.pseudocode = sequence.pseudocode
   }
 

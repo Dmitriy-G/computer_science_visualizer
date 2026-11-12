@@ -2,7 +2,6 @@ import { ArraySortOperations } from './ArraySortOperations.ts'
 import type { ArrayEntry } from '../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
 import type { ArraySortFrame } from './ArraySortTrace.ts'
 
-// Comparison-based Cycle Sort: count smaller suffix keys to locate each write.
 export class CycleArraySort extends ArraySortOperations {
   public sort(): void {
     for (let start = 0; start < this.entries.length - 1; start += 1) {
@@ -14,7 +13,6 @@ export class CycleArraySort extends ArraySortOperations {
       }
       this.emit('hold', 'Hold the cycle entry', `Hold key ${held.value} outside index ${start}. The empty slot stays at the cycle start until the cycle closes.`, `held = array[${start}]`, { held, hole: start, sortedPrefix: start }, start)
       while (true) {
-        // Equal keys already occupy valid destinations; do not rewrite them.
         while (this.entries[position].value === held.value) {
           this.emit('select', 'Skip an equal-key destination', `Index ${position} already contains ${held.value}. Advance to the next destination without writing an equal value.`, 'while array[destination] == held: destination += 1', { held, hole: start, sortedPrefix: start, activeIndices: [position], roles: { [position]: 'EQUAL' } }, position)
           position += 1

@@ -16,23 +16,19 @@ export interface HardwareBank {
   readonly cells: readonly HardwareCell[]
 }
 
-// Immutable visual state, separate from the mechanism models in each lesson.
 export class HardwareModel {
   public readonly banks: readonly HardwareBank[]
-  public readonly detail: string
   public readonly focusId: string | null
   public readonly events: number
   public readonly diagram: HardwareDiagram | null
 
   constructor(
     banks: readonly HardwareBank[] = [],
-    detail = 'Choose a mechanism to explore interacting cores, caches, and memory.',
     focusId: string | null = null,
     events = 0,
     diagram: HardwareDiagram | null = null,
   ) {
     this.banks = banks
-    this.detail = detail
     this.focusId = focusId
     this.events = events
     this.diagram = diagram
@@ -45,6 +41,6 @@ export class HardwareModel {
       for (const cell of bank.cells) cells.push({ ...cell })
       banks.push({ name: bank.name, cells })
     }
-    return new HardwareModel(banks, this.detail, this.focusId, this.events, this.diagram?.clone() ?? null)
+    return new HardwareModel(banks, this.focusId, this.events, this.diagram?.clone() ?? null)
   }
 }

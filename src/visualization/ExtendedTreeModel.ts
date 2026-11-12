@@ -2,7 +2,6 @@ import { AdditionalTreeModel } from './AdditionalTreeModel.ts'
 import type { TreeInputValues } from './AdditionalTreeModel.ts'
 import { TreeTrace } from './TreeTrace.ts'
 import type { TreeTraceObserver, TreeTracePhase } from './TreeTrace.ts'
-// Shared validation and trace primitives, never a substitute for a structure's storage.
 export abstract class ExtendedTreeModel extends AdditionalTreeModel {
   public static readonly maximumElements = 64
   protected nextId = 0

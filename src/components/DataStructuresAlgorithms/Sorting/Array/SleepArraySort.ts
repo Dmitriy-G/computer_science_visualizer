@@ -8,8 +8,6 @@ interface WakeEvent {
   readonly order: number
 }
 
-// Virtual event-time demonstration, not OS timers. A priority queue makes the
-// scheduling work explicit; signed and extreme integers never become delays.
 export class SleepArraySort extends ArraySortOperations {
   private readonly queue: WakeEvent[] = []
   private output: (ArrayEntry | null)[] = []
@@ -75,6 +73,6 @@ export class SleepArraySort extends ArraySortOperations {
     if (!this.observer) return
     const entries: ArrayEntry[] = []
     for (const event of this.queue) entries.push(event.entry)
-    this.emit(kind, label, detail, code, { activeIndices: source === undefined ? [] : [source], output: [...this.output], storage: [{ id: 'wake-queue', label: 'EVENTS', status: 'MIN-HEAP', runs: [{ id: 'wake-queue', label: 'heap', entries, status: 'WAITING', activeIndices: reading ? [0] : [] }] }], counterHint: `Simulated Sleep Sort: virtual deadline = key - (${this.minimum}), virtual time ${this.now}. Heap scheduling costs O(n log n); no threads, real timers, or wall-clock delays.` })
+    this.emit(kind, label, detail, code, { activeIndices: source === undefined ? [] : [source], output: [...this.output], storage: [{ id: 'wake-queue', label: 'EVENTS', status: 'MIN-HEAP', runs: [{ id: 'wake-queue', label: 'heap', entries, status: 'WAITING', activeIndices: reading ? [0] : [] }] }] })
   }
 }

@@ -12,7 +12,6 @@ export class CuckooHashTable extends HashTableModel {
   private held: HashRecord | null = null
   public get length(): number { return this.count }
   public get capacity(): number { return this.tables[0].length }
-  public get hashSeed(): number { return this.seed }
   public getTables(): readonly (readonly (HashRecord | null)[])[] { return [[...this.tables[0]], [...this.tables[1]]] }
   public getHeld(): HashRecord | null { return this.held }
   public home(key: number, table: number): number { return HashTableHash.index(key, 2 * this.seed + table, this.capacity) }

@@ -52,10 +52,6 @@ export class GraphSceneLayout {
       }
     }
     return { kind: model.kind, nodes, edges, width, height: width, focusId: frame.activeIds?.[0] ?? null,
-      count: frame.count ?? model.length, countLabel: 'vertices',
-      hint: { title: `${model.edgeCount} edges · ${model.directed ? 'directed' : 'undirected'}${model.weighted ? ' · nonnegative weights' : ''}`,
-        description: model.kind === 'dag' ? 'A directed acyclic graph: an edge that creates a cycle is rejected. Edge labels are stable IDs.'
-          : model.kind === 'multigraph' ? 'Parallel edges and self-loops are allowed. Remove a specific edge using its e-number.'
-          : 'Edge labels identify edges for removal. Vertex values identify endpoints; new values must be unique.' } }
+      count: frame.count ?? model.length, countLabel: 'vertices' }
   }
 }

@@ -13,7 +13,6 @@ export interface HashActionLayout<TModel> {
   create(model: TModel, event?: HashTrace): Scene
 }
 
-// Shared trace-to-scene playback; each action owns its plan and information.
 export class HashAnimation<TModel extends HashActionModel<TModel>> extends AnimationSequence {
   public readonly result: TModel
 

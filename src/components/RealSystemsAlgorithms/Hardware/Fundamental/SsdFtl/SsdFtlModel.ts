@@ -9,7 +9,6 @@ export class SsdFtlModel extends FlashStorage {
     this.operation = 'initial mapping'
     this.flowFrom = null
     this.flowTo = null
-    this.detail = 'Simple page-mapped FTL: one logical page represents one host update. Keep the old mapping until the new page is programmed successfully. A failed page is quarantined. Ordinary completion is not a power-loss durability guarantee; mapping journaling and crash recovery are outside this example.'
   }
 
   public allocate(): number {

@@ -25,11 +25,7 @@ export class DisjointSetLayout {
       this.place(entry, 0, children, nodes, edges, cursor)
       cursor.column += 1
     }
-    return LinearScene.create(model, nodes, edges, frame, {
-      title: 'Disjoint-set forest',
-      description: 'Arrows point to parents. Each root represents one component. Union uses rank; find compresses paths without lowering stored ranks.',
-      code: 'parent[root] = root',
-    }, 'members')
+    return LinearScene.create(model, nodes, edges, frame, 'members')
   }
 
   private place(entry: DisjointSetEntry, depth: number, children: ReadonlyMap<number, readonly DisjointSetEntry[]>, nodes: SceneNode[], edges: SceneEdge[], cursor: { column: number; width: number }): number {

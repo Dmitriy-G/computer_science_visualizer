@@ -4,7 +4,6 @@ import type { LinearObserver, LinearResult } from '../../../../visualization/Lin
 export class EdgeList extends StoredEdgeGraph {
   public readonly kind = 'edge-list'
   public readonly directed = true
-  public get hint(): string { return 'Canonical storage is an array of stable-ID (source, target) edge records, plus a separate vertex registry so isolated vertices survive. Neighbor queries scan edge records; adding or deleting an edge changes this actual array.' }
   protected empty(): EdgeList { return new EdgeList() }
 
   public static createDefault(): EdgeList {

@@ -12,9 +12,6 @@ export class RobinHoodHashTableLayout {
       const record = slots[index]
       labels.push(record && record !== 'deleted' ? `home ${model.home(record.key)}; distance ${model.distance(index, record.key)}` : '')
     }
-    return HashTableScene.grid(model, [{ prefix: `${model.kind}-slot`, role: 'slot', slots, recordLabels: labels }], frame, {
-      title: 'Robin Hood displacement', code: 'distance = (slot - home + b) mod b; swap when incoming.distance > resident.distance',
-      description: 'Greater-distance arrivals displace less-traveled residents. A held record remains visible during swaps. Lookup can stop when a resident has a smaller distance than the search; deletion shifts the following cluster backward.',
-    }, model.getHeld())
+    return HashTableScene.grid(model, [{ prefix: `${model.kind}-slot`, role: 'slot', slots, recordLabels: labels }], frame, model.getHeld())
   }
 }

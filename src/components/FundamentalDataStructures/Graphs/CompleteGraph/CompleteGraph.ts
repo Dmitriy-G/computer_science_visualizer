@@ -6,7 +6,6 @@ import type { ActionKind } from '../../../../visualization/ActionCatalog.ts'
 export class CompleteGraph extends StoredEdgeGraph {
   public readonly kind = 'complete-graph'
   public readonly directed = false
-  public get hint(): string { return 'A simple undirected complete graph contains one edge for every pair of distinct vertices: E = V(V − 1)/2. Adding a vertex connects it to all existing vertices; deleting a vertex removes its incident edges. Individual edge editing is not offered.' }
   protected empty(): CompleteGraph { return new CompleteGraph() }
 
   public getNeighbors(id: string): readonly string[] {
@@ -27,7 +26,6 @@ export class CompleteGraph extends StoredEdgeGraph {
     if (action !== 'add-vertex') return super.perform(action, input, observer)
     const previous = [...this.vertices]
     const vertex = this.appendVertex(LinearModel.integer(input, 'value'))
-    // One atomic publication preserves completeness in every recorded scene.
     for (const other of previous) {
       const number = this.nextEdge++
       this.storeEdge({ id: `${this.kind}-e${number}`, number, from: other.id, to: vertex.id })

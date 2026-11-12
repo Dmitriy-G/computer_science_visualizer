@@ -8,11 +8,6 @@ import './DualPivotQuickSort.css'
 class DualPivotQuickSortDefinition implements ActionDefinition<FixedArray> {
   public readonly pseudocode = ArraySortingPseudocode.dualPivotQuickSort
   public readonly title = 'Dual-Pivot QuickSort'
-  public readonly context = 'Sorting / Array / Dual-Pivot QuickSort'
-  public readonly summary = DualPivotQuickSortAnimation.describe(0).summary
-  public readonly phases = ['Inspect', 'Locate', 'Move', 'Finish range', 'Commit']
-  public readonly timelineHint = 'Deterministic sorting steps in the shared renderer'
-  public readonly acceptsValue = false
 
   public create(model: FixedArray): DualPivotQuickSortAnimation {
     return new DualPivotQuickSortAnimation(model)

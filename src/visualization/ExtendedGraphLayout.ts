@@ -76,9 +76,8 @@ export class ExtendedGraphLayout {
     const highlighted = new Set(frame.edgeIds)
     const edges: SceneEdge[] = []
     for (const edge of drawing.edges) edges.push({ ...edge, highlighted: highlighted.has(edge.id) || highlighted.has(edge.id.split(':')[0]) })
-    const limits = model.kind === 'hypergraph' ? 'Example limits: 16 vertices and 32 hyperedges.' : 'Example limits: 16 vertices and 128 edges.'
     return LinearScene.create(model, drawing.nodes, edges, frame,
-      { title: `${model.edgeCount} ${model.kind === 'hypergraph' ? 'hyperedges' : 'edges'}`, description: `${model.hint} ${limits}` }, 'vertices')
+      'vertices')
   }
 
   public create(model: LinearModel, frame: LinearFrame = {}): Scene {

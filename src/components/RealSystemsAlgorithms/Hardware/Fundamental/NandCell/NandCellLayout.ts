@@ -24,6 +24,6 @@ export class NandCellLayout {
       .connect('read', `page-${model.selectedPage}`, 'sense', 'reference / current sense', model.operation === 'sense')
       .connect('ecc-check', 'sense', 'ecc', 'controller decode / check', model.operation === 'ECC check')
     for (let page = 0; page < model.pages.length; page += 1) diagram.connect(`erase-${page}`, 'erase', `page-${page}`, 'block ERASE', model.operation === 'block erase', -50 - page * 30)
-    return new CpuModel([], 'Illustrative SLC: erased cells read 1; programming selected cells stores charge and raises threshold for 0. One PROGRAM per erased page in this bounded policy. Arbitrary overwrites reject without changing data; ERASE affects every page in the block. TLC/QLC thresholds, 3D charge-trap versus floating-gate design, program ordering, and ECC implementation vary.', 'charge', 0, diagram)
+    return new CpuModel([], 'charge', 0, diagram)
   }
 }

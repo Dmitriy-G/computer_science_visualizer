@@ -1,7 +1,6 @@
 import { GraphModel } from '../../../../visualization/GraphModel.ts'
 export type { GraphEntry } from '../../../../visualization/GraphModel.ts'
 
-// The original Graph remains the undirected, unweighted graph.
 export class Graph extends GraphModel {
   public readonly kind = 'graph'
 

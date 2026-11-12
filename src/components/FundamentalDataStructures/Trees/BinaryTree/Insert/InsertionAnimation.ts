@@ -136,7 +136,6 @@ export class InsertionAnimation {
         })
       }
     }
-    // Reaching an empty child after checking equality proves the key is new.
     const pending = this.result.insert(value)!
     const frame: BinaryTreeFrame = {
       pendingId: pending.id,

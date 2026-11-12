@@ -6,7 +6,6 @@ interface SortRun {
   readonly length: number
 }
 
-// Algorithms mutate the model's existing allocation; observers only record snapshots.
 export class HybridArraySort {
   private readonly entries: ArrayEntry[]
   private readonly observer?: ArraySortObserver
@@ -37,7 +36,6 @@ export class HybridArraySort {
 
   private insertion(start: number, end: number, sortedEnd = start + 1): void {
     for (let index = sortedEnd; index < end; index += 1) {
-      // Upper-bound insertion keeps equal keys in arrival order.
       let low = start
       let high = index
       while (low < high) {
@@ -54,7 +52,6 @@ export class HybridArraySort {
     if (size < 2) return
     let minimum = size
     let remainder = 0
-    // A smaller teaching threshold than OpenJDK's 32 exposes merges on ten entries.
     while (minimum >= 8) {
       remainder |= minimum % 2
       minimum = Math.floor(minimum / 2)

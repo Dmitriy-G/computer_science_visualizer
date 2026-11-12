@@ -3,7 +3,6 @@ import { LinearScene } from './LinearScene.ts'
 import type { LinearModel, LinearFrame, LinearSceneFactory } from './LinearModel.ts'
 import type { Scene, SceneNode, SceneEdge } from './Scene.ts'
 
-// Storage rows and links are semantic model data; all pixel geometry lives here.
 export class AppliedLayout implements LinearSceneFactory {
   public create(model: LinearModel, frame: LinearFrame = {}): Scene {
     if (!(model instanceof AppliedModel)) throw new TypeError('Expected an applied structure model')
@@ -38,6 +37,6 @@ export class AppliedLayout implements LinearSceneFactory {
         : route * 30
       edges.push({ ...edge, curveOffset, highlighted: frame.edgeIds?.includes(edge.id) ?? false })
     }
-    return LinearScene.create(model, nodes, edges, frame, { title: 'Representation', description: model.representation }, model.countLabel)
+    return LinearScene.create(model, nodes, edges, frame, model.countLabel)
   }
 }

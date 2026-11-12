@@ -6,12 +6,6 @@ import './PushBack.css'
 
 class PushBackDefinition implements ActionDefinition<Deque> {
   public readonly title = 'Push back'
-  public readonly context = 'Deque / push back'
-  public readonly summary = 'Add a value after the back.'
-  public readonly phases = ['Inspect', 'Locate', 'Create', 'Place', 'Connect', 'Finish']
-  public readonly timelineHint = 'Follow next and prev'
-  public readonly acceptsValue = true
-  public readonly inputLabel = 'Value to insert'
   public readonly initialValue = 99
 
   public create(model: Deque, value: number): InsertionAnimation {

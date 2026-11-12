@@ -1,13 +1,11 @@
 import { StoredEdgeGraph } from '../../../../visualization/StoredEdgeGraph.ts'
 import type { ExtendedEdge } from '../../../../visualization/ExtendedGraphModel.ts'
-import { LinearModel } from '../../../../visualization/LinearModel.ts'
 import type { LinearInputValues, LinearObserver, LinearResult } from '../../../../visualization/LinearModel.ts'
 import type { ActionKind } from '../../../../visualization/ActionCatalog.ts'
 
 export class Hypergraph extends StoredEdgeGraph {
   public readonly kind = 'hypergraph'
   public readonly directed = false
-  public get hint(): string { return 'Each undirected hyperedge is a set of 2–16 distinct existing vertices. Square H nodes show hyperedges and incidence lines show membership; they are not ordinary vertices or pairwise graph edges. Vertex deletion shrinks hyperedges, dropping small or duplicate sets and keeping the first surviving ID.' }
   protected empty(): Hypergraph { return new Hypergraph() }
 
   public static parseMembers(text: string): readonly number[] {

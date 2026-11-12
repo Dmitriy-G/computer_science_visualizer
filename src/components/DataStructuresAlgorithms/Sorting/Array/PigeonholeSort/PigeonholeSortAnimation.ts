@@ -11,7 +11,7 @@ export class PigeonholeSortAnimation extends ArraySortingAnimation {
   }
 
   constructor(model: FixedArray) {
-    super(model, 'Pigeonhole Sort', { counterHint: 'One pigeonhole per integer key; full records preserve IDs and stable ties.' })
+    super(model, 'Pigeonhole Sort')
     let rejection = ''
     const accepted = this.result.pigeonholeSort((event) => {
       if (event.kind === 'reject') rejection = event.detail!

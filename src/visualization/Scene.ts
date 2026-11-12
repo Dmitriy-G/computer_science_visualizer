@@ -58,11 +58,6 @@ export interface SceneRegion {
   readonly parentId?: string
 }
 
-export interface SceneHint {
-  readonly title: string
-  readonly description: string
-  readonly code?: string
-}
 
 export interface ScenePath {
   readonly id: string
@@ -80,7 +75,6 @@ export interface Scene {
   readonly focusId: string | null
   readonly count: number
   readonly countLabel?: string
-  readonly hint?: SceneHint
   readonly slots?: readonly SceneSlot[]
   readonly regions?: readonly SceneRegion[]
   readonly paths?: readonly ScenePath[]

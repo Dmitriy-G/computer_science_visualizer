@@ -8,11 +8,6 @@ import './OddEvenSort.css'
 class OddEvenSortDefinition implements ActionDefinition<FixedArray> {
   public readonly pseudocode = ArraySortingPseudocode.oddEvenSort
   public readonly title = 'Odd-Even Sort'
-  public readonly context = 'Sorting / Array / Odd-Even Sort'
-  public readonly summary = OddEvenSortAnimation.describe(0).summary
-  public readonly phases = ['Inspect', 'Locate', 'Move', 'Finish range', 'Commit']
-  public readonly timelineHint = 'Deterministic sorting steps in the shared renderer'
-  public readonly acceptsValue = false
 
   public create(model: FixedArray): OddEvenSortAnimation {
     return new OddEvenSortAnimation(model)

@@ -3,7 +3,6 @@ import { FixedArray } from '../../../FundamentalDataStructures/Linear/Array/Fixe
 import { ArraySortingLayout } from './ArraySortingLayout.ts'
 import type { ArraySortEvent, ArraySortFrame } from './ArraySortTrace.ts'
 
-// Common snapshot handling only; each action owns its sequence and explanations.
 export class ArraySortingAnimation extends AnimationSequence {
   public readonly result: FixedArray
   protected readonly layout = new ArraySortingLayout()
@@ -33,8 +32,6 @@ export class ArraySortingAnimation extends AnimationSequence {
     this.record(event, phase, event.label!, event.detail!, event.code!)
   }
 
-  // Reserve the largest auxiliary diagram for the entire session, so growing
-  // trees or piles never resize the viewport during playback.
   protected fitScenes(): void {
     let width = 0
     let height = 0

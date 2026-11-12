@@ -14,7 +14,6 @@ class SuffixNode {
     this.end = end
   }
 }
-// Naive compressed suffix insertion with shared text slices, not Ukkonen's algorithm.
 export class SuffixTree extends ExtendedTreeModel {
   public readonly kind = 'suffix-tree'
   private text = ''

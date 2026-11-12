@@ -11,6 +11,6 @@ export class ThreadedBinaryTreeLayout extends HierarchyLayout {
       for (const thread of model.getThreads()) edges.push({ id: `thread-${thread.from}-${thread.to}`, from: thread.from, to: thread.to, label: thread.label,
         directed: true, opacity: 0.7, highlighted: thread.from === frame.activeId, curveOffset: thread.label.startsWith('predecessor') ? -45 : 45 })
     }
-    return { ...scene, edges, hint: { title: 'Threaded Binary Tree', description: 'Child arrows form the tree. Curved labeled arrows are predecessor or successor threads; traversal follows their actual pointers without recursion.' } }
+    return { ...scene, edges }
   }
 }

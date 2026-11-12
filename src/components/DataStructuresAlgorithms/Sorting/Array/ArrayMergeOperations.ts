@@ -2,7 +2,6 @@ import { ArraySortOperations } from './ArraySortOperations.ts'
 import type { ArrayEntry } from '../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
 import type { ArraySortEvent, ArraySortFrame } from './ArraySortTrace.ts'
 
-// Stable adjacent merging and trace context shared by array merge lessons.
 export class ArrayMergeOperations extends ArraySortOperations {
   private buffer: ArrayEntry[] | null = null
 

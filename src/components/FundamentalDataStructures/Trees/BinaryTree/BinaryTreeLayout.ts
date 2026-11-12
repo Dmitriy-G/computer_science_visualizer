@@ -23,8 +23,6 @@ export class BinaryTreeLayout {
     let depth = 0
     let maxDepth = 0
     let rank = 0
-    // In-order spacing keeps left children left and right children right,
-    // including skewed trees, without exponentially wide empty levels.
     while (current !== null || stack.length > 0) {
       while (current !== null) {
         stack.push({ entry: current, depth })

@@ -5,7 +5,6 @@ export interface StoredRecord {
   readonly bytes: number
 }
 
-// Shared record encoding used by the two sorted storage indexes.
 export class SortedRecords {
   public static parse(text: unknown): StoredRecord[] {
     if (typeof text !== 'string') throw new TypeError('Enter key:value pairs separated by commas')
@@ -20,7 +19,6 @@ export class SortedRecords {
       if (!Number.isSafeInteger(key) || !Number.isSafeInteger(value)) throw new RangeError('Keys and values must be safe integers')
       pairs.push({ key, value })
     }
-    // Bottom-up merge sort gives deterministic comparison and storage bounds.
     let ordered = pairs
     for (let width = 1; width < ordered.length; width *= 2) {
       const merged: { key: number, value: number }[] = []

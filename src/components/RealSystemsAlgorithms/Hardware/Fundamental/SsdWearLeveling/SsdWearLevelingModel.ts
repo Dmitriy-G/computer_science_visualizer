@@ -14,11 +14,9 @@ export class SsdWearLevelingModel extends FlashStorage {
     this.operation = 'cold data pins low-wear B0'
     this.flowFrom = null
     this.flowTo = null
-    this.detail = 'Dynamic allocation chooses the free block with the lowest erase count (ties by block ID). Static leveling moves cold data to a higher-wear erased block, freeing a low-wear block for future hot writes. Policy and initial counts are illustrative. Relocation costs flash writes; no fixed lifetime increase or immediate reduction of the maximum count is promised.'
   }
 
   public compareAllocations(): void {
-    // Same six illustrative reuse/erase cycles on three initially free blocks.
     for (let cycle = 0; cycle < 6; cycle += 1) {
       this.concentrated[0] += 1
       let low = 0

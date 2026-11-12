@@ -6,12 +6,6 @@ import './DeleteByKey.css'
 
 class DeleteByKeyDefinition implements ActionDefinition<AVLTree> {
   public readonly title = 'Delete a key'
-  public readonly context = 'AVL tree / delete by key'
-  public readonly summary = 'Remove one key and restore the tree rules; missing keys leave the tree unchanged.'
-  public readonly phases = ['Inspect', 'Traverse', 'Modify', 'Repair', 'Finish']
-  public readonly timelineHint = 'Unique keys / balanced search tree'
-  public readonly acceptsValue = true
-  public readonly inputLabel = 'Key to delete'
   public readonly initialValue = 50
 
   public create(model: AVLTree, value: number): DeletionAnimation {

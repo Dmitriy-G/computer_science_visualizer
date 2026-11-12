@@ -6,7 +6,6 @@ import type { ActionKind } from '../../../../visualization/ActionCatalog.ts'
 export class FunctionalGraph extends StoredEdgeGraph {
   public readonly kind = 'functional-graph'
   public readonly directed = true
-  public get hint(): string { return 'Every vertex has exactly one outgoing successor, including possible self-loops. Set successor replaces the existing outgoing edge. Deleting a vertex redirects its surviving predecessors to themselves, preserving a total successor function.' }
   protected empty(): FunctionalGraph { return new FunctionalGraph() }
 
   public static createDefault(): FunctionalGraph {

@@ -6,11 +6,6 @@ import './Clear.css'
 
 class ClearDefinition implements ActionDefinition<AVLTree> {
   public readonly title = 'Clear'
-  public readonly context = 'AVL tree / clear'
-  public readonly summary = 'Release all nodes or pages after their children, without repeated balanced deletions.'
-  public readonly phases = ['Inspect', 'Traverse', 'Release', 'Finalize', 'Finish']
-  public readonly timelineHint = 'Unique keys / balanced search tree'
-  public readonly acceptsValue = false
 
   public create(model: AVLTree): ClearAnimation {
     return new ClearAnimation(model)

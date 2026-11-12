@@ -26,6 +26,6 @@ export class FlashLayout {
       diagram.fixture(`erase-${block}`, `B${block} erase count`, String(model.erases[block]), x + 125, 905, undefined, 200)
     }
     if (model.flowFrom && model.flowTo) diagram.connect('transaction', model.flowFrom, model.flowTo, model.operation === 'mapping committed' ? 'publish mapping' : model.operation.startsWith('program') ? 'program attempt' : model.operation, true, -65)
-    return new CpuModel([], `${model.detail} Page states are explicit: free, staged (programmed but not mapped), valid, invalid, and failed. Erase counts are independent of page validity. Counters count completed host page writes and successful NAND page programs; metadata writes are excluded.`, model.flowTo, 0, diagram)
+    return new CpuModel([], model.flowTo, 0, diagram)
   }
 }

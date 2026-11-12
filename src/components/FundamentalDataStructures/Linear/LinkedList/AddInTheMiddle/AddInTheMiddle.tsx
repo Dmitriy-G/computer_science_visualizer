@@ -15,18 +15,6 @@ interface AddInTheMiddleProps {
 
 class LinkedListInsertionDefinition implements ActionDefinition<LinkedList> {
   public readonly title = 'Insert in the middle'
-  public readonly context = 'Linked list / insertion'
-  public readonly summary = 'Follow the pointers. See every connection.'
-  public readonly phases = [
-    'Start',
-    'Traverse',
-    'Middle',
-    'Create',
-    'Make space',
-    'Insert',
-    'Connect',
-  ]
-  public readonly timelineHint = 'O(n) traversal · O(1) pointer update'
 
   public create(list: LinkedList, value: number): InsertionAnimation {
     return new InsertionAnimation(list, value)

@@ -117,6 +117,6 @@ export class TranslationModel {
         { id: 'tlb', label: 'cached PFN', value: frame === undefined ? 'empty' : frame.toString(16) },
         { id: 'walk', label: 'table reads', value: `${this.reads}`, status: this.last },
       ] },
-    ], 'Cortex-A710 hardware translation-table walk concept. Illustrative EL1 stage-1 configuration: 48-bit VA, 4 KiB pages, four 9-bit indices, 12-bit offset, one ASID. Addresses displayed in hexadecimal. No stage 2, blocks, permissions, faults, TLB hierarchy, or replacement-policy simulation. Mapping changes are quiesced and use a simplified break-before-make maintenance sequence.', this.walking ? `level-${this.level}` : 'tlb', 0, TranslationLayout.create(this.flow, this.readLevel, this.va.toString(16), cells, frame === undefined ? null : frame.toString(16), this.physical === null ? null : this.physical.toString(16)))
+    ], this.walking ? `level-${this.level}` : 'tlb', 0, TranslationLayout.create(this.flow, this.readLevel, this.va.toString(16), cells, frame === undefined ? null : frame.toString(16), this.physical === null ? null : this.physical.toString(16)))
   }
 }

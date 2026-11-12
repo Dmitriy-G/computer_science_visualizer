@@ -1,7 +1,5 @@
 import { ArrayNetworkSort } from './ArrayNetworkSort.ts'
 
-// Arbitrary-length bitonic construction, following H. W. Lang's merge rule:
-// https://www.hwlang.de/algorithmen/sortieren/bitonic/oddn.htm
 export class BitonicArraySort extends ArrayNetworkSort {
   public sort(): void {
     this.sortRange(0, this.entries.length, true)

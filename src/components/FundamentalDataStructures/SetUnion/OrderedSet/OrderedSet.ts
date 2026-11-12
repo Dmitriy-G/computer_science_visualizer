@@ -4,7 +4,6 @@ import type { AVLTreeEntry } from '../../Trees/AVLTree/AVLTree.ts'
 import type { ActionKind } from '../../../../visualization/ActionCatalog.ts'
 import type { LinearInputValues, LinearObserver, LinearResult } from '../../../../visualization/LinearModel.ts'
 
-// An ordered set has the same unique-key storage and repairs as an AVL tree.
 export class OrderedSet extends SetUnionModel {
   public readonly kind = 'ordered-set'
   private storage = new AVLTree()

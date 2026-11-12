@@ -8,8 +8,6 @@ export class BogoArraySort extends ArraySortOperations {
     const original = [...this.entries]
     for (let attempt = 1; attempt <= attempts; attempt += 1) {
       for (let index = this.entries.length - 1; index > 0; index -= 1) {
-        // Fixed-seed xorshift drives reproducible Fisher-Yates demonstrations.
-        // Complexity notes for ideal Bogo Sort assume independent uniform draws.
         this.seed ^= this.seed << 13
         this.seed ^= this.seed >>> 17
         this.seed ^= this.seed << 5
@@ -18,11 +16,11 @@ export class BogoArraySort extends ArraySortOperations {
         this.entries[index] = this.entries[other]
         this.entries[other] = entry
       }
-      this.emit('pass', 'Try one seeded random permutation', `Shuffle attempt ${attempt} of ${attempts}. This is a complete Fisher-Yates pass; the fixed seed makes playback reproducible.`, 'shuffle(array); check whether ordered', { counterHint: `Bounded Bogo Sort demonstration: ${attempt}/${attempts} seeded shuffles. No fallback sort is used.` })
+      this.emit('pass', 'Try one seeded random permutation', `Shuffle attempt ${attempt} of ${attempts}. This is a complete Fisher-Yates pass; the fixed seed makes playback reproducible.`, 'shuffle(array); check whether ordered', {  })
       if (this.ordered()) return true
     }
     for (let index = 0; index < this.entries.length; index += 1) this.entries[index] = original[index]
-    this.emit('reject', 'Shuffle budget exhausted; array unchanged', `None of the ${attempts} seeded permutations was sorted. Restore the original entry order. A bounded Bogo Sort attempt is not guaranteed to succeed.`, 'restore original array; report unfinished', { counterHint: 'The demonstration stopped at its shuffle budget. This is an unfinished sort, not a sorted result.' })
+    this.emit('reject', 'Shuffle budget exhausted; array unchanged', `None of the ${attempts} seeded permutations was sorted. Restore the original entry order. A bounded Bogo Sort attempt is not guaranteed to succeed.`, 'restore original array; report unfinished', {  })
     return false
   }
 

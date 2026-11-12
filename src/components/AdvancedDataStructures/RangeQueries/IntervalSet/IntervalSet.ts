@@ -80,7 +80,6 @@ export class IntervalSet extends SetUnionModel {
       let inserted = false
       for (const interval of this.intervals) {
         SetUnionModel.emit(observer, interval.id, `Compare the candidate [${minimum}, ${maximum}] with [${interval.minimum}, ${interval.maximum}].`, 'compare endpoints for ordering, overlap, or adjacency')
-        // BigInt avoids overflow in adjacent-endpoint comparisons at safe-integer limits.
         if (BigInt(interval.maximum) + 1n < BigInt(minimum)) result.push(interval)
         else if (BigInt(maximum) + 1n < BigInt(interval.minimum)) {
           if (!inserted) {

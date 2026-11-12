@@ -24,7 +24,6 @@ export class ExtendedTreeAnimation extends AnimationSequence implements TreeTrac
     try { result = this.result.execute(action, input, this) }
     catch (error) {
       if (!(error instanceof TypeError) && !(error instanceof RangeError)) throw error
-      // Rejected requests never publish a partially changed clone or consume IDs.
       this.result = model.clone()
       this.steps.splice(1)
       this.visited.clear()

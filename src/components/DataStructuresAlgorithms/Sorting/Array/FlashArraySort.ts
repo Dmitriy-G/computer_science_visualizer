@@ -10,7 +10,6 @@ export class FlashArraySort extends IntegerDistributionSort {
     }
     const classes = Math.max(2, Math.floor(this.entries.length * 0.43))
     const classify = (value: number): number => Number((BigInt(value) - minimum) * BigInt(classes - 1) / (maximum - minimum))
-    this.hint = `Flash classes: floor((key - (${minimum})) * ${classes - 1} / (${maximum} - (${minimum}))). Exact BigInt arithmetic; ${classes} classes.`
     this.cells = new Array<number>(classes).fill(0)
     for (let index = 0; index < this.entries.length; index += 1) {
       const bin = classify(this.entries[index].value)

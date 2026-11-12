@@ -11,9 +11,6 @@ export class OrderedSetLayout {
       pendingId: frame.status === 'NEW' ? frame.activeId ?? undefined : undefined,
       visitedIds: frame.visited ? [...frame.visited] : [],
     })
-    return { ...scene, countLabel: 'unique keys', hint: {
-      title: 'AVL-backed ordered set',
-      description: 'Each key occurs once. Smaller keys are on the left and larger keys on the right; stored heights drive AVL rotations. Lower bound follows one search path.',
-    } }
+    return { ...scene, countLabel: 'unique keys' }
   }
 }

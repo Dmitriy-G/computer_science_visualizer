@@ -8,7 +8,6 @@ export interface HashRecord {
   readonly value: number
 }
 
-// Shared input/result contracts only. Each table owns its canonical collision storage.
 export abstract class HashTableModel extends LinearModel {
   protected nextId = 0
   protected lastLocation = ''

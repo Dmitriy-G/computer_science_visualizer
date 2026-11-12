@@ -83,7 +83,6 @@ export class CompactedDeBruijnGraph extends AppliedGraphModel {
       const predecessors = incoming.get(kmer)!
       if (!this.owner.has(kmer) && (predecessors.length !== 1 || this.outgoing.get(predecessors[0])!.length !== 1)) compact(kmer)
     }
-    // Any remaining component consists entirely of a one-in/one-out cycle.
     for (const kmer of ordered) if (!this.owner.has(kmer)) compact(kmer)
   }
   public execute(action: ActionKind, input: LinearInputValues, observer?: LinearObserver): LinearResult {

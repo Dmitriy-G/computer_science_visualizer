@@ -12,7 +12,6 @@ export class SsdGarbageCollectionModel extends FlashStorage {
     this.operation = 'after five host writes'
     this.flowFrom = null
     this.flowTo = null
-    this.detail = 'GC chooses the block with most invalid pages, breaking ties by block number, then preserves each live page before erasing. This is an illustrative policy. Filesystem deletion alone does not invalidate these pages; deallocation must reach the device. GC reclaims space; it does not select blocks to balance wear.'
   }
 
   public chooseVictim(): number {

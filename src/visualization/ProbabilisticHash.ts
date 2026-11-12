@@ -1,5 +1,3 @@
-// Fixed, reproducible SplitMix64-style avalanche mixing for numeric lessons.
-// Seeds are public and deterministic, not cryptographic or an independence proof.
 export class ProbabilisticHash {
   private static readonly mask = (1n << 64n) - 1n
 

@@ -1,7 +1,6 @@
 import { HardwareModel } from './HardwareModel.ts'
 import { PublicationLayout } from './PublicationLayout.ts'
 
-// Shared publication primitive. Lessons choose their own instruction constraints.
 export class PublicationModel {
   public flow = 'none'
   public data = 0
@@ -26,7 +25,6 @@ export class PublicationModel {
   public readFlag(acquire: boolean): number {
     this.observedFlag = this.flag
     this.flow = 'flag-load'
-    // The post-acquire load must observe a value consistent with synchronization.
     if (acquire && this.flag === 1) this.earlyData = null
     return this.flag
   }
@@ -38,7 +36,7 @@ export class PublicationModel {
   public orderRead(): void {
     this.flow = 'read-order'
   }
-  public snapshot(detail: string, mode: 'plain' | 'dmb' | 'acquire-release' = 'plain'): HardwareModel {
+  public snapshot(mode: 'plain' | 'dmb' | 'acquire-release' = 'plain'): HardwareModel {
     return new HardwareModel([
       { name: 'Shared', cells: [
         { id: 'data', label: 'data', value: `${this.data}` },
@@ -49,6 +47,6 @@ export class PublicationModel {
         { id: 'seen-data', label: 'data register', value: `${this.observedData ?? '?'}` },
         { id: 'early-data', label: 'early data read', value: `${this.earlyData ?? 'none'}` },
       ] },
-    ], detail, null, 0, PublicationLayout.create(mode, this.flow, this.earlyData !== null, this.data, this.flag, this.earlyData))
+    ], null, 0, PublicationLayout.create(mode, this.flow, this.earlyData !== null, this.data, this.flag, this.earlyData))
   }
 }

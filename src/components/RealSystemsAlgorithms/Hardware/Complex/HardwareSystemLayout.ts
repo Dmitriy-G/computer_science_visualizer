@@ -19,7 +19,6 @@ interface PackedComponent {
   readonly cellWidth: number
 }
 
-// Organizes logical teaching components. It does not infer hardware transactions.
 export class HardwareSystemLayout {
   private readonly components: Component[] = []
   private readonly parts = new Map<string, SystemPart>()
@@ -276,8 +275,6 @@ export class HardwareSystemLayout {
 
   private add(edge: SceneEdge, from: string, to: string, label: string, shared = false): void {
     if (from === to) return
-    // Preserve each logical route in order, including shared interface segments.
-    // Merging these segments interleaves simultaneous requests and responses.
     const id = `${edge.id}:${from}:${to}`
     const highlighted = edge.highlighted
     const betweenPackages = from === this.cpuPort && to === this.busPort || from === this.busPort && to === this.cpuPort

@@ -202,7 +202,6 @@ export class ArraySortingLayout {
       ...scene, nodes, edges, slots, focusId,
       width: frame.distribution ? Math.max(width, 160 + entries.length * 92 + Math.max(10, entries.length) * 20, 160 + Math.max(10, entries.length) * 112) : width,
       height,
-      hint: frame.counterHint ? { title: 'Auxiliary storage', description: frame.counterHint } : undefined,
     }
   }
 }

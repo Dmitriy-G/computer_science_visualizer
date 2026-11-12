@@ -14,10 +14,6 @@ export class IntervalSetLayout {
       nodes.push(LinearScene.node(interval.id, text, `interval ${index}`, 310 + index % 2 * 640, 110 + Math.floor(index / 2) * 160, width))
       index += 1
     }
-    return LinearScene.create(model, nodes, [], frame, {
-      title: 'Closed integer intervals',
-      description: 'Both endpoints are included. Overlapping and adjacent ranges coalesce; subtraction can split a range. Cards show sorted interval storage, with equal spacing rather than a coordinate scale. The count is stored intervals, not covered integers.',
-      code: '[a, b] union [b + 1, c] = [a, c]',
-    }, 'intervals')
+    return LinearScene.create(model, nodes, [], frame, 'intervals')
   }
 }

@@ -6,7 +6,6 @@ import type { ActionKind } from '../../../../visualization/ActionCatalog.ts'
 export class BinaryMaxHeap extends BinaryPriorityHeap {
   public readonly kind = 'binary-max-heap'
   protected readonly maximum = true
-  public get hint(): string { return 'A complete binary max-heap: every parent is at least as large as either child. Insert sifts upward; extracting the maximum replaces the root with the last leaf and sifts downward. Up to 64 values.' }
 
   public static createDefault(): BinaryMaxHeap {
     const model = new BinaryMaxHeap()

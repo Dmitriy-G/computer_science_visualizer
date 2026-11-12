@@ -6,7 +6,6 @@ export class OddEvenArraySort extends ArrayNetworkSort {
     let swapped = true
     while (swapped) {
       swapped = false
-      // Both parities must be clean before stopping; one clean phase is not enough.
       for (let parity = 0; parity < 2; parity += 1) {
         this.emit('stage', parity === 0 ? 'Compare even-start pairs' : 'Compare odd-start pairs', `Compare disjoint neighbors starting at indices ${parity}, ${parity + 2}, and so on. Equal values remain in order.`, `for i = ${parity}; i + 1 < n; i += 2`)
         for (let index = parity; index + 1 < this.entries.length; index += 2) {

@@ -122,6 +122,6 @@ export class RegisterRenameModel {
       result: current?.done ? `${program.id}: ${this.physical[current.destination] ?? 'retired'}` : 'waiting for operands',
     })
     const focusId = focus === null ? null : this.phase === 'rename' ? 'rename-map' : this.phase === 'execute' ? 'alu' : 'committed-registers'
-    return new CpuModel(banks, 'Renamed sources keep their physical identities. Reusing the name r1 does not change I2’s input. A small illustrative register file models the Intel Core mechanism; it is not a cycle-accurate core. Instruction-cache and idle data-cache boxes provide core context; cache behavior is not simulated.', focusId, 0, diagram)
+    return new CpuModel(banks, focusId, 0, diagram)
   }
 }

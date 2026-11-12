@@ -6,12 +6,6 @@ import './SearchByValue.css'
 
 class SearchByValueDefinition implements ActionDefinition<CircularBuffer> {
   public readonly title = 'Search by value'
-  public readonly context = 'Circular buffer / search by value'
-  public readonly summary = 'Search occupied slots in logical FIFO order, wrapping as needed.'
-  public readonly phases = ['Inspect', 'Compare', 'Finish']
-  public readonly timelineHint = 'Fixed capacity / FIFO order'
-  public readonly acceptsValue = true
-  public readonly inputLabel = 'Value to find'
   public readonly initialValue = 50
 
   public create(model: CircularBuffer, value: number): SearchAnimation {

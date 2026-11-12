@@ -1,8 +1,6 @@
 import type { StructureTechnology } from './StructureInformation.ts'
 
 export class StructureProductCatalog {
-  // Product labels are curated against existing, verified technology entries.
-  // Reuse their evidence links and usage notes instead of inferring downstream users.
   private static readonly names: Readonly<Record<string, string>> = {
     'Go runtime semaphore treaps': 'Go',
     'scikit-learn CART decision trees': 'scikit-learn',

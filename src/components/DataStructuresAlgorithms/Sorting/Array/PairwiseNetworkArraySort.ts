@@ -1,8 +1,5 @@
 import { ArrayNetworkSort } from './ArrayNetworkSort.ts'
 
-// Parberry's recursive construction: order pairs, recursively order their
-// minima/maxima, then reduce the amplitude of the interleaved sorted pairs.
-// https://ianparberry.com/pubs/pairwise.pdf, Sections 2 and 3.
 export class PairwiseNetworkArraySort extends ArrayNetworkSort {
   public sort(): void {
     if (this.entries.length < 2) return

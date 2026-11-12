@@ -7,7 +7,6 @@ import type { ActionKind } from '../../../../visualization/ActionCatalog.ts'
 export class IndexedPriorityQueue extends BinaryPriorityHeap {
   public readonly kind = 'indexed-priority-queue'
   private readonly positions = new Map<number, number>()
-  public get hint(): string { return 'A min-heap of unique integer keys and priorities, with an inverse key → heap-index Map. Every exchange updates both positions. Change-priority repairs in either direction; duplicate keys are rejected. Up to 64 keys.' }
 
   public static createDefault(): IndexedPriorityQueue {
     const model = new IndexedPriorityQueue()

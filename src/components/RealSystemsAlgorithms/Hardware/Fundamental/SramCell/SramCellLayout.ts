@@ -32,6 +32,6 @@ export class SramCellLayout {
       .connect('sense-bl-bar', 'bl-bar', 'sense', 'read differential', model.operation === 'sense', -80)
       .connect('write-drive', 'driver', 'bl-bar', 'write drive', model.operation.startsWith('write'), 85)
       .connect('write-drive-left', 'driver', 'bl', 'complementary write drive', model.operation.startsWith('write'), -95)
-    return new CpuModel([], 'Powered 6T feedback holds the bit without periodic refresh. Reads sense a small bit-line differential; writes overpower the feedback through access transistors. Dual-port cells can use other transistor counts. No analog stability or transistor timing is simulated.', 'q', 0, diagram)
+    return new CpuModel([], 'q', 0, diagram)
   }
 }

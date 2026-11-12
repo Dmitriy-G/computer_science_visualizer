@@ -14,6 +14,6 @@ export class BitSetLayout {
     for (let index = 0; index < model.length; index += 1) {
       nodes.push(LinearScene.node(`bit-${index}`, model.test(index) ? '1' : '0', `bit ${index}`, 80 + index % 32 * 100, 235 + Math.floor(index / 32) * 290, 62))
     }
-    return LinearScene.create(model, nodes, [], frame, { title: 'Bit Array / BitSet', description: 'Bits are packed into unsigned 32-bit words. The diagram expands individual bits for readability. Word index = floor(i / 32); bit offset = i % 32. Clear zeroes words without changing the logical size.' }, 'bits')
+    return LinearScene.create(model, nodes, [], frame, 'bits')
   }
 }

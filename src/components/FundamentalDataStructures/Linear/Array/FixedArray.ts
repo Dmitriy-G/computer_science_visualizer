@@ -77,7 +77,6 @@ export class FixedArray {
     return new FixedArray([60, 20, 90, 40, 10, 80, 30, 100, 50, 70])
   }
 
-  // Sort the existing fixed allocation. Trace consumers can snapshot each operation.
   public bubbleSort(onStep?: (event: BubbleSortEvent) => void): void {
     for (let end = this.length - 1; end > 0; end -= 1) {
       let swapped = false
@@ -315,7 +314,6 @@ export class FixedArray {
     this.mergeRange(left, middle, buffer, onStep)
     this.mergeRange(middle + 1, right, buffer, onStep)
     for (let index = left; index <= right; index += 1) buffer[index] = this.items[index]
-    // Copies for the observer are visualization overhead, not sorting storage.
     const snapshot = onStep ? buffer.slice(left, right + 1) : undefined
     onStep?.({ kind: 'buffer', index: left, left, middle, right, frame: { buffer: snapshot, bufferStart: left, writeIndex: left, rangeEnd: right } })
     let first = left
@@ -430,18 +428,17 @@ export class FixedArray {
     }
     const range = Number(span)
     const counts = new Array<number>(range).fill(0)
-    const hint = `${range} count cells represent keys ${minimum} through ${maximum}. Only observed keys are drawn; omitted keys have frequency zero.`
     for (let index = 0; index < this.length; index += 1) {
       const key = Number(BigInt(this.items[index].value) - minimum)
       counts[key] += 1
-      onStep?.({ kind: 'count', index, amount: counts[key], label: String(this.items[index].value), frame: { activeIndices: [index], counters: this.countCells(counts, minimum, key), counterHint: hint } })
+      onStep?.({ kind: 'count', index, amount: counts[key], label: String(this.items[index].value), frame: { activeIndices: [index], counters: this.countCells(counts, minimum, key) } })
     }
     const next = new Array<number>(range).fill(0)
     let position = 0
     for (let key = 0; key < range; key += 1) {
       next[key] = position
       position += counts[key]
-      if (counts[key] > 0) onStep?.({ kind: 'prefix', index: key, amount: next[key], label: String(minimum + BigInt(key)), frame: { counters: this.countCells(counts, minimum, key, next), counterHint: hint } })
+      if (counts[key] > 0) onStep?.({ kind: 'prefix', index: key, amount: next[key], label: String(minimum + BigInt(key)), frame: { counters: this.countCells(counts, minimum, key, next) } })
     }
     const output = new Array<ArrayEntry | null>(this.length).fill(null)
     for (let index = 0; index < this.length; index += 1) {
@@ -449,7 +446,7 @@ export class FixedArray {
       const key = Number(BigInt(entry.value) - minimum)
       const destination = next[key]++
       output[destination] = entry
-      onStep?.({ kind: 'distribute', index, other: destination, label: String(entry.value), frame: { activeIndices: [index], output: output.slice(), counters: this.countCells(counts, minimum, key, next), counterHint: hint } })
+      onStep?.({ kind: 'distribute', index, other: destination, label: String(entry.value), frame: { activeIndices: [index], output: output.slice(), counters: this.countCells(counts, minimum, key, next) } })
     }
     for (let index = 0; index < this.length; index += 1) this.items[index] = output[index]!
     onStep?.({ kind: 'gather', index: 0, frame: { sortedPrefix: this.length } })
@@ -544,7 +541,6 @@ export class FixedArray {
     return counters
   }
 
-  // A fixed array never grows. Insertion produces a separate array of exact length + 1.
   public withInsertedAt(index: number, value: number): FixedArray {
     if (!Number.isInteger(index) || index < 0 || index > this.length) {
       throw new RangeError('Insertion index is outside the array')

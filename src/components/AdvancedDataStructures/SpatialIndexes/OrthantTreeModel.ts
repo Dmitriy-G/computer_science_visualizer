@@ -17,7 +17,6 @@ class OrthantNode {
     this.depth = depth
   }
 }
-// The actual shared orthant subdivision algorithm: four children in 2D, eight in 3D.
 export abstract class OrthantTreeModel extends ExtendedTreeModel {
   protected abstract readonly dimensions: number
   protected abstract empty(): OrthantTreeModel

@@ -14,11 +14,9 @@ export interface PriorityDiagram {
   readonly circularRoots?: boolean
 }
 
-// Reuse the trace/playback contract, while each priority structure owns its storage.
 export abstract class PriorityModel extends LinearModel {
   public abstract clone(): PriorityModel
   public abstract getDiagram(): PriorityDiagram
-  public abstract get hint(): string
 
   public static parseValues(text: string): readonly number[] {
     if (text.length > 320 || !/^\s*-?\d+(?:\s*,\s*-?\d+)*\s*$/.test(text)) throw new TypeError('Enter comma-separated whole numbers')

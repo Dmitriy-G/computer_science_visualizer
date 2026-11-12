@@ -6,12 +6,6 @@ import './SearchByValue.css'
 
 class SearchByValueDefinition implements ActionDefinition<DoublyLinkedList> {
   public readonly title = 'Search by value'
-  public readonly context = 'Doubly linked list / search by value'
-  public readonly summary = 'Follow next pointers to the first match.'
-  public readonly phases = ['Inspect', 'Compare', 'Finish']
-  public readonly timelineHint = 'Follow next and prev'
-  public readonly acceptsValue = true
-  public readonly inputLabel = 'Value to find'
   public readonly initialValue = 50
 
   public create(model: DoublyLinkedList, value: number): SearchAnimation {

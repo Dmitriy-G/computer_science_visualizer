@@ -5,7 +5,6 @@ import type { LinearObserver } from '../../../../visualization/LinearModel.ts'
 export class LeftistHeap extends MeldableBinaryHeap {
   public readonly kind = 'leftist-heap'
   protected readonly leftist = true
-  public get hint(): string { return 'A meldable min-heap with null-path rank: rank(null) = 0, rank(leaf) = 1, and rank(left) >= rank(right). Only right spines are merged; child swaps restore the rank condition. Up to 64 nodes.' }
   protected empty(): LeftistHeap { return new LeftistHeap() }
 
   public static createDefault(): LeftistHeap {

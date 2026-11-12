@@ -33,8 +33,6 @@ export class SeparateChainingHashTableLayout {
       }
       rowY += Math.max(1, maximumDepth) * 125 + 150
     }
-    return LinearScene.create(model, nodes, edges, frame, { title: 'Separate collision chains', code: `bucket = normalizedModulo(key, ${model.bucketCount})`,
-      description: 'Each bucket points to an actual singly linked collision chain. Insertion links at the head; deletion reconnects neighbors. Above 0.75 load, double the buckets and relink the same records. This entry reuses the existing Hash Map’s canonical chaining model.',
-    }, 'entries')
+    return LinearScene.create(model, nodes, edges, frame, 'entries')
   }
 }

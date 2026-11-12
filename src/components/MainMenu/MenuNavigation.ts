@@ -29,7 +29,6 @@ export interface AlgorithmGroup {
   readonly symbol: string
 }
 
-// Browsing the menu never changes the selected structure or its animation.
 export class MenuNavigation {
   public static readonly categoryName = 'Fundamental Data Structures'
   public static readonly advancedCategoryName = 'Advanced Data Structures'
@@ -40,7 +39,6 @@ export class MenuNavigation {
     { kind: 'sorting', name: 'Sorting', description: 'Sorting algorithms for data structures', symbol: '[]' },
     { kind: 'graph-traversal', name: 'Graphs Traversal', description: 'Reachability, shortest paths, ordering, and maximum flow', symbol: '→' },
   ]
-  // Root categories follow this fixed order instead of alphabetical ordering.
   public static readonly categories: readonly MenuCategory[] = [
     { kind: 'algorithm-categories', name: MenuNavigation.algorithmsRootName, description: 'Explore data structures, their operations, and algorithms', symbol: '+' },
     { kind: 'advanced-algorithms', name: MenuNavigation.advancedAlgorithmsCategoryName, description: 'Explore hardware and network system overviews', symbol: '+' },

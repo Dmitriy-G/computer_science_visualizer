@@ -23,7 +23,6 @@ export class LinearAnimation extends AnimationSequence implements LinearObserver
     const description = this.omittedFrames ? `${result.description} ${this.omittedFrames} intermediate trace events were executed but omitted from playback to bound snapshot storage.` : result.description
     this.add(5, title, description, result.status === 'REJECTED' ? 'reject request; preserve committed structure' : query ? `return ${JSON.stringify(result.value ?? null)}` : 'commit completed operation',
       layout.create(this.result, { activeId: result.activeId, status: result.status, visited: query ? this.visited : undefined }))
-    // Reserve the largest bounds throughout playback so diagrams never jump vertically.
     let width = 0
     let height = 0
     for (const step of this.steps) {

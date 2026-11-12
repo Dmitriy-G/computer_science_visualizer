@@ -3,7 +3,6 @@ import type { HardwareDiagram } from '../../../../visualization/HardwareDiagram.
 
 export type ComponentAlgorithmKind = 'latch' | 'sram-cell' | 'dram-row' | 'hdd-sector' | 'nand-cell' | 'ssd-ftl' | 'ssd-garbage-collection' | 'ssd-wear-leveling'
 
-// The Fundamental workspace retains its original CPU adapter names.
 export type CpuAlgorithmKind = 'register-renaming' | 'out-of-order' | 'branch-prediction' | 'return-stack' | ComponentAlgorithmKind
 
 export interface CpuCell {
@@ -21,14 +20,12 @@ export interface CpuBank {
 
 export class CpuModel {
   public readonly banks: readonly CpuBank[]
-  public readonly detail: string
   public readonly focusId: string | null
   public readonly events: number
   public readonly diagram: HardwareDiagram | null
 
-  constructor(banks: readonly CpuBank[] = [], detail = 'Choose a fundamental overview to inspect its hardware state.', focusId: string | null = null, events = 0, diagram: HardwareDiagram | null = null) {
+  constructor(banks: readonly CpuBank[] = [], focusId: string | null = null, events = 0, diagram: HardwareDiagram | null = null) {
     this.banks = banks
-    this.detail = detail
     this.focusId = focusId
     this.events = events
     this.diagram = diagram
@@ -41,6 +38,6 @@ export class CpuModel {
       for (const cell of bank.cells) cells.push({ ...cell })
       banks.push({ name: bank.name, cells })
     }
-    return new CpuModel(banks, this.detail, this.focusId, this.events, this.diagram?.clone() ?? null)
+    return new CpuModel(banks, this.focusId, this.events, this.diagram?.clone() ?? null)
   }
 }

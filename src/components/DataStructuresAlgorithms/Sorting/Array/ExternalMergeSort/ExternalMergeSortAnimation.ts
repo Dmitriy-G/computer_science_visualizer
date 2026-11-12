@@ -10,7 +10,7 @@ export class ExternalMergeSortAnimation extends ArraySortingAnimation {
   }
 
   constructor(model: FixedArray) {
-    super(model, 'External Merge Sort', { counterHint: 'Four virtual tapes; RAM chunks of at most three records; no disk access.' })
+    super(model, 'External Merge Sort')
     this.result.externalMergeSort((event) => this.recordTrace(event))
     this.finish(true)
     this.fitScenes()

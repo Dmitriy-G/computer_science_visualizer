@@ -6,14 +6,7 @@ import './SearchByIndex.css'
 
 class SearchDefinition implements ActionDefinition<FixedArray> {
   public readonly title = 'Search by index'
-  public readonly context = 'Fixed array / search'
-  public readonly summary = 'Read an indexed slot directly.'
-  public readonly phases = ['Start', 'Examine', 'Result', 'Finish']
-  public readonly timelineHint = 'Direct access'
-  public readonly inputLabel = 'Index (zero-based)'
   public readonly initialValue = 4
-  public readonly inputMinimum = 0
-  public readonly inputMaximum = Number.MAX_SAFE_INTEGER
 
   public create(model: FixedArray, value: number): SearchAnimation { return new SearchAnimation(model, value) }
 }

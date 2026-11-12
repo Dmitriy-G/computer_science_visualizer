@@ -6,11 +6,6 @@ import './Dequeue.css'
 
 class DequeueDefinition implements ActionDefinition<CircularBuffer> {
   public readonly title = 'Dequeue'
-  public readonly context = 'Circular buffer / dequeue'
-  public readonly summary = 'Read and release the oldest slot, then advance read.'
-  public readonly phases = ['Inspect', 'Read', 'Release', 'Advance', 'Finish']
-  public readonly timelineHint = 'Fixed capacity / FIFO order'
-  public readonly acceptsValue = false
 
   public create(model: CircularBuffer, value: number): DequeueAnimation {
     return new DequeueAnimation(model)

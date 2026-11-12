@@ -8,11 +8,6 @@ import './InsertionSort.css'
 class InsertionSortDefinition implements ActionDefinition<FixedArray> {
   public readonly pseudocode = ArraySortingPseudocode.insertionSort
   public readonly title = 'Insertion Sort'
-  public readonly context = 'Sorting / Array / Insertion Sort'
-  public readonly summary = InsertionSortAnimation.describe(0).summary
-  public readonly phases = ['Inspect', 'Locate', 'Move', 'Finish range', 'Commit']
-  public readonly timelineHint = 'Deterministic sorting steps in the shared renderer'
-  public readonly acceptsValue = false
 
   public create(model: FixedArray): InsertionSortAnimation {
     return new InsertionSortAnimation(model)

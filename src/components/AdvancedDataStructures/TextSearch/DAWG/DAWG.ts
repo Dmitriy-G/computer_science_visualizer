@@ -14,7 +14,6 @@ export interface WordGraphState {
   readonly transitions: ReadonlyMap<string, string>
 }
 
-// Dictionary DAWG / minimal acyclic DFA, distinct from a suffix automaton.
 export class DAWG extends StringTextModel {
   public readonly kind = 'dawg' as const
   private states = new Map<string, WordGraphState>()

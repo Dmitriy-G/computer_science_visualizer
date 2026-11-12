@@ -3,7 +3,6 @@ import { AdditionalTreeModel } from '../../../../visualization/AdditionalTreeMod
 import type { TreeDiagramEntry, TreeInputValues, TreeOperationResult } from '../../../../visualization/AdditionalTreeModel.ts'
 import type { ActionKind } from '../../../../visualization/ActionCatalog.ts'
 import type { TreeTraceObserver } from '../../../../visualization/TreeTrace.ts'
-// Nodes are immutable, so versions and playback clones safely share unchanged branches.
 class PersistentNode {
   public readonly id: string
   public readonly low: number

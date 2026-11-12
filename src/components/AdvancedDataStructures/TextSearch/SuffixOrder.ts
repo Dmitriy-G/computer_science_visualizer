@@ -1,5 +1,3 @@
-// Actual shared construction primitive for Suffix Array and FM-Index.
-// Bottom-up merge sort compares source ranges; it does not materialize suffixes.
 export class SuffixOrder {
   public static create(text: string, compare?: (left: number, right: number, order: number) => void): number[] {
     let order: number[] = []

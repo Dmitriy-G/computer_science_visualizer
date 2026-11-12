@@ -20,7 +20,6 @@ export class FlowNetwork extends StoredEdgeGraph {
   private source: string | null = null
   private sink: string | null = null
   public get terminals(): readonly (string | null)[] { return [this.source, this.sink] }
-  public get hint(): string { return 'Directed edges carry flow/capacity labels, with nonnegative integer capacities. Edmonds–Karp uses forward and reverse residual arcs and exact BigInt arithmetic. Graph edits reset all flows. Self-loops and duplicate directed edges are rejected; opposite directions are distinct.' }
   protected empty(): FlowNetwork { return new FlowNetwork() }
 
   public static createDefault(): FlowNetwork {
@@ -87,7 +86,6 @@ export class FlowNetwork extends StoredEdgeGraph {
         path.push(arc)
         cursor = arc.from
       }
-      // Publish an entire path augmentation atomically to preserve conservation.
       for (const arc of path) arc.edge.flow = arc.edge.flow! + (arc.forward ? amount! : -amount!)
       total += amount!
       this.emit(observer, to.id, `Augment the residual path by ${amount}; total flow is ${total}. Reverse arcs cancel earlier flow.`, 'for each path arc: adjust flow by bottleneck\ntotal += bottleneck', path.map((arc) => arc.edge.id), 'AUGMENT')

@@ -6,12 +6,6 @@ import './SearchByValue.css'
 
 class SearchByValueDefinition implements ActionDefinition<Deque> {
   public readonly title = 'Search by value'
-  public readonly context = 'Deque / search by value'
-  public readonly summary = 'Find the first match from the front without changing order.'
-  public readonly phases = ['Inspect', 'Compare', 'Finish']
-  public readonly timelineHint = 'Follow next and prev'
-  public readonly acceptsValue = true
-  public readonly inputLabel = 'Value to find'
   public readonly initialValue = 50
 
   public create(model: Deque, value: number): SearchAnimation {

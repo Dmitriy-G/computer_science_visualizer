@@ -20,7 +20,6 @@ export interface PerfectBuildView {
   readonly collisionIndex: number | null
 }
 
-// Static FKS set: n primary buckets, s² secondary cells, and an explicit key check.
 export class PerfectHashTable extends HashTableModel {
   public readonly kind = 'perfect-hash-table'
   public static readonly maximumTrials = 128

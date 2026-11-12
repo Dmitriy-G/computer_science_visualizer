@@ -146,7 +146,6 @@ export class HashMap {
   private resize(trace?: HashObserver): void {
     const oldBuckets = this.buckets
     this.buckets = Array(oldBuckets.length * 2).fill(null)
-    // Retain the old chains until each node is moved; no entry is lost mid-rehash.
     for (const head of oldBuckets) {
       let node = head
       while (node) {

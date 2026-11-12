@@ -57,7 +57,6 @@ export class NaturalMergeArraySort extends ArrayMergeOperations {
     if (!this.observer) return
     const snapshots = []
     for (const run of runs) snapshots.push({ id: `natural-${run.start}-${run.end}`, label: `[${run.start},${run.end})`, entries: this.entries.slice(run.start, run.end), status: 'RUN' })
-    // Retain immutable input-run copies while mergeRange writes the main array.
     this.visualRuns = [{ id: 'natural-runs', label: 'runs', status: 'RUNS', runs: snapshots }]
   }
 }

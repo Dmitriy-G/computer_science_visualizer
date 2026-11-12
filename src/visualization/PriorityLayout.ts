@@ -44,8 +44,7 @@ export class PriorityLayout {
         this.edges.push({ ...edge, bend: index === diagram.roots.length - 1 ? -65 : -35 })
       }
     }
-    // Copy arrays: this layout instance is reused for every immutable snapshot.
     return LinearScene.create(model, [...this.nodes], [...this.edges], frame,
-      { title: 'Priority structure', description: model.hint }, 'entries')
+      'entries')
   }
 }

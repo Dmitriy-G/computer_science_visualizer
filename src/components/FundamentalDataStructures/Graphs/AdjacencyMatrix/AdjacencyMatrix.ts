@@ -8,7 +8,6 @@ export class AdjacencyMatrix extends ExtendedGraphModel {
   private cells: (ExtendedEdge | null)[][] = []
   private count = 0
   public get edgeCount(): number { return this.count }
-  public get hint(): string { return 'Canonical storage is a square adjacency matrix. Row i is the source and column j is the target; 1 means an edge, 0 means absence. Self-loops use the diagonal. Vertex deletion removes its row and column, shifting storage indices while preserving vertex IDs.' }
   protected empty(): AdjacencyMatrix { return new AdjacencyMatrix() }
 
   public static createDefault(): AdjacencyMatrix {

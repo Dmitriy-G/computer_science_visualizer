@@ -10,7 +10,7 @@ export class PolyphaseMergeSortAnimation extends ArraySortingAnimation {
   }
 
   constructor(model: FixedArray) {
-    super(model, 'Polyphase Merge Sort', { counterHint: 'Three virtual tapes; Fibonacci run quotas and empty dummy runs; no disk access.' })
+    super(model, 'Polyphase Merge Sort')
     this.result.polyphaseMergeSort((event) => this.recordTrace(event))
     this.finish(false)
     this.fitScenes()

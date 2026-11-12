@@ -41,6 +41,6 @@ export class HddSectorLayout {
       const polarity = model.magneticRegions[index]
       diagram.fixture(`magnetic-${index}`, `region ${index}`, polarity === undefined ? '?' : polarity > 0 ? 'N > S' : 'S > N', 95 + index * 115, 1100, undefined, 80)
     }
-    return new CpuModel([], 'Conventional magnetic recording example. LBA placement is internal; the drawn geometry is not a host CHS contract. Two magnetic regions encode each example bit plus parity; real channels use different coding and error correction. No SMR, HAMR, OS scheduling, or analog channel simulation.', 'head', 0, diagram)
+    return new CpuModel([], 'head', 0, diagram)
   }
 }

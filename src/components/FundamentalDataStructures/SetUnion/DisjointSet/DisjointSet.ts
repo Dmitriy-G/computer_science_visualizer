@@ -57,7 +57,6 @@ export class DisjointSet extends SetUnionModel {
 
   public execute(action: ActionKind, input: LinearInputValues, observer?: LinearObserver): LinearResult {
     if (action === 'clear') {
-      // Remove children before their parent so every intermediate forest is valid.
       const children = new Map<number, number[]>()
       const pending: { value: number; expanded: boolean }[] = []
       for (const node of this.nodes.values()) {
@@ -100,7 +99,6 @@ export class DisjointSet extends SetUnionModel {
     if (action !== 'union' && action !== 'connected') throw new RangeError('Unsupported disjoint-set action')
     const first = SetUnionModel.integer(input, 'first')
     const second = SetUnionModel.integer(input, 'second')
-    // Validate both endpoints before either find can compress a path.
     if (!this.nodes.has(first) || !this.nodes.has(second)) return this.reject('Both values must already be members. No parents were changed.')
     let left = this.find(first, observer)
     let right = this.find(second, observer)

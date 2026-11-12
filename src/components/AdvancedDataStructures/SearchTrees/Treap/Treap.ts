@@ -13,7 +13,6 @@ export class Treap extends SearchTreeModel {
   }
   protected insertKey(key: number, observer?: TreeTraceObserver): void {
     this.capacity()
-    // Fixed seed makes playback reproducible; expected bounds assume independent priorities.
     this.seed ^= this.seed << 13
     this.seed ^= this.seed >>> 17
     this.seed ^= this.seed << 5

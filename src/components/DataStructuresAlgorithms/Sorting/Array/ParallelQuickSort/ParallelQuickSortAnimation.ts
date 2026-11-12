@@ -10,7 +10,7 @@ export class ParallelQuickSortAnimation extends ArraySortingAnimation {
   }
 
   constructor(model: FixedArray) {
-    super(model, 'Parallel QuickSort', { counterHint: 'Two virtual workers; deterministic fork/join simulation.' })
+    super(model, 'Parallel QuickSort')
     this.result.parallelQuickSort((event) => this.recordTrace(event))
     this.finish(false)
     this.fitScenes()

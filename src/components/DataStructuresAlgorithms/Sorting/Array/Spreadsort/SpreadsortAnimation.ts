@@ -10,7 +10,7 @@ export class SpreadsortAnimation extends ArraySortingAnimation {
   }
 
   constructor(model: FixedArray) {
-    super(model, 'Spreadsort', { counterHint: 'Adaptive range splits; small insertion leaves; depth-limited heap fallback.' })
+    super(model, 'Spreadsort')
     this.result.spreadSort((event) => this.recordTrace(event))
     this.finish(false)
     this.fitScenes()

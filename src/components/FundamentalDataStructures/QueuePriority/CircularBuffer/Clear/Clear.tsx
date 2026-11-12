@@ -6,11 +6,6 @@ import './Clear.css'
 
 class ClearDefinition implements ActionDefinition<CircularBuffer> {
   public readonly title = 'Clear'
-  public readonly context = 'Circular buffer / clear'
-  public readonly summary = 'Release occupied slots in FIFO order.'
-  public readonly phases = ['Inspect', 'Release', 'Finish']
-  public readonly timelineHint = 'Fixed capacity / FIFO order'
-  public readonly acceptsValue = false
 
   public create(model: CircularBuffer, value: number): ClearAnimation {
     return new ClearAnimation(model)

@@ -8,11 +8,6 @@ import './PancakeSort.css'
 class PancakeSortDefinition implements ActionDefinition<FixedArray> {
   public readonly pseudocode = ArraySortingPseudocode.pancakeSort
   public readonly title = 'Pancake Sort'
-  public readonly context = 'Sorting / Array / Pancake Sort'
-  public readonly summary = PancakeSortAnimation.describe(0).summary
-  public readonly phases = ['Inspect', 'Locate', 'Move', 'Finish range', 'Commit']
-  public readonly timelineHint = 'Deterministic sorting steps in the shared renderer'
-  public readonly acceptsValue = false
 
   public create(model: FixedArray): PancakeSortAnimation {
     return new PancakeSortAnimation(model)

@@ -5,10 +5,7 @@ import type { LinearInputValues, LinearObserver, LinearResult } from '../../../.
 
 export class CountingBloomFilter extends ProbabilisticModel {
   public readonly kind = 'counting-bloom-filter' as const
-  public static readonly counterCount = 32
-  public static readonly maximumCounter = 15
   private counters = new Array<number>(32).fill(0)
-  // Teaching safety guard only: queries NEVER use these exact keys.
   private occurrences = new Map<number, number>()
 
   public static createDefault(): CountingBloomFilter {

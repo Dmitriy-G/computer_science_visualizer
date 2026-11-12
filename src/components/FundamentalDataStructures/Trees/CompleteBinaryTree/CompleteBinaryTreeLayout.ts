@@ -4,6 +4,6 @@ import type { TreeFrame } from '../../../../visualization/TreeActionAnimation.ts
 import type { Scene } from '../../../../visualization/Scene.ts'
 export class CompleteBinaryTreeLayout extends HierarchyLayout {
   public create(model: AdditionalTreeModel, frame: TreeFrame = {}): Scene {
-    return { ...super.create(model, frame), countLabel: 'values', hint: { title: 'Complete Binary Tree', description: 'Level-order storage filled left to right, without heap ordering.' } }
+    return { ...super.create(model, frame), countLabel: 'values' }
   }
 }

@@ -32,12 +32,10 @@ export class FibonacciHeap extends PriorityModel {
   public get length(): number { return this.handles.size }
   public getMinimum(): FibonacciNode | null { return this.minimum }
   public getNodes(): readonly FibonacciNode[] { return Array.from(this.handles.values()) }
-  public get hint(): string { return 'A Fibonacci min-heap uses circular doubly linked root/child lists, degrees, and loss marks. Insert is lazy; extract-min consolidates equal degrees. Decrease-key uses visible stable handle IDs and cascading cuts. Handle lookup uses a Map; meld also merges that Map. Up to 64 nodes.' }
 
   public static createDefault(): FibonacciHeap {
     const model = new FibonacciHeap()
     for (const value of [40, 20, 70, 10, 50, 90, 30, 60, 80, 100, 110]) model.execute('insert', { value })
-    // Ten nodes with consolidated trees make cuts available immediately.
     model.execute('extract-min', {})
     return model
   }

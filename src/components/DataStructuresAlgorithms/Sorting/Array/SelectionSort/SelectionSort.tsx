@@ -8,11 +8,6 @@ import './SelectionSort.css'
 class SelectionSortDefinition implements ActionDefinition<FixedArray> {
   public readonly pseudocode = ArraySortingPseudocode.selectionSort
   public readonly title = 'Selection Sort'
-  public readonly context = 'Sorting / Array / Selection Sort'
-  public readonly summary = SelectionSortAnimation.describe(0).summary
-  public readonly phases = ['Inspect', 'Locate', 'Move', 'Finish range', 'Commit']
-  public readonly timelineHint = 'Deterministic sorting steps in the shared renderer'
-  public readonly acceptsValue = false
 
   public create(model: FixedArray): SelectionSortAnimation {
     return new SelectionSortAnimation(model)

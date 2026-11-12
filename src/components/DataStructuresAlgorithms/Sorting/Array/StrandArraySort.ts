@@ -82,6 +82,6 @@ export class StrandArraySort extends ArraySortOperations {
       }
       storage.push({ id, label: id.toUpperCase(), status: 'LIST', runs: [{ id, label: id, entries, activeIndices, status: 'RECORD' }] })
     }
-    this.emit(kind, label, detail, code, { storage, counterHint: 'Extract nondecreasing subsequences from a linked remaining list, then stably merge each strand. The original array stays intact until gathering.' })
+    this.emit(kind, label, detail, code, { storage })
   }
 }

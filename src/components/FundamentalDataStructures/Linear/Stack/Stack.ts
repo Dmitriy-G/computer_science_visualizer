@@ -19,7 +19,6 @@ class StackNode {
   }
 }
 
-// A linked stack: top operations never resize or copy an underlying array.
 export class Stack {
   private top: StackNode | null = null
   private count = 0
@@ -59,7 +58,6 @@ export class Stack {
     while (!this.isEmpty()) this.pop()
   }
 
-  // Optional value search traverses the linked representation without changing order.
   public find(value: number): StackEntry | null {
     Stack.validateValue(value)
     let current = this.top

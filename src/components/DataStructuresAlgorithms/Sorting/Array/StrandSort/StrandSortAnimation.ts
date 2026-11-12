@@ -10,7 +10,7 @@ export class StrandSortAnimation extends ArraySortingAnimation {
   }
 
   constructor(model: FixedArray) {
-    super(model, 'Strand Sort', { counterHint: 'Linked remaining list, nondecreasing strand extraction, and stable list merging.' })
+    super(model, 'Strand Sort')
     this.result.strandSort((event) => this.recordTrace(event))
     this.finish(true)
     this.fitScenes()

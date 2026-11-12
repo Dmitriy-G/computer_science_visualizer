@@ -133,7 +133,6 @@ export class HNSWGraph extends AppliedGraphModel {
     }
     let entry = this.entry
     for (let layer = this.topLevel; layer > level; layer -= 1) entry = this.greedy(query, entry, layer, observer)
-    // Publish only after constructing all links, keeping every recorded scene consistent.
     const selections = new Map<number, number[]>()
     for (let layer = Math.min(level, this.topLevel); layer >= 0; layer -= 1) {
       const candidates = this.searchLayer(query, entry, layer, observer)

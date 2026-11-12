@@ -6,11 +6,6 @@ import './Clear.css'
 
 class ClearDefinition implements ActionDefinition<Queue> {
   public readonly title = 'Clear'
-  public readonly context = 'Queue / clear'
-  public readonly summary = 'Release all nodes from front to rear.'
-  public readonly phases = ['Inspect', 'Release', 'Finish']
-  public readonly timelineHint = 'First in, first out'
-  public readonly acceptsValue = false
 
   public create(model: Queue, value: number): ClearAnimation {
     return new ClearAnimation(model)

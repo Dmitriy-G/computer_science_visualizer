@@ -39,6 +39,6 @@ export class LseAtomicModel {
       { name: 'LSE', cells: [{ id: 'counter', label: 'shared counter', value: `${this.value}` }] },
       { name: 'Core 0', cells: [{ id: 'old-0', label: 'returned old', value: `${this.old[0] ?? '?'}`, status: this.operation[0] }] },
       { name: 'Core 1', cells: [{ id: 'old-1', label: 'returned old', value: `${this.old[1] ?? '?'}`, status: this.operation[1] }] },
-    ], 'Arm FEAT_LSE required (for example Neoverse N1). Aligned shared Normal cacheable memory. CASAL, SWPAL, and LDADDAL select acquire/release variants. Each event is one architectural atomic operation. No internal retry, arbitration, cycle count, or speedup is inferred.', null, 0, LseAtomicLayout.create(this.lastCore, this.operation, this.old, this.requests))
+    ], null, 0, LseAtomicLayout.create(this.lastCore, this.operation, this.old, this.requests))
   }
 }

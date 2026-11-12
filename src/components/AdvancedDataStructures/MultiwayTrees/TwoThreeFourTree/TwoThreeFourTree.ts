@@ -4,7 +4,6 @@ import { AdditionalTreeModel } from '../../../../visualization/AdditionalTreeMod
 import type { TreeDiagramEntry, TreeInputValues, TreeOperationResult } from '../../../../visualization/AdditionalTreeModel.ts'
 import type { ActionKind } from '../../../../visualization/ActionCatalog.ts'
 import type { TreeTraceObserver } from '../../../../visualization/TreeTrace.ts'
-// A 2-3-4 tree is exactly a minimum-degree-two B-tree, so share that implementation.
 export class TwoThreeFourTree extends ExtendedTreeModel {
   public readonly kind = 'two-three-four-tree'
   private tree = new BTree()

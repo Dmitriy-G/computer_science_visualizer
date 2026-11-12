@@ -21,6 +21,6 @@ export class MonotonicQueueLayout {
       const entry = window[index]
       nodes.push(LinearScene.node(`history-${entry.id}`, String(entry.value), `window ${entry.index} · ${retained.has(entry.id) ? 'candidate' : 'dominated'}`, 140 + index * 250, 310, 140))
     }
-    return LinearScene.create(model, nodes, edges, frame, { title: 'Monotonic Queue', description: model.hint }, 'window values')
+    return LinearScene.create(model, nodes, edges, frame, 'window values')
   }
 }

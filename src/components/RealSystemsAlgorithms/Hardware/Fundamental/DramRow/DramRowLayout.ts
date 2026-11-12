@@ -29,6 +29,6 @@ export class DramRowLayout {
     diagram.fixture('io', 'Selected-column data I/O', model.output === null ? 'no read yet' : String(model.output), 560, 920, undefined, 270)
     if (model.selectedColumn !== null) diagram.connect('column-io', `sense-${model.selectedColumn}`, 'io', 'column READ', model.stage === 'read')
     if (model.selectedColumn !== null) diagram.connect('column-write', 'io', `sense-${model.selectedColumn}`, 'column WRITE', model.stage === 'write recovery', 55)
-    return new CpuModel([], 'ACTIVATE shares charge; sensing amplifies and restores the open row. READs to other columns are row hits. Changing rows requires PRECHARGE after restoration/write recovery. PRECHARGE equalizes bit lines, rather than restoring cells. Signal levels and waiting intervals are symbolic.', 'command', 0, diagram)
+    return new CpuModel([], 'command', 0, diagram)
   }
 }

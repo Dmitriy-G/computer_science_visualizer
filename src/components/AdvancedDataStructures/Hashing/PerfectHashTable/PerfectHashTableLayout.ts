@@ -1,6 +1,5 @@
 import { PerfectHashTable } from './PerfectHashTable.ts'
 import { LinearScene } from '../../../../visualization/LinearScene.ts'
-import { HashTableScene } from '../../../../visualization/HashTableScene.ts'
 import type { LinearModel, LinearFrame } from '../../../../visualization/LinearModel.ts'
 import type { Scene, SceneNode, SceneEdge } from '../../../../visualization/Scene.ts'
 
@@ -55,9 +54,6 @@ export class PerfectHashTableLayout {
       if (work.collisionKey !== null) nodes.push(LinearScene.node(`${model.kind}-candidate-collision`, String(work.collisionKey), 'candidate key cannot fit this seed', 100 + width / 2,
         trialY + Math.ceil(work.trialSlots.length / 4) * 210 + 80, Math.max(width, String(work.collisionKey).length * 10 + 24)))
     }
-    return LinearScene.create(model, nodes, edges, frame, { title: 'Static two-level FKS perfect hashing',
-      code: `committed h1 seed ${model.primarySeed}; candidate h1 seed ${work?.primarySeed ?? 'none'}; secondary size = s²`,
-      description: 'Build a complete static set of distinct keys. Primary trials require the sum of squared bucket sizes to be at most 4n; secondary trials eliminate collisions. Candidate buckets and key copies appear below the committed table during construction, then replace it only after success. Each lookup verifies the full key. Seed trials are capped at 128 per level; this is not a minimal perfect table.',
-    }, 'keys')
+    return LinearScene.create(model, nodes, edges, frame, 'keys')
   }
 }

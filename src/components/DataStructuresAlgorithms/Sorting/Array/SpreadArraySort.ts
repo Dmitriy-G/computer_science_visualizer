@@ -1,7 +1,5 @@
 import { IntegerDistributionSort } from './IntegerDistributionSort.ts'
 
-// Reduced-fan-out integer Spreadsort teaching variant: range-derived radix
-// partitions, small comparison-sorted leaves, and a depth-limited heap fallback.
 export class SpreadArraySort extends IntegerDistributionSort {
   public sort(): void {
     if (this.entries.length < 2) return
@@ -11,7 +9,6 @@ export class SpreadArraySort extends IntegerDistributionSort {
   private sortRange(start: number, end: number, budget: number): void {
     if (end - start < 2) return
     const { minimum, maximum, ordered } = this.bounds(start, end)
-    this.hint = `Adaptive integer range [${minimum}, ${maximum}], slots [${start}, ${end}), depth budget ${budget}. Up to 16 bins; insertion leaves at size 4.`
     this.cells = []
     if (ordered) {
       this.step('pass', 'The range is already ordered', 'A linear bounds scan also checked neighboring keys. No distribution or comparison-sort fallback is needed.', 'if range is ordered: return', {}, start, end - 1)
@@ -34,7 +31,6 @@ export class SpreadArraySort extends IntegerDistributionSort {
     const shift = Math.max(0, bits - splitBits)
     const divisor = 2n ** BigInt(shift)
     const bins = Number(range / divisor) + 1
-    this.hint += ` Bin = (key - min) / 2^${shift}; ${bins} bins skip common high bits.`
     this.step('split', 'Choose a range-sensitive radix split', `The actual range needs ${bits} bits. Retain up to ${splitBits} high bits after subtracting the local minimum, rather than reading a fixed digit position.`, `divider = 2^${shift}; bins = ${bins}`, {}, start, end - 1)
     const boundaries = this.distribute(start, end, bins, (entry) => Number((BigInt(entry.value) - minimum) / divisor))
     for (let bin = 0; bin < bins; bin += 1) this.sortRange(boundaries[bin], boundaries[bin + 1], budget - 1)

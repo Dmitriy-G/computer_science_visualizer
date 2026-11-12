@@ -11,7 +11,6 @@ class BTreePage {
   constructor(id: string) { this.id = id }
 }
 
-// Minimum degree 2: non-root pages have 1..3 keys and internal pages 2..4 children.
 export class BTree {
   private root: BTreePage | null = null
   private count = 0

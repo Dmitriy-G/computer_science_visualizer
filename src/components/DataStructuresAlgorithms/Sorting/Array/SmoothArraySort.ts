@@ -1,7 +1,5 @@
 import { ArraySortOperations } from './ArraySortOperations.ts'
 
-// Dijkstra's Leonardo-heap sift/trinkle algorithm (EWD796a).
-// Arithmetic shape operations avoid JavaScript's signed 32-bit bitwise limit.
 export class SmoothArraySort extends ArraySortOperations {
   private sortedFrom = this.entries.length
 

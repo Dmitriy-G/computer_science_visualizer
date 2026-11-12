@@ -9,7 +9,6 @@ export interface IntervalKey {
   readonly maximum: number
 }
 
-// An operator-class boundary, rather than hard-coded comparisons in the index.
 export abstract class GiSTStrategy {
   public abstract union(keys: readonly IntervalKey[]): IntervalKey
   public abstract consistent(key: IntervalKey, query: IntervalKey): boolean
@@ -97,7 +96,6 @@ export class GiST extends AppliedModel {
       for (const candidate of page.entries) {
         if (this.strategy.penalty(candidate.key, entry.key) < this.strategy.penalty(selected.key, entry.key)) selected = candidate
       }
-      // No structural writes have occurred on this path yet.
       if (splits.length === 0) LinearModel.emit(observer, `gist-page-${selected.child!.id}`, 'Choose the child with minimum operator-class enlargement.', 'child = minimum penalty(bounds, incoming)')
       const sibling = this.insert(selected.child!, entry, observer, splits)
       selected.key = this.strategy.union(selected.child!.entries.map((item) => item.key))

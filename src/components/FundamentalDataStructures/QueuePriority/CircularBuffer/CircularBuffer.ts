@@ -4,7 +4,6 @@ export interface CircularBufferEntry {
   readonly slot: number
 }
 
-// A bounded FIFO buffer. A full enqueue is rejected; values are never overwritten.
 export class CircularBuffer {
   private readonly slots: (CircularBufferEntry | null)[]
   private head = 0
@@ -23,7 +22,6 @@ export class CircularBuffer {
 
   public static createDefault(): CircularBuffer {
     const buffer = new CircularBuffer()
-    // Start near the end to demonstrate physical wraparound in the initial preview.
     buffer.head = 8
     for (let value = 10; value <= 100; value += 10) buffer.enqueue(value)
     return buffer

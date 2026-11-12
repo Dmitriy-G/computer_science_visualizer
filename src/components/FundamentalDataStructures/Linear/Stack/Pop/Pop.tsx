@@ -6,11 +6,6 @@ import './Pop.css'
 
 class PopDefinition implements ActionDefinition<Stack> {
   public readonly title = 'Pop'
-  public readonly context = 'Stack / pop'
-  public readonly summary = 'Remove and return the top value.'
-  public readonly phases = ['Inspect', 'Lift', 'Update top', 'Finish']
-  public readonly timelineHint = 'O(1) top removal'
-  public readonly acceptsValue = false
 
   public create(model: Stack): PopAnimation {
     return new PopAnimation(model)

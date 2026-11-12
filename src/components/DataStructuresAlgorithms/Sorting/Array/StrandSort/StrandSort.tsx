@@ -8,11 +8,6 @@ import './StrandSort.css'
 class StrandSortDefinition implements ActionDefinition<FixedArray> {
   public readonly pseudocode = ArraySortingPseudocode.strandSort
   public readonly title = 'Strand Sort'
-  public readonly context = 'Sorting / Array / Strand Sort'
-  public readonly summary = StrandSortAnimation.describe(0).summary
-  public readonly phases = ['Inspect', 'Locate', 'Move', 'Finish range', 'Commit']
-  public readonly timelineHint = 'Deterministic sorting steps in the shared renderer'
-  public readonly acceptsValue = false
 
   public create(model: FixedArray): StrandSortAnimation {
     return new StrandSortAnimation(model)

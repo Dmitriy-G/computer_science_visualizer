@@ -9,7 +9,6 @@ export interface HardwareSceneBank {
 export interface HardwareSceneState {
   readonly banks: readonly HardwareSceneBank[]
   readonly diagram: HardwareDiagram | null
-  readonly detail: string
   readonly focusId: string | null
   readonly events: number
 }
@@ -35,7 +34,6 @@ export class HardwareSceneLayout {
     return {
       kind, nodes, edges: [], width: 720, height: Math.max(250, y),
       focusId: model.focusId, count: model.events, countLabel: 'hardware events',
-      hint: { title: kind === 'cpu-hardware' ? 'Inside one CPU core' : 'Interacting hardware', description: model.detail },
     }
   }
 
@@ -64,7 +62,6 @@ export class HardwareSceneLayout {
     return {
       kind, nodes, edges, regions, paths, width: diagram.width, height: diagram.height,
       focusId: model.focusId, count: model.events, countLabel: 'hardware events',
-      hint: { title: kind === 'cpu-hardware' ? 'Inside one CPU core / current flow' : kind === 'hardware-component' ? 'Inside one component / current flow' : 'Hardware and current flow', description: model.detail },
     }
   }
 }

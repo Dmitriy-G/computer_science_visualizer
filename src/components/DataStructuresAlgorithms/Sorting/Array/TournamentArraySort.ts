@@ -34,7 +34,6 @@ export class TournamentArraySort extends ArraySortOperations {
     let winner = first
     if (first < 0) winner = second
     else if (second >= 0 && (this.entries[second].value < this.entries[first].value || this.entries[second].value === this.entries[first].value && second < first)) winner = second
-    // Render the newly decided match, not its previous cached winner.
     if (this.observer) {
       const snapshot = [...winners]
       snapshot[match] = winner

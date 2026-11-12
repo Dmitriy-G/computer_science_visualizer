@@ -12,6 +12,6 @@ export class SparseArrayLayout {
     for (let index = 0; index < entries.length; index += 1) {
       nodes.push(LinearScene.node(`sparse-${entries[index][0]}`, String(entries[index][1]), `index ${entries[index][0]}`, 90 + index * 150, 270, 90))
     }
-    return LinearScene.create(model, nodes, [], frame, { title: 'Sparse Array', description: 'A Map stores only explicit index/value entries; omitted slots are implicit zero. Setting zero still creates an entry. Deleting an entry does not shift indices or shrink logical length. The diagram sorts stored indices; model lookup uses the Map.' }, 'logical slots')
+    return LinearScene.create(model, nodes, [], frame, 'logical slots')
   }
 }

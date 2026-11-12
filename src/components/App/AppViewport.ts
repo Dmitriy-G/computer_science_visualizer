@@ -14,7 +14,6 @@ export class AppViewport {
   }
 
   private update = (): void => {
-    // On-screen keyboards can resize this viewport without changing 100dvh.
     const viewport = window.visualViewport
     if (!viewport) return
     const style = document.documentElement.style

@@ -11,7 +11,6 @@ export interface ByteLogRecord {
   readonly bytes: number
 }
 
-// Common sequential encoded log storage; concrete subclasses own their indexes.
 export abstract class ByteLog extends AppliedModel {
   protected records: ByteLogRecord[] = []
   protected nextOffset = 0

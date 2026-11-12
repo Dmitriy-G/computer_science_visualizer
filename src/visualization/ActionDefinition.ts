@@ -11,16 +11,8 @@ export interface ActionPlan<TModel> {
 
 export interface ActionDefinition<TModel> {
   readonly title: string
-  readonly context: string
-  readonly summary: string
-  readonly phases: readonly string[]
-  readonly timelineHint: string
   readonly pseudocode?: string
-  readonly inputLabel?: string
   readonly initialValue?: number
-  readonly inputMinimum?: number
-  readonly inputMaximum?: number
-  readonly acceptsValue?: boolean
   create(model: TModel, value: number, upperValue?: number): ActionPlan<TModel>
 }
 

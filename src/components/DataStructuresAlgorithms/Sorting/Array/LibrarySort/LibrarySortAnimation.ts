@@ -10,7 +10,7 @@ export class LibrarySortAnimation extends ArraySortingAnimation {
   }
 
   constructor(model: FixedArray) {
-    super(model, 'Library Sort', { counterHint: 'Separate auxiliary shelf with gaps; the fixed array remains fully occupied.' })
+    super(model, 'Library Sort')
     this.result.librarySort((event) => this.recordTrace(event))
     this.finish(true)
     this.fitScenes()

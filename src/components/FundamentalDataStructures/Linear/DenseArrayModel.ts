@@ -3,7 +3,6 @@ import type { NumericalStorageRow } from '../../../visualization/NumericalModel.
 import type { LinearInputValues, LinearObserver, LinearResult } from '../../../visualization/LinearModel.ts'
 import type { ActionKind } from '../../../visualization/ActionCatalog.ts'
 
-// Tensor and grid both use real contiguous row-major numeric storage.
 export abstract class DenseArrayModel extends NumericalModel {
   protected data = new Float64Array(10)
   protected elementStrides = [5, 1]

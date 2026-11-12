@@ -12,7 +12,6 @@ export interface RopeNode {
   readonly weight: number
 }
 
-// Immutable AVL rope nodes share untouched subtrees across edits and playback clones.
 export class Rope extends LinearModel {
   public readonly kind = 'rope'
   public static readonly chunkSize = 4
@@ -123,7 +122,6 @@ export class Rope extends LinearModel {
     LinearModel.index(index, this.length)
     if (count < 1 || count > this.length - index) throw new RangeError('Deletion extends past the text')
     const [left, suffix] = this.split(this.root, index, observer)
-    // The detached suffix is not published until both splits and the join complete.
     const [, right] = this.split(suffix, count)
     this.root = this.join(left, right)
     LinearModel.emit(observer, this.root?.id ?? null, 'Discard the selected middle span and join the surviving sides with updated weights.', 'prefix, rest = split(root, index)\nremoved, suffix = split(rest, count)\nroot = join(prefix, suffix)')

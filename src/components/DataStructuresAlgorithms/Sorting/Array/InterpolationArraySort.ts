@@ -1,8 +1,6 @@
 import { IntegerDistributionSort } from './IntegerDistributionSort.ts'
 import type { ArrayEntry } from '../../../FundamentalDataStructures/Linear/Array/FixedArray.ts'
 
-// Stable histogram interpolation, followed by comparison cleanup within the
-// ordered value regions. Unlike Flashsort, placement uses separate output.
 export class InterpolationArraySort extends IntegerDistributionSort {
   public sort(): void {
     if (this.entries.length < 2) return
@@ -13,7 +11,6 @@ export class InterpolationArraySort extends IntegerDistributionSort {
     }
     const count = this.entries.length
     const address = (value: number): number => Number((BigInt(value) - minimum) * BigInt(count - 1) / (maximum - minimum))
-    this.hint = `Estimated rank = floor((key - (${minimum})) * ${count - 1} / (${maximum} - (${minimum}))). Stable histogram placement uses exact BigInt arithmetic.`
     this.cells = new Array<number>(count).fill(0)
     for (let index = 0; index < count; index += 1) {
       const bin = address(this.entries[index].value)

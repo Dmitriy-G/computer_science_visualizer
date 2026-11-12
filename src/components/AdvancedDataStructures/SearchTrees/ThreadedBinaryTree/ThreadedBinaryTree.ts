@@ -80,7 +80,6 @@ export class ThreadedBinaryTree extends ExtendedTreeModel {
   public execute(action: ActionKind, input: TreeInputValues, observer?: TreeTraceObserver): TreeOperationResult {
     if (action === 'traverse-inorder') {
       const values: number[] = []
-      // Successors are found through actual thread pointers, without recursion or a stack.
       let node = this.root
       while (node && !node.leftThread) node = node.left
       while (node) {

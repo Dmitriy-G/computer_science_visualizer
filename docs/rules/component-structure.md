@@ -172,16 +172,19 @@ under `DataStructuresAlgorithms/`.
 ## Shared action playback
 
 Use `src/components/ActionPlayback/` for the shared playback component and its
-styles. Each action's component supplies its own class-based definition with phase
-labels, explanations, and a factory method that creates its animation plan.
+styles. Each action's component supplies its own class-based definition with a
+title and a factory method that creates its animation plan. Include optional
+input defaults and a pseudocode listing only when consumed by shared playback.
 Keep structure-specific algorithms and model types in their action folders;
 reuse the common animation session and progress display. Accept an optional
 operation value, an optional upper range bound, and completion callback so actions can collect input separately
 and unlock further operations after the result is committed. Otherwise use each
 action's default value. Keep normal playback speed and do not render a bottom panel.
 The app header provides the `playback-toolbar` host. `ActionPlayback` renders
-its step description and noninteractive progress bar there through a React portal, keeping them
-connected to the same controller without adding a bottom-panel wrapper.
+only its noninteractive progress bar there through a React portal, connected to
+the same controller without adding a bottom-panel wrapper. Keep step descriptions
+in the progress indicator's accessible text, without visible text or a tooltip
+above the bar, across data structures, algorithms, and overviews.
 Actions start automatically and run to completion. The header's full structure
 Reset is the only playback control; do not add pause, play, or seeking controls.
 In Sorting and Graphs Traversal, the renderer provides the `renderer-code` host
@@ -193,6 +196,9 @@ through a structured action adapter.
 
 Keep contracts and infrastructure used across structures in `src/visualization/`,
 such as `Scene.ts`, `AnimationController.ts`, and `StructureCatalog.ts`.
+Do not generate unused scene hints, timeline hints, action-context strings, or
+phase-name lists. Keep explanations consumed by dialogs, input validation,
+hardware arrow captions, and accessible playback text.
 Structure-specific layouts belong beside their canonical model in the matching
 FundamentalDataStructures or AdvancedDataStructures subject folder.
 Algorithm-specific layouts stay beside their algorithm helpers under

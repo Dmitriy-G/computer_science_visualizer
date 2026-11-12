@@ -10,7 +10,7 @@ export class ParallelMergeSortAnimation extends ArraySortingAnimation {
   }
 
   constructor(model: FixedArray) {
-    super(model, 'Parallel Merge Sort', { counterHint: 'Two virtual workers; deterministic fork/join simulation.' })
+    super(model, 'Parallel Merge Sort')
     this.result.parallelMergeSort((event) => this.recordTrace(event))
     this.finish(true)
     this.fitScenes()

@@ -1,7 +1,5 @@
 import { ArraySortOperations } from './ArraySortOperations.ts'
 
-// These algorithms execute their exact recurrences only on small arrays.
-// Bound recorded detail independently of execution; never substitute a sort.
 export class RecursiveDemoSort extends ArraySortOperations {
   private comparisons = 0
   private exchanges = 0

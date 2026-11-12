@@ -16,7 +16,6 @@ export class LibraryArraySort extends ArraySortOperations {
       this.emit('pass', 'The input is already ordered', 'A linear scan avoids allocating the auxiliary gapped shelf for this input.', 'if ordered: return')
       return
     }
-    // Auxiliary storage only. The fixed model allocation never gains gaps.
     this.shelf = new Array<ArrayEntry | null>(2 * this.entries.length + 1).fill(null)
     this.span = 3
     this.shelf[1] = this.entries[0]
@@ -99,6 +98,6 @@ export class LibraryArraySort extends ArraySortOperations {
 
   private step(kind: ArraySortEvent['kind'], label: string, detail: string, code: string, extra: ArraySortFrame = {}): void {
     if (!this.observer) return
-    this.emit(kind, label, detail, code, { shelf: this.shelf.slice(0, this.span), counterHint: 'Library Sort uses a separate auxiliary shelf with gaps. The numeric array retains its exact fixed length. Insertion rounds grow geometrically; rebalancing redistributes gaps.', ...extra })
+    this.emit(kind, label, detail, code, { shelf: this.shelf.slice(0, this.span), ...extra })
   }
 }

@@ -43,8 +43,6 @@ export interface GraphOperationResult {
   readonly error?: boolean
 }
 
-// Adjacency sets store edge IDs, so parallel edges retain their own identities.
-// Models emit synchronous events; animation timing and snapshots live elsewhere.
 export abstract class GraphModel {
   public abstract readonly kind: GraphKind
   private vertices = new Map<string, GraphVertex>()
@@ -149,7 +147,6 @@ export abstract class GraphModel {
 
   private search(value: number, observer?: GraphTraceObserver): string[] {
     GraphModel.integer(value)
-    // A single BFS frontier per component, with one shared visited set.
     const seen = new Set<string>()
     const path: string[] = []
     for (const start of this.vertices.keys()) {

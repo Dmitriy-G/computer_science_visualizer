@@ -12,9 +12,6 @@ export class MultisetLayout {
       nodes.push(LinearScene.node(entry.id, String(entry.value), `count ${entry.count}`, 160 + index % 4 * 310, 110 + Math.floor(index / 4) * 160, 260))
       index += 1
     }
-    return LinearScene.create(model, nodes, [], frame, {
-      title: 'Counted bag',
-      description: 'One Map entry per distinct value stores a positive occurrence count. The header counts all occurrences. Entry placement follows insertion order and does not imply sorted keys or visible hash buckets.',
-    }, 'occurrences')
+    return LinearScene.create(model, nodes, [], frame, 'occurrences')
   }
 }

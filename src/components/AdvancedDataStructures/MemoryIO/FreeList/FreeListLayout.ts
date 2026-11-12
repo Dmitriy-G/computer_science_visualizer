@@ -15,6 +15,6 @@ export class FreeListLayout {
         edges.push({ ...edge, curveOffset: slot.next < slot.id ? 85 : 0 })
       }
     }
-    return LinearScene.create(model, nodes, edges, frame, { title: 'Free List', description: 'A fixed pool of ten simulated slots. Allocation removes the free-chain head; release pushes a slot onto it. Allocated slots are above free slots. Exhaustion and double release are rejected. This models pool bookkeeping, not native memory allocation.' }, 'allocated slots')
+    return LinearScene.create(model, nodes, edges, frame, 'allocated slots')
   }
 }

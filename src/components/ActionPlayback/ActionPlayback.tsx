@@ -65,22 +65,12 @@ export default class ActionPlayback<TModel extends ActionModel<TModel>>
     return (
       <div className="playback-toolbar" role="group" aria-label="Animation progress">
         <div className="playback-timeline">
-          <p
-            id="timeline-description"
-            className="timeline-description"
-            title={step.description}
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            {step.description}
-          </p>
           <progress
             className="timeline-progress"
             max={Math.max(1, this.animation.steps.length - 1)}
             value={this.animation.steps.length === 1 ? 1 : this.state.index}
             aria-label="Animation progress"
-            aria-describedby="timeline-description"
-            aria-valuetext={`Step ${this.state.index + 1}: ${step.title}`}
+            aria-valuetext={`Step ${this.state.index + 1}: ${step.title}. ${step.description}`}
           />
         </div>
       </div>

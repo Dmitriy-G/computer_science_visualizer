@@ -6,7 +6,6 @@ interface BufferedStore {
   value: number
 }
 
-// A bounded x86-TSO store-buffering litmus, not a general x86 simulator.
 export class StoreBufferModel {
   public readonly fence: 'none' | 'MFENCE' | 'SFENCE' | 'LFENCE'
   private flow = 'none'
@@ -58,8 +57,6 @@ export class StoreBufferModel {
     const loadPc = this.fence === 'none' ? 1 : 2
     if (this.pc[core] === 0) this.buffers[core].push({ address: own, value: 1 })
     else if (this.pc[core] === 1 && this.fence !== 'none') {
-      // SFENCE does not constrain the following load: its local completion
-      // is not modeled here. LFENCE does not drain stores.
       if (this.fence === 'MFENCE' && this.buffers[core].length) return false
     } else if (this.pc[core] === loadPc) {
       this.registers[core] = this.load(core, other)
@@ -102,7 +99,7 @@ export class StoreBufferModel {
     return [...outcomes].sort()
   }
 
-  public snapshot(detail = 'Intel x86: aligned ordinary write-back memory; x=y=0. Core 0: MOV [x],1; MOV r0,[y]. Core 1: MOV [y],1; MOV r1,[x]. Hardware instructions, not a C/C++ data race.'): HardwareModel {
+  public snapshot(): HardwareModel {
     const banks = []
     for (let core = 0; core < 2; core += 1) {
       const buffer = this.buffers[core][0]
@@ -123,6 +120,6 @@ export class StoreBufferModel {
       { id: 'mem-x', label: 'x', value: `${this.memory.x}` },
       { id: 'mem-y', label: 'y', value: `${this.memory.y}` },
     ] })
-    return new HardwareModel(banks, detail, null, 0, StoreBufferLayout.create(this.flow, this.flowCore, this.memory))
+    return new HardwareModel(banks, null, 0, StoreBufferLayout.create(this.flow, this.flowCore, this.memory))
   }
 }

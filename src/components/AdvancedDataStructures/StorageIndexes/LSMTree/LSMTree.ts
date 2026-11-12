@@ -19,8 +19,6 @@ export interface SortedRun {
   readonly pending?: boolean
 }
 
-// Educational in-memory LSM: a sorted-array memtable (four distinct keys),
-// immutable sorted runs, and explicit full compaction. No disk I/O or WAL.
 export class LSMTree extends AdditionalTreeModel {
   public readonly kind = 'lsm-tree'
   private memtable: LSMRecord[] = []

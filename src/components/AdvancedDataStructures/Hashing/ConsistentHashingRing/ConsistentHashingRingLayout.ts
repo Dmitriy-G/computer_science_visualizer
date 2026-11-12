@@ -30,9 +30,6 @@ export class ConsistentHashingRingLayout {
       const assignment = assignments[index]
       nodes.push(LinearScene.node(`${model.kind}-sample-${assignment.key}`, `${assignment.key} → ${assignment.owner ?? 'none'}`, 'sample key → server', 100 + sampleWidth / 2 + (index % 5) * (sampleWidth + 40), sampleY + Math.floor(index / 5) * 130, sampleWidth))
     }
-    return LinearScene.create(model, nodes, edges, frame, { title: 'Clockwise ownership on a 32-bit hash ring',
-      code: 'owner(key) = first token >= hash(key), or the first token after wrapping through zero',
-      description: 'Each physical server has three independently seeded virtual tokens. The diagram spaces tokens evenly in sorted clockwise order; angular gaps do not represent hash distance. Labels show actual token positions. Sample keys illustrate ownership changes when servers join or leave. This sequential example supports sixteen servers and does not model replication or a network.',
-    }, 'servers')
+    return LinearScene.create(model, nodes, edges, frame, 'servers')
   }
 }

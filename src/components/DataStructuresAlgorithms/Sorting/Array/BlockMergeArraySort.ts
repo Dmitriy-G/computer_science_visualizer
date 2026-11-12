@@ -7,7 +7,6 @@ interface SortedBlock {
   next: number
 }
 
-// Buffered block-wise multiway merging, implemented locally for this visualizer.
 export class BlockMergeArraySort {
   private readonly entries: ArrayEntry[]
   private readonly observer?: ArraySortObserver

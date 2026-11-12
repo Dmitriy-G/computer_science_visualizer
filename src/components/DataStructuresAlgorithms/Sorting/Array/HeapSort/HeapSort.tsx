@@ -8,11 +8,6 @@ import './HeapSort.css'
 class HeapSortDefinition implements ActionDefinition<FixedArray> {
   public readonly pseudocode = ArraySortingPseudocode.heapSort
   public readonly title = 'Heap Sort'
-  public readonly context = 'Sorting / Array / Heap Sort'
-  public readonly summary = HeapSortAnimation.describe(0).summary
-  public readonly phases = ['Inspect', 'Locate', 'Move', 'Finish range', 'Commit']
-  public readonly timelineHint = 'Deterministic sorting steps in the shared renderer'
-  public readonly acceptsValue = false
 
   public create(model: FixedArray): HeapSortAnimation {
     return new HeapSortAnimation(model)

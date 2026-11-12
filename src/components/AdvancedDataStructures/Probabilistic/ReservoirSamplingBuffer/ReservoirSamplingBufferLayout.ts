@@ -14,10 +14,6 @@ export class ReservoirSamplingBufferLayout {
       const entry = sample[slot]
       nodes.push(ProbabilisticScene.cell(entry?.id ?? `empty-sample-${slot}`, entry ? String(entry.value) : 'empty', `slot ${slot}${entry ? ` · arrival ${entry.arrival}` : ''}`, slot % 3, 1 + Math.floor(slot / 3), width))
     }
-    return LinearScene.create(model, nodes, [], frame, {
-      title: 'Algorithm R · five retained stream occurrences',
-      description: 'Fill five slots, then draw j uniformly from 0 to seen − 1; replace slot j only if j < 5. Duplicates are separate arrivals. Under ideal random draws every occurrence has the same inclusion probability min(1, 5/seen). This lesson uses a fixed seeded PRNG with rejection sampling for reproducible decisions; it stores only retained values, a counter, and generator state. Clear restarts the seed.',
-      code: 'seen += 1; if seen ≤ 5: append(value); else: j = uniform(0, seen - 1); if j < 5: sample[j] = value',
-    }, 'stream occurrences observed')
+    return LinearScene.create(model, nodes, [], frame, 'stream occurrences observed')
   }
 }

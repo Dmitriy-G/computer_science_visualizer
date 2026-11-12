@@ -6,10 +6,6 @@ import './Contains.css'
 
 class ContainsDefinition implements ActionDefinition<HashSet> {
   public readonly title = 'Contains value'
-  public readonly context = 'HashSet / Contains value'
-  public readonly summary = 'Contains value using deterministic hash probes.'
-  public readonly phases = ['Start', 'Hash', 'Access storage', 'Finish']
-  public readonly timelineHint = 'Follow each hash and storage access'
   public readonly initialValue = 99
 
   public create(model: HashSet, value: number, storedValue?: number): ContainsAnimation {

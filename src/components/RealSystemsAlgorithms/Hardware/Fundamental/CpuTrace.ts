@@ -15,7 +15,7 @@ export class CpuTrace {
   public record(model: CpuModel, title: string, description: string, code: string, phase = 1): void {
     if (this.steps.length >= 96) throw new RangeError('CPU lesson exceeds its event bound')
     const copy = model.clone()
-    this.result = new CpuModel(copy.banks, copy.detail, copy.focusId, this.steps.length + 1, copy.diagram)
+    this.result = new CpuModel(copy.banks, copy.focusId, this.steps.length + 1, copy.diagram)
     const scene = HardwareSceneLayout.create(this.result, this.kind)
     const previous = new Map<string, string>()
     for (const node of this.steps.at(-1)?.scene.nodes ?? []) previous.set(node.id, JSON.stringify([node.displayValue, node.status]))

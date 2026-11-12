@@ -49,7 +49,6 @@ export class QuotientFilter extends ProbabilisticModel {
     return run
   }
 
-  // Decode fingerprints from the real packed runs, not from a hidden key set.
   private fingerprints(): number[] {
     const result: number[] = []
     for (let quotient = 0; quotient < 16; quotient += 1) {
@@ -64,8 +63,6 @@ export class QuotientFilter extends ProbabilisticModel {
   }
 
   private pack(fingerprints: readonly number[]): QuotientSlot[] {
-    // Educational rebuild insertion: try circular cuts until all sorted runs
-    // fit. One reserved empty slot guarantees a valid cut and lookup sentinel.
     for (let start = 0; start < 16; start += 1) {
       const sorted = [...fingerprints].sort((left, right) => {
         const ql = Math.floor(left / 256)

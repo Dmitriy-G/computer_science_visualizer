@@ -7,7 +7,6 @@ export class BloomFilter {
   private bits: number[] = Array(this.bitCount).fill(0)
   private insertions = 0
 
-  // This is the number of add calls, not an exact count of distinct members.
   public get length(): number { return this.insertions }
   public getBits(): readonly number[] { return [...this.bits] }
 

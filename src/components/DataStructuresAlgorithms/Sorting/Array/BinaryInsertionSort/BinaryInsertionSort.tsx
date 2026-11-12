@@ -8,11 +8,6 @@ import './BinaryInsertionSort.css'
 class BinaryInsertionSortDefinition implements ActionDefinition<FixedArray> {
   public readonly pseudocode = ArraySortingPseudocode.binaryInsertionSort
   public readonly title = 'Binary Insertion Sort'
-  public readonly context = 'Sorting / Array / Binary Insertion Sort'
-  public readonly summary = BinaryInsertionSortAnimation.describe(0).summary
-  public readonly phases = ['Inspect', 'Locate', 'Move', 'Finish range', 'Commit']
-  public readonly timelineHint = 'Deterministic sorting steps in the shared renderer'
-  public readonly acceptsValue = false
 
   public create(model: FixedArray): BinaryInsertionSortAnimation {
     return new BinaryInsertionSortAnimation(model)

@@ -5,7 +5,6 @@ import type { LinearInputValues, LinearObserver, LinearResult } from '../../../.
 
 export class FMIndex extends StringTextModel {
   public readonly kind = 'fm-index' as const
-  public static readonly sampleRate = 4
   private sourceLength = 0
   private bwt = ''
   private cumulative = new Map<string, number>()

@@ -19,7 +19,6 @@ export class PairingHeap extends PriorityModel {
   private nextId = 1
   public get length(): number { return this.count }
   public getRoot(): PairingNode | null { return this.root }
-  public get hint(): string { return 'A min-heap with child/sibling links. Meld attaches the larger root as the smaller root’s first child. Extract-min pairs adjacent children left-to-right, then combines the resulting heaps right-to-left. Up to 64 nodes.' }
 
   public static createDefault(): PairingHeap {
     const model = new PairingHeap()

@@ -6,7 +6,6 @@ import type { LinearObserver } from './LinearModel.ts'
 
 export type ProbeSlot = HashRecord | 'deleted' | null
 
-// Genuine common array storage and rehash primitives for linear probing and Robin Hood.
 export abstract class ProbingHashTable extends HashTableModel {
   protected slots: ProbeSlot[] = new Array<ProbeSlot>(16).fill(null)
   protected count = 0

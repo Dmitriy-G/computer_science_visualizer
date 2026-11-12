@@ -19,8 +19,6 @@ export class SearchTreeNode {
     this.key = key
   }
 }
-// Actual common BST links, rotations, subtree metadata, and ordered comparisons.
-// Balancing and access policies belong to each concrete model.
 export abstract class SearchTreeModel extends ExtendedTreeModel {
   public abstract readonly kind: StructureKind
   protected root: SearchTreeNode | null = null
@@ -100,7 +98,6 @@ export abstract class SearchTreeModel extends ExtendedTreeModel {
     this.emit(observer, node.id, `Connect the new key ${key}.`, 'parent.child = newNode', 'connect')
     return node
   }
-  // Reconnect the ancestor before publishing a rotation, so every frame is a tree.
   protected rotate(node: SearchTreeNode, direction: 'left' | 'right', observer?: TreeTraceObserver): SearchTreeNode {
     const pivot = direction === 'left' ? node.right! : node.left!
     const parent = node.parent

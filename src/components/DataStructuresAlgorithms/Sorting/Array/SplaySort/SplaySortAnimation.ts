@@ -10,7 +10,7 @@ export class SplaySortAnimation extends ArraySortingAnimation {
   }
 
   constructor(model: FixedArray) {
-    super(model, 'Splay Sort', { counterHint: 'Splay each insertion to the root using zig, zig-zig, and zig-zag rotations.' })
+    super(model, 'Splay Sort')
     this.result.splaySort((event) => this.recordTrace(event))
     this.finish(true)
     this.fitScenes()

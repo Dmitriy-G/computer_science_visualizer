@@ -20,7 +20,6 @@ export interface AppliedDiagram {
   readonly links?: readonly DiagramLink[]
 }
 
-// Trace, bounds, and rejection contracts shared by structures in several groups.
 export abstract class AppliedModel extends LinearModel {
   public abstract getDiagram(): AppliedDiagram
   public abstract readonly representation: string

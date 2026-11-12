@@ -6,16 +6,13 @@ export interface FlashPage {
   data: string
 }
 
-// Shared media and mapping primitives, not a victim-selection or wear policy.
 export class FlashStorage {
-  public static readonly pagesPerBlock = 3
   public readonly pages: FlashPage[] = []
   public readonly mapping = new Map<number, number>()
   public readonly erases = [0, 0, 0]
   public hostWrites = 0
   public flashWrites = 0
   public operation = 'idle'
-  public detail = 'Page-mapped teaching policy. Mapping persistence and crash recovery are not simulated.'
   public flowFrom: string | null = null
   public flowTo: string | null = null
   public selectedBlock: number | null = null

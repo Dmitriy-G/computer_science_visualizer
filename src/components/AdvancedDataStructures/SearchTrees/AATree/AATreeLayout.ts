@@ -4,6 +4,6 @@ import type { TreeFrame } from '../../../../visualization/TreeActionAnimation.ts
 import type { Scene } from '../../../../visualization/Scene.ts'
 export class AATreeLayout extends HierarchyLayout {
   public create(model: AdditionalTreeModel, frame: TreeFrame = {}): Scene {
-    return { ...super.create(model, frame), countLabel: 'keys', hint: { title: 'AA Tree', description: 'Leveled search nodes repaired with skew and split operations.' } }
+    return { ...super.create(model, frame), countLabel: 'keys' }
   }
 }

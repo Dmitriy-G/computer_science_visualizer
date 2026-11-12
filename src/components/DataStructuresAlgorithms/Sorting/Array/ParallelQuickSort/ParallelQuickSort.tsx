@@ -8,11 +8,6 @@ import './ParallelQuickSort.css'
 class ParallelQuickSortDefinition implements ActionDefinition<FixedArray> {
   public readonly pseudocode = ArraySortingPseudocode.parallelQuickSort
   public readonly title = 'Parallel QuickSort'
-  public readonly context = 'Sorting / Array / Parallel QuickSort'
-  public readonly summary = ParallelQuickSortAnimation.describe(0).summary
-  public readonly phases = ['Inspect', 'Locate', 'Move', 'Finish range', 'Commit']
-  public readonly timelineHint = 'Deterministic sorting steps in the shared renderer'
-  public readonly acceptsValue = false
 
   public create(model: FixedArray): ParallelQuickSortAnimation {
     return new ParallelQuickSortAnimation(model)

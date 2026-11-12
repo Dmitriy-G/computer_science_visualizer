@@ -100,6 +100,6 @@ export class OutOfOrderModel {
     return new CpuModel([
       { name: 'Program', cells: program }, { name: 'ROB', cells: reorder }, { name: 'Committed', cells: committed },
       { name: 'Fetch', cells: [{ id: 'pc', label: 'next PC register', value: this.nextPc, status: this.mispredicted ? 'redirected' : 'predict not taken' }, { id: 'prediction', label: 'I4', value: this.mispredicted ? 'redirected' : 'predict not taken' }] },
-    ], 'A small conceptual reorder buffer demonstrates Intel Core execution and retirement. A slow load and fixed event order illustrate dependencies; these are not measured cycle counts. Squashed results never enter committed registers. Cache boxes locate instruction fetch and the load-data path; no hit/miss or replacement behavior is simulated.', focus, 0, diagram)
+    ], focus, 0, diagram)
   }
 }

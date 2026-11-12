@@ -41,6 +41,6 @@ export class DsbModel {
       { id: 'pou', label: 'same memory location', value: `${this.pouValue}`, status: 'Point of Unification' },
       { id: 'barrier', label: 'CPU barrier', value: this.barrier, status: this.barrier === 'DSB ISH' && this.cleanPending ? 'blocked on completion' : this.barrier === 'not reached' ? 'not issued' : 'may continue' },
       { id: 'continue', label: 'following CPU instruction', value: 'ADD x2, x2, #1', status: this.continued ? 'executed' : 'not executed' },
-    ] }], 'CPU issues DC CVAU for a dirty data-cache line containing 42. The memory-system Point of Unification (PoU) initially has 0. Follow request, data clean, and completion arrows. DMB permits unrelated CPU execution while the clean is pending; DSB waits for completion. PoU may be a cache, so this does not require a RAM flush or persistence.', null, 0, DsbLayout.create(this.flow))
+    ] }], null, 0, DsbLayout.create(this.flow))
   }
 }

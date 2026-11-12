@@ -54,6 +54,6 @@ export class PigeonholeArraySort extends ArraySortOperations {
       }
       runs.push({ id: `hole-${hole}`, label: `hole ${hole}`, entries: [...this.holes[hole]], status: hole === active ? 'SELECTED' : 'HOLE', activeIndices })
     }
-    this.emit(kind, label, detail, code, { storage: [{ id: 'pigeonholes', label: 'HOLES', status: 'OCCUPIED', runs }], output: this.output.length ? [...this.output] : undefined, counterHint: `Hole key = (${this.minimum}) + hole index. Occupied holes hold full entries in arrival order. Empty holes are omitted from the drawing.`, ...extra }, index, active)
+    this.emit(kind, label, detail, code, { storage: [{ id: 'pigeonholes', label: 'HOLES', status: 'OCCUPIED', runs }], output: this.output.length ? [...this.output] : undefined, ...extra }, index, active)
   }
 }

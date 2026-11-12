@@ -108,7 +108,6 @@ export class GapBuffer extends LinearModel {
       const text = LinearModel.text(input)
       if (this.length + text.length > LinearModel.maximumTextLength) return { description: 'Insertion rejected: this teaching example allows 256 characters.' }
       this.moveGap(index, observer)
-      // Keep at least one gap cell so cursor movement never has a zero-width gap.
       this.ensureGap(text.length + 1, observer)
       for (const character of text) {
         const entry = { id: `gap-char-${this.nextId++}`, character }

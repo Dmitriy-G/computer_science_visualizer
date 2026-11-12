@@ -30,8 +30,6 @@ class SortTape {
   }
 }
 
-// Tape files and record I/O are simulated in memory; the source array stays
-// intact until the final load. A record is one logical I/O unit in this lesson.
 export class ExternalArraySort extends ArrayMergeOperations {
   private tapes: SortTape[] = []
   private ram: readonly ArrayEntry[] = []
@@ -54,7 +52,7 @@ export class ExternalArraySort extends ArrayMergeOperations {
       storage.push({ id: `tape-${tape.id}`, label: `T${tape.id}`, status: this.outputIds.includes(tape.id) ? 'OUTPUT' : this.inputIds.includes(tape.id) ? 'INPUT' : 'READY', runs })
     }
     if (this.merging.length) storage.push({ id: 'merge', label: 'Merge', status: 'sequential input cursors / output run', runs: this.merging })
-    return { storage, counterHint: `Virtual tapes in RAM; no disk access. Logical record reads: ${this.reads}; writes: ${this.writes}. Counts include run generation and tape merges, excluding the final visualization load.` }
+    return { storage }
   }
 
   public externalMergeSort(): void {

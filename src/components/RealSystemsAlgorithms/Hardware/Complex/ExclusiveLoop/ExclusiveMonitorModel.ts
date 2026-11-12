@@ -35,7 +35,6 @@ export class ExclusiveMonitorModel {
   public interferingWrite(value: number): void {
     this.value = value
     this.version += 1
-    // Abstract global-monitor invalidation of reservations for this granule.
     this.global = [null, null]
   }
   public snapshot(): HardwareModel {
@@ -46,6 +45,6 @@ export class ExclusiveMonitorModel {
       { id: `loaded-${core}`, label: 'loaded / status', value: `${this.loaded[core]} / ${this.status[core] ?? '?'}`, status: `STXR attempts: ${this.attempts[core]}` },
     ] })
     banks.push({ name: 'Shared', cells: [{ id: 'counter', label: 'counter', value: `${this.value}` }] })
-    return new HardwareModel(banks, 'Arm AArch64: aligned counter in shared Normal cacheable memory. Local and global monitors are conceptual roles, not a physical monitor layout. Interfering writes invalidate global exclusivity; STXR consumes the local attempt. Plain LDXR/STXR supply atomic retry, not acquire/release ordering. Real STXR can also fail for other reasons.', null, 0, ExclusiveMonitorLayout.create(this.flow, this.flowCore, this.value))
+    return new HardwareModel(banks, null, 0, ExclusiveMonitorLayout.create(this.flow, this.flowCore, this.value))
   }
 }

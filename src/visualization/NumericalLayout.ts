@@ -2,11 +2,10 @@ import { NumericalModel } from './NumericalModel.ts'
 import { DenseArrayModel } from '../components/FundamentalDataStructures/Linear/DenseArrayModel.ts'
 import { LinearScene } from './LinearScene.ts'
 import type { LinearFrame, LinearModel } from './LinearModel.ts'
-import type { Scene, SceneHint, SceneNode } from './Scene.ts'
+import type { Scene, SceneNode } from './Scene.ts'
 
-// Storage-array geometry only; each canonical model supplies its actual arrays.
 export class NumericalLayout {
-  public create(model: LinearModel, frame: LinearFrame, hint: SceneHint): Scene {
+  public create(model: LinearModel, frame: LinearFrame): Scene {
     if (!(model instanceof NumericalModel)) throw new TypeError('Expected numerical storage')
     const storage = model.getStorage()
     let cellWidth = 160
@@ -36,6 +35,6 @@ export class NumericalLayout {
       const lines = row.name === 'data' && model.kind === 'grid-2d' ? model.shape[0] : Math.max(1, Math.ceil(row.values.length / 8))
       y += lines * 130
     }
-    return LinearScene.create(model, nodes, [], frame, hint, model instanceof DenseArrayModel ? 'occupied cells' : model.kind === 'sparse-coo' ? 'stored triplets' : 'stored nonzeros')
+    return LinearScene.create(model, nodes, [], frame, model instanceof DenseArrayModel ? 'occupied cells' : model.kind === 'sparse-coo' ? 'stored triplets' : 'stored nonzeros')
   }
 }

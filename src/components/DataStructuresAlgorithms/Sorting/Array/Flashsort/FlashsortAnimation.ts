@@ -10,7 +10,7 @@ export class FlashsortAnimation extends ArraySortingAnimation {
   }
 
   constructor(model: FixedArray) {
-    super(model, 'Flashsort', { counterHint: 'Value-range classification, in-place Flashsort cycles, then insertion cleanup.' })
+    super(model, 'Flashsort')
     this.result.flashSort((event) => this.recordTrace(event))
     this.finish(false)
     this.fitScenes()

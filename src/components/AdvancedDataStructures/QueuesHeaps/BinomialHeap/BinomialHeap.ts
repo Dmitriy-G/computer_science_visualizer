@@ -25,7 +25,6 @@ export class BinomialHeap extends PriorityModel {
     for (const root of this.roots) if (!root.parent) roots.push(root)
     return roots
   }
-  public get hint(): string { return 'A forest of binomial min-trees with at most one root of each degree after consolidation. Linking equal degrees makes the larger root a child. Degree d represents exactly 2^d nodes. The minimum root is cached; up to 64 values.' }
 
   public static createDefault(): BinomialHeap {
     const model = new BinomialHeap()

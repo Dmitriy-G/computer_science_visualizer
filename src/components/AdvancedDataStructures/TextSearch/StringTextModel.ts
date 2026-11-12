@@ -2,7 +2,6 @@ import { LinearModel } from '../../../visualization/LinearModel.ts'
 import type { LinearInputValues, LinearResult } from '../../../visualization/LinearModel.ts'
 
 export abstract class StringTextModel extends LinearModel {
-  public static readonly maximumSourceLength = 64
   public static readonly defaultText = 'bananaband'
   public static readonly defaultWords = 'an,and,ant,at,be,bee,bed,cat,car,dog'
 

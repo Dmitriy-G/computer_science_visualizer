@@ -6,10 +6,6 @@ import './Clear.css'
 
 class ClearDefinition implements ActionDefinition<HashSet> {
   public readonly title = 'Clear'
-  public readonly context = 'HashSet / Clear'
-  public readonly summary = 'Clear using deterministic hash probes.'
-  public readonly phases = ['Start', 'Hash', 'Access storage', 'Finish']
-  public readonly timelineHint = 'Follow each hash and storage access'
   public readonly initialValue = 99
 
   public create(model: HashSet, value: number, storedValue?: number): ClearAnimation {

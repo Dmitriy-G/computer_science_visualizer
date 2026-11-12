@@ -18,7 +18,6 @@ class BurstContainer {
     this.parent = parent
   }
 
-  // Full prefix strings belong to trace snapshots, not retained algorithm data.
   public get prefix(): string {
     let prefix = ''
     let node: BurstContainer | null = this
@@ -30,8 +29,6 @@ class BurstContainer {
   }
 }
 
-// Integer adaptation of pointer-container Burstsort. Equal-width hexadecimal
-// strings encode exact offsets; the array itself continues to hold numbers.
 export class BurstArraySort extends ArraySortOperations {
   private readonly root = new BurstContainer('burst-0', '', null)
   private nextNodeId = 1
@@ -145,6 +142,6 @@ export class BurstArraySort extends ArraySortOperations {
         }
       } else runs.push({ id: node.id, label: node.prefix.length > 8 ? `…${node.prefix.slice(-8)}` : node.prefix || 'root', entries: [...node.entries], status: node.prefix.length === this.width ? 'TERMINAL' : 'CONTAINER', activeIndices: node === selected ? [...activeIndices] : [] })
     }
-    this.emit(kind, label, detail, code, { trie, trieDepth: this.width, storage: [{ id: 'burst-containers', label: 'LEAVES', status: 'PREFIX CONTAINERS', runs }], output: this.output ? [...this.output] : undefined, counterHint: `Integer Burstsort adaptation: ${this.width}-digit hexadecimal keys encode value - (${this.minimum}). Burst threshold: 3 records. Selected prefix: ${selected?.prefix || 'root'}. Terminal equal-key containers stop at full key length.`, ...extra })
+    this.emit(kind, label, detail, code, { trie, trieDepth: this.width, storage: [{ id: 'burst-containers', label: 'LEAVES', status: 'PREFIX CONTAINERS', runs }], output: this.output ? [...this.output] : undefined, ...extra })
   }
 }

@@ -1,7 +1,6 @@
 import type { LinearFrame, LinearModel } from './LinearModel.ts'
-import type { Scene, SceneEdge, SceneHint, SceneNode } from './Scene.ts'
+import type { Scene, SceneEdge, SceneNode } from './Scene.ts'
 
-// Shared SVG contracts; each structure owns its geometry and storage diagram.
 export class LinearScene {
   public static node(id: string, text: string, label: string, x: number, y = 125, width = 76): SceneNode {
     return { id, value: 0, displayValue: text, label, x, y, width, tone: 'default', opacity: 1 }
@@ -11,7 +10,7 @@ export class LinearScene {
     return { id: `${from}-${to}-${label}`, from, to, label, directed: true, highlighted: false, opacity: 1 }
   }
 
-  public static create(model: LinearModel, nodes: readonly SceneNode[], edges: readonly SceneEdge[], frame: LinearFrame, hint: SceneHint, countLabel = 'elements'): Scene {
+  public static create(model: LinearModel, nodes: readonly SceneNode[], edges: readonly SceneEdge[], frame: LinearFrame, countLabel = 'elements'): Scene {
     const marked: SceneNode[] = []
     let width = 560
     let height = 300
@@ -26,6 +25,6 @@ export class LinearScene {
         status: active ? frame.status ?? 'CURRENT' : visited ? 'VISITED' : node.status })
     }
     return { kind: model.kind, nodes: marked, edges, width, height, focusId,
-      count: frame.count ?? model.length, countLabel, hint }
+      count: frame.count ?? model.length, countLabel }
   }
 }

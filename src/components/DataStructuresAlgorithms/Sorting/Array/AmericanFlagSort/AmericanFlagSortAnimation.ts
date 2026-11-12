@@ -11,7 +11,7 @@ export class AmericanFlagSortAnimation extends ArraySortingAnimation {
   }
 
   constructor(model: FixedArray) {
-    super(model, 'American Flag Sort', { counterHint: 'In-place MSD radix sorting; 16 hexadecimal bins; exact integer offsets.' })
+    super(model, 'American Flag Sort')
     this.result.americanFlagSort((event) => this.recordTrace(event))
     this.finish(false)
     this.fitScenes()

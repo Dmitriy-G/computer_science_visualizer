@@ -6,11 +6,6 @@ import './Clear.css'
 
 class ClearDefinition implements ActionDefinition<LinkedList> {
   public readonly title = 'Clear'
-  public readonly context = 'LinkedList / clear'
-  public readonly summary = 'Save each successor and release nodes from the head.'
-  public readonly phases = ['Inspect', 'Save next', 'Release', 'Finish']
-  public readonly timelineHint = 'Release nodes from head to tail'
-  public readonly acceptsValue = false
 
   public create(model: LinkedList): ClearAnimation {
     return new ClearAnimation(model)

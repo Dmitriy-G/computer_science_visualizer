@@ -1,7 +1,6 @@
 import { LinearScene } from './LinearScene.ts'
 import type { SceneNode } from './Scene.ts'
 
-// Shared geometry only. Models and layouts own their representation and labels.
 export class ProbabilisticScene {
   public static cell(id: string, value: string, label: string, column: number, row: number, width = 150): SceneNode {
     return LinearScene.node(id, value, label, 90 + width / 2 + column * (width + 36), 115 + row * 160, width)

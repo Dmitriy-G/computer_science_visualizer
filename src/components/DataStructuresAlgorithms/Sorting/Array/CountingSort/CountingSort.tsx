@@ -8,11 +8,6 @@ import './CountingSort.css'
 class CountingSortDefinition implements ActionDefinition<FixedArray> {
   public readonly pseudocode = ArraySortingPseudocode.countingSort
   public readonly title = 'Counting Sort'
-  public readonly context = 'Sorting / Array / Counting Sort'
-  public readonly summary = CountingSortAnimation.describe(0).summary
-  public readonly phases = ['Inspect', 'Locate', 'Move', 'Finish range', 'Commit']
-  public readonly timelineHint = 'Deterministic sorting steps in the shared renderer'
-  public readonly acceptsValue = false
 
   public create(model: FixedArray): CountingSortAnimation {
     return new CountingSortAnimation(model)

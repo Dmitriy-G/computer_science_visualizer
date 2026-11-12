@@ -16,6 +16,6 @@ export class UnrolledLinkedListLayout {
       start += block.values.length
       index += 1
     }
-    return LinearScene.create(model, nodes, edges, frame, { title: 'Unrolled Linked List', description: 'Each linked block holds up to four values. Full blocks split; deletion merges a following block when the combined values fit.' }, 'values')
+    return LinearScene.create(model, nodes, edges, frame, 'values')
   }
 }

@@ -18,8 +18,6 @@ class BPlusPage {
   }
 }
 
-// Order 4: internal pages have 2..4 children; non-root leaves have 2..3 records.
-// Internal separators copy the minimum record of each child after the first.
 export class BPlusTree {
   private root: BPlusPage | null = null
   private count = 0

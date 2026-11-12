@@ -20,8 +20,6 @@ export class ReservoirSamplingBuffer extends ProbabilisticModel {
 
   public getSample(): readonly ReservoirEntry[] { return this.sample.map((entry) => ({ ...entry })) }
 
-  // Rejection sampling removes modulo bias from each 32-bit draw. A public
-  // fixed seed makes lessons reproducible, not suitable for secure sampling.
   private choose(bound: number): number {
     const range = 0x100000000
     const limit = range - range % bound

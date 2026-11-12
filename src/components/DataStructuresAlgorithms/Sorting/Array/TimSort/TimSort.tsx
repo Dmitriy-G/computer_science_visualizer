@@ -8,11 +8,6 @@ import './TimSort.css'
 class TimSortDefinition implements ActionDefinition<FixedArray> {
   public readonly pseudocode = ArraySortingPseudocode.timSort
   public readonly title = 'TimSort'
-  public readonly context = 'Sorting / Array / TimSort'
-  public readonly summary = TimSortAnimation.describe(0).summary
-  public readonly phases = ['Inspect', 'Locate', 'Move', 'Finish range', 'Commit']
-  public readonly timelineHint = 'Deterministic sorting steps in the shared renderer'
-  public readonly acceptsValue = false
 
   public create(model: FixedArray): TimSortAnimation {
     return new TimSortAnimation(model)

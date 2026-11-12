@@ -40,7 +40,6 @@ test('all twelve Complex lessons have deterministic independent scenes with fixe
       const ids = new Set(step.scene.nodes.map((node) => node.id))
       assert.equal(ids.size, step.scene.nodes.length)
       assert.ok(step.scene.focusId === null || ids.has(step.scene.focusId))
-      assert.ok(step.scene.hint.description.length > 0)
       assert.ok(step.scene.regions.some((region) => region.role === 'cpu'), choice.name)
       assert.ok(step.scene.regions.some((region) => region.role === 'memory'), choice.name)
       assert.ok(step.scene.edges.length > 0, choice.name)
@@ -169,7 +168,7 @@ test('transactions with unchanged payloads remain visible and narration adds no 
   assert.match(trace.steps.at(-1).description, /The flag is still zero/)
 
   const diagram = new HardwareDiagram().region('core', 'CPU', 'cpu', 0, 0, 300, 300).place('value', 100, 100)
-  const idle = new HardwareModel([{ name: 'Core', cells: [{ id: 'value', label: 'register', value: '0' }] }], '', null, 0, diagram)
+  const idle = new HardwareModel([{ name: 'Core', cells: [{ id: 'value', label: 'register', value: '0' }] }], null, 0, diagram)
   const local = new HardwareTrace()
   local.record(idle, 'Initial', 'Initial', '', 0)
   local.record(idle, 'No operation', 'Explanation only', '', 2)

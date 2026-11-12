@@ -30,10 +30,6 @@ class WikiPull {
   }
 }
 
-// Adapted from the public-domain WikiSort reference:
-// https://github.com/BonzaiThePenguin/WikiSort/blob/master/WikiSort.java
-// This cache-free variant uses insertion-sorted base runs. Internal buffers are
-// borrowed entries, not allocated arrays; no working storage grows with the input.
 export class WikiArraySort extends ArraySortOperations {
   public sort(): void {
     const length = this.entries.length
@@ -176,7 +172,6 @@ export class WikiArraySort extends ArraySortOperations {
       else if (this.compare(b.start, a.end - 1) < 0) this.roll(a, b, tags, work, blockSize)
     }
     this.insertion(work.start, work.end)
-    // A left buffer must be restored before a right buffer from the same pair.
     if (second && first.left && !second.left && first.pair.start === second.pair.start) first.pair.end -= second.count
     this.redistribute(first)
     if (second) this.redistribute(second)

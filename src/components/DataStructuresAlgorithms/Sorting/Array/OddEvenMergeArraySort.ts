@@ -1,6 +1,5 @@
 import { ArrayNetworkSort } from './ArrayNetworkSort.ts'
 
-// Batcher odd-even merging; virtual trailing wires are pruned, not allocated.
 export class OddEvenMergeArraySort extends ArrayNetworkSort {
   public sort(): void {
     if (this.entries.length < 2) return

@@ -27,10 +27,6 @@ export class FMIndexLayout {
     }
     const width = StringTextScene.width(chunks.map((chunk) => chunk.text), chunks.map((chunk) => chunk.label), 260)
     chunks.forEach((chunk, rank) => nodes.push(StringTextScene.cell(chunk.id, chunk.text, chunk.label, rank % 4, Math.floor(rank / 4), width, occurrenceTop)))
-    return LinearScene.create(model, nodes, [], frame, {
-      title: 'BWT + C + dense exclusive-prefix Occ + sampled suffix positions',
-      description: 'C[c] counts symbols smaller than c; Occ(c, i) counts c in BWT[0..i). Backward search updates a half-open suffix-row interval from right to left. LF steps recover positions from samples whose source position is divisible by four, requiring at most three steps. The full suffix array and source are discarded after construction. Dense Occ exposes every rank counter for teaching and is not a compressed production representation.',
-      code: '[l, r) ← [C[c] + Occ(c,l), C[c] + Occ(c,r)); LF(i) = C[BWT[i]] + Occ(BWT[i],i)',
-    }, 'source characters')
+    return LinearScene.create(model, nodes, [], frame, 'source characters')
   }
 }

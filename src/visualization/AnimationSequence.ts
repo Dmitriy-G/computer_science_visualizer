@@ -1,7 +1,6 @@
 import type { AnimationStep, Scene, SceneNode } from './Scene.ts'
 import type { AlgorithmInformation, AlgorithmTerm } from './AlgorithmInformation.ts'
 
-// Snapshot construction only; each action supplies its algorithm and ordered steps.
 export class AnimationSequence {
   public readonly steps: AnimationStep[] = []
 

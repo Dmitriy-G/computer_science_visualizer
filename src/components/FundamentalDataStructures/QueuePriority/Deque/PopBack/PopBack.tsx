@@ -6,11 +6,6 @@ import './PopBack.css'
 
 class PopBackDefinition implements ActionDefinition<Deque> {
   public readonly title = 'Pop back'
-  public readonly context = 'Deque / pop back'
-  public readonly summary = 'Remove and return the back value.'
-  public readonly phases = ['Inspect', 'Locate', 'Unlink', 'Finish']
-  public readonly timelineHint = 'Follow next and prev'
-  public readonly acceptsValue = false
 
   public create(model: Deque, value: number): RemovalAnimation {
     return new RemovalAnimation(model)

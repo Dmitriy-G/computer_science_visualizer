@@ -15,9 +15,6 @@ export class HopscotchHashingLayout {
       const record = slots[index]
       recordLabels.push(record ? `home ${model.home(record.key)}; offset ${(index - model.home(record.key) + model.capacity) % model.capacity}` : '')
     }
-    return HashTableScene.grid(model, [{ prefix: `${model.kind}-slot`, role: 'slot / home', slots, labels, recordLabels }], frame, {
-      title: 'Four-position hop neighborhoods', code: 'home = normalizedModulo(key, b); bit d means slot[(home + d) mod b] belongs to home',
-      description: 'The rightmost bitmap bit is offset zero. A bitmap belongs to the home index, independently of the record occupying that slot. Legal hops bring a free slot closer while preserving each moved record’s four-slot neighborhood. Growth is capped at 256 slots; failed placement is rolled back.',
-    })
+    return HashTableScene.grid(model, [{ prefix: `${model.kind}-slot`, role: 'slot / home', slots, labels, recordLabels }], frame)
   }
 }

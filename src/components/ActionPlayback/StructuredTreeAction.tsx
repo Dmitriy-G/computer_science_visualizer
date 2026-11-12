@@ -14,15 +14,10 @@ export interface StructuredTreeActionProps {
 export interface TreeSequenceConstructor {
   new(model: AdditionalTreeModel, input: TreeInputValues): ActionPlan<AdditionalTreeModel>
   readonly title: string
-  readonly summary: string
 }
 
 class StructuredTreeDefinition implements ActionDefinition<AdditionalTreeModel> {
   public readonly title: string
-  public readonly summary: string
-  public readonly context = 'Tree operation'
-  public readonly phases = ['Inspect', 'Traverse', 'Modify', 'Repair', 'Finish']
-  public readonly timelineHint = 'Follow the current operation'
   private readonly sequence: TreeSequenceConstructor
   private readonly input: TreeInputValues
 
@@ -30,7 +25,6 @@ class StructuredTreeDefinition implements ActionDefinition<AdditionalTreeModel> 
     this.sequence = sequence
     this.input = input
     this.title = sequence.title
-    this.summary = sequence.summary
   }
 
   public create(model: AdditionalTreeModel): ActionPlan<AdditionalTreeModel> { return new this.sequence(model, this.input) }

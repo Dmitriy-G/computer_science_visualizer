@@ -10,7 +10,7 @@ export class SlowSortAnimation extends ArraySortingAnimation {
   }
 
   constructor(model: FixedArray) {
-    super(model, 'Slow Sort', { counterHint: 'Slow Sort: at most 12 entries; execute the full recurrence with summarized playback.' })
+    super(model, 'Slow Sort')
     let rejection = ''
     const accepted = this.result.slowSort((event) => {
       if (event.kind === 'reject') rejection = event.detail!
