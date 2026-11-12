@@ -36,6 +36,6 @@ export class OutOfOrderAnimation extends CpuLesson {
       const id = model.retireNext()!
       trace.record(model.snapshot(id), `Retire ${id}`, 'Only the oldest completed, unsquashed operation can commit its architectural effects.', 'commit(ROB.head); advance_head()')
     }
-    trace.record(model.snapshot('I5'), 'Wrong-path result discarded', 'Committed r1 = 10, r2 = 7, r3 = 11. I5 computed 99 but was squashed; r2 never becomes 99.', 'r1 = 10; r2 = 7; r3 = 11\nI5.state = squashed', 2)
+    trace.explain('Committed r1 = 10, r2 = 7, r3 = 11. I5 computed 99 but was squashed; r2 never becomes 99.')
   }
 }

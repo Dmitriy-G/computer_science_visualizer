@@ -59,6 +59,10 @@ export class BranchPredictorModel {
         { id: 'correct', label: 'correct', value: String(this.correct) },
         { id: 'misses', label: 'mispredictions', value: String(this.resolved - this.correct) },
       ] },
-    ], this.predicted === null ? null : `counter-${this.lastIndex}`, 0, BranchPredictionLayout.create(this.flow, this.lastIndex, this.predicted, this.actual, this.correct, this.resolved))
+    ], this.predicted === null ? null : `counter-${this.lastIndex}`, 0, BranchPredictionLayout.create({
+      flow: this.flow, index: this.lastIndex, predicted: this.predicted, actual: this.actual,
+      correct: this.correct, resolved: this.resolved, counter: this.counters[this.lastIndex],
+      history: this.history.toString(2).padStart(3, '0'), pc: this.pc,
+    }))
   }
 }

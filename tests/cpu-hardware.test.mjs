@@ -6,6 +6,7 @@ import { RegisterRenameModel } from '../src/components/RealSystemsAlgorithms/Har
 import { OutOfOrderModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/OutOfOrder/OutOfOrderModel.ts'
 import { BranchPredictorModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/BranchPrediction/BranchPredictorModel.ts'
 import { ReturnStackModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/ReturnStack/ReturnStackModel.ts'
+import { CpuTrace } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CpuTrace.ts'
 
 test('four hardware lessons have deterministic independent snapshots and leave their source unchanged', () => {
   const cpuChoices = CpuAlgorithmCatalog.choices.filter((choice) => choice.components.includes('CPU'))
@@ -17,7 +18,7 @@ test('four hardware lessons have deterministic independent snapshots and leave t
     const plan = definition.create(source, 0)
     assert.deepEqual(source, before)
     assert.deepEqual(plan, definition.create(source, 0))
-    assert.ok(plan.steps.length > 2 && plan.steps.length <= 96)
+    assert.ok(plan.steps.length > 2 && plan.steps.length <= 256)
     assert.equal(plan.result.events, plan.steps.length)
     assert.equal(plan.steps[0].phase, 0)
     assert.equal(plan.steps.at(-1).phase, 2)
@@ -49,6 +50,54 @@ test('four hardware lessons have deterministic independent snapshots and leave t
   }
 })
 
+test('CPU lessons share one core map and show one explained interaction per step', () => {
+  let components
+  for (const choice of CpuAlgorithmCatalog.choices.filter((entry) => entry.components.includes('CPU'))) {
+    const plan = CpuAlgorithmCatalog.definition(choice.kind).create(new CpuModel(), 0)
+    for (let index = 0; index < plan.steps.length; index += 1) {
+      const scene = plan.steps[index].scene
+      const core = scene.regions.find((region) => region.id === 'core')
+      const units = scene.regions.filter((region) => region.id.startsWith('component-'))
+      assert.equal(core.width, core.height)
+      assert.equal(units.length, 17)
+      if (!components) components = units
+      assert.deepEqual(units, components)
+      const active = scene.edges.filter((edge) => edge.highlighted)
+      assert.ok(active.length <= 1, `${choice.kind}: bundled arrows`)
+      assert.deepEqual(scene.edges.filter((edge) => edge.opacity > 0), active)
+      assert.equal(scene.count, index + 1)
+      for (const node of scene.nodes) {
+        assert.ok(node.x - node.width / 2 > core.x)
+        assert.ok(node.x + node.width / 2 < core.x + core.width)
+        assert.ok(node.y - node.height / 2 > core.y)
+        assert.ok(node.y + node.height / 2 + 28 < core.y + core.height)
+      }
+      if (index === 0) {
+        assert.equal(active.length, 0)
+        continue
+      }
+      const previous = new Map(plan.steps[index - 1].scene.nodes.map((node) => [node.id, node]))
+      const changed = scene.nodes.filter((node) => {
+        const old = previous.get(node.id)
+        return !old || old.displayValue !== node.displayValue || old.status !== node.status || old.label !== node.label
+      })
+      const current = scene.nodes.filter((node) => node.tone === 'active')
+      if (active.length) {
+        const edge = active[0]
+        assert.match(edge.message, /^(Instruction|Data|Request|Control): /)
+        assert.equal(edge.flow, true)
+        assert.equal(scene.focusId, edge.to)
+        assert.deepEqual(new Set(current.map((node) => node.id)), new Set([edge.from, edge.to]))
+        assert.ok(changed.every((node) => node.id === edge.from || node.id === edge.to))
+      } else {
+        assert.equal(changed.length, 1, `${choice.kind}: empty or bundled local update`)
+        assert.deepEqual(current.map((node) => node.id), [changed[0].id])
+      }
+    }
+  }
+  assert.ok(!CpuAlgorithmCatalog.choices.some((choice) => choice.kind === 'cpu-core'))
+})
+
 test('rename operand arrows retain the captured physical source after a later write renames r1', () => {
   const model = new RegisterRenameModel()
   for (let index = 0; index < 4; index += 1) model.renameNext()
@@ -62,6 +111,25 @@ test('rename operand arrows retain the captured physical source after a later wr
   const copy = snapshot.clone()
   copy.diagram.regions[0].label = 'mutated copied core'
   assert.equal(snapshot.diagram.regions[0].label, 'CPU / Core 0')
+})
+
+test('both physical operands arrive before the ALU result and register write are shown', () => {
+  const model = new RegisterRenameModel()
+  for (let index = 0; index < 4; index += 1) model.renameNext()
+  for (const id of ['I3', 'I1', 'I2']) model.execute(id)
+  const trace = new CpuTrace()
+  trace.record(model.snapshot(), 'Initial', 'I4 waits for its operands.', '', 0)
+  model.execute('I4')
+  trace.record(model.snapshot('I4'), 'Execute I4', 'Read both physical operands, then write p6.', '')
+  const transfers = trace.steps.filter((step) => step.scene.edges.some((edge) => edge.highlighted))
+  assert.deepEqual(transfers.map((step) => step.scene.edges.find((edge) => edge.highlighted).id), ['operand-5', 'operand-4', 'result'])
+  const value = (step, id) => step.scene.nodes.find((node) => node.id === id).displayValue
+  assert.equal(value(transfers[0], 'alu'), 'I2: 8')
+  assert.equal(value(transfers[0], 'physical-6'), 'not ready')
+  assert.equal(value(transfers[1], 'alu'), 'I4: 28')
+  assert.equal(value(transfers[1], 'physical-6'), 'not ready')
+  assert.equal(value(transfers[2], 'physical-6'), '28')
+  assert.equal(transfers[0].scene.edges.find((edge) => edge.highlighted).message, 'Data: I4 reads p5 = 20')
 })
 
 test('out-of-order flow separates a load request, speculative execution, and architectural commit', () => {

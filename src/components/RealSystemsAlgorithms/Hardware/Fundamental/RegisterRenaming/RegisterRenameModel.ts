@@ -118,6 +118,9 @@ export class RegisterRenameModel {
     const diagram = RegisterRenamingLayout.create({
       phase: this.phase, id: program.id, text: program.text,
       sources: current?.sources ?? [], destination: current?.destination ?? 0,
+      operands: current?.sources.map((source) => String(this.physical[source] ?? 'not ready')) ?? [],
+      immediate: program.immediate, destinationName: program.destination,
+      value: String(current ? this.physical[current.destination] ?? 'not ready' : 'not ready'),
       previous: current?.previous ?? 0, mapping: mapping.join(' '), committed: architectural.join(' '),
       result: current?.done ? `${program.id}: ${this.physical[current.destination] ?? 'retired'}` : 'waiting for operands',
     })

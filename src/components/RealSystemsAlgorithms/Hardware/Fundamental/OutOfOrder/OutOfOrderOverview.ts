@@ -1,11 +1,13 @@
 import type { SystemOverviewInformation } from '../../../../../visualization/SystemOverviewInformation.ts'
 import { OutOfOrderAnimation } from './OutOfOrderAnimation.ts'
+import { CpuLessonInformation } from '../CpuLesson.ts'
 
 export class OutOfOrderOverview {
   public static describe(): SystemOverviewInformation {
     const information = OutOfOrderAnimation.describe()
     return {
       name: information.name,
+      implementationNote: CpuLessonInformation.coreMapNote,
       summary: 'A CPU execution mechanism that runs ready instructions ahead of stalled older instructions, then commits their effects in program order.',
       problem: 'A slow instruction can leave execution units idle even when independent work is ready. Out-of-order execution uses that idle capacity while preserving data dependencies and correct committed state.',
       steps: [

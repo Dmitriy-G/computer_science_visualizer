@@ -1,11 +1,13 @@
 import type { SystemOverviewInformation } from '../../../../../visualization/SystemOverviewInformation.ts'
 import { RegisterRenamingAnimation } from './RegisterRenamingAnimation.ts'
+import { CpuLessonInformation } from '../CpuLesson.ts'
 
 export class RegisterRenamingOverview {
   public static describe(): SystemOverviewInformation {
     const information = RegisterRenamingAnimation.describe()
     return {
       name: information.name,
+      implementationNote: CpuLessonInformation.coreMapNote,
       summary: 'A CPU mechanism that maps program-visible register names to separate physical registers for different writes.',
       problem: 'Reusing a register name can create false dependencies between otherwise independent instructions. Renaming removes those name conflicts while preserving the actual producer of each operand.',
       steps: [

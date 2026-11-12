@@ -40,6 +40,6 @@ export class ReturnStackAnimation extends CpuLesson {
         matched ? 'The newest outstanding call has a matching prediction.' : 'No prediction remains for the oldest call. Its actual return target is still correct; a real core recovers fetch using resolved control flow.',
         'predicted = pop_or_unavailable()\nactual = actual_returns.pop(); resolve_return(actual)')
     }
-    trace.record(model.snapshot(), 'Prediction is not correctness', `${model.matched} of ${model.returns} returns had matching predictions. All actual calls returned correctly, including the one without a prediction.`, 'actual_call_depth = 0\nreturn_predictor.size = 0', 2)
+    trace.explain(`${model.matched} of ${model.returns} returns had matching predictions. All actual calls returned correctly, including the one without a prediction.`)
   }
 }

@@ -6,6 +6,7 @@ import { StructureCatalog } from '../src/visualization/StructureCatalog.ts'
 import { ActionCatalog } from '../src/visualization/ActionCatalog.ts'
 import { ActionOrdering } from '../src/components/MainMenu/ActionMenu/ActionOrdering.ts'
 import { ShellSortAnimation } from '../src/components/DataStructuresAlgorithms/Sorting/Array/ShellSort/ShellSortAnimation.ts'
+import { CpuAlgorithmCatalog } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CpuAlgorithmCatalog.ts'
 
 test('algorithm action ordering is alphabetical by default without changing catalog order', () => {
   const actions = ActionCatalog.getScopedActions('array', 'sorting')
@@ -283,9 +284,8 @@ test('advanced hardware categories have reversible paths and no structure select
   assert.deepEqual(fundamental.getStructures(), [])
   assert.deepEqual(fundamental.getGroups(), [])
   assert.throws(() => fundamental.selectStructure('array'), /current group/)
-  assert.deepEqual(fundamental.getCpuAlgorithms().map((lesson) => lesson.kind), [
-    'branch-prediction', 'out-of-order', 'register-renaming', 'return-stack',
-  ])
+  assert.deepEqual(fundamental.getCpuAlgorithms(), CpuAlgorithmCatalog.choices)
+  assert.ok(!fundamental.getCpuAlgorithms().some((lesson) => lesson.kind === 'cpu-core'))
   assert.deepEqual(hardware.getCpuAlgorithms(), [])
   assert.deepEqual(fundamental.getHardwareAlgorithms(), [])
   for (const kind of ['disks', 'memory', 'cpu']) {

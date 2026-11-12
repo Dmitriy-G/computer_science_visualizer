@@ -96,7 +96,14 @@ export class OutOfOrderModel {
     for (const [name, value] of this.architectural) committed.push({ id: `arch-${name}`, label: name, value: String(value) })
     const registers: string[] = []
     for (const [name, value] of this.architectural) registers.push(`${name}:${value}`)
-    const diagram = OutOfOrderLayout.create(this.flow, this.currentId, this.unit, registers.join(' '), this.entries[this.head]?.id ?? 'empty', this.entries[0].state === 'waiting')
+    const current = this.entries.find((entry) => entry.id === this.currentId)!
+    const producer = this.entries.find((entry) => entry.id === current.producer)
+    const diagram = OutOfOrderLayout.create({
+      flow: this.flow, id: this.currentId, instruction: current.text,
+      unit: this.unit, registers: registers.join(' '), head: this.entries[this.head]?.id ?? 'empty',
+      loadPending: this.entries[0].state === 'waiting', producer: current.producer,
+      operand: producer?.result ?? current.input, addend: current.addend, result: current.result, branch: current.branch,
+    })
     return new CpuModel([
       { name: 'Program', cells: program }, { name: 'ROB', cells: reorder }, { name: 'Committed', cells: committed },
       { name: 'Fetch', cells: [{ id: 'pc', label: 'next PC register', value: this.nextPc, status: this.mispredicted ? 'redirected' : 'predict not taken' }, { id: 'prediction', label: 'I4', value: this.mispredicted ? 'redirected' : 'predict not taken' }] },

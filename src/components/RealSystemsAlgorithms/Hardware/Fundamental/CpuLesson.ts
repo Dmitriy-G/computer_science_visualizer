@@ -26,6 +26,8 @@ export abstract class CpuLesson implements ActionDefinition<CpuModel> {
 }
 
 export class CpuLessonInformation {
+  public static readonly coreMapNote = 'The shared core map is a conceptual superset of components. Idle units provide context; their presence does not imply that every cited processor implements them. The diagram does not show exact physical wiring.'
+
   public static create(name: string, summary: string, product: string, url: string, usage: string, limits: string): AlgorithmInformation {
     const bound = { best: 'O(1)', average: 'O(1)', worst: 'O(1)' }
     return {

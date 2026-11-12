@@ -80,6 +80,7 @@ test('removed OS disk schedulers have no algorithm or structure search destinati
 })
 
 test('CPU hardware search provides distinct fundamental algorithm destinations', () => {
+  assert.deepEqual(index.find('algorithms', 'CPU core components'), [])
   for (const name of ['Register renaming', 'Out-of-order execution', 'History-based branch prediction', 'Return-address stack prediction']) {
     const results = index.find('algorithms', name).filter((result) => 'cpuAlgorithm' in result)
     assert.equal(results.length, 1)

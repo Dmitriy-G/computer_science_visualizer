@@ -1,11 +1,13 @@
 import type { SystemOverviewInformation } from '../../../../../visualization/SystemOverviewInformation.ts'
 import { ReturnStackAnimation } from './ReturnStackAnimation.ts'
+import { CpuLessonInformation } from '../CpuLesson.ts'
 
 export class ReturnStackOverview {
   public static describe(): SystemOverviewInformation {
     const information = ReturnStackAnimation.describe()
     return {
       name: information.name,
+      implementationNote: CpuLessonInformation.coreMapNote,
       summary: 'A small hardware stack that predicts return targets by remembering the addresses following nested calls.',
       problem: 'One return instruction can jump to many callers, so its next address is hard to predict from the instruction alone. Tracking call nesting supplies a likely target before the actual return resolves.',
       steps: [

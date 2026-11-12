@@ -1,4 +1,4 @@
-import type { Scene, SceneEdge, SceneNode } from '../../../../visualization/Scene.ts'
+import type { Scene, SceneEdge, SceneNode } from './Scene.ts'
 
 export interface HardwareInteraction {
   readonly scene: Scene
@@ -13,15 +13,18 @@ export class HardwareInteractions {
     const changed: SceneNode[] = []
     for (const node of target.nodes) {
       const old = before.get(node.id)
-      current.set(node.id, old ? { ...node, displayValue: old.displayValue, status: old.status } : { ...node })
-      if (!old || old.displayValue !== node.displayValue || old.status !== node.status) changed.push(node)
+      current.set(node.id, old ? { ...node, displayValue: old.displayValue, status: old.status, label: old.label } : { ...node })
+      if (!old || old.displayValue !== node.displayValue || old.status !== node.status || old.label !== node.label) changed.push(node)
     }
     const transfers: SceneEdge[] = []
     for (const edge of target.edges) if (edge.highlighted) transfers.push(edge)
     const updates = new Map<number, SceneNode[]>()
     const local: SceneNode[] = []
     for (const node of changed) {
-      let stage = transfers.findIndex((edge) => edge.to === node.id)
+      let stage = -1
+      for (let index = 0; index < transfers.length; index += 1) {
+        if (transfers[index].to === node.id) stage = index
+      }
       if (stage < 0) stage = transfers.findIndex((edge) => edge.from === node.id)
       if (stage < 0) local.push(node)
       else {

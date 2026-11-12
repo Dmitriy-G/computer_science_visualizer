@@ -20,56 +20,75 @@ interface RendererProps {
 interface RendererState {
   readonly actualSize: boolean
   readonly showSizeControls: boolean
+  readonly viewportHeight: number | null
 }
 
 export default class Renderer extends Component<
   RendererProps,
   RendererState
 > {
-  public state: RendererState = { actualSize: false, showSizeControls: false }
+  public state: RendererState = { actualSize: false, showSizeControls: false, viewportHeight: null }
+  private readonly content = createRef<HTMLDivElement>()
+  private readonly tools = createRef<HTMLDivElement>()
+  private readonly codeHost = createRef<HTMLDivElement>()
   private readonly viewport = createRef<HTMLDivElement>()
   private readonly svg = createRef<SVGSVGElement>()
   private resizeObserver: ResizeObserver | null = null
 
   public componentDidMount(): void {
     this.resizeObserver = new ResizeObserver(this.updateSizeControls)
-    if (this.viewport.current) this.resizeObserver.observe(this.viewport.current)
+    this.observeLayout()
     window.addEventListener('resize', this.updateSizeControls)
+    window.addEventListener('scroll', this.updateSizeControls, { passive: true })
+    window.visualViewport?.addEventListener('resize', this.updateSizeControls)
+    window.visualViewport?.addEventListener('scroll', this.updateSizeControls)
     this.updateSizeControls()
   }
 
-  public componentDidUpdate(previous: RendererProps): void {
-    if (previous.scene?.width !== this.props.scene?.width ||
-      previous.scene?.height !== this.props.scene?.height) {
-      this.updateSizeControls()
-    }
+  public componentDidUpdate(previous: RendererProps, previousState: RendererState): void {
+    this.observeLayout()
+    this.updateSizeControls()
     if (previous.scene?.kind !== this.props.scene?.kind) {
       this.viewport.current?.scrollTo({ left: 0, top: 0, behavior: 'instant' })
       if (this.state.actualSize) this.setState({ actualSize: false })
       return
     }
-    if (previous.scene !== this.props.scene) this.revealCurrentNode()
+    if (previous.scene !== this.props.scene || previousState.viewportHeight !== this.state.viewportHeight) this.revealCurrentNode()
   }
 
   public componentWillUnmount(): void {
     this.resizeObserver?.disconnect()
     this.resizeObserver = null
     window.removeEventListener('resize', this.updateSizeControls)
+    window.removeEventListener('scroll', this.updateSizeControls)
+    window.visualViewport?.removeEventListener('resize', this.updateSizeControls)
+    window.visualViewport?.removeEventListener('scroll', this.updateSizeControls)
+  }
+
+  private observeLayout(): void {
+    for (const element of [this.content.current, this.tools.current, this.codeHost.current, this.viewport.current]) {
+      if (element) this.resizeObserver?.observe(element)
+    }
   }
 
   private updateSizeControls = (): void => {
     const scene = this.props.scene
     const viewport = this.viewport.current
+    let viewportHeight = this.state.viewportHeight
     let showSizeControls = false
-    if (scene && viewport) {
-      const availableWidth = viewport.getBoundingClientRect().width
-      const maximumHeight = Number.parseFloat(window.getComputedStyle(viewport).maxHeight)
-      showSizeControls = availableWidth > 0 &&
-        (scene.width > availableWidth + 1 || scene.height > maximumHeight + 1)
+    if (viewport) {
+      const bounds = viewport.getBoundingClientRect()
+      const visible = window.visualViewport
+      const visibleTop = visible?.offsetTop ?? 0
+      const visibleHeight = visible?.height ?? window.innerHeight
+      const bottomPadding = this.content.current ? Number.parseFloat(window.getComputedStyle(this.content.current).paddingBottom) || 0 : 0
+      viewportHeight = Math.max(160, Math.floor(visibleTop + visibleHeight - Math.max(visibleTop, bounds.top) - bottomPadding))
+      showSizeControls = !!scene && bounds.width > 0 &&
+        (scene.width > viewport.clientWidth + 1 || scene.height > viewportHeight + 1)
     }
     const actualSize = showSizeControls && this.state.actualSize
-    if (showSizeControls !== this.state.showSizeControls || actualSize !== this.state.actualSize) {
-      this.setState({ showSizeControls, actualSize })
+    if (showSizeControls !== this.state.showSizeControls || actualSize !== this.state.actualSize || viewportHeight !== this.state.viewportHeight) {
+      this.setState({ showSizeControls, actualSize, viewportHeight })
     }
   }
 
@@ -298,7 +317,7 @@ export default class Renderer extends Component<
     return (
       <svg
         ref={this.svg}
-        className={`scene-svg${scene.kind === 'hardware-system' ? ' scene-svg--hardware-system' : ''}${this.state.actualSize ? ' scene-svg--actual' : ''}`}
+        className={`scene-svg${scene.kind === 'hardware-system' || scene.kind === 'cpu-hardware' ? ' scene-svg--hardware-flow' : ''}${this.state.actualSize ? ' scene-svg--actual' : ''}`}
         width={scene.width}
         height={scene.height}
         viewBox={`0 0 ${scene.width} ${scene.height}`}
@@ -365,7 +384,7 @@ export default class Renderer extends Component<
     const scene = this.props.scene
     let transfer: SceneEdge | undefined
     let local: SceneNode | undefined
-    if (scene?.kind === 'hardware-system') {
+    if (scene?.kind === 'hardware-system' || scene?.kind === 'cpu-hardware') {
       for (const edge of scene.edges) if (edge.highlighted) transfer = edge
       if (!transfer) {
         for (const node of scene.nodes) if (node.id === scene.focusId) local = node
@@ -373,11 +392,11 @@ export default class Renderer extends Component<
     }
     return (
       <section className="renderer" aria-label="Visualization workspace">
-        <div className="renderer-content">
+        <div className="renderer-content" ref={this.content}>
           {this.props.children}
           <div className="renderer-stage">
             {scene && (
-              <div className="diagram-tools">
+              <div className="diagram-tools" ref={this.tools}>
                 <div className="scene-legend" role="group" aria-label="Node states">
                   <span>
                     <i className="legend-dot current" />
@@ -421,7 +440,7 @@ export default class Renderer extends Component<
                     </button>
                   </div>
                 )}
-                {scene.kind === 'hardware-system' && (
+                {(scene.kind === 'hardware-system' || scene.kind === 'cpu-hardware') && (
                   <div className="hardware-transfer" role="status" aria-live="polite" aria-atomic="true">
                     {transfer ? <>
                       <svg width="30" height="16" viewBox="0 0 30 16" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true" focusable="false">
@@ -434,11 +453,12 @@ export default class Renderer extends Component<
                 )}
               </div>
             )}
-            {this.props.showPseudocode && <div id="renderer-code" className="renderer-code-host" />}
+            {this.props.showPseudocode && <div id="renderer-code" className="renderer-code-host" ref={this.codeHost} />}
             <div
               id="diagram-viewport"
               className="renderer-viewport"
               ref={this.viewport}
+              style={{ height: this.state.viewportHeight ?? undefined }}
               tabIndex={scene ? 0 : -1}
               role={scene ? 'region' : undefined}
               aria-label={scene ? 'Scrollable data structure canvas' : undefined}

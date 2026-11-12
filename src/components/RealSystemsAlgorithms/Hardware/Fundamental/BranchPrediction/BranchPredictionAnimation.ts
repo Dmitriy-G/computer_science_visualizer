@@ -26,6 +26,6 @@ export class BranchPredictionAnimation extends CpuLesson {
         `${correct ? 'The predicted direction matched.' : 'A real core would redirect speculative fetch.'} Train the selected counter and shift the actual outcome into global history.`,
         'PHT[index] = clamp(PHT[index] + (taken ? 1 : -1), 0, 3)\nhistory = ((history << 1) | taken) & 0b111')
     }
-    trace.record(model.snapshot(), 'Learned history patterns', `${model.correct} of ${model.resolved} predictions matched this fixed trace. This result describes the teaching model, not an A53 benchmark.`, `correct = ${model.correct}; resolved = ${model.resolved}`, 2)
+    trace.explain(`${model.correct} of ${model.resolved} predictions matched this fixed trace. This result describes the teaching model, not an A53 benchmark.`)
   }
 }

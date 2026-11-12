@@ -28,6 +28,6 @@ export class RegisterRenamingAnimation extends CpuLesson {
       const id = model.retireNext()
       trace.record(model.snapshot(id), `Retire ${id}`, 'Commit the oldest completed result and release the superseded physical register.', 'architectural[dst] = physical[new]\nfree(old_physical)')
     }
-    trace.record(model.snapshot(), 'Dependencies preserved', 'Final committed values: r1 = 20, r2 = 8, r3 = 28. False name dependencies were removed; I2’s true dependency on I1 was preserved.', 'r1 = 20; r2 = 8; r3 = 28', 2)
+    trace.explain('Final committed values: r1 = 20, r2 = 8, r3 = 28. False name dependencies were removed; I2’s true dependency on I1 was preserved.')
   }
 }

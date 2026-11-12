@@ -24,7 +24,8 @@
    its workspace panel directly, with overview cards, component tags, and separate
    information buttons. Show no intermediate lesson picker and start no animation
    until an overview is selected. Fundamental includes four hardware execution and
-   prediction overviews without CPU, Disks, or Memory subcategories. Network/Fundamental
+   prediction overviews sharing one CPU-core component map, without CPU, Disks,
+   or Memory subcategories or a separate static test entry. Network/Fundamental
    contains Physical, Data Link, Network, Transport, Session, Presentation, and
    Application in OSI layer order. Complex covers systems combining components
    or network layers. OS scheduler lessons have been removed. The Complex workspace lists twelve
@@ -131,8 +132,13 @@ backdrop dismissal return focus to the
 button without interrupting playback. Reset or selecting another action disposes
 the popup with the old session.
 
-Fit the full diagram to the available width and a bounded viewport height by
-default, preserving its aspect ratio and top alignment. Offer Fit diagram and
+Fit the full diagram to the available width and the remaining visible height
+below its controls, preserving its aspect ratio and top alignment. Measure the
+actual viewport position and bottom padding rather than imposing a fixed
+percentage-of-screen cap. Recalculate when the header, action panel, legend,
+arrow caption, pseudocode trigger, or visual viewport changes size. Keep a usable
+minimum diagram height on short screens, allowing page scrolling when necessary.
+Offer Fit diagram and
 Actual size as view controls outside the SVG. Actual size allows horizontal and
 vertical scrolling and keeps the current node visible during playback. These
 controls never affect playback timing. On stacked layouts, bound the action list
@@ -393,9 +399,15 @@ Each mechanism owns actual state transitions: physical source identities and
 renaming/retirement; dependency readiness, reorder-buffer completion and branch
 squashing; history/counter training; or bounded return prediction independent of
 actual return addresses. Record independent snapshots with fixed diagram bounds
-per lesson, at most 96 events, and no hardware timing claims. Use labeled CPU
-core regions with registers, cache context, and mechanism-specific units. Connect
-those components with directed paths and highlight the current logical transfer.
+per CPU lesson, at most 256 diagram interactions, and no hardware timing claims.
+Use the shared square CPU-core map with all seventeen component regions; leave
+unneeded units idle. Show one arrow or one local state change per step. Preserve
+unchanged-value transactions and update receivers when data arrives, including
+waiting for all operands before displaying a combined execution result.
+Describe the active arrow's instruction, data, request, or control contents in
+the caption below the legend. Keep narrative-only conclusions on an existing
+result frame rather than replaying its last transfer. The map is a conceptual
+superset, with visible qualifications in each overview's information dialog.
 Renaming shows captured operands, physical destinations, and retirement; the
 out-of-order lesson separates load request/response, execution, commitment, and
 fetch recovery. Branch prediction shows history lookup, direction selection,

@@ -268,7 +268,7 @@ opens its workspace action panel directly and closes MainMenu; do not render a
 second lesson list inside the menu. Each workspace can open with no lesson selected,
 showing all overview cards and their separate info buttons while the diagram waits
 for selection. The Renderer supports action children without a scene and accepts
-an optional empty-state message. Selecting an overview starts playback; its info
+an optional empty-state message. Selecting an animated overview starts playback; its info
 button only opens information. Workspace Back and header menu reopen Hardware,
 where selecting the current group preserves its session. Hardware/Fundamental
 includes all implemented fundamental overviews without CPU, Disks, or Memory cards;
@@ -281,17 +281,24 @@ navigation rather than adding empty implementation directories.
 Do not add empty hardware-component categories or operating-system disk scheduling
 policies. The former mq-deadline, BFQ, and Kyber lessons and destinations were removed.
 
-Keep CPU hardware lessons under `RealSystemsAlgorithms/Hardware/Fundamental/CPU/`,
+Keep CPU hardware lessons under `RealSystemsAlgorithms/Hardware/Fundamental/`,
 with RegisterRenaming, OutOfOrder, BranchPrediction, and ReturnStack action folders.
 This source grouping is not a menu level. Search selections open the Fundamental
 workspace and start the selected lesson. Menu reopening and workspace Back lead to
 Hardware, without an intermediate lesson picker.
 Each owns its mechanism model, component, CSS, animation, layout, and sourced
-information. Diagrams show the enclosing CPU core, register files or history/
-return registers, instruction cache, and data-cache context. Highlight actual
-instruction, operand, result, retirement, and prediction flows. Cache accesses,
+information. CpuCoreLayout supplies one enclosing square CPU-core boundary and
+the same seventeen internal component regions for all four CPU lessons. Group
+the components into front end, scheduling and registers, execution and retirement,
+and memory access. Keep unused units idle and adapt each lesson's state and
+dataflow to the relevant units. The temporary CPU core test entry is removed;
+its shared core concept belongs to the existing lessons.
+CpuTrace uses shared HardwareInteractions to publish exactly one explained arrow
+or one local state update per animation step, with receiver updates on arrival.
+Keep captions below the legend for cpu-hardware and hardware-system scenes.
+Highlight actual instruction, operand, result, retirement, and prediction flows. Cache accesses,
 hit/miss timing, and precise physical wiring are outside these bounded models.
-CpuModel, CpuLayout, CpuTrace, and CpuLesson share only visual-state snapshots,
+CpuModel, HardwareSceneLayout, CpuTrace, and CpuLesson share only visual-state snapshots,
 scene generation, and playback contracts. Use the cpu-hardware Scene kind and
 distinct CPU search/menu destinations, preserving data-structure and Complex
 destinations. CpuWorkspace reuses Renderer, ActionView, ActionPlayback, and the

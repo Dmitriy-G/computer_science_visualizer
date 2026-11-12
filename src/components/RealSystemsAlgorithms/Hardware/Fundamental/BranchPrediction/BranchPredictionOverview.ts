@@ -1,11 +1,13 @@
 import type { SystemOverviewInformation } from '../../../../../visualization/SystemOverviewInformation.ts'
 import { BranchPredictionAnimation } from './BranchPredictionAnimation.ts'
+import { CpuLessonInformation } from '../CpuLesson.ts'
 
 export class BranchPredictionOverview {
   public static describe(): SystemOverviewInformation {
     const information = BranchPredictionAnimation.describe()
     return {
       name: information.name,
+      implementationNote: CpuLessonInformation.coreMapNote,
       summary: 'A CPU mechanism that predicts branch direction from the outcomes of earlier branches.',
       problem: 'Instruction fetch needs the next address before a branch has finished executing. Predicting its direction reduces the time spent waiting for the result.',
       steps: [

@@ -3,7 +3,7 @@ import type { AlgorithmInformation } from '../../../../visualization/AlgorithmIn
 import type { AnimationStep, SceneNode } from '../../../../visualization/Scene.ts'
 import { HardwareLayout } from './HardwareLayout.ts'
 import { HardwareModel } from './HardwareModel.ts'
-import { HardwareInteractions } from './HardwareInteractions.ts'
+import { HardwareInteractions } from '../../../../visualization/HardwareInteractions.ts'
 
 export class HardwareTrace {
   public readonly steps: AnimationStep[] = []

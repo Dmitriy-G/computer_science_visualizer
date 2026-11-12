@@ -1,4 +1,5 @@
-import { HardwareDiagram } from '../../../../../visualization/HardwareDiagram.ts'
+import type { HardwareDiagram } from '../../../../../visualization/HardwareDiagram.ts'
+import { CpuCoreLayout } from '../CpuCore/CpuCoreLayout.ts'
 
 export interface ReturnDiagramState {
   readonly flow: string
@@ -14,32 +15,26 @@ export interface ReturnDiagramState {
 
 export class ReturnStackLayout {
   public static create(state: ReturnDiagramState): HardwareDiagram {
-    const diagram = new HardwareDiagram(960, 760)
-    diagram.region('core', 'CPU / Core 0', 'cpu', 10, 10, 940, 730, 'system')
-    diagram.region('icache-region', 'Instruction cache / program', 'cache', 20, 50, 260, 170)
-    diagram.region('register-region', 'Core / return registers', 'cpu', 350, 50, 260, 170)
-    diagram.region('prediction-region', 'Core / return prediction', 'cpu', 680, 50, 260, 170)
-    diagram.region('depth-region', 'Program call-depth reference', 'cpu', 20, 250, 260, 170)
-    diagram.region('actual-region', 'Core / resolved return target', 'cpu', 350, 250, 260, 170)
-    diagram.region('fetch-region', 'Core / next-fetch selector', 'cpu', 680, 250, 260, 170)
-    diagram.region('stack-region', 'Hardware return predictor / 8 entries', 'cpu', 20, 450, 590, 285)
-    diagram.region('dcache-region', 'Data cache / context', 'cache', 680, 450, 260, 135)
-    diagram.region('statistics-region', 'Prediction accounting', 'cpu', 680, 590, 260, 150)
-    diagram.fixture('instruction-cache', 'recognized program instruction', state.flow === 'call' ? 'CALL / BL' : state.flow.startsWith('return-') ? 'RET' : 'no call yet', 150, 150, 'resident program / schematic')
-    diagram.fixture('return-register', 'program-supplied return address', state.register, 480, 150, 'saved/restored by program')
-    diagram.place('predicted', 810, 150).place('depth', 150, 350).place('actual', 480, 350)
-    const nextFetch = state.flow === 'return-predict' ? state.predicted === 'unavailable' ? 'await actual target' : state.predicted : state.flow === 'return-resolve' ? state.actual : state.flow === 'call' ? 'call continues' : 'not selected'
-    diagram.fixture('next-fetch', 'next program fetch', nextFetch, 810, 350)
-    for (let index = 0; index < 8; index += 1) diagram.place(`return-${index}`, 95 + index % 4 * 150, 550 + Math.floor(index / 4) * 130, 110)
-    diagram.fixture('data-cache', 'program data / not simulated', 'cache context', 810, 530)
-    diagram.fixture('statistics', 'matching returns', `${state.matched} / ${state.returns}`, 810, 685, `overflow ${state.lost}; empty ${state.underflows}`)
+    const diagram = CpuCoreLayout.create(['instruction-cache', 'instruction-decoder', 'register-files', 'branch-predictor', 'integer-alus', 'instruction-fetch'])
+    const instruction = state.flow === 'call' ? 'CALL / BL' : state.flow.startsWith('return-') ? 'RET' : 'no call yet'
+    CpuCoreLayout.fixture(diagram, 'instruction-cache', 'instruction-cache', 'recognized program instruction', instruction)
+    CpuCoreLayout.fixture(diagram, 'instruction-decoder', 'decoded-instruction', 'call / return recognition', instruction)
+    CpuCoreLayout.fixture(diagram, 'register-files', 'return-register', 'program-supplied return address', state.register, 0, 0, 1, 350)
+    CpuCoreLayout.place(diagram, 'branch-predictor', 'predicted', 0, 0, 2, 280)
+    CpuCoreLayout.fixture(diagram, 'branch-predictor', 'statistics', 'matches; overflow; empty returns', `${state.matched}/${state.returns}; lost ${state.lost}; empty ${state.underflows}`, 1, 0, 2, 300)
+    for (let index = 0; index < 8; index += 1) CpuCoreLayout.place(diagram, 'branch-predictor', `return-${index}`, index % 4, 1 + Math.floor(index / 4), 4, 130)
+    CpuCoreLayout.place(diagram, 'integer-alus', 'actual')
+    const nextFetch = state.flow === 'return-predict' ? state.predicted === 'unavailable' ? 'wait for target' : state.predicted : state.flow === 'return-resolve' ? state.actual : state.flow === 'call' ? 'call continues' : 'pending'
+    CpuCoreLayout.fixture(diagram, 'instruction-fetch', 'next-fetch', 'next program fetch', nextFetch)
     const slot = `return-${Math.max(0, state.slot)}`
-    diagram.connect('call-address', 'instruction-cache', 'return-register', 'call return address', state.flow === 'call')
-    diagram.connect('push', 'return-register', slot, 'push prediction', state.flow === 'call', 30)
-    diagram.connect('pop', slot, 'predicted', state.slot < 0 ? 'stack empty' : 'pop prediction', state.flow === 'return-predict' && state.slot >= 0, -55)
-    diagram.connect('predict-fetch', 'predicted', 'next-fetch', 'predict next fetch', state.flow === 'return-predict' && state.predicted !== 'unavailable', 35)
-    diagram.connect('resolve', 'return-register', 'actual', 'resolve actual target', state.flow === 'return-resolve', 35)
-    diagram.connect('validate', 'actual', 'next-fetch', state.predicted === state.actual ? 'confirm target' : 'use actual target', state.flow === 'return-resolve')
-    return diagram
+    diagram.connect('call-decode', 'instruction-cache', 'decoded-instruction', 'recognize call', state.flow === 'call', 0, 'Instruction: recognize CALL / BL and its return address')
+    diagram.connect('call-address', 'decoded-instruction', 'return-register', 'call return address', state.flow === 'call', 90, `Data: program return address = ${state.register}`)
+    diagram.connect('push', 'return-register', slot, 'push prediction', state.flow === 'call', -100, `Data: push return address ${state.register} into predictor slot ${state.slot}`)
+    diagram.connect('fetch-return', 'instruction-cache', 'decoded-instruction', 'recognize return', state.flow === 'return-predict', 0, 'Instruction: recognize RET before predicting its target')
+    diagram.connect('pop', slot, 'predicted', state.slot < 0 ? 'stack empty' : 'pop prediction', state.flow === 'return-predict' && state.slot >= 0, -35, `Data: pop predicted return address ${state.predicted} from slot ${state.slot}`)
+    diagram.connect('predict-fetch', 'predicted', 'next-fetch', 'predict next fetch', state.flow === 'return-predict' && state.predicted !== 'unavailable', -80, `Control: predict the next fetch address ${state.predicted}`)
+    diagram.connect('resolve', 'return-register', 'actual', 'resolve actual target', state.flow === 'return-resolve', -180, `Data: actual program return address = ${state.register}`)
+    diagram.connect('validate', 'actual', 'next-fetch', state.predicted === state.actual ? 'confirm target' : 'use actual target', state.flow === 'return-resolve', -160, `Control: ${state.predicted === state.actual ? 'confirm' : 'recover fetch using'} actual target ${state.actual}`)
+    return CpuCoreLayout.route(diagram)
   }
 }

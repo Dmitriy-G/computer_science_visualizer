@@ -1,34 +1,40 @@
-import { HardwareDiagram } from '../../../../../visualization/HardwareDiagram.ts'
+import type { HardwareDiagram } from '../../../../../visualization/HardwareDiagram.ts'
+import { CpuCoreLayout } from '../CpuCore/CpuCoreLayout.ts'
+
+export interface BranchDiagramState {
+  readonly flow: string
+  readonly index: number
+  readonly predicted: boolean | null
+  readonly actual: boolean | null
+  readonly correct: number
+  readonly resolved: number
+  readonly counter: number
+  readonly history: string
+  readonly pc: string
+}
 
 export class BranchPredictionLayout {
-  public static create(flow: string, index: number, predicted: boolean | null, actual: boolean | null, correct: number, resolved: number): HardwareDiagram {
-    const diagram = new HardwareDiagram(960, 760)
-    diagram.region('core', 'CPU / Core 0', 'cpu', 10, 10, 940, 730, 'system')
-    diagram.region('pc-region', 'Core / fetch address register', 'cpu', 20, 50, 260, 170)
-    diagram.region('icache-region', 'Instruction cache / program', 'cache', 350, 50, 260, 170)
-    diagram.region('fetch-region', 'Core / next-fetch selector', 'cpu', 680, 50, 260, 170)
-    diagram.region('history-region', 'Core / history register', 'cpu', 20, 250, 260, 170)
-    diagram.region('decision-region', 'Core / predicted direction', 'cpu', 350, 250, 260, 170)
-    diagram.region('branch-region', 'Core / branch execution unit', 'cpu', 680, 250, 260, 170)
-    diagram.region('pht-region', 'Predictor SRAM / counters, not a cache', 'cpu', 20, 450, 590, 285)
-    diagram.region('dcache-region', 'Data cache / context', 'cache', 680, 450, 260, 135)
-    diagram.region('statistics-region', 'Prediction accounting', 'cpu', 680, 590, 260, 150)
-    diagram.place('branch-pc', 150, 150).place('history', 150, 350)
-    diagram.fixture('instruction-cache', 'resident program instruction', 'conditional branch', 480, 150, 'cache behavior not simulated')
-    const direction = actual ?? predicted
-    diagram.fixture('next-fetch', 'selected program path', direction === null ? 'not selected' : direction ? 'taken path' : 'fall-through', 810, 150, actual !== null && actual !== predicted ? 'redirect after misprediction' : 'predicted path until resolve')
-    diagram.place('predicted', 480, 350).place('actual', 810, 350)
-    for (let counter = 0; counter < 8; counter += 1) diagram.place(`counter-${counter}`, 95 + counter % 4 * 150, 550 + Math.floor(counter / 4) * 130, 110)
-    diagram.fixture('data-cache', 'no data-memory access here', 'idle', 810, 530)
-    diagram.fixture('statistics', 'correct / resolved', `${correct} / ${resolved}`, 810, 685, `mispredictions: ${resolved - correct}`)
-    diagram.connect('fetch', 'branch-pc', 'instruction-cache', 'fetch branch', flow === 'predict')
-    diagram.connect('select', 'history', `counter-${index}`, 'index by history', flow === 'predict', -30)
-    diagram.connect('predict', `counter-${index}`, 'predicted', 'counter decision', flow === 'predict', 55)
-    diagram.connect('steer', 'predicted', 'next-fetch', 'steer next fetch', flow === 'predict', 30)
-    diagram.connect('execute', 'instruction-cache', 'actual', 'resolve branch', flow === 'resolve', -40)
-    diagram.connect('train', 'actual', `counter-${index}`, 'train selected entry', flow === 'resolve', 55)
-    diagram.connect('history-update', 'actual', 'history', 'shift actual outcome', flow === 'resolve', -55)
-    diagram.connect('redirect', 'actual', 'next-fetch', actual !== null && actual !== predicted ? 'redirect fetch' : 'confirm prediction', flow === 'resolve', 40)
-    return diagram
+  public static create(state: BranchDiagramState): HardwareDiagram {
+    const diagram = CpuCoreLayout.create(['instruction-fetch', 'instruction-cache', 'branch-predictor', 'integer-alus'])
+    CpuCoreLayout.place(diagram, 'instruction-fetch', 'branch-pc', 0, 0, 2, 85)
+    const direction = state.actual ?? state.predicted
+    CpuCoreLayout.fixture(diagram, 'instruction-fetch', 'next-fetch', 'next path', direction === null ? 'pending' : direction ? 'taken' : 'fallthrough', 1, 0, 2, 95)
+    CpuCoreLayout.fixture(diagram, 'instruction-cache', 'instruction-cache', 'program instruction', 'conditional branch')
+    CpuCoreLayout.place(diagram, 'branch-predictor', 'history', 0, 0, 3, 180)
+    CpuCoreLayout.place(diagram, 'branch-predictor', 'predicted', 1, 0, 3, 180)
+    CpuCoreLayout.fixture(diagram, 'branch-predictor', 'statistics', 'correct / resolved predictions', `${state.correct} / ${state.resolved}`, 2, 0, 3, 180)
+    for (let index = 0; index < 8; index += 1) CpuCoreLayout.place(diagram, 'branch-predictor', `counter-${index}`, index % 4, 1 + Math.floor(index / 4), 4, 130)
+    CpuCoreLayout.place(diagram, 'integer-alus', 'actual')
+    const predicted = state.predicted ? 'taken' : 'not taken'
+    const actual = state.actual ? 'taken' : 'not taken'
+    diagram.connect('fetch', 'branch-pc', 'instruction-cache', 'fetch branch', state.flow === 'predict', 0, `Request: fetch the branch at PC ${state.pc}`)
+    diagram.connect('select', 'history', `counter-${state.index}`, 'index by history', state.flow === 'predict', -35, `Control: history ${state.index.toString(2).padStart(3, '0')} selects PHT[${state.index}]`)
+    diagram.connect('predict', `counter-${state.index}`, 'predicted', 'counter decision', state.flow === 'predict', 40, `Data: PHT[${state.index}] = ${state.counter}; predict ${predicted}`)
+    diagram.connect('steer', 'predicted', 'next-fetch', 'steer next fetch', state.flow === 'predict', -70, `Control: follow the predicted ${predicted} path`)
+    diagram.connect('execute', 'instruction-cache', 'actual', 'resolve branch', state.flow === 'resolve', -160, `Data: executed branch resolves ${actual}`)
+    diagram.connect('train', 'actual', `counter-${state.index}`, 'train selected entry', state.flow === 'resolve', 120, `Data: outcome ${actual}; train PHT[${state.index}] to ${state.counter}`)
+    diagram.connect('history-update', 'actual', 'history', 'shift actual outcome', state.flow === 'resolve', -110, `Data: shift outcome bit ${Number(state.actual)} into history; history = ${state.history}`)
+    diagram.connect('redirect', 'actual', 'next-fetch', state.actual !== state.predicted ? 'redirect fetch' : 'confirm prediction', state.flow === 'resolve', -200, `Control: ${state.actual !== state.predicted ? 'redirect fetch to' : 'confirm'} the ${actual} path`)
+    return CpuCoreLayout.route(diagram)
   }
 }

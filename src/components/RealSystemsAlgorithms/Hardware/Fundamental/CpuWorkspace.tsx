@@ -41,7 +41,8 @@ export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorksp
   private readonly firstAlgorithm = createRef<HTMLButtonElement>()
   public state: CpuWorkspaceState = {
     scene: null,
-    active: this.props.algorithm !== null, running: this.props.algorithm !== null,
+    active: this.props.algorithm !== null,
+    running: this.props.algorithm !== null,
   }
 
   public componentDidMount(): void {

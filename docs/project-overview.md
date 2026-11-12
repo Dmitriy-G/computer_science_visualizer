@@ -20,7 +20,11 @@ Hardware/Complex closes the menu and opens its workspace action panel with overv
 cards and separate information buttons. No intermediate lesson picker is shown;
 the diagram waits for an overview selection. Hardware/Fundamental includes its
 implemented overviews without CPU, Disks, or Memory subcategories.
-Alongside the four CPU overviews, Fundamental implements the latch, conventional
+The four CPU overviews share a square CPU-core boundary with the same seventeen
+component locations. Each supplies its own dataflow; unused units remain idle.
+CpuCoreLayout owns this common geometry. The temporary static test overview has
+been removed from the catalog and search.
+Alongside the four animated CPU overviews, Fundamental implements the latch, conventional
 6T SRAM cell, DRAM row access, conventional HDD sector access, SLC NAND, page-mapped
 SSD FTL, SSD garbage collection, and SSD wear-leveling lessons from coverage.md.
 Each owns its model, layout, animation, and sourced overview in a named folder
@@ -34,11 +38,16 @@ MainMenu/AdvancedAlgorithmCatalog.ts. Operating-system disk schedulers have been
 removed from the hardware branch. Fundamental lists register renaming,
 out-of-order execution with in-order retirement, history-based branch prediction,
 and return-address stack prediction. Their source files remain under
-Hardware/Fundamental/CPU. Each owns
+Hardware/Fundamental. Each owns
 its mechanism model and layout. Diagrams show the CPU core, instruction/data
 cache context, registers, and the current operand, result, retirement, or
 prediction flow. Cache behavior and exact wiring are not simulated. Shared CPU
-helpers handle scene snapshots and playback.
+helpers handle scene snapshots and playback. CPU lessons share HardwareInteractions
+with Complex lessons, showing one transfer or one local update per step, with
+receiver values updated on arrival and an arrow-content caption below the legend.
+CPU traces are bounded to 256 interactions with fixed scene bounds; memory/storage
+component lessons retain their existing trace and playback behavior. The common
+core map is conceptual and does not claim that all units exist in every cited CPU.
 Operating-system CPU scheduler lessons have been removed. Hardware/Complex
 implements the twelve cross-component lessons from coverage.md directly in one
 flat list: store buffering, x86 fences, DMB, DSB, acquire/release, exclusive loops,
