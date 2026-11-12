@@ -279,6 +279,7 @@ import { ActionInputRequest } from '../../visualization/ActionInputRequest.ts'
 import { MenuNavigation } from '../MainMenu/MenuNavigation.ts'
 import type { MenuCategoryKind, AlgorithmGroupKind } from '../MainMenu/MenuNavigation.ts'
 import type { AdvancedAlgorithmGroupKind, HardwareOverviewGroupKind } from '../MainMenu/AdvancedAlgorithmCatalog.ts'
+import { AdvancedAlgorithmCatalog } from '../MainMenu/AdvancedAlgorithmCatalog.ts'
 import HardwareWorkspace from '../RealSystemsAlgorithms/Hardware/Complex/HardwareWorkspace.tsx'
 import { HardwareAlgorithmCatalog } from '../RealSystemsAlgorithms/Hardware/Complex/HardwareAlgorithmCatalog.ts'
 import type { HardwareAlgorithmKind } from '../RealSystemsAlgorithms/Hardware/Complex/HardwareModel.ts'
@@ -426,10 +427,11 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private openMenu = (): void => {
     this.menuOpenedFromSearch = false
+    const hardwareParent = this.state.hardwareOverview ? AdvancedAlgorithmCatalog.getGroup(this.state.hardwareOverview).parent : null
     this.setState({
       menuOpen: true,
       searchOpen: false,
-      menu: this.state.hardwareOverview ? new MenuNavigation('advanced-algorithms', null, 'fundamental', 'hardware') : this.state.selected ? MenuNavigation.forStructure(this.state.selected, this.state.selectedScope) : new MenuNavigation(),
+      menu: this.state.hardwareOverview ? new MenuNavigation('advanced-algorithms', null, 'fundamental', hardwareParent) : this.state.selected ? MenuNavigation.forStructure(this.state.selected, this.state.selectedScope) : new MenuNavigation(),
     })
   }
 
@@ -457,7 +459,7 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private focusActions = (): void => {
     if (this.state.hardwareOverview === 'hardware-complex') this.hardwareWorkspace.current?.focusFirstAction()
-    else if (this.state.hardwareOverview === 'hardware-fundamental') this.cpuWorkspace.current?.focusFirstAction()
+    else if (AdvancedAlgorithmCatalog.isHardwareFundamentalGroup(this.state.hardwareOverview)) this.cpuWorkspace.current?.focusFirstAction()
     else this.actionMenu.current?.focusFirstAction()
   }
 
@@ -518,15 +520,16 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private selectCpuAlgorithm = (algorithm: CpuAlgorithmKind): void => {
     if (!CpuAlgorithmCatalog.choices.some((choice) => choice.kind === algorithm)) return
+    const group = CpuAlgorithmCatalog.groupFor(algorithm)
     this.setState({
-      hardwareOverview: 'hardware-fundamental',
+      hardwareOverview: group,
       hardwareAlgorithm: null, hardwareActionActive: false,
       cpuAlgorithm: algorithm, cpuSession: this.state.cpuSession + 1, cpuActionActive: true,
       selected: null, scene: null, actionOpen: false, selectedAction: null, actionRunning: false,
       actionValue: undefined, actionUpperValue: undefined,
       inputRequest: null, overviewInformation: null, structureInformation: null,
       algorithmInformation: null, menuOpen: false, searchOpen: false,
-      menu: new MenuNavigation('advanced-algorithms', null, 'fundamental', 'hardware-fundamental'),
+      menu: new MenuNavigation('advanced-algorithms', null, 'fundamental', group),
     })
   }
 
@@ -1563,10 +1566,11 @@ export default class App extends Component<Record<string, never>, AppState> {
               onInformation={this.showHardwareInformation}
               onReset={this.hardwareReset}
             />
-          ) : this.state.hardwareOverview === 'hardware-fundamental' ? (
+          ) : AdvancedAlgorithmCatalog.isHardwareFundamentalGroup(this.state.hardwareOverview) ? (
             <CpuWorkspace
               key={`cpu-${this.state.cpuSession}`}
               ref={this.cpuWorkspace}
+              group={this.state.hardwareOverview}
               algorithm={this.state.cpuAlgorithm}
               onBack={this.openMenu}
               onSelect={this.selectCpuAlgorithm}

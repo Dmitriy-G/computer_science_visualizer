@@ -3,6 +3,8 @@ import type { MouseEvent, ReactNode } from 'react'
 import type { Scene } from '../../../../visualization/Scene.ts'
 import Renderer from '../../../Renderer/Renderer.tsx'
 import { CpuAlgorithmCatalog } from './CpuAlgorithmCatalog.ts'
+import { AdvancedAlgorithmCatalog } from '../../../MainMenu/AdvancedAlgorithmCatalog.ts'
+import type { HardwareFundamentalGroupKind } from '../../../MainMenu/AdvancedAlgorithmCatalog.ts'
 import { CpuModel } from './CpuModel.ts'
 import type { CpuAlgorithmKind } from './CpuModel.ts'
 import OverviewTags from '../../../OverviewTags/OverviewTags.tsx'
@@ -22,6 +24,7 @@ import '../../../MainMenu/ActionMenu/ActionMenu.css'
 import './CpuWorkspace.css'
 
 interface CpuWorkspaceProps {
+  readonly group: HardwareFundamentalGroupKind
   readonly algorithm: CpuAlgorithmKind | null
   readonly onBack: () => void
   readonly onSelect: (algorithm: CpuAlgorithmKind) => void
@@ -67,16 +70,16 @@ export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorksp
 
   private select = (event: MouseEvent<HTMLButtonElement>): void => {
     if (this.state.running) return
-    for (const choice of CpuAlgorithmCatalog.choices) if (choice.kind === event.currentTarget.dataset.algorithm) this.props.onSelect(choice.kind)
+    for (const choice of CpuAlgorithmCatalog.forGroup(this.props.group)) if (choice.kind === event.currentTarget.dataset.algorithm) this.props.onSelect(choice.kind)
   }
 
   private information = (event: MouseEvent<HTMLButtonElement>): void => {
-    for (const choice of CpuAlgorithmCatalog.choices) if (choice.kind === event.currentTarget.dataset.algorithm) this.props.onInformation(choice.kind)
+    for (const choice of CpuAlgorithmCatalog.forGroup(this.props.group)) if (choice.kind === event.currentTarget.dataset.algorithm) this.props.onInformation(choice.kind)
   }
 
   private renderAlgorithms(): ReactNode[] {
     const rows: ReactNode[] = []
-    for (const choice of CpuAlgorithmCatalog.choices) rows.push(
+    for (const choice of CpuAlgorithmCatalog.forGroup(this.props.group)) rows.push(
       <div className="canvas-action-row" key={choice.kind}>
         <button type="button" className="canvas-action canvas-action--labeled" ref={rows.length === 0 ? this.firstAlgorithm : undefined} data-algorithm={choice.kind} onClick={this.select} disabled={this.state.running} aria-current={this.state.active && this.props.algorithm === choice.kind ? 'true' : undefined}>
           <OverviewTags components={choice.components} architectures={choice.architectures} devices={choice.devices} />
@@ -115,15 +118,16 @@ export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorksp
   }
 
   public render(): ReactNode {
+    const group = AdvancedAlgorithmCatalog.getGroup(this.props.group)
     return <>
       <Renderer scene={this.state.scene} onOpenMenu={this.props.onBack} emptyState={<>
-        <h1>Choose a fundamental overview.</h1>
+        <h1>Choose a {group.name} overview.</h1>
         <p>Select an overview from the panel to start, or use its info button to learn more.</p>
       </>}>
-        <aside className="action-menu" aria-label="Fundamental hardware overviews">
-          <button type="button" className="text-button action-menu-back-button" onClick={this.props.onBack}>← Hardware</button>
-          <h2 ref={this.heading} tabIndex={-1}>Hardware / Fundamental</h2>
-          <nav aria-label="Fundamental hardware mechanisms">{this.renderAlgorithms()}</nav>
+        <aside className="action-menu" aria-label={`${group.name} hardware overviews`}>
+          <button type="button" className="text-button action-menu-back-button" onClick={this.props.onBack}>← Fundamental</button>
+          <h2 ref={this.heading} tabIndex={-1}>Hardware / Fundamental / {group.name}</h2>
+          <nav aria-label={`${group.name} hardware mechanisms`}>{this.renderAlgorithms()}</nav>
         </aside>
       </Renderer>
       {this.renderPlayback()}

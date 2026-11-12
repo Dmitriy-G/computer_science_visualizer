@@ -8,6 +8,7 @@ import type { StructureKind } from '../../../visualization/Scene.ts'
 import type { OverviewArchitectureKind, OverviewComponentKind, OverviewDeviceKind } from '../../../visualization/OverviewComponent.ts'
 import { StructureInformation } from '../../StructureInfo/StructureInformation.ts'
 import { CpuAlgorithmCatalog } from '../../RealSystemsAlgorithms/Hardware/Fundamental/CpuAlgorithmCatalog.ts'
+import { AdvancedAlgorithmCatalog } from '../AdvancedAlgorithmCatalog.ts'
 import type { CpuAlgorithmKind } from '../../RealSystemsAlgorithms/Hardware/Fundamental/CpuModel.ts'
 import { HardwareAlgorithmCatalog } from '../../RealSystemsAlgorithms/Hardware/Complex/HardwareAlgorithmCatalog.ts'
 import type { HardwareAlgorithmKind } from '../../RealSystemsAlgorithms/Hardware/Complex/HardwareModel.ts'
@@ -80,6 +81,7 @@ export class MenuSearchIndex {
     }
     for (const algorithm of CpuAlgorithmCatalog.choices) {
       const information = CpuAlgorithmCatalog.describeOverview(algorithm.kind)
+      const group = AdvancedAlgorithmCatalog.getGroup(CpuAlgorithmCatalog.groupFor(algorithm.kind))
       let text = `${algorithm.name} ${information.name}`
       if (information.realWorldUsage) text += this.technologyNames(information.realWorldUsage.technologies) + this.technologyNames(information.realWorldUsage.products)
       this.documents.push({
@@ -87,7 +89,7 @@ export class MenuSearchIndex {
         result: {
           key: `cpu:${algorithm.kind}`, cpuAlgorithm: algorithm.kind,
           name: algorithm.name, description: algorithm.description,
-          context: 'System Components Overview / Hardware / Fundamental', symbol: algorithm.components[0] ?? 'CPU',
+          context: `System Components Overview / Hardware / Fundamental / ${group.name}`, symbol: group.component ?? 'CPU',
           components: algorithm.components, architectures: algorithm.architectures, devices: algorithm.devices,
         },
       })

@@ -15,11 +15,14 @@ in MainMenu/MenuStructureCatalog.ts. Data Structures Algorithms contains Sorting
 (Array with forty-eight sorting algorithms) and Graphs Traversal; graph algorithm
 examples live in the latter.
 System Components Overview is a separate root branch for Hardware and Network, each
-with Fundamental and Complex subcategories. Choosing Hardware/Fundamental or
-Hardware/Complex closes the menu and opens its workspace action panel with overview
-cards and separate information buttons. No intermediate lesson picker is shown;
-the diagram waits for an overview selection. Hardware/Fundamental includes its
-implemented overviews without CPU, Disks, or Memory subcategories.
+with Fundamental and Complex subcategories. Hardware/Fundamental contains CPU,
+Disk, and RAM subcategories in that order. Choosing one opens a workspace whose
+overview cards are filtered by the matching component tag, with separate info
+buttons. CPU contains four lessons, Disk five, and RAM three. Hardware/Complex
+opens its existing flat workspace directly. The diagram waits for an overview
+selection. Fundamental workspace Back and header menu return to the three
+component categories; returning to the current component preserves playback.
+Search selections open the matching component workspace and lesson.
 The four CPU overviews share a square CPU-core boundary with the same seventeen
 component locations. Each supplies its own dataflow; unused units remain idle.
 CpuCoreLayout owns this common geometry. The temporary static test overview has

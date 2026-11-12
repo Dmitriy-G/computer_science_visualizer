@@ -20,20 +20,25 @@
    **Data Structures Algorithms**, and **Advanced Data Structures**, in that order.
    These category lists are excluded from alphabetical menu ordering. System Components Overview
    opens Hardware or Network, each containing Fundamental and Complex.
-   Choosing Hardware/Fundamental or Hardware/Complex closes the menu and opens
-   its workspace panel directly, with overview cards, component tags, and separate
-   information buttons. Show no intermediate lesson picker and start no animation
-   until an overview is selected. Fundamental includes four hardware execution and
-   prediction overviews sharing one CPU-core component map, without CPU, Disks,
-   or Memory subcategories or a separate static test entry. Network/Fundamental
+   Hardware/Fundamental opens CPU, Disk, and RAM subcategories in that order.
+   Choosing a component closes the menu and opens its workspace with overview
+   cards filtered by the corresponding component tag. CPU contains the four
+   execution and prediction overviews sharing one CPU-core map; Disk contains
+   five storage overviews, and RAM contains the three memory overviews. No static
+   test entry is offered. Hardware/Complex opens its flat workspace directly.
+   Keep separate information buttons and start no animation until an overview
+   is selected. Network/Fundamental
    contains Physical, Data Link, Network, Transport, Session, Presentation, and
    Application in OSI layer order. Complex covers systems combining components
    or network layers. OS scheduler lessons have been removed. The Complex workspace lists twelve
    cross-component lessons for ordering, barriers, atomic updates, coherence,
    translation, and instruction synchronization, without CPU/memory subcategories.
    Selecting a lesson starts its bounded trace in the shared renderer. Workspace
-   Back and the header menu reopen Hardware. Returning to the current group keeps
-   its playback session; selecting another group opens that group's idle panel.
+   Back and the header menu reopen Fundamental for CPU, Disk, and RAM workspaces,
+   and Hardware for Complex. Returning to the current component or Complex group
+   keeps its playback session; selecting another group opens its idle panel.
+   Search results include the component subcategory and open the corresponding
+   workspace with the selected lesson.
    Hardware overview cards in Fundamental and Complex workspace action lists and
    search show component tags (CPU, RAM, Disk, Bus) from their catalog metadata,
    instead of Real Systems, Educational, or Popular usage tags. Tag the existing

@@ -85,7 +85,7 @@ test('CPU hardware search provides distinct fundamental algorithm destinations',
     const results = index.find('algorithms', name).filter((result) => 'cpuAlgorithm' in result)
     assert.equal(results.length, 1)
     assert.deepEqual(results[0].components, ['CPU'])
-    assert.equal(results[0].context, 'System Components Overview / Hardware / Fundamental')
+    assert.equal(results[0].context, 'System Components Overview / Hardware / Fundamental / CPU')
   }
   assert.equal(index.find('algorithms', 'Intel Core').filter((result) => 'cpuAlgorithm' in result).length, 3)
   assert.equal(index.find('algorithms', 'Arm Cortex-A53').filter((result) => 'cpuAlgorithm' in result).length, 2)

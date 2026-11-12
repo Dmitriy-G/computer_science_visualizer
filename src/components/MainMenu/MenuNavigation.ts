@@ -100,7 +100,7 @@ export class MenuNavigation {
   public get hardwareOverviewGroup(): HardwareOverviewGroupKind | null {
     if (this.screen !== 'advanced-algorithms') return null
     const group = this.advancedAlgorithmGroup
-    return group === 'hardware-fundamental' || group === 'hardware-complex' ? group : null
+    return group === 'hardware-complex' || AdvancedAlgorithmCatalog.isHardwareFundamentalGroup(group) ? group : null
   }
 
   public getHardwareAlgorithms(): readonly HardwareAlgorithmChoice[] {
@@ -108,7 +108,8 @@ export class MenuNavigation {
   }
 
   public getCpuAlgorithms(): readonly CpuAlgorithmChoice[] {
-    return this.screen === 'advanced-algorithms' && this.advancedAlgorithmGroup === 'hardware-fundamental' ? CpuAlgorithmCatalog.choices : []
+    return this.screen === 'advanced-algorithms' && AdvancedAlgorithmCatalog.isHardwareFundamentalGroup(this.advancedAlgorithmGroup)
+      ? CpuAlgorithmCatalog.forGroup(this.advancedAlgorithmGroup) : []
   }
 
   public selectAdvancedAlgorithmGroup(kind: AdvancedAlgorithmGroupKind): MenuNavigation {

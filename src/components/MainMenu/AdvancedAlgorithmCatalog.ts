@@ -1,8 +1,12 @@
-export type HardwareOverviewGroupKind = 'hardware-fundamental' | 'hardware-complex'
+import type { OverviewComponentKind } from '../../visualization/OverviewComponent.ts'
+
+export type HardwareFundamentalGroupKind = 'hardware-cpu' | 'hardware-disk' | 'hardware-ram'
+export type HardwareOverviewGroupKind = HardwareFundamentalGroupKind | 'hardware-complex'
 
 export type AdvancedAlgorithmGroupKind =
   | 'hardware'
   | 'network'
+  | 'hardware-fundamental'
   | HardwareOverviewGroupKind
   | 'network-fundamental'
   | 'network-complex'
@@ -19,14 +23,18 @@ export interface AdvancedAlgorithmGroup {
   readonly parent: AdvancedAlgorithmGroupKind | null
   readonly name: string
   readonly description: string
+  readonly component?: OverviewComponentKind
 }
 
 export class AdvancedAlgorithmCatalog {
   public static readonly groups: readonly AdvancedAlgorithmGroup[] = [
     { kind: 'hardware', parent: null, name: 'Hardware', description: 'Explore individual hardware components and mechanisms that combine them into working systems.' },
     { kind: 'network', parent: null, name: 'Network', description: 'Explore individual OSI layers and mechanisms that combine layers into working networks.' },
-    { kind: 'hardware-fundamental', parent: 'hardware', name: 'Fundamental', description: 'Overviews focused on one hardware component: disks, memory, or CPU.' },
+    { kind: 'hardware-fundamental', parent: 'hardware', name: 'Fundamental', description: 'Explore CPU, Disk, and RAM components and their mechanisms.' },
     { kind: 'hardware-complex', parent: 'hardware', name: 'Complex', description: 'Combine hardware components into systems, such as caching between CPU and memory.' },
+    { kind: 'hardware-cpu', parent: 'hardware-fundamental', name: 'CPU', description: 'Explore instruction execution, register renaming, and prediction inside a CPU core.', component: 'CPU' },
+    { kind: 'hardware-disk', parent: 'hardware-fundamental', name: 'Disk', description: 'Explore HDD access, NAND storage, and SSD controller mechanisms.', component: 'Disk' },
+    { kind: 'hardware-ram', parent: 'hardware-fundamental', name: 'RAM', description: 'Explore latches, SRAM cells, and DRAM row access.', component: 'RAM' },
     { kind: 'network-fundamental', parent: 'network', name: 'Fundamental', description: 'Overviews focused on one OSI layer and the tasks it performs.' },
     { kind: 'network-complex', parent: 'network', name: 'Complex', description: 'Combine network layers into working systems, such as secure web communication.' },
     { kind: 'physical', parent: 'network-fundamental', name: 'Physical', description: 'Layer 1: transmit bits as physical signals.' },
@@ -51,5 +59,16 @@ export class AdvancedAlgorithmCatalog {
       if (group.kind === kind) return group
     }
     throw new RangeError('Unknown advanced algorithm group')
+  }
+
+  public static isHardwareFundamentalGroup(kind: AdvancedAlgorithmGroupKind | null): kind is HardwareFundamentalGroupKind {
+    return kind === 'hardware-cpu' || kind === 'hardware-disk' || kind === 'hardware-ram'
+  }
+
+  public static fundamentalGroupFor(components: readonly OverviewComponentKind[]): HardwareFundamentalGroupKind {
+    for (const group of this.getGroups('hardware-fundamental')) {
+      if (this.isHardwareFundamentalGroup(group.kind) && group.component && components.includes(group.component)) return group.kind
+    }
+    throw new RangeError('Fundamental overviews require a CPU, Disk, or RAM component tag')
   }
 }

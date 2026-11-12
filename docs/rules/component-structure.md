@@ -263,15 +263,21 @@ Keep the System Components Overview category hierarchy in
 `MainMenu/AdvancedAlgorithmCatalog.ts`, separate from structure membership and
 data-structure algorithm scopes. Hardware and Network each contain Fundamental
 and Complex, always displaying Fundamental first and Complex second rather than
-sorting that pair alphabetically. Choosing Hardware/Fundamental or Hardware/Complex
-opens its workspace action panel directly and closes MainMenu; do not render a
+sorting that pair alphabetically. Hardware/Fundamental opens CPU, Disk, and RAM
+subcategory cards in that fixed order. Each component subcategory closes MainMenu
+and opens its own workspace, filtered from CpuAlgorithmCatalog by the matching
+CPU, Disk, or RAM component tag. Keep lesson source folders in their existing
+Fundamental locations; category membership comes from tags rather than copies.
+Hardware/Complex opens its existing flat workspace directly. Do not render a
 second lesson list inside the menu. Each workspace can open with no lesson selected,
 showing all overview cards and their separate info buttons while the diagram waits
 for selection. The Renderer supports action children without a scene and accepts
 an optional empty-state message. Selecting an animated overview starts playback; its info
-button only opens information. Workspace Back and header menu reopen Hardware,
-where selecting the current group preserves its session. Hardware/Fundamental
-includes all implemented fundamental overviews without CPU, Disks, or Memory cards;
+button only opens information. Fundamental workspace Back and header menu reopen
+Hardware/Fundamental with the CPU, Disk, and RAM cards; Complex returns to Hardware.
+Selecting the current component group preserves its session. Changing component
+groups opens an idle workspace. Search routes each fundamental lesson to the
+component group selected by its tag, including the full component path in results.
 Network/Fundamental contains Physical, Data Link, Network, Transport, Session,
 Presentation, and Application in OSI layer order. Complex categories describe
 cross-component hardware systems or systems spanning network layers. Unimplemented
@@ -283,9 +289,9 @@ policies. The former mq-deadline, BFQ, and Kyber lessons and destinations were r
 
 Keep CPU hardware lessons under `RealSystemsAlgorithms/Hardware/Fundamental/`,
 with RegisterRenaming, OutOfOrder, BranchPrediction, and ReturnStack action folders.
-This source grouping is not a menu level. Search selections open the Fundamental
-workspace and start the selected lesson. Menu reopening and workspace Back lead to
-Hardware, without an intermediate lesson picker.
+Search selections open Hardware/Fundamental/CPU and start the selected CPU lesson.
+Menu reopening and workspace Back lead to Hardware/Fundamental; its Back leads
+to Hardware. Disk and RAM lessons follow the same component navigation pattern.
 Each owns its mechanism model, component, CSS, animation, layout, and sourced
 information. CpuCoreLayout supplies one enclosing square CPU-core boundary and
 the same seventeen internal component regions for all four CPU lessons. Group

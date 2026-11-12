@@ -1,4 +1,6 @@
 import type { ActionDefinition } from '../../../../visualization/ActionDefinition.ts'
+import { AdvancedAlgorithmCatalog } from '../../../MainMenu/AdvancedAlgorithmCatalog.ts'
+import type { HardwareFundamentalGroupKind } from '../../../MainMenu/AdvancedAlgorithmCatalog.ts'
 import { LatchAnimation } from './Latch/LatchAnimation.ts'
 import { LatchOverview } from './Latch/LatchOverview.ts'
 import { SramCellAnimation } from './SramCell/SramCellAnimation.ts'
@@ -68,6 +70,22 @@ export class CpuAlgorithmCatalog {
       case 'register-renaming': return new RegisterRenamingAnimation()
       case 'return-stack': return new ReturnStackAnimation()
     }
+  }
+
+  public static forGroup(group: HardwareFundamentalGroupKind): readonly CpuAlgorithmChoice[] {
+    const component = AdvancedAlgorithmCatalog.getGroup(group).component
+    const choices: CpuAlgorithmChoice[] = []
+    for (const choice of this.choices) {
+      if (component && choice.components.includes(component)) choices.push(choice)
+    }
+    return choices
+  }
+
+  public static groupFor(kind: CpuAlgorithmKind): HardwareFundamentalGroupKind {
+    for (const choice of this.choices) {
+      if (choice.kind === kind) return AdvancedAlgorithmCatalog.fundamentalGroupFor(choice.components)
+    }
+    throw new RangeError('Unknown fundamental hardware overview')
   }
 
   public static describeOverview(kind: CpuAlgorithmKind): SystemOverviewInformation {
