@@ -40,6 +40,6 @@ export class TranslationAnimation extends HardwareLesson {
       model.walkNext()
       trace.record(model.snapshot(), `Refill reads level ${level}`, 'Follow the table-walk arrow to the next descriptor. The final descriptor points to the replacement frame.', `read L${level} descriptor`)
     }
-    trace.record(model.snapshot(), 'Refill from the new mapping', `The new walk computes PA 0x${model.physical!.toString(16)}. The page offset is unchanged. Four additional descriptor reads were executed.`, 'TLB miss -> L0 -> L1 -> L2 -> L3 -> new PA', 2)
+    trace.explain(`The new walk computes PA 0x${model.physical!.toString(16)}. The page offset is unchanged. Four additional descriptor reads were executed.`, 2)
   }
 }

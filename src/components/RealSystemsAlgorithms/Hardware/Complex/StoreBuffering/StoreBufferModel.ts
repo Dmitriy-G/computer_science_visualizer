@@ -44,6 +44,12 @@ export class StoreBufferModel {
     return this.memory[address]
   }
 
+  public inspectForwarding(core: number): number {
+    this.flow = 'forward'
+    this.flowCore = core
+    return this.load(core, core === 0 ? 'x' : 'y')
+  }
+
   public advance(core: number): boolean {
     this.flowCore = core
     this.flow = this.pc[core] === 0 ? 'store' : 'fence'
@@ -108,7 +114,7 @@ export class StoreBufferModel {
       else if (this.pc[core] === 1 && this.fence !== 'none') instruction = this.fence
       else if (this.pc[core] === loadPc) instruction = `MOV r${core},[${other}]`
       banks.push({ name: `Core ${core}`, cells: [
-        { id: `c${core}-pc`, label: 'next CPU instruction', value: instruction, status: this.fence === 'none' ? 'no fence' : this.fence },
+        { id: `c${core}-pc`, label: 'next CPU instruction', value: instruction, status: this.flow === 'fence' && this.flowCore === core && this.fence === 'MFENCE' && this.buffers[core].length ? 'MFENCE: waiting for store' : this.fence === 'none' ? 'no fence' : this.fence },
         { id: `c${core}-buffer`, label: 'store buffer', value: buffer ? `${buffer.address}=${buffer.value}` : 'empty' },
         { id: `c${core}-r`, label: `r${core}`, value: `${this.registers[core] ?? '?'}` },
       ] })
@@ -117,6 +123,6 @@ export class StoreBufferModel {
       { id: 'mem-x', label: 'x', value: `${this.memory.x}` },
       { id: 'mem-y', label: 'y', value: `${this.memory.y}` },
     ] })
-    return new HardwareModel(banks, detail, null, 0, StoreBufferLayout.create(this.flow, this.flowCore))
+    return new HardwareModel(banks, detail, null, 0, StoreBufferLayout.create(this.flow, this.flowCore, this.memory))
   }
 }

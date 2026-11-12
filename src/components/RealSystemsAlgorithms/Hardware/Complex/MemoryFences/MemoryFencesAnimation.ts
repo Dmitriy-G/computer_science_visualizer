@@ -14,27 +14,33 @@ export class MemoryFencesAnimation extends HardwareLesson {
   protected build(trace: HardwareTrace): void {
     const model = new StoreBufferModel('MFENCE')
     trace.record(model.snapshot(), 'Insert MFENCE on both cores', 'Each core stores, fences, then loads the other address.', 'MOV [own],1\nMFENCE\nMOV r,[other]', 0)
-    model.advance(0)
-    model.advance(1)
-    trace.record(model.snapshot(), 'Stores are pending', 'MFENCE must order each earlier store before the later load.', 'C0 and C1: buffer store')
+    for (let core = 0; core < 2; core += 1) {
+      model.advance(core)
+      trace.record(model.snapshot(), `Core ${core} buffers its store`, 'MFENCE must order this earlier store before the later load.', `C${core}: buffer store`)
+    }
     const crossed = model.advance(0)
     trace.record(model.snapshot(), 'MFENCE waits', `Core 0 can cross its fence: ${crossed}. Its store is still pending.`, 'MFENCE: wait for earlier accesses')
     for (let core = 0; core < 2; core += 1) {
       model.drain(core)
+      trace.record(model.snapshot(), `Core ${core} publishes its store`, 'The buffered write becomes visible before this core crosses MFENCE.', `drain C${core}`)
       model.advance(core)
+      trace.record(model.snapshot(), `Core ${core} crosses MFENCE`, 'The earlier store is now visible, so the fence releases the following load.', `C${core}: MFENCE`)
       model.advance(core)
-      trace.record(model.snapshot(), `Core ${core} crosses MFENCE`, 'After its store becomes visible the later load can proceed.', `drain C${core}; MFENCE; load`)
+      trace.record(model.snapshot(), `Core ${core} performs its later load`, 'Read the other core\'s location after the local fence.', `C${core}: load`)
     }
     for (const fence of ['none', 'MFENCE', 'SFENCE', 'LFENCE'] as const) {
-      trace.record(model.snapshot(), `${fence}: litmus outcomes`, `Exhaustive (r0,r1) outcomes with ${fence} on both cores: ${new StoreBufferModel(fence).outcomes().join('; ')}. Only MFENCE removes (0,0) here.`, `enumerate store; ${fence}; load`)
+      trace.explain(`Exhaustive (r0,r1) outcomes with ${fence} on both cores: ${new StoreBufferModel(fence).outcomes().join('; ')}.`)
     }
     let wc = new MemoryFenceModel()
+    trace.record(wc.snapshot(), 'Restart with a WC payload and WB flag', 'Begin a separate memory-type example with a buffered payload and an unpublished flag.', 'WC payload pending; WB flag=0', 0)
     wc.publishFlag(false)
     trace.record(wc.snapshot(), 'WC payload without SFENCE', 'The WB flag can become visible while the WC payload write remains pending. This is a different memory type from the litmus.', 'MOV [WC payload],42\nMOV [WB flag],1')
     wc = new MemoryFenceModel()
+    trace.record(wc.snapshot(), 'Repeat with SFENCE', 'Reset the payload and flag before adding store ordering.', 'WC payload pending; WB flag=0', 0)
     const published = wc.publishFlag(true)
     trace.record(wc.snapshot(), 'SFENCE orders stores', `Flag publication allowed: ${published}. The earlier WC payload store must be ordered first.`, 'MOV [WC payload],42\nSFENCE\nMOV [WB flag],1')
     wc.completeWc()
+    trace.record(wc.snapshot(), 'Publish the WC payload', 'The earlier payload write reaches shared memory before flag publication.', 'complete WC store')
     wc.publishFlag(true)
     trace.record(wc.snapshot(), 'Payload before flag', 'The payload store completes before the flag is published in this example.', 'complete WC store; publish flag')
     wc.issueLoad()

@@ -63,6 +63,6 @@ export class InstructionSyncModel {
         { id: 'ic-1', label: 'I-cache', value: this.instruction[1] === null ? 'invalid' : `MOV w0,#${this.instruction[1]}` },
         { id: 'pipe-1', label: 'fetched stream', value: this.pipeline[1] === null ? 'refetch needed' : `MOV w0,#${this.pipeline[1]}` },
       ] },
-    ], 'Arm AArch64 generated-code example: cacheable Inner Shareable code, distinct data/instruction paths, explicit maintenance required (no IDC/DIC shortcuts). Both cores cooperate before executing modified code. IC invalidation is scoped to participating caches; ISB affects only the executing core. No concurrent unsafe patching or persistence claim.', null, 0, InstructionSyncLayout.create(this.flow, this.flowCore))
+    ], 'Arm AArch64 generated-code example: cacheable Inner Shareable code, distinct data/instruction paths, explicit maintenance required (no IDC/DIC shortcuts). Both cores cooperate before executing modified code. IC invalidation is scoped to participating caches; ISB affects only the executing core. No concurrent unsafe patching or persistence claim.', null, 0, InstructionSyncLayout.create(this.flow, this.flowCore, this.data, this.pou))
   }
 }

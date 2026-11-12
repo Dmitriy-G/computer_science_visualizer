@@ -151,6 +151,7 @@ export default class Renderer extends Component<
     const normalY = dx / length
     return (
       <g key={edge.id} className="scene-edge-group" style={{ opacity: edge.opacity }}>
+        {edge.message && <title>{edge.message}</title>}
         <path
           className={`scene-edge${edge.highlighted ? ' scene-edge-highlighted' : ''}${edge.flow ? ' scene-edge-flow' : ''}`}
           d={curve ? `M ${x1} ${y1} Q ${middleX + normalX * curve * 2} ${middleY + normalY * curve * 2} ${x2} ${y2}` : bend ? `M ${x1} ${y1} Q ${middleX} ${middleY + bend * 2} ${x2} ${y2}` : `M ${x1} ${y1} L ${x2} ${y2}`}
@@ -299,7 +300,7 @@ export default class Renderer extends Component<
     return (
       <svg
         ref={this.svg}
-        className={`scene-svg${this.state.actualSize ? ' scene-svg--actual' : ''}`}
+        className={`scene-svg${scene.kind === 'hardware-system' ? ' scene-svg--hardware-system' : ''}${this.state.actualSize ? ' scene-svg--actual' : ''}`}
         width={scene.width}
         height={scene.height}
         viewBox={`0 0 ${scene.width} ${scene.height}`}
@@ -357,13 +358,21 @@ export default class Renderer extends Component<
     const descriptions: string[] = []
     for (const region of scene.regions) descriptions.push(region.label)
     for (const edge of scene.edges) {
-      if (edge.highlighted) descriptions.push(`${edge.label}: ${nodes.get(edge.from)?.label} to ${nodes.get(edge.to)?.label}`)
+      if (edge.highlighted) descriptions.push(`${edge.message ?? edge.label}: ${nodes.get(edge.from)?.label} to ${nodes.get(edge.to)?.label}`)
     }
     return ` Hardware regions and current transactions: ${descriptions.join('. ')}.`
   }
 
   public render() {
     const scene = this.props.scene
+    let transfer: SceneEdge | undefined
+    let local: SceneNode | undefined
+    if (scene?.kind === 'hardware-system') {
+      for (const edge of scene.edges) if (edge.highlighted) transfer = edge
+      if (!transfer) {
+        for (const node of scene.nodes) if (node.id === scene.focusId) local = node
+      }
+    }
     return (
       <section className="renderer" aria-label="Visualization workspace">
         <div className="renderer-content">
@@ -412,6 +421,17 @@ export default class Renderer extends Component<
                         <path d="M14 4h6v6M20 4l-7 7M10 20H4v-6M4 20l7-7" />
                       </svg>
                     </button>
+                  </div>
+                )}
+                {scene.kind === 'hardware-system' && (
+                  <div className="hardware-transfer" role="status" aria-live="polite" aria-atomic="true">
+                    {transfer ? <>
+                      <svg width="30" height="16" viewBox="0 0 30 16" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true" focusable="false">
+                        <path d="M1 8h26" strokeDasharray="4 3" />
+                        <path d="m22 3 6 5-6 5" />
+                      </svg>
+                      <span>{transfer.message ?? transfer.label}</span>
+                    </> : local ? <span>Local update: {local.label} = {local.displayValue ?? local.value}{local.status ? ` (${local.status})` : ''}</span> : <span>Initial state · no transfer</span>}
                   </div>
                 )}
               </div>

@@ -42,6 +42,20 @@
   margin-left: auto;
   gap: 6px;
 }
+.hardware-transfer {
+  display: flex;
+  flex-basis: 100%;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 20px;
+  color: #2563bd;
+  font: 12px/20px var(--mono);
+  overflow-wrap: anywhere;
+}
+.hardware-transfer svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
 .diagram-size-controls button {
   display: inline-grid;
   place-items: center;
@@ -188,6 +202,9 @@
 }
 .scene-edge-group {
   transition: opacity 450ms ease;
+}
+.scene-svg--hardware-system .scene-edge-group {
+  transition: none;
 }
 .scene-edge {
   fill: none;

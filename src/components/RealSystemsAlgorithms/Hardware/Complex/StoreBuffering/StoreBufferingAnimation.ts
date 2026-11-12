@@ -17,7 +17,8 @@ export class StoreBufferingAnimation extends HardwareLesson {
       model.advance(core)
       trace.record(model.snapshot(), `Core ${core} buffers a store`, 'The local store has issued but is not yet globally visible.', `C${core}: MOV [${core === 0 ? 'x' : 'y'}],1`)
     }
-    trace.record(model.snapshot(), 'Local forwarding', `A same-address load by core 0 would get ${model.load(0, 'x')} from its own buffer; shared x is still ${model.memory.x}. This inspection is outside the litmus.`, 'inspect C0 forwarding: [x] -> 1')
+    const forwarded = model.inspectForwarding(0)
+    trace.record(model.snapshot(), 'Local forwarding', `A same-address load by core 0 would get ${forwarded} from its own buffer; shared x is still ${model.memory.x}. This inspection is outside the litmus and does not write r0.`, 'inspect C0 forwarding: [x] -> 1')
     for (let core = 0; core < 2; core += 1) {
       model.advance(core)
       trace.record(model.snapshot(), `Core ${core} reads zero`, 'A load from the other address bypasses the local pending store.', `C${core}: MOV r${core},[${core === 0 ? 'y' : 'x'}]`)
@@ -25,7 +26,7 @@ export class StoreBufferingAnimation extends HardwareLesson {
     model.drain(0)
     trace.record(model.snapshot(), 'Publish x', 'Drain core 0\'s oldest buffered store into coherent shared memory.', 'C0 buffer -> shared x')
     model.drain(1)
-    trace.record(model.snapshot(), 'Publish y', 'Draining the stores does not retroactively change the earlier loads.', 'C1 buffer -> shared y')
-    trace.record(model.snapshot(), 'Enumerate permitted outcomes', `Exploring every finite instruction/drain interleaving gives (r0,r1): ${model.outcomes().join('; ')}. This trace witnessed (0,0).`, 'explore(enabled instruction steps, FIFO drains)', 2)
+    trace.record(model.snapshot(), 'Publish y', 'Draining the stores does not retroactively change the earlier loads.', 'C1 buffer -> shared y', 2)
+    trace.explain(`Exploring every finite instruction/drain interleaving gives (r0,r1): ${model.outcomes().join('; ')}. This trace witnessed (0,0).`)
   }
 }

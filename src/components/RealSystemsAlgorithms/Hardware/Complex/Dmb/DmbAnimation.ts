@@ -21,6 +21,7 @@ export class DmbAnimation extends HardwareLesson {
     plain.readData()
     trace.record(plain.view(), 'Unordered observation', `The consumer got flag=${plain.observedFlag}, data=${plain.observedData}.`, 'LDR flag -> 1\nLDR data -> 0')
     const ordered = new DmbModel(true)
+    trace.record(ordered.view(), 'Restart with DMB ordering', 'Reset the same data and flag for a producer and consumer using DMB.', 'data=0; flag=0; consumer registers unread', 0)
     const allowed = ordered.publish()
     trace.record(ordered.view(), 'DMB ISHST constrains publication', `Flag may pass pending data: ${allowed}. DMB supplies an ordering constraint; this is not a cache flush.`, 'STR data,42\nDMB ISHST\nSTR flag,1')
     ordered.publishData()
@@ -28,7 +29,9 @@ export class DmbAnimation extends HardwareLesson {
     ordered.publish()
     trace.record(ordered.view(), 'Publish flag after the data', 'After producer-side DMB ordering, the flag-store arrow publishes 1 after data 42.', 'C0: DMB ISHST\nSTR flag,1')
     ordered.readFlag(false)
-    trace.record(ordered.view(), 'Consumer reads flag then orders its next load', 'Core 1 observes flag 1 and uses DMB ISHLD before loading data. Both CPUs are inside the selected scope.', 'C1: LDR flag -> 1\nDMB ISHLD')
+    trace.record(ordered.view(), 'Consumer reads the published flag', 'Core 1 observes flag 1. Its data load has not executed yet.', 'C1: LDR flag -> 1')
+    ordered.orderRead()
+    trace.record(ordered.view(), 'Consumer orders its next load', 'DMB ISHLD orders the flag load before the following data load. Both CPUs are inside the selected scope.', 'C1: DMB ISHLD')
     ordered.readData()
     trace.record(ordered.view(), 'Ordered producer and consumer', `Flag=${ordered.observedFlag}, data=${ordered.observedData}. Reader DMB ISHLD orders flag-load before data-load.`, 'LDR flag -> 1\nDMB ISHLD\nLDR data -> 42', 2)
   }

@@ -43,6 +43,7 @@ export interface SceneEdge {
   readonly curveOffset?: number
   readonly loopRadius?: number
   readonly flow?: boolean
+  readonly message?: string
 }
 
 export interface SceneRegion {

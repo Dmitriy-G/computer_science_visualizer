@@ -27,7 +27,7 @@ export class LseAtomicsAnimation extends HardwareLesson {
     loop.stxr(1, loop.loaded[1] + 1)
     trace.record(loop.snapshot(), 'Exclusive loop completes', 'Counter reaches 2 after software retries. These are instruction events, not cycle counts.', 'C1: LDXR; ADD; STXR -> success')
     const model = new LseAtomicModel()
-    trace.record(model.snapshot(), 'Restart with LSE', 'The counter starts again at zero. AL variants explicitly request acquire/release ordering.', 'MOV wDelta,#1\nLDADDAL wDelta,wOld,[counter]')
+    trace.record(model.snapshot(), 'Restart with LSE', 'The counter starts again at zero. AL variants explicitly request acquire/release ordering. Diagram transfers show presentation stages of each indivisible instruction, without exposing internal implementation.', 'MOV wDelta,#1\nLDADDAL wDelta,wOld,[counter]', 0)
     for (let core = 0; core < 2; core += 1) {
       const old = model.ldadd(core, 1)
       trace.record(model.snapshot(), `Core ${core}: LDADDAL`, `Atomically return old=${old} and add one. There is no software STXR-status retry in this instruction sequence.`, `C${core}: LDADDAL 1 -> old ${old}`)

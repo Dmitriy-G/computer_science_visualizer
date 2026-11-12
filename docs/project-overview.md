@@ -50,7 +50,15 @@ and shared memory roles with directional transaction paths. Complex diagrams use
 large CPU, Bus/Interconnect, and Memory-system boundaries. Each has internal
 interfaces and component flows, with routed transfers between the large blocks. DSB distinguishes
 CPU-to-cache requests, cache-to-PoU data transfer, completion responses, and CPU
-continuation. HardwareDiagram and HardwareSceneLayout in src/visualization share
+continuation. Complex playback expands logical events into individual interface
+transfers or local cell updates, displaying one interaction per step. Receiver
+values change on arrival; waits have explicit statuses. A short caption below
+the legend identifies the active arrow's data, request, response, or control
+message and its contents, preserved across interface hops. Scenario resets use
+initial-state frames, and narration-only summaries reuse an existing frame.
+These detailed lessons remain bounded to 256 interaction frames with fixed scene
+bounds; the stages do not imply processor cycles or atomic-operation internals.
+HardwareDiagram and HardwareSceneLayout in src/visualization share
 region geometry and flow metadata across Fundamental CPU and Complex lessons; they
 do not imply a vendor's exact physical wiring. Other leaves are empty until implemented.
 Use npm for dependency management.

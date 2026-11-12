@@ -24,6 +24,7 @@ export class AcquireReleaseAnimation extends HardwareLesson {
     plain.readData()
     trace.record(plain.view('plain'), 'An early data read can be stale', `Plain loads can produce flag=${plain.observedFlag}, data=${plain.observedData} because the data load occurred early. Coherence alone does not order these locations.`, 'early LDR data -> 0\nthen LDR flag -> 1')
     const model = new AcquireReleaseModel()
+    trace.record(model.view(), 'Restart with acquire/release', 'Reset the same data and flag before using STLR and LDAR.', 'data=0; flag=0; consumer registers unread', 0)
     const published = model.stlr()
     trace.record(model.view(), 'Release constrains earlier accesses', `Release may publish ahead of pending data: ${published}.`, 'STR data,42\nSTLR flag,1')
     model.publishData()

@@ -46,7 +46,7 @@ export class MemoryFenceModel {
       { id: 'wc', label: 'WC payload', value: `${this.payload}`, status: this.wcPending ? 'write pending' : 'write complete' },
       { id: 'flag', label: 'WB flag', value: `${this.flag}` },
       { id: 'load', label: 'earlier load', value: this.loadComplete ? 'complete' : 'pending' },
-      { id: 'later', label: 'later execution', value: this.laterExecuted ? 'executed' : 'waiting' },
+      { id: 'later', label: 'later execution', value: this.laterExecuted ? 'executed' : 'waiting', status: this.flow === 'blocked-load' ? 'LFENCE: waiting for earlier load' : undefined },
     ] }], 'Intel x86. Payload uses explicitly write-combining (WC) memory; flag uses write-back (WB). SFENCE orders stores. LFENCE orders loads and has local execution-ordering semantics. No fence here promises persistence.', null, 0, MemoryFenceLayout.create(this.flow))
   }
 }

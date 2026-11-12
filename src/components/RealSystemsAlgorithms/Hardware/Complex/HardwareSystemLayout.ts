@@ -276,9 +276,10 @@ export class HardwareSystemLayout {
 
   private add(edge: SceneEdge, from: string, to: string, label: string, shared = false): void {
     if (from === to) return
-    const id = shared ? `${from}:${to}` : `${edge.id}:${from}:${to}`
-    const previous = this.edges.get(id)
-    const highlighted = edge.highlighted || previous?.highlighted === true
+    // Preserve each logical route in order, including shared interface segments.
+    // Merging these segments interleaves simultaneous requests and responses.
+    const id = `${edge.id}:${from}:${to}`
+    const highlighted = edge.highlighted
     const betweenPackages = from === this.cpuPort && to === this.busPort || from === this.busPort && to === this.cpuPort
     this.edges.set(id, {
       ...edge, id, from, to, label, highlighted, flow: highlighted,

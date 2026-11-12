@@ -1,47 +1,46 @@
 import type { ActionDefinition, ActionPlan } from '../../../../visualization/ActionDefinition.ts'
 import type { AlgorithmInformation } from '../../../../visualization/AlgorithmInformation.ts'
-import type { AnimationStep } from '../../../../visualization/Scene.ts'
+import type { AnimationStep, SceneNode } from '../../../../visualization/Scene.ts'
 import { HardwareLayout } from './HardwareLayout.ts'
 import { HardwareModel } from './HardwareModel.ts'
+import { HardwareInteractions } from './HardwareInteractions.ts'
 
 export class HardwareTrace {
   public readonly steps: AnimationStep[] = []
   public result = new HardwareModel()
 
   public record(model: HardwareModel, title: string, description: string, code: string, phase = 1): void {
-    if (this.steps.length >= 96) throw new RangeError('Hardware lesson exceeds its event bound')
-    const previous = new Map<string, string>()
-    for (const bank of this.result.banks) {
-      for (const cell of bank.cells) previous.set(cell.id, JSON.stringify([cell.value, cell.status]))
-    }
-    for (const cell of this.result.diagram?.fixtures ?? []) previous.set(cell.id, JSON.stringify([cell.value, cell.status]))
     const copy = model.clone()
-    this.result = new HardwareModel(copy.banks, copy.detail, copy.focusId, this.steps.length + 1, copy.diagram)
-    const scene = HardwareLayout.create(this.result)
-    const changed = new Set<string>()
-    for (const bank of copy.banks) {
-      for (const cell of bank.cells) {
-        if (previous.get(cell.id) !== JSON.stringify([cell.value, cell.status])) changed.add(cell.id)
+    const scene = { ...HardwareLayout.create(copy), countLabel: 'diagram interactions' }
+    const previous = this.steps.at(-1)?.scene
+    if (!previous || phase === 0) {
+      const nodes = new Map<string, SceneNode>()
+      for (const node of scene.nodes) nodes.set(node.id, node)
+      this.steps.push({ phase, title, description, code, duration: 1100,
+        scene: { ...HardwareInteractions.frame(scene, nodes, null, null), count: this.steps.length + 1 } })
+    } else {
+      const interactions = HardwareInteractions.create(previous, scene)
+      for (let index = 0; index < interactions.length; index += 1) {
+        const interaction = interactions[index]
+        const last = index === interactions.length - 1
+        this.steps.push({
+          phase: phase === 2 && !last ? 1 : phase,
+          title, code, duration: 1100,
+          description: `${interaction.description} ${last ? description : title + '.'}`,
+          scene: { ...interaction.scene, count: this.steps.length + 1 },
+        })
       }
+      if (!interactions.length) this.explain(description, phase)
     }
-    for (const cell of copy.diagram?.fixtures ?? []) {
-      if (previous.get(cell.id) !== JSON.stringify([cell.value, cell.status])) changed.add(cell.id)
-    }
-    let focusId = model.focusId
-    const edges = []
-    for (const edge of scene.edges) {
-      edges.push(changed.size ? edge : { ...edge, highlighted: false, flow: false, opacity: 0.45 })
-    }
-    const nodes = []
-    for (const node of scene.nodes) {
-      let current = phase !== 0 && changed.has(node.id)
-      for (const edge of edges) {
-        if (edge.highlighted && (edge.from === node.id || edge.to === node.id)) current = true
-      }
-      if (current && focusId === null) focusId = node.id
-      nodes.push({ ...node, tone: current ? 'active' as const : node.tone })
-    }
-    this.steps.push({ phase, title, description, code, duration: 1100, scene: { ...scene, nodes, edges, focusId } })
+    if (this.steps.length > 256) throw new RangeError('Hardware lesson exceeds its interaction bound')
+    this.result = new HardwareModel(copy.banks, copy.detail, copy.focusId, this.steps.length, copy.diagram)
+  }
+
+  public explain(description: string, phase?: number): void {
+    const index = this.steps.length - 1
+    const previous = this.steps[index]
+    if (!previous) throw new Error('Record an initial hardware state before its explanation')
+    this.steps[index] = { ...previous, description: `${previous.description} ${description}`, phase: phase ?? previous.phase }
   }
 }
 
@@ -50,7 +49,7 @@ export abstract class HardwareLesson implements ActionDefinition<HardwareModel> 
   public readonly context = 'Hardware / Complex'
   public readonly summary = 'A bounded instruction trace through interacting hardware components.'
   public readonly phases = ['Initial state', 'Hardware events', 'Result']
-  public readonly timelineHint = 'Deterministic events, not processor cycles'
+  public readonly timelineHint = 'One diagram interaction per step, not processor cycles'
   protected abstract build(trace: HardwareTrace): void
 
   public create(_source: HardwareModel): ActionPlan<HardwareModel> {

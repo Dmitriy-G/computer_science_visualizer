@@ -35,6 +35,9 @@ export class PublicationModel {
     this.flow = 'data-load'
     return this.observedData
   }
+  public orderRead(): void {
+    this.flow = 'read-order'
+  }
   public snapshot(detail: string, mode: 'plain' | 'dmb' | 'acquire-release' = 'plain'): HardwareModel {
     return new HardwareModel([
       { name: 'Shared', cells: [
@@ -46,6 +49,6 @@ export class PublicationModel {
         { id: 'seen-data', label: 'data register', value: `${this.observedData ?? '?'}` },
         { id: 'early-data', label: 'early data read', value: `${this.earlyData ?? 'none'}` },
       ] },
-    ], detail, null, 0, PublicationLayout.create(mode, this.flow, this.earlyData !== null))
+    ], detail, null, 0, PublicationLayout.create(mode, this.flow, this.earlyData !== null, this.data, this.flag, this.earlyData))
   }
 }

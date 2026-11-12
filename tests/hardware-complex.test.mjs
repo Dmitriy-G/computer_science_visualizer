@@ -3,6 +3,8 @@ import { test } from 'node:test'
 import { HardwareAlgorithmCatalog } from '../src/components/RealSystemsAlgorithms/Hardware/Complex/HardwareAlgorithmCatalog.ts'
 import { HardwareModel } from '../src/components/RealSystemsAlgorithms/Hardware/Complex/HardwareModel.ts'
 import { HardwareLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Complex/HardwareLayout.ts'
+import { HardwareTrace } from '../src/components/RealSystemsAlgorithms/Hardware/Complex/HardwareLesson.ts'
+import { HardwareDiagram } from '../src/visualization/HardwareDiagram.ts'
 import { StoreBufferModel } from '../src/components/RealSystemsAlgorithms/Hardware/Complex/StoreBuffering/StoreBufferModel.ts'
 import { MemoryFenceModel } from '../src/components/RealSystemsAlgorithms/Hardware/Complex/MemoryFences/MemoryFenceModel.ts'
 import { DmbModel } from '../src/components/RealSystemsAlgorithms/Hardware/Complex/Dmb/DmbModel.ts'
@@ -27,7 +29,7 @@ test('all twelve Complex lessons have deterministic independent scenes with fixe
     const plan = definition.create(source, 0)
     assert.deepEqual(source, before)
     assert.deepEqual(plan, definition.create(source, 0))
-    assert.ok(plan.steps.length > 2 && plan.steps.length <= 96)
+    assert.ok(plan.steps.length > 2 && plan.steps.length <= 256)
     assert.equal(plan.result.events, plan.steps.length)
     assert.equal(plan.steps[0].phase, 0)
     assert.equal(plan.steps.at(-1).phase, 2)
@@ -91,6 +93,101 @@ test('all twelve Complex lessons have deterministic independent scenes with fixe
     assert.ok(crossings.has('system-bus:system-cpu'), choice.name)
     assert.ok(crossings.has('system-bus:system-memory'), choice.name)
   }
+})
+
+test('each Complex event displays one transfer segment or one local state update', () => {
+  for (const choice of HardwareAlgorithmCatalog.choices) {
+    const plan = HardwareAlgorithmCatalog.definition(choice.kind).create(new HardwareModel(), 0)
+    for (let index = 0; index < plan.steps.length; index += 1) {
+      const step = plan.steps[index]
+      const active = step.scene.edges.filter((edge) => edge.highlighted)
+      const visible = step.scene.edges.filter((edge) => edge.opacity > 0)
+      assert.ok(active.length <= 1, `${choice.kind}: ${step.title} bundles transfers`)
+      assert.deepEqual(visible, active)
+      assert.equal(step.scene.count, index + 1)
+      if (step.phase === 0) {
+        assert.equal(active.length, 0)
+        continue
+      }
+      const previous = new Map(plan.steps[index - 1].scene.nodes.map((node) => [node.id, node]))
+      const changed = step.scene.nodes.filter((node) => {
+        const old = previous.get(node.id)
+        return !old || old.displayValue !== node.displayValue || old.status !== node.status
+      })
+      const current = step.scene.nodes.filter((node) => node.tone === 'active')
+      if (active.length) {
+        const edge = active[0]
+        assert.match(edge.message, /^(Data|Request|Response|Control): /, `${choice.kind}: missing transfer contents`)
+        assert.equal(edge.flow, true)
+        assert.equal(step.scene.focusId, edge.to)
+        assert.deepEqual(new Set(current.map((node) => node.id)), new Set([edge.from, edge.to]))
+        assert.ok(changed.every((node) => node.id === edge.from || node.id === edge.to), `${choice.kind}: unrelated value changes during a transfer`)
+      } else {
+        assert.equal(changed.length, 1, `${choice.kind}: ${step.title} has no single visible update`)
+        assert.deepEqual(current.map((node) => node.id), [changed[0].id])
+      }
+    }
+  }
+})
+
+test('a publication follows the interfaces in order and changes memory only on arrival', () => {
+  const model = new DmbModel(false)
+  const trace = new HardwareTrace()
+  trace.record(model.view(), 'Initial', 'Initial values', '', 0)
+  model.publishData()
+  trace.record(model.view(), 'Publish data', 'Publish 42', '', 2)
+  const transfers = trace.steps.slice(1)
+  const route = ['producer-data', 'system-cpu-port', 'system-bus-port', 'system-bus-memory-port', 'system-memory-port', 'data']
+  assert.equal(transfers.length, route.length - 1)
+  for (let index = 0; index < transfers.length; index += 1) {
+    const scene = transfers[index].scene
+    const edge = scene.edges.find((candidate) => candidate.highlighted)
+    assert.deepEqual([edge.from, edge.to], route.slice(index, index + 2))
+    assert.equal(edge.message, 'Data: write data = 42')
+    assert.equal(scene.nodes.find((node) => node.id === 'data').displayValue, index === transfers.length - 1 ? '42' : '0')
+  }
+  transfers.at(-1).scene.regions[0].label = 'changed region'
+  assert.notEqual(transfers[0].scene.regions[0].label, 'changed region')
+  assert.equal(trace.result.banks[0].cells.find((cell) => cell.id === 'data').value, '42')
+})
+
+test('transactions with unchanged payloads remain visible and narration adds no idle frame', () => {
+  const model = new DmbModel(false)
+  const trace = new HardwareTrace()
+  trace.record(model.view(), 'Initial', 'Initial', '', 0)
+  model.readFlag(false)
+  trace.record(model.view(), 'First read', 'Read zero', '')
+  const count = trace.steps.length
+  model.readFlag(false)
+  trace.record(model.view(), 'Read again', 'Read the same zero again', '')
+  assert.equal(trace.steps.length, count + 5)
+  assert.equal(trace.steps.at(-1).scene.edges.filter((edge) => edge.highlighted).length, 1)
+  const beforeExplanation = trace.steps.length
+  trace.explain('The flag is still zero.', 2)
+  assert.equal(trace.steps.length, beforeExplanation)
+  assert.equal(trace.steps.at(-1).phase, 2)
+  assert.match(trace.steps.at(-1).description, /The flag is still zero/)
+
+  const diagram = new HardwareDiagram().region('core', 'CPU', 'cpu', 0, 0, 300, 300).place('value', 100, 100)
+  const idle = new HardwareModel([{ name: 'Core', cells: [{ id: 'value', label: 'register', value: '0' }] }], '', null, 0, diagram)
+  const local = new HardwareTrace()
+  local.record(idle, 'Initial', 'Initial', '', 0)
+  local.record(idle, 'No operation', 'Explanation only', '', 2)
+  assert.equal(local.steps.length, 1)
+  assert.equal(local.steps[0].phase, 2)
+})
+
+test('locked-update presentation retains ownership until the result has returned', () => {
+  const plan = HardwareAlgorithmCatalog.definition('locked-atomics').create(new HardwareModel(), 0)
+  const update = plan.steps.filter((step) => step.title === 'Core 0 commits XADD')
+  assert.ok(update.length > 2)
+  for (const step of update.slice(0, -1)) {
+    assert.equal(step.scene.nodes.find((node) => node.id === 'owner').displayValue, 'Core 0')
+  }
+  const last = update.at(-1).scene
+  assert.equal(last.nodes.find((node) => node.id === 'owner').displayValue, 'available')
+  assert.equal(last.nodes.find((node) => node.id === 'counter').displayValue, '1')
+  assert.equal(last.nodes.find((node) => node.id === 'old-0').displayValue, '0')
 })
 
 test('store buffering explores all outcomes and only MFENCE rules out both-zero', () => {
@@ -248,6 +345,11 @@ test('LSE operations return old values and CAS mismatch preserves the counter', 
   assert.equal(model.cas(0, 2, 9), true)
   assert.equal(model.swp(1, 5), 9)
   assert.equal(model.value, 5)
+  assert.equal(model.snapshot().diagram.edges.find((edge) => edge.id === 'return-1').message, 'Data: return old counter = 9')
+  model.cas(0, 5, 12)
+  const snapshot = model.snapshot()
+  assert.equal(snapshot.diagram.edges.find((edge) => edge.id === 'rmw-0').message, 'Request: CASAL counter, expected = 5, new = 12')
+  assert.equal(snapshot.diagram.edges.find((edge) => edge.id === 'return-0').message, 'Data: return old counter = 5')
 })
 
 test('x86 locked updates exclude competing ownership and preserve failed comparisons', () => {

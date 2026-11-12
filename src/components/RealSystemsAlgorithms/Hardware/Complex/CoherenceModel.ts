@@ -109,8 +109,10 @@ export abstract class CoherenceModel {
 
   public snapshot(): HardwareModel {
     const cells = []
+    const lines: string[] = []
     for (let index = 0; index < this.caches.length; index += 1) {
       const cache = this.caches[index]
+      lines.push(`x=${cache.x}, y=${cache.y}`)
       cells.push({ id: `cache-${index}`, label: `C${index} line`, value: cache.state === 'I' ? 'I' : `${cache.state}: ${cache.x},${cache.y}`, status: 'state: x,y' })
     }
     return new HardwareModel([
@@ -119,6 +121,6 @@ export abstract class CoherenceModel {
         { id: 'memory', label: 'line x,y', value: `${this.memory.x},${this.memory.y}`, status: 'may lag a dirty owner' },
         { id: 'transfer', label: 'last transaction', value: this.transfer },
       ] },
-    ], `${this.protocol === 'MOESI' ? 'Cortex-A53 coherent L1 data caches: M Modified, O Owned (dirty shared owner), E Exclusive, S Shared, I Invalid.' : 'Xeon 7500-series QuickPath/LLC protocol: M Modified, E Exclusive, S Shared, I Invalid, F Forward (clean responder).'} Three conceptual agents, one shared cache line holding distinct variables x and y. Transfers and responder selection are deterministic teaching choices, not vendor arbitration. Coherence of a line does not order other memory locations.`, null, 0, CoherenceLayout.create(this.protocol, this.flow, this.source, this.target, this.instructions, this.invalidated, this.wroteBack))
+    ], `${this.protocol === 'MOESI' ? 'Cortex-A53 coherent L1 data caches: M Modified, O Owned (dirty shared owner), E Exclusive, S Shared, I Invalid.' : 'Xeon 7500-series QuickPath/LLC protocol: M Modified, E Exclusive, S Shared, I Invalid, F Forward (clean responder).'} Three conceptual agents, one shared cache line holding distinct variables x and y. Transfers and responder selection are deterministic teaching choices, not vendor arbitration. Coherence of a line does not order other memory locations.`, null, 0, CoherenceLayout.create(this.protocol, this.flow, this.source, this.target, this.instructions, this.invalidated, this.wroteBack, lines, `x=${this.memory.x}, y=${this.memory.y}`))
   }
 }

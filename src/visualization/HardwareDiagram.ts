@@ -45,8 +45,8 @@ export class HardwareDiagram {
     return this.place(id, x, y, width)
   }
 
-  public connect(id: string, from: string, to: string, label: string, active = false, curveOffset = 0): this {
-    this.edges.push({ id, from, to, label, highlighted: active, flow: active, curveOffset, directed: true, opacity: active ? 1 : 0.45 })
+  public connect(id: string, from: string, to: string, label: string, active = false, curveOffset = 0, message?: string): this {
+    this.edges.push({ id, from, to, label, message, highlighted: active, flow: active, curveOffset, directed: true, opacity: active ? 1 : 0.45 })
     return this
   }
 

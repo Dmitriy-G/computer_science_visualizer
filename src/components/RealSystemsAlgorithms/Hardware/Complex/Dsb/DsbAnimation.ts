@@ -22,7 +22,7 @@ export class DsbAnimation extends HardwareLesson {
     model.completeClean()
     trace.record(model.snapshot(), 'Completion returns after ADD', 'The memory system reports completion to the CPU. In the DMB run, ADD already executed before this response.', 'PoU -> CPU: clean completion')
     model = new DsbModel()
-    trace.record(model.snapshot(), 'Repeat with DSB', 'Reset the same cache and memory location. The following CPU instruction will now wait for clean completion.', 'D-cache[x0] = 42; PoU[x0] = 0\nDC CVAU,x0\nDSB ISH\nADD x2,x2,#1')
+    trace.record(model.snapshot(), 'Repeat with DSB', 'Reset the same cache and memory location. The following CPU instruction will now wait for clean completion.', 'D-cache[x0] = 42; PoU[x0] = 0\nDC CVAU,x0\nDSB ISH\nADD x2,x2,#1', 0)
     model.issueClean()
     trace.record(model.snapshot(), 'CPU requests the same clean', 'The request follows the same CPU-to-cache path. Changing the barrier changes when execution may continue.', 'CPU -> D-cache: DC CVAU,x0')
     const allowed = model.continueAfter('DSB ISH')
