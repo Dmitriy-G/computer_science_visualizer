@@ -6,6 +6,8 @@ import type {
   SceneNode,
   SceneSlot,
   SceneRegion,
+  SceneBounds,
+  SceneDetailRange,
 } from '../../visualization/Scene.ts'
 import './Renderer.css'
 
@@ -21,19 +23,22 @@ interface RendererState {
   readonly actualSize: boolean
   readonly showSizeControls: boolean
   readonly viewportHeight: number | null
+  readonly camera: SceneBounds | null
 }
 
 export default class Renderer extends Component<
   RendererProps,
   RendererState
 > {
-  public state: RendererState = { actualSize: false, showSizeControls: false, viewportHeight: null }
+  public state: RendererState = { actualSize: false, showSizeControls: false, viewportHeight: null, camera: this.props.scene?.camera?.from ?? null }
   private readonly content = createRef<HTMLDivElement>()
   private readonly tools = createRef<HTMLDivElement>()
   private readonly codeHost = createRef<HTMLDivElement>()
   private readonly viewport = createRef<HTMLDivElement>()
   private readonly svg = createRef<SVGSVGElement>()
   private resizeObserver: ResizeObserver | null = null
+  private cameraFrame: number | null = null
+  private readonly reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
 
   public componentDidMount(): void {
     this.resizeObserver = new ResizeObserver(this.updateSizeControls)
@@ -43,12 +48,16 @@ export default class Renderer extends Component<
     window.visualViewport?.addEventListener('resize', this.updateSizeControls)
     window.visualViewport?.addEventListener('scroll', this.updateSizeControls)
     this.updateSizeControls()
+    this.reducedMotion.addEventListener('change', this.motionChanged)
+    this.moveCamera()
   }
 
   public componentDidUpdate(previous: RendererProps, previousState: RendererState): void {
     this.observeLayout()
     this.updateSizeControls()
-    if (previous.scene?.kind !== this.props.scene?.kind) {
+    const cameraChanged = previous.scene?.camera !== this.props.scene?.camera
+    if (cameraChanged) this.moveCamera()
+    if (previous.scene?.kind !== this.props.scene?.kind || cameraChanged && this.props.scene?.camera) {
       this.viewport.current?.scrollTo({ left: 0, top: 0, behavior: 'instant' })
       if (this.state.actualSize) this.setState({ actualSize: false })
       return
@@ -59,10 +68,63 @@ export default class Renderer extends Component<
   public componentWillUnmount(): void {
     this.resizeObserver?.disconnect()
     this.resizeObserver = null
+    this.cancelCamera()
+    this.reducedMotion.removeEventListener('change', this.motionChanged)
     window.removeEventListener('resize', this.updateSizeControls)
     window.removeEventListener('scroll', this.updateSizeControls)
     window.visualViewport?.removeEventListener('resize', this.updateSizeControls)
     window.visualViewport?.removeEventListener('scroll', this.updateSizeControls)
+  }
+
+  private cancelCamera(): void {
+    if (this.cameraFrame !== null) window.cancelAnimationFrame(this.cameraFrame)
+    this.cameraFrame = null
+  }
+
+  private motionChanged = (): void => {
+    if (this.reducedMotion.matches) {
+      this.cancelCamera()
+      this.setState({ camera: this.props.scene?.camera?.to ?? null })
+    }
+  }
+
+  private moveCamera(): void {
+    this.cancelCamera()
+    const camera = this.props.scene?.camera
+    if (!camera || this.reducedMotion.matches) {
+      this.setState({ camera: camera?.to ?? null })
+      return
+    }
+    const from = this.state.camera ?? camera.from
+    const to = camera.to
+    if (from.x === to.x && from.y === to.y && from.width === to.width && from.height === to.height) {
+      this.setState({ camera: to })
+      return
+    }
+    let started: number | null = null
+    const advance = (time: number): void => {
+      started ??= time
+      const progress = Math.min(1, (time - started) / 1400)
+      const eased = progress * progress * (3 - 2 * progress)
+      const width = from.width * (to.width / from.width) ** eased
+      const height = from.height * (to.height / from.height) ** eased
+      const centerX = from.x + from.width / 2 + (to.x + to.width / 2 - from.x - from.width / 2) * eased
+      const centerY = from.y + from.height / 2 + (to.y + to.height / 2 - from.y - from.height / 2) * eased
+      this.setState({ camera: { x: centerX - width / 2, y: centerY - height / 2, width, height } })
+      this.cameraFrame = progress < 1 ? window.requestAnimationFrame(advance) : null
+    }
+    this.cameraFrame = window.requestAnimationFrame(advance)
+  }
+
+  private detailOpacity(range: SceneDetailRange | undefined, width: number): number {
+    if (!range) return 1
+    return Math.max(0, Math.min(1, (range.startWidth - width) / (range.startWidth - range.endWidth)))
+  }
+
+  public getScene(): Scene | null {
+    const scene = this.props.scene
+    if (!scene?.camera || !this.state.camera) return scene
+    return { ...scene, camera: { from: this.state.camera, to: this.state.camera } }
   }
 
   private observeLayout(): void {
@@ -213,7 +275,7 @@ export default class Renderer extends Component<
     return elements
   }
 
-  private renderNode(node: SceneNode, circular: boolean, showExplicitStatus = false): ReactNode {
+  private renderNode(node: SceneNode, circular: boolean, showExplicitStatus = false, overview = false): ReactNode {
     const width = node.width ?? 66
     const height = node.height ?? 66
     const sideLabels = node.labelPlacement === 'right'
@@ -224,7 +286,7 @@ export default class Renderer extends Component<
     return (
       <g
         key={node.id}
-        className={`scene-node tone-${node.tone}${node.nodeColor ? ` tree-color-${node.nodeColor}` : ''}`}
+        className={`scene-node tone-${node.tone}${node.nodeColor ? ` tree-color-${node.nodeColor}` : ''}${overview ? ' scene-node--overview' : ''}`}
         style={style}
         aria-label={`${node.keys ? node.keys.length ? node.keys.join(', ') : 'empty page' : node.displayValue ?? node.value}, ${node.label}${node.tone === 'active' ? ', current node' : ''}${showExplicitStatus && node.status ? `, ${node.status}` : ''}`}
       >
@@ -248,7 +310,7 @@ export default class Renderer extends Component<
           className="node-value"
           textAnchor="middle"
           dominantBaseline="central"
-          style={{ fontSize: Math.min(21, (width - 16) * 1.6 / String(node.displayValue ?? node.value).length) }}
+          style={{ fontSize: Math.min(overview ? 42 : 21, (width - 16) * 1.6 / Math.max(1, String(node.displayValue ?? node.value).length)) }}
         >
           {node.displayValue ?? node.value}
         </text>}
@@ -297,7 +359,7 @@ export default class Renderer extends Component<
     )
   }
 
-  private renderScene(scene: Scene): ReactNode {
+  private renderElements(scene: Scene, cameraWidth: number): ReactNode {
     const nodeMap = new Map<string, SceneNode>()
     const elements: ReactNode[] = []
     for (const region of scene.regions ?? []) elements.push(this.renderRegion(region))
@@ -308,20 +370,53 @@ export default class Renderer extends Component<
     )
     for (const edge of scene.edges)
       elements.push(this.renderEdge(edge, nodeMap))
-    for (const region of scene.regions ?? []) elements.push(
-      <text key={`region-title-${region.id}`} className={`scene-region-title${region.level === 'system' ? ' scene-region-title--system' : ''}`} x={region.x + 16} y={region.y + 29}>{region.label}</text>,
-    )
+    for (const region of scene.regions ?? []) {
+      const lines: string[] = []
+      if (scene.kind === 'system-overview') {
+        const limit = Math.max(12, Math.floor((region.width - 32) / 9))
+        let line = ''
+        for (const word of region.label.split(' ')) {
+          if (line && line.length + word.length + 1 > limit) {
+            lines.push(line)
+            line = word
+          } else line += `${line ? ' ' : ''}${word}`
+        }
+        if (line) lines.push(line)
+      } else lines.push(region.label)
+      const titles: ReactNode[] = []
+      for (let index = 0; index < lines.length; index += 1) titles.push(<tspan key={index} x={region.x + 16} dy={index === 0 ? 0 : 19}>{lines[index]}</tspan>)
+      elements.push(
+        <text key={`region-title-${region.id}`} className={`scene-region-title${region.level === 'system' ? ' scene-region-title--system' : ''}`} x={region.x + 16} y={region.y + 29}>
+          {titles}
+        </text>,
+      )
+    }
     const circular = scene.kind === 'directed-graph' || scene.kind === 'weighted-graph' || scene.kind === 'dag' || scene.kind === 'multigraph' || scene.kind === 'graph' || scene.kind === 'binary-tree' || scene.kind === 'avl-tree' || scene.kind === 'red-black-tree'
     for (const node of scene.nodes)
-      elements.push(this.renderNode(node, circular || scene.countLabel === 'vertices' && node.id.startsWith(`${scene.kind}-v`), scene.kind === 'hardware-system' || scene.kind === 'cpu-hardware' || scene.kind === 'hardware-component'))
+      elements.push(this.renderNode(node, circular || scene.countLabel === 'vertices' && node.id.startsWith(`${scene.kind}-v`), scene.kind === 'hardware-system' || scene.kind === 'cpu-hardware' || scene.kind === 'hardware-component', scene.kind === 'system-overview'))
+    for (const layer of scene.layers ?? []) {
+      const opacity = this.detailOpacity(layer.reveal, cameraWidth) * (layer.conceal ? 1 - this.detailOpacity(layer.conceal, cameraWidth) : 1)
+      elements.push(
+        <g key={`layer-${layer.id}`} transform={`translate(${layer.x} ${layer.y}) scale(${layer.scale})`} opacity={opacity} aria-hidden={opacity === 0 ? true : undefined}>
+          {this.renderElements(layer.scene, cameraWidth)}
+        </g>,
+      )
+    }
+    return elements
+  }
+
+  private renderScene(scene: Scene): ReactNode {
+    const camera = scene.camera ? this.state.camera ?? scene.camera.from : { x: 0, y: 0, width: scene.width, height: scene.height }
+    const nodeMap = new Map<string, SceneNode>()
+    for (const node of scene.nodes) nodeMap.set(node.id, node)
     return (
       <svg
         ref={this.svg}
         className={`scene-svg${scene.kind === 'hardware-system' || scene.kind === 'cpu-hardware' ? ' scene-svg--hardware-flow' : ''}${this.state.actualSize ? ' scene-svg--actual' : ''}`}
         width={scene.width}
         height={scene.height}
-        viewBox={`0 0 ${scene.width} ${scene.height}`}
-        preserveAspectRatio="xMidYMin meet"
+        viewBox={`${camera.x} ${camera.y} ${camera.width} ${camera.height}`}
+        preserveAspectRatio={scene.camera ? 'xMidYMid meet' : 'xMidYMin meet'}
         style={this.state.actualSize ? { width: scene.width, height: scene.height } : { maxWidth: scene.width }}
         role="img"
         aria-labelledby="scene-title scene-description"
@@ -330,8 +425,8 @@ export default class Renderer extends Component<
           {`${scene.kind.replaceAll('-', ' ')} visualization`}
         </title>
         <desc id="scene-description">
-          {scene.count} {scene.countLabel ?? 'elements'}. Blue marks the current node, teal marks
-          visited nodes, and amber marks the new node.
+          {scene.count} {scene.countLabel ?? 'elements'}.
+          {scene.kind !== 'system-overview' && ' Blue marks the current node, teal marks visited nodes, and amber marks the new node.'}
           {this.describeHardwareFlow(scene, nodeMap)}
           {this.state.showSizeControls && ' Use Fit diagram to see the full structure, or Actual size to scroll through its details.'}
         </desc>
@@ -359,7 +454,7 @@ export default class Renderer extends Component<
             <path d="M 1 1 L 7 4 L 1 7" />
           </marker>
         </defs>
-        {elements}
+        {this.renderElements(scene, camera.width)}
       </svg>
     )
   }
@@ -391,13 +486,13 @@ export default class Renderer extends Component<
       }
     }
     return (
-      <section className="renderer" aria-label="Visualization workspace">
+      <section className={`renderer${scene?.kind === 'system-overview' ? ' renderer--overview' : ''}`} aria-label="Visualization workspace">
         <div className="renderer-content" ref={this.content}>
           {this.props.children}
           <div className="renderer-stage">
             {scene && (
               <div className="diagram-tools" ref={this.tools}>
-                <div className="scene-legend" role="group" aria-label="Node states">
+                {scene.kind !== 'system-overview' && <div className="scene-legend" role="group" aria-label="Node states">
                   <span>
                     <i className="legend-dot current" />
                     Current
@@ -410,7 +505,7 @@ export default class Renderer extends Component<
                     <i className="legend-dot added" />
                     New node
                   </span>
-                </div>
+                </div>}
                 {this.state.showSizeControls && (
                   <div className="diagram-size-controls" role="group" aria-label="Diagram size">
                     <button

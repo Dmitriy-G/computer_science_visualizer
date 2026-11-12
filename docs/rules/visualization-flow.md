@@ -26,8 +26,16 @@
    execution and prediction overviews sharing one CPU-core map; Disk contains
    five storage overviews, and RAM contains the three memory overviews. No static
    test entry is offered. Hardware/Complex opens its flat workspace directly.
-   Keep separate information buttons and start no animation until an overview
-   is selected. Network/Fundamental
+   Keep separate information buttons and start no lesson playback until an overview
+   is selected. Category navigation renders a client, abstract network, and server
+   at System Components Overview. Hardware zooms into that server to reveal CPU,
+   RAM, bus, HDD, SSD, GPU, and network adapter; CPU zooms into the same CPU block
+   to reveal the common core map. Use continuous SVG camera movement and reveal
+   nested details as they grow, with reduced-motion support. Algorithms browsing
+   leaves the diagram unchanged. Hardware, Fundamental, and Complex share the
+   server hardware preview. Network, Disk, and RAM initially
+   show a blank renderer. Selecting a lesson uses its existing scene and playback.
+   Network/Fundamental
    contains Physical, Data Link, Network, Transport, Session, Presentation, and
    Application in OSI layer order. Complex covers systems combining components
    or network layers. OS scheduler lessons have been removed. The Complex workspace lists twelve
@@ -35,8 +43,11 @@
    translation, and instruction synchronization, without CPU/memory subcategories.
    Selecting a lesson starts its bounded trace in the shared renderer. Workspace
    Back and the header menu reopen Fundamental for CPU, Disk, and RAM workspaces,
-   and Hardware for Complex. Returning to the current component or Complex group
-   keeps its playback session; selecting another group opens its idle panel.
+   and Hardware for Complex, ending the lesson and restoring the hardware preview.
+   Returning from CPU to Fundamental zooms out to hardware; returning to System
+   Components Overview zooms out to client/network/server. CPU category selection
+   returns to its core map. Changing groups opens
+   the corresponding category preview without starting lesson playback.
    Search results include the component subcategory and open the corresponding
    workspace with the selected lesson.
    Hardware overview cards in Fundamental and Complex workspace action lists and
@@ -58,8 +69,9 @@
    steps. Combine related events into one step for longer processes. Omit time and
    memory complexities and explanations, Teaching model, and Terms used in this
    action. Algorithm action dialogs retain their existing content.
-   Other empty leaves show that no overviews have been added yet. Back returns
-   through their parents without changing the current visualization or playback.
+   Other empty leaves show that no overviews have been added yet. Back follows
+   their parents; returning to Hardware or System Components Overview zooms to
+   that category's preview, while other parent lists preserve the diagram.
    Structure assignments are defined in `MainMenu/MenuStructureCatalog.ts`,
    and mirrored by canonical model folders under the matching root and subject.
    Fundamental contains Linear, Queue / Priority, Trees, String / Text, Graphs,

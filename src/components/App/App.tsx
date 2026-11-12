@@ -323,9 +323,11 @@ import { ExtendedGraphCatalog } from '../../visualization/ExtendedGraphCatalog.t
 import { ExtendedGraphModel } from '../../visualization/ExtendedGraphModel.ts'
 import { ExtendedGraphFeatures } from '../StructureFeatures/ExtendedGraphFeatures.tsx'
 import { ExtendedGraphTraversalFeatures } from '../DataStructuresAlgorithms/GraphsTraversal/ExtendedGraphTraversalFeatures.tsx'
+import { SystemOverviewLayout } from '../RealSystemsAlgorithms/SystemOverview/SystemOverviewLayout.ts'
 import './App.css'
 
 interface AppState {
+  readonly emptyRenderer: boolean
   readonly hardwareOverview: HardwareOverviewGroupKind | null
   readonly hardwareAlgorithm: HardwareAlgorithmKind | null
   readonly hardwareSession: number
@@ -373,6 +375,7 @@ export default class App extends Component<Record<string, never>, AppState> {
   private readonly aboutButton = createRef<HTMLButtonElement>()
   private menuOpenedFromSearch = false
   private readonly actionMenu = createRef<ActionMenu>()
+  private readonly renderer = createRef<Renderer>()
   private readonly hardwareWorkspace = createRef<HardwareWorkspace>()
   private readonly cpuWorkspace = createRef<CpuWorkspace>()
   private graph = Graph.createDefault()
@@ -389,6 +392,7 @@ export default class App extends Component<Record<string, never>, AppState> {
   constructor(props: Record<string, never>) {
     super(props)
     this.state = {
+      emptyRenderer: false,
       hardwareOverview: null,
       cpuAlgorithm: null,
       hardwareAlgorithm: null,
@@ -427,11 +431,16 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private openMenu = (): void => {
     this.menuOpenedFromSearch = false
-    const hardwareParent = this.state.hardwareOverview ? AdvancedAlgorithmCatalog.getGroup(this.state.hardwareOverview).parent : null
+    if (this.state.hardwareOverview) {
+      const parent = AdvancedAlgorithmCatalog.getGroup(this.state.hardwareOverview).parent
+      const menu = new MenuNavigation('advanced-algorithms', null, 'fundamental', parent)
+      this.showSystemCategory(menu, SystemOverviewLayout.create('hardware', this.currentDiagram()))
+      return
+    }
     this.setState({
       menuOpen: true,
       searchOpen: false,
-      menu: this.state.hardwareOverview ? new MenuNavigation('advanced-algorithms', null, 'fundamental', hardwareParent) : this.state.selected ? MenuNavigation.forStructure(this.state.selected, this.state.selectedScope) : new MenuNavigation(),
+      menu: this.state.selected ? MenuNavigation.forStructure(this.state.selected, this.state.selectedScope) : this.state.emptyRenderer ? this.state.menu : new MenuNavigation(),
     })
   }
 
@@ -464,7 +473,10 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private selectCategory = (category: MenuCategoryKind): void => {
-    this.setState({ menu: this.state.menu.selectCategory(category) })
+    const menu = this.state.menu.selectCategory(category)
+    if (category === 'advanced-algorithms') {
+      this.showSystemCategory(menu, SystemOverviewLayout.create('system', this.currentDiagram()))
+    } else this.setState({ menu })
   }
 
   private selectAlgorithmGroup = (group: AlgorithmGroupKind): void => {
@@ -474,23 +486,34 @@ export default class App extends Component<Record<string, never>, AppState> {
   private selectAdvancedAlgorithmGroup = (group: AdvancedAlgorithmGroupKind): void => {
     const menu = this.state.menu.selectAdvancedAlgorithmGroup(group)
     const hardwareOverview = menu.hardwareOverviewGroup
-    if (!hardwareOverview) {
-      this.setState({ menu })
+    if (group === 'hardware' || group === 'hardware-fundamental' || group === 'hardware-complex' || group === 'hardware-cpu') {
+      this.showSystemCategory(menu, SystemOverviewLayout.create(group === 'hardware-cpu' ? 'cpu' : 'hardware', this.currentDiagram()), group === 'hardware-cpu' || group === 'hardware-complex')
       return
     }
-    if (hardwareOverview === this.state.hardwareOverview) {
-      this.setState({ menu, menuOpen: false, searchOpen: false }, this.focusActions)
+    if (group === 'network' || group === 'hardware-disk' || group === 'hardware-ram') {
+      this.showSystemCategory(menu, null, hardwareOverview !== null)
       return
     }
+    this.setState({ menu })
+  }
+
+  private currentDiagram(): Scene | null {
+    if (this.state.hardwareOverview === 'hardware-complex') return this.hardwareWorkspace.current?.getScene() ?? this.state.scene
+    if (AdvancedAlgorithmCatalog.isHardwareFundamentalGroup(this.state.hardwareOverview)) return this.cpuWorkspace.current?.getScene() ?? this.state.scene
+    return this.renderer.current?.getScene() ?? this.state.scene
+  }
+
+  private showSystemCategory(menu: MenuNavigation, scene: Scene | null, closeMenu = false): void {
     this.setState({
-      hardwareOverview,
+      emptyRenderer: true,
+      hardwareOverview: menu.hardwareOverviewGroup,
       hardwareAlgorithm: null, hardwareActionActive: false,
       cpuAlgorithm: null, cpuActionActive: false,
       hardwareSession: this.state.hardwareSession + 1, cpuSession: this.state.cpuSession + 1,
-      selected: null, scene: null, actionOpen: false, selectedAction: null, actionRunning: false,
+      selected: null, scene, actionOpen: false, selectedAction: null, actionRunning: false,
       actionValue: undefined, actionUpperValue: undefined,
       inputRequest: null, overviewInformation: null, structureInformation: null,
-      algorithmInformation: null, menuOpen: false, searchOpen: false, menu,
+      algorithmInformation: null, menuOpen: !closeMenu, searchOpen: false, menu,
     })
   }
 
@@ -500,7 +523,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       hardwareOverview: 'hardware-complex',
       hardwareAlgorithm: algorithm, hardwareSession: this.state.hardwareSession + 1, hardwareActionActive: true,
       cpuAlgorithm: null, cpuActionActive: false,
-      selected: null, scene: null, actionOpen: false, selectedAction: null, actionRunning: false,
+      selected: null, scene: SystemOverviewLayout.still(this.state.scene), actionOpen: false, selectedAction: null, actionRunning: false,
       actionValue: undefined, actionUpperValue: undefined,
       inputRequest: null, overviewInformation: null, structureInformation: null,
       algorithmInformation: null, menuOpen: false, searchOpen: false,
@@ -525,7 +548,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       hardwareOverview: group,
       hardwareAlgorithm: null, hardwareActionActive: false,
       cpuAlgorithm: algorithm, cpuSession: this.state.cpuSession + 1, cpuActionActive: true,
-      selected: null, scene: null, actionOpen: false, selectedAction: null, actionRunning: false,
+      selected: null, scene: group === 'hardware-cpu' ? SystemOverviewLayout.still(SystemOverviewLayout.create('cpu', null)) : null, actionOpen: false, selectedAction: null, actionRunning: false,
       actionValue: undefined, actionUpperValue: undefined,
       inputRequest: null, overviewInformation: null, structureInformation: null,
       algorithmInformation: null, menuOpen: false, searchOpen: false,
@@ -548,7 +571,10 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private backInMenu = (): void => {
-    this.setState({ menu: this.state.menu.back() })
+    const menu = this.state.menu.back()
+    if (menu.screen === 'advanced-algorithms' && (menu.advancedAlgorithmGroup === null || menu.advancedAlgorithmGroup === 'hardware' || menu.advancedAlgorithmGroup === 'hardware-fundamental')) {
+      this.showSystemCategory(menu, SystemOverviewLayout.create(menu.advancedAlgorithmGroup === null ? 'system' : 'hardware', this.currentDiagram()))
+    } else this.setState({ menu })
   }
 
   private selectStructure = (kind: StructureKind): void => {
@@ -597,6 +623,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       this.buffer = CircularBuffer.createDefault()
     }
     this.setState({
+      emptyRenderer: false,
       hardwareOverview: null,
       cpuAlgorithm: null,
       cpuActionActive: false,
@@ -1561,6 +1588,7 @@ export default class App extends Component<Record<string, never>, AppState> {
               key={`hardware-${this.state.hardwareSession}`}
               ref={this.hardwareWorkspace}
               algorithm={this.state.hardwareAlgorithm}
+              previewScene={scene}
               onBack={this.openMenu}
               onSelect={this.selectHardwareAlgorithm}
               onInformation={this.showHardwareInformation}
@@ -1572,6 +1600,7 @@ export default class App extends Component<Record<string, never>, AppState> {
               ref={this.cpuWorkspace}
               group={this.state.hardwareOverview}
               algorithm={this.state.cpuAlgorithm}
+              previewScene={scene}
               onBack={this.openMenu}
               onSelect={this.selectCpuAlgorithm}
               onInformation={this.showCpuInformation}
@@ -1580,7 +1609,9 @@ export default class App extends Component<Record<string, never>, AppState> {
           ) : (
             <>
               <Renderer
+                ref={this.renderer}
                 scene={scene}
+                emptyState={this.state.emptyRenderer ? <></> : undefined}
                 onOpenMenu={this.openMenu}
                 showPseudocode={this.state.selectedScope === 'sorting' || this.state.selectedScope === 'graph-traversal'}
               >

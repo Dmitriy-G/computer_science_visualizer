@@ -5,7 +5,6 @@ import Renderer from '../../../Renderer/Renderer.tsx'
 import { HardwareAlgorithmCatalog } from './HardwareAlgorithmCatalog.ts'
 import { HardwareModel } from './HardwareModel.ts'
 import type { HardwareAlgorithmKind } from './HardwareModel.ts'
-import { HardwareLayout } from './HardwareLayout.ts'
 import OverviewTags from '../../../OverviewTags/OverviewTags.tsx'
 import '../../../MainMenu/ActionMenu/ActionMenu.css'
 import StoreBuffering from './StoreBuffering/StoreBuffering.tsx'
@@ -23,6 +22,7 @@ import InstructionSync from './InstructionSync/InstructionSync.tsx'
 import './HardwareWorkspace.css'
 
 interface HardwareWorkspaceProps {
+  readonly previewScene: Scene | null
   readonly algorithm: HardwareAlgorithmKind | null
   readonly onBack: () => void
   readonly onSelect: (algorithm: HardwareAlgorithmKind) => void
@@ -38,15 +38,16 @@ interface HardwareWorkspaceState {
 
 export default class HardwareWorkspace extends Component<HardwareWorkspaceProps, HardwareWorkspaceState> {
   private readonly model = new HardwareModel()
+  private readonly renderer = createRef<Renderer>()
   private readonly heading = createRef<HTMLHeadingElement>()
   private readonly firstAlgorithm = createRef<HTMLButtonElement>()
   public state: HardwareWorkspaceState = {
-    scene: this.props.algorithm ? this.preview() : null,
+    scene: null,
     active: this.props.algorithm !== null, running: this.props.algorithm !== null,
   }
 
-  private preview(): Scene {
-    return HardwareLayout.create(this.model)
+  public getScene(): Scene | null {
+    return this.renderer.current?.getScene() ?? this.state.scene ?? this.props.previewScene
   }
 
   public componentDidMount(): void {
@@ -60,7 +61,7 @@ export default class HardwareWorkspace extends Component<HardwareWorkspaceProps,
   }
 
   public reset(): void {
-    this.setState({ active: false, running: false, scene: this.preview() }, () => {
+    this.setState({ active: false, running: false, scene: null }, () => {
       this.props.onReset()
       this.firstAlgorithm.current?.focus()
     })
@@ -120,10 +121,7 @@ export default class HardwareWorkspace extends Component<HardwareWorkspaceProps,
 
   public render(): ReactNode {
     return <>
-      <Renderer scene={this.state.scene} onOpenMenu={this.props.onBack} emptyState={<>
-        <h1>Choose a complex overview.</h1>
-        <p>Select an overview from the panel to start, or use its info button to learn more.</p>
-      </>}>
+      <Renderer ref={this.renderer} scene={this.state.scene ?? this.props.previewScene} onOpenMenu={this.props.onBack} emptyState={<></>}>
         <aside className="action-menu" aria-label="Complex hardware mechanisms">
           <button type="button" className="text-button action-menu-back-button" onClick={this.props.onBack}>← Hardware</button>
           <h2 ref={this.heading} tabIndex={-1}>Hardware / Complex</h2>

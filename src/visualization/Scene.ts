@@ -67,7 +67,7 @@ export interface ScenePath {
 }
 
 export interface Scene {
-  readonly kind: StructureKind | 'cpu-hardware' | 'hardware-system' | 'hardware-component'
+  readonly kind: StructureKind | 'cpu-hardware' | 'hardware-system' | 'hardware-component' | 'system-overview'
   readonly nodes: readonly SceneNode[]
   readonly edges: readonly SceneEdge[]
   readonly width: number
@@ -78,6 +78,35 @@ export interface Scene {
   readonly slots?: readonly SceneSlot[]
   readonly regions?: readonly SceneRegion[]
   readonly paths?: readonly ScenePath[]
+  readonly camera?: SceneCamera
+  readonly layers?: readonly SceneLayer[]
+}
+
+export interface SceneBounds {
+  readonly x: number
+  readonly y: number
+  readonly width: number
+  readonly height: number
+}
+
+export interface SceneCamera {
+  readonly from: SceneBounds
+  readonly to: SceneBounds
+}
+
+export interface SceneDetailRange {
+  readonly startWidth: number
+  readonly endWidth: number
+}
+
+export interface SceneLayer {
+  readonly id: string
+  readonly scene: Scene
+  readonly x: number
+  readonly y: number
+  readonly scale: number
+  readonly reveal?: SceneDetailRange
+  readonly conceal?: SceneDetailRange
 }
 
 export interface AnimationStep {

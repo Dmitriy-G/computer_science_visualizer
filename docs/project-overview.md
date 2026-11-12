@@ -19,9 +19,24 @@ with Fundamental and Complex subcategories. Hardware/Fundamental contains CPU,
 Disk, and RAM subcategories in that order. Choosing one opens a workspace whose
 overview cards are filtered by the matching component tag, with separate info
 buttons. CPU contains four lessons, Disk five, and RAM three. Hardware/Complex
-opens its existing flat workspace directly. The diagram waits for an overview
-selection. Fundamental workspace Back and header menu return to the three
-component categories; returning to the current component preserves playback.
+opens its existing flat workspace directly. System Components Overview displays
+a client, abstract network, and server. Hardware moves the SVG camera into that
+server, revealing CPU, RAM, bus, HDD, SSD, GPU, and network adapter. CPU moves
+closer into the same nested CPU block, progressively revealing the shared core
+map. SystemOverviewLayout owns these navigation scenes; Renderer animates the
+camera and detail visibility, respecting reduced motion and cleaning up frames.
+Zooming into a component hides the surrounding boundaries and unrelated
+connections; zooming out restores its context.
+Category previews open in Fit mode and reset scrolling, including after Actual size.
+Their layout always reserves the left menu's width, scaling elements to fit beside
+it and keeping the diagram in place when the menu opens or closes.
+Algorithms browsing preserves the current diagram. Hardware, Fundamental, and
+Complex share the server hardware preview. Returning from CPU to Fundamental
+zooms out to that hardware view; returning to System Components Overview zooms
+out to the client/network/server view. Network, Disk, and RAM
+start with a blank renderer. Selecting a lesson uses its existing diagram and
+playback. Fundamental workspace Back and header menu return to the three
+component categories and restore the hardware preview, ending the current lesson.
 Search selections open the matching component workspace and lesson.
 The four CPU overviews share a square CPU-core boundary with the same seventeen
 component locations. Each supplies its own dataflow; unused units remain idle.

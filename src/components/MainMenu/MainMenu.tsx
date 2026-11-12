@@ -276,7 +276,7 @@ export default class MainMenu extends Component<MainMenuProps> {
     return (
       <dialog
         id="main-menu"
-        className="main-menu"
+        className={`main-menu${!searching && navigation.screen === 'advanced-algorithms' ? ' main-menu--system' : ''}`}
         ref={this.dialog}
         onCancel={this.handleCancel}
         onClick={this.handleBackdrop}

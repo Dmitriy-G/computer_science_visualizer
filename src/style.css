@@ -4,6 +4,7 @@
   --accent: #356fc0;
   --border: #e2e8f0;
   --menu-card-height: 112px;
+  --main-menu-width: 420px;
   --dialog-gutter: max(24px, env(safe-area-inset-top), env(safe-area-inset-right), env(safe-area-inset-bottom), env(safe-area-inset-left));
   --mono: 'Cascadia Code', 'SFMono-Regular', Consolas, monospace;
   font-family:
@@ -14,6 +15,7 @@
   color: var(--ink);
   background: #f8fafc;
   font-synthesis: none;
+  scrollbar-gutter: stable;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

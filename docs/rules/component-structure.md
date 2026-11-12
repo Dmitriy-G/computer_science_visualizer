@@ -270,13 +270,23 @@ CPU, Disk, or RAM component tag. Keep lesson source folders in their existing
 Fundamental locations; category membership comes from tags rather than copies.
 Hardware/Complex opens its existing flat workspace directly. Do not render a
 second lesson list inside the menu. Each workspace can open with no lesson selected,
-showing all overview cards and their separate info buttons while the diagram waits
-for selection. The Renderer supports action children without a scene and accepts
+showing all overview cards and their separate info buttons. SystemOverviewLayout
+under RealSystemsAlgorithms/SystemOverview supplies nested category previews:
+client/network/server, server hardware, and the shared CPU core. Scene camera
+bounds and detail layers let Renderer animate one continuous zoom and progressively
+reveal nested internals. Respect reduced motion and cancel animation frames on
+unmount or replacement. Hardware, Fundamental, and Complex share the server
+hardware preview. Returning from CPU to Fundamental zooms out to hardware;
+returning to System Components Overview zooms out to client/network/server.
+Network, Disk, and RAM
+begin with blank renderers. Existing lesson scenes and playback stay unchanged.
+The Renderer supports action children without a scene and accepts
 an optional empty-state message. Selecting an animated overview starts playback; its info
 button only opens information. Fundamental workspace Back and header menu reopen
 Hardware/Fundamental with the CPU, Disk, and RAM cards; Complex returns to Hardware.
-Selecting the current component group preserves its session. Changing component
-groups opens an idle workspace. Search routes each fundamental lesson to the
+Returning to a parent category ends lesson playback and restores that category's
+preview. CPU category selection returns to its core preview. Changing groups opens
+their preview without starting a lesson. Search routes each fundamental lesson to the
 component group selected by its tag, including the full component path in results.
 Network/Fundamental contains Physical, Data Link, Network, Transport, Session,
 Presentation, and Application in OSI layer order. Complex categories describe

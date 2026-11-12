@@ -3,7 +3,7 @@ import type { HardwarePosition } from '../../../../../visualization/HardwareDiag
 import type { SceneRegion } from '../../../../../visualization/Scene.ts'
 
 export class CpuCoreLayout {
-  public static create(used: readonly string[]): HardwareDiagram {
+  public static create(used: readonly string[], showIdle = true): HardwareDiagram {
     const diagram = new HardwareDiagram(1560, 1560)
     diagram.region('core', 'CPU / Core 0', 'cpu', 20, 20, 1520, 1520, 'system')
     diagram.region('front-end', 'Front end', 'cpu', 50, 90, 700, 620, 'component', 'core')
@@ -31,7 +31,7 @@ export class CpuCoreLayout {
     ]
     for (const [id, label, role, parent, x, y, width, height] of parts) {
       diagram.region(`component-${id}`, label, role, x, y, width, height, 'component', parent)
-      if (!used.includes(id)) diagram.fixture(`idle-${id}`, 'not used in this overview', 'idle', x + width / 2, y + (height > 200 ? 190 : height < 130 ? 55 : 80), undefined, Math.min(210, width - 30))
+      if (showIdle && !used.includes(id)) diagram.fixture(`idle-${id}`, 'not used in this overview', 'idle', x + width / 2, y + (height > 200 ? 190 : height < 130 ? 55 : 80), undefined, Math.min(210, width - 30))
     }
     return diagram
   }

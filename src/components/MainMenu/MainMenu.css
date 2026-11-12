@@ -1,7 +1,7 @@
 .main-menu {
   position: fixed;
   inset: var(--viewport-top, 0px) auto auto var(--viewport-left, 0px);
-  width: min(420px, var(--viewport-width, 100vw));
+  width: min(var(--main-menu-width), var(--viewport-width, 100vw));
   height: var(--viewport-height, 100dvh);
   max-height: var(--viewport-height, 100dvh);
   max-width: var(--viewport-width, 100vw);
@@ -18,6 +18,10 @@
 .main-menu::backdrop {
   background: #15273b47;
   backdrop-filter: blur(3px);
+}
+.main-menu--system::backdrop {
+  background: #15273b12;
+  backdrop-filter: none;
 }
 .menu-content {
   padding: max(26px, env(safe-area-inset-top)) max(26px, env(safe-area-inset-right)) max(26px, env(safe-area-inset-bottom)) max(26px, env(safe-area-inset-left));

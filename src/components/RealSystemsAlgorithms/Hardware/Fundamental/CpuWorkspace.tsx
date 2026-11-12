@@ -24,6 +24,7 @@ import '../../../MainMenu/ActionMenu/ActionMenu.css'
 import './CpuWorkspace.css'
 
 interface CpuWorkspaceProps {
+  readonly previewScene: Scene | null
   readonly group: HardwareFundamentalGroupKind
   readonly algorithm: CpuAlgorithmKind | null
   readonly onBack: () => void
@@ -40,6 +41,7 @@ interface CpuWorkspaceState {
 
 export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorkspaceState> {
   private readonly model = new CpuModel()
+  private readonly renderer = createRef<Renderer>()
   private readonly heading = createRef<HTMLHeadingElement>()
   private readonly firstAlgorithm = createRef<HTMLButtonElement>()
   public state: CpuWorkspaceState = {
@@ -63,6 +65,10 @@ export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorksp
       this.props.onReset()
       this.firstAlgorithm.current?.focus()
     })
+  }
+
+  public getScene(): Scene | null {
+    return this.renderer.current?.getScene() ?? this.state.scene ?? this.props.previewScene
   }
 
   private updateScene = (scene: Scene): void => { this.setState({ scene }) }
@@ -120,10 +126,7 @@ export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorksp
   public render(): ReactNode {
     const group = AdvancedAlgorithmCatalog.getGroup(this.props.group)
     return <>
-      <Renderer scene={this.state.scene} onOpenMenu={this.props.onBack} emptyState={<>
-        <h1>Choose a {group.name} overview.</h1>
-        <p>Select an overview from the panel to start, or use its info button to learn more.</p>
-      </>}>
+      <Renderer ref={this.renderer} scene={this.state.scene ?? this.props.previewScene} onOpenMenu={this.props.onBack} emptyState={<></>}>
         <aside className="action-menu" aria-label={`${group.name} hardware overviews`}>
           <button type="button" className="text-button action-menu-back-button" onClick={this.props.onBack}>← Fundamental</button>
           <h2 ref={this.heading} tabIndex={-1}>Hardware / Fundamental / {group.name}</h2>

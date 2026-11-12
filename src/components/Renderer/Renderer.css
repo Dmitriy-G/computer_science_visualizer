@@ -27,6 +27,19 @@
   min-width: 0;
   gap: 20px;
 }
+.renderer--overview .renderer-content {
+  display: grid;
+  grid-template-columns: min(max(0px, calc(var(--main-menu-width) - var(--renderer-inset))), max(0px, calc(100% - var(--renderer-column-gap)))) minmax(0, 1fr);
+  align-content: start;
+}
+.renderer--overview .renderer-content > .action-menu {
+  grid-column: 1;
+  grid-row: 1;
+}
+.renderer--overview .renderer-stage {
+  grid-column: 2;
+  grid-row: 1;
+}
 .diagram-tools {
   display: flex;
   flex-wrap: wrap;
@@ -98,6 +111,9 @@
 }
 .scene-svg--actual {
   max-width: none;
+}
+.scene-node--overview .node-label {
+  font-size: 22px;
 }
 .scene-node {
   transition:
