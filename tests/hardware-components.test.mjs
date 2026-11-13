@@ -13,6 +13,8 @@ import { NandCellModel } from '../src/components/RealSystemsAlgorithms/Hardware/
 import { SsdFtlModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/SsdFtl/SsdFtlModel.ts'
 import { SsdGarbageCollectionModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/SsdGarbageCollection/SsdGarbageCollectionModel.ts'
 import { SsdWearLevelingModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/SsdWearLeveling/SsdWearLevelingModel.ts'
+import { SsdLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Ssd/SsdLayout.ts'
+import { SystemOverviewLayout } from '../src/components/RealSystemsAlgorithms/SystemOverview/SystemOverviewLayout.ts'
 import { MenuSearchIndex } from '../src/components/MainMenu/Search/MenuSearchIndex.ts'
 
 const choices = CpuAlgorithmCatalog.choices.filter((choice) => !choice.components.includes('CPU'))
@@ -58,6 +60,102 @@ test('eight component lessons retain independent deterministic scenes and fundam
     assert.equal(results[0].context, `System Components Overview / Hardware Fundamental / ${category}`)
     assert.equal(results[0].symbol, category)
   }
+})
+
+test('all four SSD overviews retain the category schematic and return to its camera bounds', () => {
+  const common = SsdLayout.create()
+  for (const kind of ['nand-cell', 'ssd-ftl', 'ssd-garbage-collection', 'ssd-wear-leveling']) {
+    const plan = CpuAlgorithmCatalog.definition(kind).create(new CpuModel(), 0)
+    for (const step of plan.steps) {
+      assert.equal(step.scene.width, common.width)
+      assert.ok(step.scene.height > common.height)
+      for (const region of common.regions) {
+        assert.deepEqual(step.scene.regions.find((candidate) => candidate.id === region.id), region)
+      }
+      const paths = new Set(step.scene.paths.map((path) => path.id))
+      assert.equal(paths.size, step.scene.paths.length)
+      for (const path of common.paths) assert.ok(paths.has(path.id), `${kind}: missing ${path.id}`)
+      assert.ok(step.scene.nodes.some((node) => node.id === 'ssd-state-controller'))
+      assert.equal(step.scene.paths.find((path) => path.id === 'ssd-channel-1').highlighted, false)
+      assert.equal(step.scene.paths.find((path) => path.id === 'ssd-channel-0-package-1').highlighted, false)
+    }
+    assert.ok(plan.steps.some((step) => step.scene.paths.some((path) => path.highlighted)))
+    const restored = SystemOverviewLayout.create('ssd', plan.steps.at(-1).scene)
+    assert.deepEqual(restored.camera.from, restored.camera.to)
+  }
+  assert.deepEqual(SsdLayout.create(), common)
+})
+
+test('shared SSD data paths distinguish program, read, and metadata-only mapping publication', () => {
+  const model = new SsdFtlModel()
+  const destination = model.allocate()
+  model.program(0, 'A2', destination)
+  const programmed = model.snapshot().diagram
+  assert.ok(programmed.paths.find((path) => path.id === 'ssd-buffer-encode').highlighted)
+  assert.ok(programmed.paths.find((path) => path.id === 'ssd-encode-nand').highlighted)
+  assert.equal(programmed.paths.find((path) => path.id === 'ssd-nand-decode').highlighted, false)
+  assert.equal(programmed.fixtures.find((cell) => cell.id === 'ssd-state-ftl').value, 'CH0 / T0 / D0 / PL0 / B0 / P2')
+  model.commit()
+  const committed = model.snapshot().diagram
+  assert.ok(committed.paths.find((path) => path.id === 'ssd-sram-ftl').highlighted)
+  for (const id of ['ssd-ftl-nand', 'ssd-channel-0', 'ssd-buffer-encode', 'ssd-encode-nand']) {
+    assert.equal(committed.paths.find((path) => path.id === id).highlighted, false)
+  }
+  model.read(0)
+  const read = model.snapshot().diagram
+  for (const id of ['ssd-nand-decode', 'ssd-decode-buffer', 'ssd-interface-dma', 'ssd-channel-0-package-0']) {
+    assert.ok(read.paths.find((path) => path.id === id).highlighted)
+  }
+  assert.equal(read.paths.find((path) => path.id === 'ssd-encode-nand').highlighted, false)
+  assert.notEqual(read.paths.find((path) => path.id === 'ssd-channel-0').d, programmed.paths.find((path) => path.id === 'ssd-channel-0').d)
+  assert.equal(read.fixtures.find((cell) => cell.id === 'ssd-state-dma').value, 'A2')
+  assert.equal(programmed.paths.find((path) => path.id === 'ssd-nand-decode').highlighted, false)
+})
+
+test('SSD relocation uses both ECC paths without host traffic and erase bypasses payload ECC', () => {
+  const model = new SsdGarbageCollectionModel()
+  const victim = model.chooseVictim()
+  for (const page of model.livePages(victim)) {
+    model.copy(page, model.destination(victim))
+    const copying = model.snapshot().diagram
+    for (const id of ['ssd-nand-decode', 'ssd-decode-buffer', 'ssd-buffer-encode', 'ssd-encode-nand']) {
+      assert.ok(copying.paths.find((path) => path.id === id).highlighted)
+    }
+    assert.equal(copying.paths.find((path) => path.id === 'ssd-interface-dma').highlighted, false)
+    assert.equal(copying.paths.find((path) => path.id === 'ssd-data-interface').highlighted, false)
+    assert.ok(copying.paths.find((path) => path.id === 'ssd-channel-0').bidirectional)
+    model.commit()
+  }
+  model.erase(victim)
+  const erased = model.snapshot().diagram
+  assert.ok(erased.paths.find((path) => path.id === 'ssd-ftl-nand').highlighted)
+  assert.ok(erased.paths.find((path) => path.id === 'ssd-channel-0-package-0').highlighted)
+  for (const id of ['ssd-buffer-encode', 'ssd-encode-nand', 'ssd-nand-decode', 'ssd-decode-buffer']) {
+    assert.equal(erased.paths.find((path) => path.id === id).highlighted, false)
+  }
+})
+
+test('NAND overview identifies ECC encoding before programs and physical access without FTL lookup', () => {
+  const plan = CpuAlgorithmCatalog.definition('nand-cell').create(new CpuModel(), 0)
+  let programs = 0
+  for (let index = 0; index < plan.steps.length; index += 1) {
+    const scene = plan.steps[index].scene
+    const operation = scene.nodes.find((node) => node.id === 'buffer').status
+    assert.equal(scene.paths.find((path) => path.id === 'ssd-host-ftl').highlighted, false)
+    assert.equal(scene.paths.find((path) => path.id === 'ssd-cpu-ftl').highlighted, false)
+    if (operation === 'program') {
+      programs += 1
+      assert.equal(plan.steps[index - 1].scene.nodes.find((node) => node.id === 'buffer').status, 'ECC encode')
+      assert.ok(scene.paths.find((path) => path.id === 'ssd-cpu-nand').highlighted)
+      assert.ok(scene.paths.find((path) => path.id === 'ssd-encode-nand').highlighted)
+    }
+    if (operation === 'sense') {
+      assert.ok(scene.paths.find((path) => path.id === 'ssd-nand-decode').highlighted)
+      assert.equal(scene.paths.find((path) => path.id === 'ssd-decode-buffer').highlighted, false)
+    }
+    if (operation === 'ECC check') assert.ok(scene.paths.find((path) => path.id === 'ssd-decode-buffer').highlighted)
+  }
+  assert.equal(programs, 3)
 })
 
 test('a transparent latch follows multiple input changes, holds when closed, and preserves state with output disconnected', () => {

@@ -367,6 +367,20 @@
   stroke-linejoin: round;
 }
 
+.scene-svg--ssd .node-label {
+  fill: #4b647e;
+  font-size: 22px;
+  font-weight: 500;
+}
+.scene-svg--ssd .node-status {
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+}
+.scene-svg--ssd .graph-edge-label {
+  font-size: 20px;
+}
+
 .scene-region rect {
   fill: #eef4fc;
   fill-opacity: 0.72;

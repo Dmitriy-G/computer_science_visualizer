@@ -364,7 +364,8 @@ export default class Renderer extends Component<
     const elements: ReactNode[] = []
     const cpu = scene.regions?.some((region) => region.id === 'core') ?? false
     const hdd = scene.regions?.some((region) => region.id === 'hdd-enclosure') ?? false
-    const schematic = cpu || hdd
+    const ssd = scene.regions?.some((region) => region.id === 'ssd-pcb') ?? false
+    const schematic = cpu || hdd || ssd
     for (const region of scene.regions ?? []) elements.push(this.renderRegion(region))
     for (const slot of scene.slots ?? []) elements.push(this.renderSlot(slot))
     for (const node of scene.nodes) nodeMap.set(node.id, node)
@@ -380,7 +381,7 @@ export default class Renderer extends Component<
       const lines: string[] = []
       const label = region.shortLabel ?? region.label
       const fontSize = region.level === 'system' ? 32 : 26
-      if (scene.kind === 'system-overview' || scene.kind === 'cpu-hardware' || hdd) {
+      if (scene.kind === 'system-overview' || scene.kind === 'cpu-hardware' || hdd || ssd) {
         const limit = Math.max(schematic ? 8 : 12, Math.floor((region.width - 32) / (schematic ? fontSize * 0.62 : 9)))
         let line = ''
         for (const word of label.split(' ')) {
@@ -416,12 +417,13 @@ export default class Renderer extends Component<
 
   private renderScene(scene: Scene): ReactNode {
     const camera = scene.camera ? this.state.camera ?? scene.camera.from : { x: 0, y: 0, width: scene.width, height: scene.height }
+    const ssd = scene.regions?.some((region) => region.id === 'ssd-pcb') ?? false
     const nodeMap = new Map<string, SceneNode>()
     for (const node of scene.nodes) nodeMap.set(node.id, node)
     return (
       <svg
         ref={this.svg}
-        className={`scene-svg${scene.kind === 'hardware-system' || scene.kind === 'cpu-hardware' ? ' scene-svg--hardware-flow' : ''}${this.state.actualSize ? ' scene-svg--actual' : ''}`}
+        className={`scene-svg${scene.kind === 'hardware-system' || scene.kind === 'cpu-hardware' ? ' scene-svg--hardware-flow' : ''}${ssd ? ' scene-svg--ssd' : ''}${this.state.actualSize ? ' scene-svg--actual' : ''}`}
         width={scene.width}
         height={scene.height}
         viewBox={`${camera.x} ${camera.y} ${camera.width} ${camera.height}`}

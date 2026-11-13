@@ -9,7 +9,7 @@ export class NandCellOverview {
       steps: [
         'Inspect an erased SLC cell, its charge-storage region, and low threshold.',
         'Place cells in conceptual pages belonging to one erase block.',
-        'Load the page buffer and program selected cells to higher-threshold states.',
+        'Load the page buffer, identify controller ECC encoding, then program selected cells to higher-threshold states.',
         'Read a page by reference-voltage sensing of cell conduction.',
         'Pass decoded data to a separate controller ECC stage.',
         'Reject an arbitrary overwrite of a programmed page, preserving its contents.',

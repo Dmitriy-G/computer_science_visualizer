@@ -36,9 +36,29 @@
    nested details as they grow, with reduced-motion support. Algorithms browsing
    leaves the diagram unchanged. Hardware Fundamental and Complex share the
    server hardware preview. HDD zooms into its storage block to reveal the common
-   enclosure/mechanical assembly and controller-board component map. Network, SSD,
-   and RAM initially show a blank renderer. Selecting a lesson uses its existing
-   scene and playback.
+   enclosure/mechanical assembly and controller-board component map. SSD zooms
+   into its connected component schematic, showing host interface, controller,
+   NAND channels/packages, optional DRAM, power management, and optional PLP.
+   Inside the SSD controller, show CPU cores, SRAM, FTL, DMA/data buffers,
+   separate ECC encode and decode/correction stages, and NAND channel controllers.
+   Show LBA-to-physical NAND mapping and a channel shared by multiple packages;
+   channel and package counts are illustrative. Distinguish page reads/programs
+   from whole-block erases. Direct write payloads through ECC encoding before
+   programming and readback through ECC decoding/correction before host delivery.
+   Route address/command/status control separately, with block erase bypassing
+   payload ECC. Distinguish optional parts in text and dashed power rails from
+   data paths.
+   All four SSD overviews reuse that common schematic with stable component
+   positions, state cells, and highlighted data/control paths. Append the NAND
+   cell, FTL/page-state, garbage-collection, and wear-counter detail panels below
+   it. Their symbolic blocks share CH0 / target 0 / die 0 / plane 0; leave other
+   packages idle. Distinguish logical state-association arrows from hardware
+   payload paths. Relocation uses read and write paths without host traffic;
+   mapping publication does not issue a NAND write. NAND cell primitives use
+   physical commands without FTL translation and identify ECC stages without
+   computing the code. Reserve fixed bounds and independent playback snapshots.
+   Network and RAM initially show a blank renderer. Selecting a lesson starts
+   its mechanism's playback; HDD and SSD retain their common component maps.
    Network/Fundamental
    contains Physical, Data Link, Network, Transport, Session, Presentation, and
    Application in OSI layer order. Complex covers systems combining components
@@ -52,7 +72,8 @@
    Returning from CPU to Hardware Fundamental zooms out to hardware; returning to System
    Components Overview zooms out to client/network/server. CPU category selection
    returns to its core map; HDD category selection and lesson Reset return to its
-   common component map. Changing groups opens
+   common component map. SSD category selection and lesson Reset restore its
+   common SSD map. Changing groups opens
    the corresponding category preview without starting lesson playback.
    Search results include the component subcategory and open the corresponding
    workspace with the selected lesson.

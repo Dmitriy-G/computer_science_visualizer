@@ -49,6 +49,42 @@ recording formats or ECC implementations.
 SystemOverviewLayout owns these navigation
 scenes; Renderer animates the camera and detail visibility, respecting reduced
 motion and cleaning up frames.
+SSD zooms into its existing server storage block to reveal SsdLayout's connected
+PCB schematic: host connector/interface, controller, NAND channels and packages,
+optional DRAM, power management, and optional PLP capacitors. Controller regions
+identify internal CPU cores and SRAM, FTL, DMA/data buffers, ECC encoding and
+decoding/correction, NAND channel controllers, garbage collection, and wear
+leveling. The FTL translates LBAs into physical NAND locations including channel,
+target, die, plane, block, and page; host sectors may also need an offset within
+a page. Command/status paths reach NAND controllers separately from payloads.
+Writes pass through ECC encoding before page programming; reads pass through
+ECC decoding/correction before host delivery. These are logical stages, not a
+bitwise ECC simulation. Block erase does not traverse the ECC payload path.
+NAND packages show separate die, plane, erase-block, and read/program-page regions.
+Channel 0 branches to two packages, while channel 1 serves another; shared-channel
+bus transfers are serialized, although internal die operations can overlap.
+The two channels, three packages, and one depicted die/plane/block/page per
+package are illustrative. Power rails are dashed and optional parts are labeled
+in text. SSD lesson Reset restores this category preview.
+All four SSD lessons reuse this same schematic and component positions through
+SsdLessonLayout. Component state cells and highlighted paths identify firmware,
+mapping metadata, DMA buffers, ECC stages, and active channel traffic. NAND cell
+access uses physical commands without an FTL lookup. Mapping publication and
+allocation change controller metadata without implying a NAND program or erase.
+Lower detail panels preserve the cell/threshold demonstration, logical mappings,
+page states, block erase counters, write amplification, and wear comparison.
+Their three conceptual blocks belong to CH0 / target 0 / die 0 / plane 0; other
+packages remain idle. Logical association arrows in these panels are distinct
+from the common schematic's payload paths. Relocations use both read and write
+paths without host traffic. The NAND lesson identifies ECC encoding before each
+program and decoding/checking after sensing, without computing an ECC code.
+Every lesson retains fixed bounds and independent snapshots throughout playback.
+The controller organization is grounded in the
+[Marvell Bravera SC5 product brief](https://www.marvell.com/content/dam/marvell/en/public-collateral/storage/marvell-ssd-mv-ss1331-1333-product-brief.pdf),
+multi-target channels in the
+[Silicon Motion SM2320 product brief](https://www.siliconmotion.com/download/3fu/a/SM2320_PB_EN.pdf),
+and NAND hierarchy, operation granularity, and FTL mapping in
+[Samsung's SSD data-placement overview](https://semiconductor.samsung.com/news-events/tech-blog/a-brief-history-of-data-placement-technologies/).
 Zooming into a component hides the surrounding boundaries and unrelated
 connections; zooming out restores its context.
 Category previews open in Fit mode and reset scrolling, including after Actual size.
@@ -58,9 +94,10 @@ Algorithms browsing preserves the current diagram. Hardware Fundamental and
 Complex share the server hardware preview. Returning from CPU to Hardware Fundamental
 zooms out to that hardware view; returning to System Components Overview zooms
 out to the client/network/server view. HDD returns to the same hardware preview.
-Network, SSD, and RAM
-start with a blank renderer. Selecting a lesson uses its existing diagram and
-playback. Component workspace Back and header menu return to the four categories
+Network and RAM
+start with a blank renderer. Selecting a lesson uses its mechanism's playback;
+HDD and SSD lessons retain their shared component diagrams. Component workspace
+Back and header menu return to the four categories
 in Hardware Fundamental and restore the hardware preview, ending the current lesson.
 Complex returns directly to System Components Overview and its system preview.
 Search selections open the matching component workspace and lesson.
