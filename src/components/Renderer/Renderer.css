@@ -431,6 +431,11 @@
   fill-opacity: 1;
   stroke: #baa9d2;
 }
+.scene-region--color-light-orange > rect {
+  fill: #faf6ec;
+  fill-opacity: 1;
+  stroke: #d8bd85;
+}
 .scene-edge-flow {
   stroke: #2563bd;
   stroke-width: 2.5;

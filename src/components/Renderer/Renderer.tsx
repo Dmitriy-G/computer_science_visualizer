@@ -362,7 +362,7 @@ export default class Renderer extends Component<
   private renderElements(scene: Scene, cameraWidth: number): ReactNode {
     const nodeMap = new Map<string, SceneNode>()
     const elements: ReactNode[] = []
-    const cpu = scene.regions?.some((region) => region.id === 'core') ?? false
+    const cpu = scene.regions?.some((region) => region.id === 'core' || region.id === 'cpu-die') ?? false
     const hdd = scene.regions?.some((region) => region.id === 'hdd-enclosure') ?? false
     const ssd = scene.regions?.some((region) => region.id === 'ssd-pcb') ?? false
     const ram = scene.regions?.some((region) => region.id === 'ram-pcb') ?? false

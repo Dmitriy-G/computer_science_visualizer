@@ -286,7 +286,7 @@ Root Complex opens its existing flat workspace directly. Do not render a
 second lesson list inside the menu. Each workspace can open with no lesson selected,
 showing all overview cards and their separate info buttons. SystemOverviewLayout
 under RealSystemsAlgorithms/SystemOverview supplies nested category previews:
-client/network/server, server hardware, the shared CPU core, and common HDD/SSD
+client/network/server, server hardware, the CPU package, and common HDD/SSD
 component maps, and a common RAM map. Keep RAM geometry in
 Hardware/Fundamental/Ram/RamLayout.ts. Keep the logical component diagram with
 one representative chip, an explicit DRAM die, bank group, bank, decoders, row
@@ -375,8 +375,28 @@ and memory access. Separate ITLB and DTLB, rename map (RAT), rename/physical
 allocation, dispatch/ROB and queue allocation, PRF, committed architectural state,
 and L2. L2 can be private or shared. Committed register values remain in the PRF;
 show committed mappings rather than a separate architectural register file.
-The category preview includes directed logical pipeline paths with register read,
+The static CPU category preview lives in Cpu/CpuLayout.ts. Show an illustrative
+four-core, single-die package with one representative expanded core reusing
+CpuCoreLayout. Use "Cores (~4 per die)" only in this static preview; omit indexed
+peer-core blocks and their wires. Keep the existing CPU lessons unchanged.
+Arrange shared components alongside the expanded core with visible communication
+paths. Add shared L3 cache, on-die interconnect, integrated
+memory and I/O controllers, clock/power/thermal control, package contacts, and a
+distinct CPU socket. Show bidirectional memory and I/O paths through the contacts
+and socket; separate power connections with dashed paths. Titles use component
+names, with organization and placement limits in accessible descriptions. The
+socket is logically unfolded beside the package, not physically beside the die.
+Use explicit light-orange (#faf6ec) overrides in the static CPU preview for the
+three socket signal/power blocks, shared L3, on-die interconnect, memory/I/O
+controllers, front-end components, rename/RAT/dispatch/issue components,
+execution/retirement components, memory-access components, and cache/bus interface.
+Keep surrounding group colors, PRF, committed state, and L2 unchanged. Apply these
+overrides to the static core instance without changing CpuCoreLayout's lesson colors.
+Do not change the four existing CPU overview cards or animations for this static
+preview. Its expanded core includes logical pipeline paths with register read,
 writeback, and in-order retirement; these paths do not imply clock cycles.
+Focused CPU, RAM, HDD, and SSD previews include only their own detailed layer,
+so neighboring hardware schematics cannot leak into the view.
 Keep unused units idle and adapt each lesson's state and
 dataflow to the relevant units. The temporary CPU core test entry is removed;
 its shared core concept belongs to the existing lessons.

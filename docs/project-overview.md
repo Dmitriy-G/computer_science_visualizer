@@ -24,8 +24,23 @@ from the overview root; Network retains Fundamental and Complex subcategories.
 System Components Overview displays a client, abstract network, and server.
 Hardware Fundamental moves the SVG camera into that
 server, revealing CPU, RAM, bus, HDD, SSD, GPU, and network adapter. CPU moves
-closer into the same nested CPU block, progressively revealing the shared core
-map. HDD zooms into its storage block to reveal a common component map, grouping
+closer into the same nested CPU block, revealing CpuLayout's static package map.
+Its illustrative single-die, four-core example expands one representative core
+using the existing core geometry, titled "Cores (~4 per die)". It shows no empty
+peer-core blocks. Surrounding components include shared L3 cache, on-die
+interconnect, integrated memory and I/O controllers, clock/power/thermal control,
+package contacts, and a separate CPU socket with memory, I/O, and power connections.
+The socket is drawn beside the package for clarity; physically it sits underneath.
+Core count, cache organization, packaging, and interfaces vary between processors;
+the map is logical rather than a manufacturer floorplan. Cache and controller
+context follows [Intel's processor datasheet](https://cdrdv2-public.intel.com/634648/634648-004.pdf).
+Focused component previews exclude the other components' detailed layers, preventing
+neighboring RAM or disk diagrams from appearing in the surrounding viewport.
+The static CPU preview uses opaque light orange (#faf6ec) for the socket's inner
+signal/power blocks, shared L3/interconnect/controllers, and the selected front-end,
+rename/dispatch/issue, execution/retirement, memory-access, and cache-interface
+blocks. Group boundaries and existing CPU lesson palettes retain their colors.
+HDD zooms into its storage block to reveal a common component map, grouping
 platters, the spindle motor, heads, actuator arms, the voice-coil actuator, and
 filters inside the enclosure, alongside the controller board, cache, and connectors.
 HddLayout owns that reusable schematic and the sector-access lesson's geometry.
@@ -143,8 +158,10 @@ Complex returns directly to System Components Overview and its system preview.
 Search selections open the matching component workspace and lesson.
 The four CPU overviews share a square CPU-core boundary with the same twenty-three
 component locations. Each supplies its own dataflow; unused units remain idle.
-CpuCoreLayout owns this common geometry and the category preview's logical
-pipeline arrows. ITLB and DTLB are separate, with shared MMU/page-walk context.
+CpuCoreLayout owns this common lesson geometry and logical pipeline arrows.
+CpuLayout reuses it as the expanded core inside the static package preview;
+the four current CPU overview cards and animations remain unchanged.
+ITLB and DTLB are separate, with shared MMU/page-walk context.
 The RAT, rename/physical allocation, dispatch/queue allocation, PRF, committed
 architectural state, and L2 cache have distinct regions. L2 may be private or shared.
 The renaming and out-of-order lessons keep speculative and committed values in

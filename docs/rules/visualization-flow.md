@@ -502,8 +502,15 @@ per CPU lesson, at most 256 diagram interactions, and no hardware timing claims.
 Use the shared square CPU-core map with all twenty-three component regions; leave
 unneeded units idle. Distinguish ITLB, DTLB, shared translation context, RAT,
 rename/physical allocation, dispatch/ROB and queue allocation, PRF, committed
-architectural state, and private-or-shared L2. The category preview shows logical
-pipeline paths through issue, register read, execution, writeback, and retirement.
+architectural state, and private-or-shared L2. The static category preview wraps
+this core geometry in a separate four-core package example, drawing only one
+representative core titled "Cores (~4 per die)" without empty peer-core blocks.
+Keep its communications to the surrounding shared cache,
+interconnect, memory/I/O controllers, contacts, and a CPU socket. Keep its layout
+in CpuLayout without changing the existing four overview cards or animations.
+Only the focused component's detailed scene layer is included in a category
+preview. The expanded core shows logical pipeline paths through issue, register
+read, execution, writeback, and retirement.
 Lesson playback keeps these context paths out of the active interaction sequence.
 Renaming and out-of-order lessons keep values in the PRF, update committed mappings
 at retirement, and release superseded registers. Branch recovery restores surviving

@@ -8,6 +8,7 @@ import { BranchPredictorModel } from '../src/components/RealSystemsAlgorithms/Ha
 import { ReturnStackModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/ReturnStack/ReturnStackModel.ts'
 import { HardwareTrace } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/HardwareTrace.ts'
 import { CpuCoreLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CpuCore/CpuCoreLayout.ts'
+import { CpuLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Cpu/CpuLayout.ts'
 import { SystemOverviewLayout } from '../src/components/RealSystemsAlgorithms/SystemOverview/SystemOverviewLayout.ts'
 
 test('four hardware lessons have deterministic independent snapshots and leave their source unchanged', () => {
@@ -258,13 +259,49 @@ test('branch recovery restores the surviving rename map and frees the wrong-path
   assert.equal(model.physical[1], null)
 })
 
-test('CPU category preview reuses the lesson geometry and includes logical pipeline arrows', () => {
+test('CPU category preview expands the package while preserving the existing core geometry', () => {
   const preview = SystemOverviewLayout.create('cpu', null)
-  const core = preview.layers.find((layer) => layer.id === 'cpu-core')
+  const cpu = preview.layers.find((layer) => layer.id === 'cpu-components')
+  const core = cpu.scene.layers.find((layer) => layer.id === 'cpu-core')
   const diagram = CpuCoreLayout.create([], false)
-  assert.deepEqual(core.scene.regions, diagram.regions)
-  assert.equal(preview.count, CpuCoreLayout.componentCount)
-  assert.ok(Math.abs(core.scene.width * core.scale - 660 * 1080 / 1560) < 0.0001)
+  const withoutColor = (regions) => regions.filter((region) => region.id !== 'core').map(({ color, ...region }) => region)
+  assert.deepEqual(withoutColor(core.scene.regions), withoutColor(diagram.regions))
+  const boundary = core.scene.regions.find((region) => region.id === 'core')
+  const originalBoundary = diagram.regions.find((region) => region.id === 'core')
+  assert.deepEqual({ ...boundary, label: originalBoundary.label, shortLabel: undefined }, { ...originalBoundary, shortLabel: undefined })
+  assert.equal(boundary.shortLabel, 'Cores (~4 per die)')
+  assert.equal(core.scene.layers?.length ?? 0, 0)
+  assert.ok(cpu.scene.regions.every((region) => !/^cpu-core-\d+$/.test(region.id)))
+  assert.equal(preview.count, CpuLayout.componentCount)
+  assert.ok(Math.abs(cpu.scene.width * cpu.scale - 660 * 1080 / 1560) < 0.0001)
+  assert.equal(core.scale, 1)
+  assert.equal(core.scene.width, CpuCoreLayout.size)
+  assert.equal(core.scene.height, CpuCoreLayout.size)
+  const regions = new Map(cpu.scene.regions.map((region) => [region.id, region]))
+  for (const id of ['cpu-package', 'cpu-die', 'cpu-shared-cache', 'cpu-interconnect', 'cpu-memory-controller', 'cpu-io-controller', 'cpu-clock-power', 'cpu-package-contacts', 'cpu-socket']) assert.ok(regions.has(id))
+  assert.equal(CpuLayout.coreCount, 4)
+  assert.match(regions.get('cpu-package').shortLabel, /4-core example/)
+  for (const region of regions.values()) {
+    assert.ok(region.x >= 0 && region.y >= 0)
+    assert.ok(region.x + region.width <= cpu.scene.width)
+    assert.ok(region.y + region.height <= cpu.scene.height)
+    if (!region.parentId) continue
+    const parent = regions.get(region.parentId)
+    assert.ok(region.x >= parent.x && region.y >= parent.y)
+    assert.ok(region.x + region.width <= parent.x + parent.width)
+    assert.ok(region.y + region.height <= parent.y + parent.height)
+  }
+  const die = regions.get('cpu-die')
+  assert.ok(core.x >= die.x && core.y >= die.y)
+  assert.ok(core.x + core.scene.width <= die.x + die.width)
+  assert.ok(core.y + core.scene.height <= die.y + die.height)
+  const paths = new Map(cpu.scene.paths.map((path) => [path.id, path]))
+  assert.ok(cpu.scene.paths.every((path) => !/^cpu-core-\d+-fabric$/.test(path.id)))
+  for (const id of ['cpu-core-fabric', 'cpu-cache-fabric', 'cpu-fabric-memory', 'cpu-fabric-io', 'cpu-memory-contacts', 'cpu-io-contacts', 'cpu-socket-memory', 'cpu-socket-io']) {
+    assert.equal(paths.get(id).bidirectional, true)
+    assert.equal(paths.get(id).directed, true)
+  }
+  assert.equal(paths.get('cpu-socket-power-contacts').dashed, true)
   const ids = new Set(diagram.regions.map((region) => region.id))
   for (const id of ['instruction-tlb', 'data-tlb', 'rename-map', 'dispatch-allocation', 'architectural-state', 'l2-cache']) {
     assert.ok(ids.has(`component-${id}`))
@@ -273,6 +310,19 @@ test('CPU category preview reuses the lesson geometry and includes logical pipel
     const arrow = core.scene.paths.find((path) => path.id === `pipeline-${id}`)
     assert.equal(arrow.directed, true)
     assert.ok(arrow.label.length > 0)
+  }
+})
+
+test('focused hardware previews exclude unrelated detailed component layers', () => {
+  for (const level of ['cpu', 'hdd', 'ssd', 'ram']) {
+    const preview = SystemOverviewLayout.create(level, null)
+    assert.deepEqual(preview.layers.filter((layer) => layer.id.endsWith('-components')).map((layer) => layer.id), [`${level}-components`])
+    const layer = preview.layers.find((candidate) => candidate.id === `${level}-components`)
+    const bounds = preview.camera.to
+    assert.ok(layer.x >= bounds.x && layer.y >= bounds.y)
+    assert.ok(layer.x + layer.scene.width * layer.scale <= bounds.x + bounds.width)
+    assert.ok(layer.y + layer.scene.height * layer.scale <= bounds.y + bounds.height)
+    assert.deepEqual(SystemOverviewLayout.create('hardware', preview).camera.from, bounds)
   }
 })
 

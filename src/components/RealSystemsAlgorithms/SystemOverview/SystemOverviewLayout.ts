@@ -1,5 +1,5 @@
-import type { Scene, SceneBounds, SceneNode } from '../../../visualization/Scene.ts'
-import { CpuCoreLayout } from '../Hardware/Fundamental/CpuCore/CpuCoreLayout.ts'
+import type { Scene, SceneBounds, SceneLayer, SceneNode } from '../../../visualization/Scene.ts'
+import { CpuLayout } from '../Hardware/Fundamental/Cpu/CpuLayout.ts'
 import { HddLayout } from '../Hardware/Fundamental/Hdd/HddLayout.ts'
 import { SsdLayout } from '../Hardware/Fundamental/Ssd/SsdLayout.ts'
 import { RamLayout } from '../Hardware/Fundamental/Ram/RamLayout.ts'
@@ -13,9 +13,9 @@ export class SystemOverviewLayout {
   private static readonly ssd = { x: 560, y: 1075, width: 420, height: 220 }
   private static readonly ram = { x: 825, y: 125, width: 640, height: 240 }
 
-  private static componentPlacement(level: 'hdd' | 'ssd' | 'ram'): { x: number, y: number, scale: number } {
-    const device = level === 'hdd' ? this.hdd : level === 'ssd' ? this.ssd : this.ram
-    const layout = level === 'hdd' ? HddLayout : level === 'ssd' ? SsdLayout : RamLayout
+  private static componentPlacement(level: 'cpu' | 'hdd' | 'ssd' | 'ram'): { x: number, y: number, scale: number } {
+    const device = level === 'cpu' ? { x: this.cpu.x, y: this.cpu.y, width: this.cpu.size, height: this.cpu.size } : level === 'hdd' ? this.hdd : level === 'ssd' ? this.ssd : this.ram
+    const layout = level === 'cpu' ? CpuLayout : level === 'hdd' ? HddLayout : level === 'ssd' ? SsdLayout : RamLayout
     const scale = Math.min(device.width / layout.width, device.height / layout.height)
     return {
       x: this.server.x + (device.x + (device.width - layout.width * scale) / 2) * this.server.scale,
@@ -28,17 +28,9 @@ export class SystemOverviewLayout {
     if (level === 'system') return { x: 0, y: 0, width: 2200, height: 1200 }
     const server = this.server
     if (level === 'hardware') return { x: server.x - 30, y: server.y - 30, width: 1140, height: 1060 }
-    if (level === 'hdd' || level === 'ssd' || level === 'ram') {
-      const device = this.componentPlacement(level)
-      const layout = level === 'hdd' ? HddLayout : level === 'ssd' ? SsdLayout : RamLayout
-      return { x: device.x - 20 * device.scale, y: device.y - 20 * device.scale, width: (layout.width + 40) * device.scale, height: (layout.height + 40) * device.scale }
-    }
-    return {
-      x: server.x + (this.cpu.x - 10) * server.scale,
-      y: server.y + (this.cpu.y - 10) * server.scale,
-      width: (this.cpu.size + 20) * server.scale,
-      height: (this.cpu.size + 20) * server.scale,
-    }
+    const device = this.componentPlacement(level)
+    const layout = level === 'cpu' ? CpuLayout : level === 'hdd' ? HddLayout : level === 'ssd' ? SsdLayout : RamLayout
+    return { x: device.x - 20 * device.scale, y: device.y - 20 * device.scale, width: (layout.width + 40) * device.scale, height: (layout.height + 40) * device.scale }
   }
 
   private static scene(width: number, height: number, nodes: readonly SceneNode[] = []): Scene {
@@ -61,71 +53,66 @@ export class SystemOverviewLayout {
       else from = level === 'cpu' || level === 'hdd' || level === 'ssd' || level === 'ram' ? this.bounds('hardware') : this.bounds('system')
     }
     const hardware = this.hardware()
-    const core = CpuCoreLayout.create([], false)
-    CpuCoreLayout.pipeline(core)
-    const coreScene: Scene = {
-      ...this.scene(core.width, core.height),
-      regions: core.regions,
-      paths: core.paths,
-      count: CpuCoreLayout.componentCount,
-      countLabel: 'CPU core components',
-    }
+    const cpuScene = CpuLayout.create()
     const server = this.server
     const cpuDetailRange = { startWidth: 850, endWidth: 500 }
     const hddScene = HddLayout.create()
     const ssdScene = SsdLayout.create()
     const ramScene = RamLayout.create()
-    const componentScene = level === 'hdd' ? hddScene : level === 'ssd' ? ssdScene : level === 'ram' ? ramScene : null
+    const componentScene = level === 'cpu' ? cpuScene : level === 'hdd' ? hddScene : level === 'ssd' ? ssdScene : level === 'ram' ? ramScene : null
+    const layers: SceneLayer[] = [
+      {
+        id: 'server-boundary', x: 0, y: 0, scale: 1,
+        scene: {
+          ...this.scene(2200, 1200),
+          regions: [{ id: 'server', label: 'Server', role: 'cpu', level: 'system', x: server.x, y: server.y, width: 1080, height: 1440 * server.scale }],
+        },
+        conceal: cpuDetailRange,
+      },
+      { id: 'system', scene: this.system(), x: 0, y: 0, scale: 1, conceal: { startWidth: 1800, endWidth: 1140 } },
+      {
+        id: 'server-summary', x: server.x, y: server.y, scale: server.scale,
+        scene: this.scene(1560, 1440, [this.label('server-summary', 'Server', 'Compute, memory and storage', 780, 670, 960, 380)]),
+        conceal: { startWidth: 2000, endWidth: 1250 },
+      },
+      { id: 'hardware', scene: hardware, ...server, reveal: { startWidth: 1800, endWidth: 1140 }, conceal: cpuDetailRange },
+      {
+        id: 'cpu-summary', ...server,
+        scene: {
+          ...this.scene(1560, 1440, [this.label('cpu-summary', 'CPU', 'Processor package / cores and shared components', 405, 440, 520, 160)]),
+          regions: [{ id: 'cpu-package', label: 'CPU', role: 'cpu', x: this.cpu.x, y: this.cpu.y, width: this.cpu.size, height: this.cpu.size }],
+        },
+        reveal: { startWidth: 1800, endWidth: 1140 },
+        conceal: cpuDetailRange,
+      },
+      {
+        id: 'cpu-components', scene: cpuScene, ...this.componentPlacement('cpu'),
+        reveal: cpuDetailRange,
+      },
+      {
+        id: 'hdd-components', scene: hddScene, ...this.componentPlacement('hdd'),
+        reveal: { startWidth: 600, endWidth: 320 },
+      },
+      {
+        id: 'ssd-components', scene: ssdScene, ...this.componentPlacement('ssd'),
+        reveal: { startWidth: 600, endWidth: 320 },
+      },
+      {
+        id: 'ram-components', scene: ramScene, ...this.componentPlacement('ram'),
+        reveal: { startWidth: 600, endWidth: 320 },
+      },
+    ]
+    const focusedLayers: SceneLayer[] = []
+    const focused = componentScene ? `${level}-components` : null
+    for (const layer of layers) {
+      if (focused && layer.id.endsWith('-components') && layer.id !== focused) continue
+      focusedLayers.push(layer)
+    }
     return {
-      ...this.scene(2200, 1200),
-      camera: { from, to },
-      count: level === 'cpu' ? CpuCoreLayout.componentCount : componentScene ? componentScene.count : level === 'hardware' ? 7 : 3,
+      ...this.scene(2200, 1200), camera: { from, to },
+      count: componentScene ? componentScene.count : level === 'hardware' ? 7 : 3,
       countLabel: componentScene ? componentScene.countLabel : 'components',
-      layers: [
-        {
-          id: 'server-boundary', x: 0, y: 0, scale: 1,
-          scene: {
-            ...this.scene(2200, 1200),
-            regions: [{ id: 'server', label: 'Server', role: 'cpu', level: 'system', x: server.x, y: server.y, width: 1080, height: 1440 * server.scale }],
-          },
-          conceal: cpuDetailRange,
-        },
-        { id: 'system', scene: this.system(), x: 0, y: 0, scale: 1, conceal: { startWidth: 1800, endWidth: 1140 } },
-        {
-          id: 'server-summary', x: server.x, y: server.y, scale: server.scale,
-          scene: this.scene(1560, 1440, [this.label('server-summary', 'Server', 'Compute, memory and storage', 780, 670, 960, 380)]),
-          conceal: { startWidth: 2000, endWidth: 1250 },
-        },
-        { id: 'hardware', scene: hardware, ...server, reveal: { startWidth: 1800, endWidth: 1140 }, conceal: cpuDetailRange },
-        {
-          id: 'cpu-summary', ...server,
-          scene: {
-            ...this.scene(1560, 1440, [this.label('cpu-summary', 'CPU', 'One core / execution and control', 405, 440, 520, 160)]),
-            regions: [{ id: 'cpu-package', label: 'CPU', role: 'cpu', x: this.cpu.x, y: this.cpu.y, width: this.cpu.size, height: this.cpu.size }],
-          },
-          reveal: { startWidth: 1800, endWidth: 1140 },
-          conceal: cpuDetailRange,
-        },
-        {
-          id: 'cpu-core', scene: coreScene,
-          x: server.x + this.cpu.x * server.scale,
-          y: server.y + this.cpu.y * server.scale,
-          scale: this.cpu.size / CpuCoreLayout.size * server.scale,
-          reveal: cpuDetailRange,
-        },
-        {
-          id: 'hdd-components', scene: hddScene, ...this.componentPlacement('hdd'),
-          reveal: { startWidth: 600, endWidth: 320 },
-        },
-        {
-          id: 'ssd-components', scene: ssdScene, ...this.componentPlacement('ssd'),
-          reveal: { startWidth: 600, endWidth: 320 },
-        },
-        {
-          id: 'ram-components', scene: ramScene, ...this.componentPlacement('ram'),
-          reveal: { startWidth: 600, endWidth: 320 },
-        },
-      ],
+      layers: focusedLayers,
     }
   }
 
