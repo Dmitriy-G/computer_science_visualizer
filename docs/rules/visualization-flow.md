@@ -35,8 +35,10 @@
    to reveal the common core map. Use continuous SVG camera movement and reveal
    nested details as they grow, with reduced-motion support. Algorithms browsing
    leaves the diagram unchanged. Hardware Fundamental and Complex share the
-   server hardware preview. Network, HDD, SSD, and RAM initially
-   show a blank renderer. Selecting a lesson uses its existing scene and playback.
+   server hardware preview. HDD zooms into its storage block to reveal the common
+   enclosure/mechanical assembly and controller-board component map. Network, SSD,
+   and RAM initially show a blank renderer. Selecting a lesson uses its existing
+   scene and playback.
    Network/Fundamental
    contains Physical, Data Link, Network, Transport, Session, Presentation, and
    Application in OSI layer order. Complex covers systems combining components
@@ -49,7 +51,8 @@
    to System Components Overview and its system preview.
    Returning from CPU to Hardware Fundamental zooms out to hardware; returning to System
    Components Overview zooms out to client/network/server. CPU category selection
-   returns to its core map. Changing groups opens
+   returns to its core map; HDD category selection and lesson Reset return to its
+   common component map. Changing groups opens
    the corresponding category preview without starting lesson playback.
    Search results include the component subcategory and open the corresponding
    workspace with the selected lesson.

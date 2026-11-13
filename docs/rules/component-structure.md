@@ -274,13 +274,15 @@ Root Complex opens its existing flat workspace directly. Do not render a
 second lesson list inside the menu. Each workspace can open with no lesson selected,
 showing all overview cards and their separate info buttons. SystemOverviewLayout
 under RealSystemsAlgorithms/SystemOverview supplies nested category previews:
-client/network/server, server hardware, and the shared CPU core. Scene camera
-bounds and detail layers let Renderer animate one continuous zoom and progressively
+client/network/server, server hardware, the shared CPU core, and the common HDD
+component map. Keep the HDD geometry in Hardware/Fundamental/Hdd/HddLayout.ts.
+Scene camera bounds and detail layers let Renderer animate one continuous zoom and progressively
 reveal nested internals. Respect reduced motion and cancel animation frames on
 unmount or replacement. Hardware Fundamental and Complex share the server
 hardware preview. Returning from CPU to Hardware Fundamental zooms out to hardware;
 returning to System Components Overview zooms out to client/network/server.
-Network, HDD, SSD, and RAM
+HDD zooms into the existing storage block to reveal its enclosure, mechanical
+components, controller board, cache, and connectors. Network, SSD, and RAM
 begin with blank renderers. Existing lesson scenes and playback stay unchanged.
 The Renderer supports action children without a scene and accepts
 an optional empty-state message. Selecting an animated overview starts playback; its info
@@ -288,7 +290,8 @@ button only opens information. Component workspace Back and header menu reopen
 Hardware Fundamental with CPU, HDD, SSD, and RAM; Complex returns directly to
 System Components Overview and its system preview.
 Returning to a parent category ends lesson playback and restores that category's
-preview. CPU category selection returns to its core preview. Changing groups opens
+preview. CPU category selection returns to its core preview; HDD returns to its
+common component map, including after lesson Reset. Changing groups opens
 their preview without starting a lesson. Search routes each fundamental lesson to the
 component group selected by its tag, including the full component path in results.
 Network/Fundamental contains Physical, Data Link, Network, Transport, Session,

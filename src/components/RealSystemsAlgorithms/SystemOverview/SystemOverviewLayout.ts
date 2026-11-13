@@ -1,16 +1,31 @@
 import type { Scene, SceneBounds, SceneNode } from '../../../visualization/Scene.ts'
 import { CpuCoreLayout } from '../Hardware/Fundamental/CpuCore/CpuCoreLayout.ts'
+import { HddLayout } from '../Hardware/Fundamental/Hdd/HddLayout.ts'
 
-type SystemOverviewLevel = 'system' | 'hardware' | 'cpu'
+type SystemOverviewLevel = 'system' | 'hardware' | 'cpu' | 'hdd'
 
 export class SystemOverviewLayout {
   private static readonly server = { x: 1060, y: 100, scale: 1080 / 1560 }
   private static readonly cpu = { x: 75, y: 110, size: 660 }
+  private static readonly hdd = { x: 75, y: 1075, width: 420, height: 220 }
+
+  private static hddPlacement(): { x: number, y: number, scale: number } {
+    const scale = this.hdd.height / 1000
+    return {
+      x: this.server.x + (this.hdd.x + (this.hdd.width - 1560 * scale) / 2) * this.server.scale,
+      y: this.server.y + this.hdd.y * this.server.scale,
+      scale: scale * this.server.scale,
+    }
+  }
 
   private static bounds(level: SystemOverviewLevel): SceneBounds {
     if (level === 'system') return { x: 0, y: 0, width: 2200, height: 1200 }
     const server = this.server
     if (level === 'hardware') return { x: server.x - 30, y: server.y - 30, width: 1140, height: 1060 }
+    if (level === 'hdd') {
+      const hdd = this.hddPlacement()
+      return { x: hdd.x - 20 * hdd.scale, y: hdd.y - 20 * hdd.scale, width: 1600 * hdd.scale, height: 1040 * hdd.scale }
+    }
     return {
       x: server.x + (this.cpu.x - 10) * server.scale,
       y: server.y + (this.cpu.y - 10) * server.scale,
@@ -32,8 +47,9 @@ export class SystemOverviewLayout {
     let from = previous?.camera?.to
     if (!from) {
       if (previous?.kind === 'cpu-hardware') from = this.bounds('cpu')
+      else if (previous?.kind === 'hardware-component' && previous.regions?.some((region) => region.id === 'platter')) from = this.bounds('hdd')
       else if (previous) from = to
-      else from = level === 'cpu' ? this.bounds('hardware') : this.bounds('system')
+      else from = level === 'cpu' || level === 'hdd' ? this.bounds('hardware') : this.bounds('system')
     }
     const hardware = this.hardware()
     const core = CpuCoreLayout.create([], false)
@@ -45,11 +61,12 @@ export class SystemOverviewLayout {
     }
     const server = this.server
     const cpuDetailRange = { startWidth: 850, endWidth: 500 }
+    const hddScene = HddLayout.create()
     return {
       ...this.scene(2200, 1200),
       camera: { from, to },
-      count: level === 'cpu' ? 17 : level === 'hardware' ? 7 : 3,
-      countLabel: 'components',
+      count: level === 'cpu' ? 17 : level === 'hdd' ? hddScene.count : level === 'hardware' ? 7 : 3,
+      countLabel: level === 'hdd' ? hddScene.countLabel : 'components',
       layers: [
         {
           id: 'server-boundary', x: 0, y: 0, scale: 1,
@@ -82,6 +99,10 @@ export class SystemOverviewLayout {
           scale: this.cpu.size / 1560 * server.scale,
           reveal: cpuDetailRange,
         },
+        {
+          id: 'hdd-components', scene: hddScene, ...this.hddPlacement(),
+          reveal: { startWidth: 600, endWidth: 320 },
+        },
       ],
     }
   }
@@ -111,7 +132,7 @@ export class SystemOverviewLayout {
       ['ram', 'RAM', 'Main memory', 1145, 245, 640, 240],
       ['gpu', 'GPU', 'Graphics / parallel compute', 1145, 595, 640, 260],
       ['bus', 'Bus / interconnect', 'Connects processor, memory and devices', 770, 905, 1390, 100],
-      ['hdd', 'HDD', 'Magnetic storage', 285, 1185, 420, 220],
+      ['hdd', 'HDD', 'Magnetic storage', this.hdd.x + this.hdd.width / 2, this.hdd.y + this.hdd.height / 2, this.hdd.width, this.hdd.height],
       ['ssd', 'SSD', 'Flash storage', 770, 1185, 420, 220],
       ['network-adapter', 'Network adapter', 'Network connection', 1255, 1185, 420, 220],
     ]

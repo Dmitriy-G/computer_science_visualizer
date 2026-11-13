@@ -25,8 +25,12 @@ System Components Overview displays a client, abstract network, and server.
 Hardware Fundamental moves the SVG camera into that
 server, revealing CPU, RAM, bus, HDD, SSD, GPU, and network adapter. CPU moves
 closer into the same nested CPU block, progressively revealing the shared core
-map. SystemOverviewLayout owns these navigation scenes; Renderer animates the
-camera and detail visibility, respecting reduced motion and cleaning up frames.
+map. HDD zooms into its storage block to reveal a common component map, grouping
+platters, the spindle motor, heads, actuator arms, the voice-coil actuator, and
+filters inside the enclosure, alongside the controller board, cache, and connectors.
+HddLayout owns that reusable map. SystemOverviewLayout owns these navigation
+scenes; Renderer animates the camera and detail visibility, respecting reduced
+motion and cleaning up frames.
 Zooming into a component hides the surrounding boundaries and unrelated
 connections; zooming out restores its context.
 Category previews open in Fit mode and reset scrolling, including after Actual size.
@@ -35,7 +39,8 @@ it and keeping the diagram in place when the menu opens or closes.
 Algorithms browsing preserves the current diagram. Hardware Fundamental and
 Complex share the server hardware preview. Returning from CPU to Hardware Fundamental
 zooms out to that hardware view; returning to System Components Overview zooms
-out to the client/network/server view. Network, HDD, SSD, and RAM
+out to the client/network/server view. HDD returns to the same hardware preview.
+Network, SSD, and RAM
 start with a blank renderer. Selecting a lesson uses its existing diagram and
 playback. Component workspace Back and header menu return to the four categories
 in Hardware Fundamental and restore the hardware preview, ending the current lesson.
