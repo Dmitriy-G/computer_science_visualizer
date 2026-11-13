@@ -15,11 +15,11 @@ export interface ReturnDiagramState {
 
 export class ReturnStackLayout {
   public static create(state: ReturnDiagramState): HardwareDiagram {
-    const diagram = CpuCoreLayout.create(['instruction-cache', 'instruction-decoder', 'register-files', 'branch-predictor', 'integer-alus', 'instruction-fetch'])
+    const diagram = CpuCoreLayout.create(['instruction-cache', 'instruction-decoder', 'architectural-state', 'branch-predictor', 'integer-alus', 'instruction-fetch'])
     const instruction = state.flow === 'call' ? 'CALL / BL' : state.flow.startsWith('return-') ? 'RET' : 'no call yet'
     CpuCoreLayout.fixture(diagram, 'instruction-cache', 'instruction-cache', 'recognized program instruction', instruction)
     CpuCoreLayout.fixture(diagram, 'instruction-decoder', 'decoded-instruction', 'call / return recognition', instruction)
-    CpuCoreLayout.fixture(diagram, 'register-files', 'return-register', 'program-supplied return address', state.register, 0, 0, 1, 350)
+    CpuCoreLayout.fixture(diagram, 'architectural-state', 'return-register', 'program return address / logical state view', state.register, 0, 0, 1, 450)
     CpuCoreLayout.place(diagram, 'branch-predictor', 'predicted', 0, 0, 2, 280)
     CpuCoreLayout.fixture(diagram, 'branch-predictor', 'statistics', 'matches; overflow; empty returns', `${state.matched}/${state.returns}; lost ${state.lost}; empty ${state.underflows}`, 1, 0, 2, 300)
     for (let index = 0; index < 8; index += 1) CpuCoreLayout.place(diagram, 'branch-predictor', `return-${index}`, index % 4, 1 + Math.floor(index / 4), 4, 130)

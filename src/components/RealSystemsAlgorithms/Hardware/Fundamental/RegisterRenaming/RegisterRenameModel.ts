@@ -27,13 +27,20 @@ export class RegisterRenameModel {
     { id: 'I4', destination: 'r3', sources: ['r1', 'r2'], immediate: 0, text: 'r3 = r1 + r2' },
   ]
   public readonly renameMap = new Map<string, number>([['r1', 0], ['r2', 1], ['r3', 2]])
-  public readonly architectural = new Map<string, number>([['r1', 3], ['r2', 4], ['r3', 0]])
+  public readonly committedMap = new Map<string, number>([['r1', 0], ['r2', 1], ['r3', 2]])
   public readonly physical: (number | null)[] = [3, 4, 0, null, null, null, null]
   private readonly allocated = new Set<number>([0, 1, 2])
   private readonly instructions: RenamedInstruction[] = []
   private retired = 0
   private phase = 'initial'
   private currentId = 'I1'
+  private executionResult = 'waiting for operands'
+
+  public get architectural(): ReadonlyMap<string, number> {
+    const values = new Map<string, number>()
+    for (const [name, physical] of this.committedMap) values.set(name, this.physical[physical]!)
+    return values
+  }
 
   public renameNext(): string {
     const instruction = RegisterRenameModel.program[this.instructions.length]
@@ -66,12 +73,13 @@ export class RegisterRenameModel {
     entry.done = true
     this.phase = 'execute'
     this.currentId = id
+    this.executionResult = `${id}: ${value}`
   }
 
   public retireNext(): string {
     const entry = this.instructions[this.retired]
     if (!entry?.done) throw new RangeError('Oldest instruction is not complete')
-    this.architectural.set(entry.instruction.destination, this.physical[entry.destination]!)
+    this.committedMap.set(entry.instruction.destination, entry.destination)
     this.allocated.delete(entry.previous)
     this.physical[entry.previous] = null
     entry.retired = true
@@ -113,8 +121,10 @@ export class RegisterRenameModel {
     const program = current?.instruction ?? RegisterRenameModel.program[0]
     const mapping: string[] = []
     const architectural: string[] = []
+    const free: string[] = []
     for (const [name, physical] of this.renameMap) mapping.push(`${name}:p${physical}`)
-    for (const [name, value] of this.architectural) architectural.push(`${name}:${value}`)
+    for (const [name, physical] of this.committedMap) architectural.push(`${name}:p${physical}=${this.physical[physical]}`)
+    for (let index = 0; index < this.physical.length; index += 1) if (!this.allocated.has(index)) free.push(`p${index}`)
     const diagram = RegisterRenamingLayout.create({
       phase: this.phase, id: program.id, text: program.text,
       sources: current?.sources ?? [], destination: current?.destination ?? 0,
@@ -122,7 +132,8 @@ export class RegisterRenameModel {
       immediate: program.immediate, destinationName: program.destination,
       value: String(current ? this.physical[current.destination] ?? 'not ready' : 'not ready'),
       previous: current?.previous ?? 0, mapping: mapping.join(' '), committed: architectural.join(' '),
-      result: current?.done ? `${program.id}: ${this.physical[current.destination] ?? 'retired'}` : 'waiting for operands',
+      free: free.join(' ') || 'none',
+      result: this.executionResult,
     })
     const focusId = focus === null ? null : this.phase === 'rename' ? 'rename-map' : this.phase === 'execute' ? 'alu' : 'committed-registers'
     return new CpuModel(banks, focusId, 0, diagram)

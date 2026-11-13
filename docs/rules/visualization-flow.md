@@ -423,8 +423,16 @@ renaming/retirement; dependency readiness, reorder-buffer completion and branch
 squashing; history/counter training; or bounded return prediction independent of
 actual return addresses. Record independent snapshots with fixed diagram bounds
 per CPU lesson, at most 256 diagram interactions, and no hardware timing claims.
-Use the shared square CPU-core map with all seventeen component regions; leave
-unneeded units idle. Show one arrow or one local state change per step. Preserve
+Use the shared square CPU-core map with all twenty-three component regions; leave
+unneeded units idle. Distinguish ITLB, DTLB, shared translation context, RAT,
+rename/physical allocation, dispatch/ROB and queue allocation, PRF, committed
+architectural state, and private-or-shared L2. The category preview shows logical
+pipeline paths through issue, register read, execution, writeback, and retirement.
+Lesson playback keeps these context paths out of the active interaction sequence.
+Renaming and out-of-order lessons keep values in the PRF, update committed mappings
+at retirement, and release superseded registers. Branch recovery restores surviving
+rename mappings and frees wrong-path destinations. Show one arrow or one local
+state change per step. Preserve
 unchanged-value transactions and update receivers when data arrives, including
 waiting for all operands before displaying a combined execution result.
 Describe the active arrow's instruction, data, request, or control contents in

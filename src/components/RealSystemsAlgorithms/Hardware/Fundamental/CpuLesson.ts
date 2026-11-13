@@ -26,7 +26,7 @@ export abstract class CpuLesson implements ActionDefinition<CpuModel> {
 }
 
 export class CpuLessonInformation {
-  public static readonly coreMapNote = 'The shared core map is a conceptual superset of components. Idle units provide context; their presence does not imply that every cited processor implements them. The diagram does not show exact physical wiring.'
+  public static readonly coreMapNote = 'The shared core map is a conceptual superset of components, not a specific processor pipeline. Renaming and out-of-order lessons use a PRF holding speculative and committed values; committed mappings identify architectural register state without a separate architectural register file. Dispatch means entry into scheduling queues; issue selects ready work for execution. Stage boundaries, TLB organization, and whether L2 is private or shared vary by design. Idle units provide context and need not exist in every cited processor. Pipeline arrows show logical progress, not clock cycles or exact physical wiring.'
 
   public static create(name: string, summary: string, product: string, url: string, usage: string, limits: string): AlgorithmInformation {
     const bound = { best: 'O(1)', average: 'O(1)', worst: 'O(1)' }

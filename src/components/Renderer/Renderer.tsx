@@ -362,31 +362,35 @@ export default class Renderer extends Component<
   private renderElements(scene: Scene, cameraWidth: number): ReactNode {
     const nodeMap = new Map<string, SceneNode>()
     const elements: ReactNode[] = []
+    const cpu = scene.regions?.some((region) => region.id === 'core') ?? false
     for (const region of scene.regions ?? []) elements.push(this.renderRegion(region))
     for (const slot of scene.slots ?? []) elements.push(this.renderSlot(slot))
     for (const node of scene.nodes) nodeMap.set(node.id, node)
     for (const path of scene.paths ?? []) elements.push(
-      <path key={`path-${path.id}`} className={`scene-edge${path.highlighted ? ' scene-edge-highlighted' : ''}`} d={path.d} role="img" aria-label={path.label}><title>{path.label}</title></path>,
+      <path key={`path-${path.id}`} className={`scene-edge${path.highlighted ? ' scene-edge-highlighted' : ''}`} d={path.d} markerEnd={path.directed ? 'url(#default-arrow)' : undefined} role="img" aria-label={path.label}><title>{path.label}</title></path>,
     )
     for (const edge of scene.edges)
       elements.push(this.renderEdge(edge, nodeMap))
     for (const region of scene.regions ?? []) {
       const lines: string[] = []
-      if (scene.kind === 'system-overview') {
-        const limit = Math.max(12, Math.floor((region.width - 32) / 9))
+      const label = region.shortLabel ?? region.label
+      const fontSize = region.level === 'system' ? 32 : 26
+      if (scene.kind === 'system-overview' || scene.kind === 'cpu-hardware') {
+        const limit = Math.max(cpu ? 8 : 12, Math.floor((region.width - 32) / (cpu ? fontSize * 0.62 : 9)))
         let line = ''
-        for (const word of region.label.split(' ')) {
+        for (const word of label.split(' ')) {
           if (line && line.length + word.length + 1 > limit) {
             lines.push(line)
             line = word
           } else line += `${line ? ' ' : ''}${word}`
         }
         if (line) lines.push(line)
-      } else lines.push(region.label)
+      } else lines.push(label)
       const titles: ReactNode[] = []
-      for (let index = 0; index < lines.length; index += 1) titles.push(<tspan key={index} x={region.x + 16} dy={index === 0 ? 0 : 19}>{lines[index]}</tspan>)
+      for (let index = 0; index < lines.length; index += 1) titles.push(<tspan key={index} x={region.x + 16} dy={index === 0 ? 0 : cpu ? 28 : 19}>{lines[index]}</tspan>)
       elements.push(
-        <text key={`region-title-${region.id}`} className={`scene-region-title${region.level === 'system' ? ' scene-region-title--system' : ''}`} x={region.x + 16} y={region.y + 29}>
+        <text key={`region-title-${region.id}`} className={`scene-region-title${region.level === 'system' ? ' scene-region-title--system' : ''}${cpu ? ' scene-region-title--cpu' : ''}`} x={region.x + 16} y={region.y + (cpu ? region.level === 'system' ? 36 : 30 : 29)}>
+          {region.shortLabel && <title>{region.label}</title>}
           {titles}
         </text>,
       )

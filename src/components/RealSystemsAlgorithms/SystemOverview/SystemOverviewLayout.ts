@@ -53,10 +53,12 @@ export class SystemOverviewLayout {
     }
     const hardware = this.hardware()
     const core = CpuCoreLayout.create([], false)
+    CpuCoreLayout.pipeline(core)
     const coreScene: Scene = {
       ...this.scene(core.width, core.height),
       regions: core.regions,
-      count: 17,
+      paths: core.paths,
+      count: CpuCoreLayout.componentCount,
       countLabel: 'CPU core components',
     }
     const server = this.server
@@ -65,7 +67,7 @@ export class SystemOverviewLayout {
     return {
       ...this.scene(2200, 1200),
       camera: { from, to },
-      count: level === 'cpu' ? 17 : level === 'hdd' ? hddScene.count : level === 'hardware' ? 7 : 3,
+      count: level === 'cpu' ? CpuCoreLayout.componentCount : level === 'hdd' ? hddScene.count : level === 'hardware' ? 7 : 3,
       countLabel: level === 'hdd' ? hddScene.countLabel : 'components',
       layers: [
         {
@@ -96,7 +98,7 @@ export class SystemOverviewLayout {
           id: 'cpu-core', scene: coreScene,
           x: server.x + this.cpu.x * server.scale,
           y: server.y + this.cpu.y * server.scale,
-          scale: this.cpu.size / 1560 * server.scale,
+          scale: this.cpu.size / CpuCoreLayout.size * server.scale,
           reveal: cpuDetailRange,
         },
         {

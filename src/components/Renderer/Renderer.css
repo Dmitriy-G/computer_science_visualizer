@@ -382,6 +382,8 @@
 }
 .scene-region--system > rect { fill-opacity: 0.28; stroke-width: 2.5; }
 .scene-region-title--system { font-size: 18px; font-weight: 700; }
+.scene-region-title--cpu { font-size: 26px; }
+.scene-region-title--cpu.scene-region-title--system { font-size: 32px; }
 .scene-region--cache rect { fill: #fff7e7; stroke: #d8bd85; }
 .scene-region--memory rect { fill: #eaf6f0; stroke: #92bba9; }
 .scene-region--interconnect rect { fill: #f3effa; stroke: #baa9d2; }

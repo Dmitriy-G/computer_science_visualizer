@@ -310,9 +310,15 @@ Menu reopening and workspace Back lead to Hardware Fundamental; its Back leads
 to System Components Overview. HDD, SSD, and RAM follow the same navigation pattern.
 Each owns its mechanism model, component, CSS, animation, layout, and sourced
 information. CpuCoreLayout supplies one enclosing square CPU-core boundary and
-the same seventeen internal component regions for all four CPU lessons. Group
+the same twenty-three internal component regions for all four CPU lessons. Group
 the components into front end, scheduling and registers, execution and retirement,
-and memory access. Keep unused units idle and adapt each lesson's state and
+and memory access. Separate ITLB and DTLB, rename map (RAT), rename/physical
+allocation, dispatch/ROB and queue allocation, PRF, committed architectural state,
+and L2. L2 can be private or shared. Committed register values remain in the PRF;
+show committed mappings rather than a separate architectural register file.
+The category preview includes directed logical pipeline paths with register read,
+writeback, and in-order retirement; these paths do not imply clock cycles.
+Keep unused units idle and adapt each lesson's state and
 dataflow to the relevant units. The temporary CPU core test entry is removed;
 its shared core concept belongs to the existing lessons.
 CpuTrace uses shared HardwareInteractions to publish exactly one explained arrow

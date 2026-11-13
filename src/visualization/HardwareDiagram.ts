@@ -29,8 +29,9 @@ export class HardwareDiagram {
     this.height = height
   }
 
-  public region(id: string, label: string, role: SceneRegion['role'], x: number, y: number, width: number, height: number, level: SceneRegion['level'] = 'component', parentId?: string): this {
-    this.regions.push({ id, label, role, x, y, width, height, level, parentId })
+  public region(id: string, label: string, role: SceneRegion['role'], x: number, y: number, width: number, height: number, level: SceneRegion['level'] = 'component', parentId?: string, shortLabel?: string): this {
+    const region: SceneRegion = { id, label, role, x, y, width, height, level, parentId }
+    this.regions.push(shortLabel ? { ...region, shortLabel } : region)
     return this
   }
 

@@ -46,9 +46,16 @@ playback. Component workspace Back and header menu return to the four categories
 in Hardware Fundamental and restore the hardware preview, ending the current lesson.
 Complex returns directly to System Components Overview and its system preview.
 Search selections open the matching component workspace and lesson.
-The four CPU overviews share a square CPU-core boundary with the same seventeen
+The four CPU overviews share a square CPU-core boundary with the same twenty-three
 component locations. Each supplies its own dataflow; unused units remain idle.
-CpuCoreLayout owns this common geometry. The temporary static test overview has
+CpuCoreLayout owns this common geometry and the category preview's logical
+pipeline arrows. ITLB and DTLB are separate, with shared MMU/page-walk context.
+The RAT, rename/physical allocation, dispatch/queue allocation, PRF, committed
+architectural state, and L2 cache have distinct regions. L2 may be private or shared.
+The renaming and out-of-order lessons keep speculative and committed values in
+the PRF; committed mappings identify architectural values. The ROB tracks
+completion and retirement. Wrong-path recovery restores surviving rename mappings
+and releases discarded physical destinations. The temporary static test overview has
 been removed from the catalog and search.
 Alongside the four animated CPU overviews, Fundamental implements the latch, conventional
 6T SRAM cell, DRAM row access, conventional HDD sector access, SLC NAND, page-mapped

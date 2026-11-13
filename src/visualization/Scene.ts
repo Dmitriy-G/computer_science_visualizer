@@ -49,6 +49,7 @@ export interface SceneEdge {
 export interface SceneRegion {
   readonly id: string
   readonly label: string
+  readonly shortLabel?: string
   readonly role: 'cpu' | 'cache' | 'memory' | 'interconnect' | 'observer'
   readonly x: number
   readonly y: number
@@ -64,6 +65,7 @@ export interface ScenePath {
   readonly d: string
   readonly label: string
   readonly highlighted: boolean
+  readonly directed?: boolean
 }
 
 export interface Scene {

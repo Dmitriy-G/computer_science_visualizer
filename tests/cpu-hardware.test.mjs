@@ -7,6 +7,8 @@ import { OutOfOrderModel } from '../src/components/RealSystemsAlgorithms/Hardwar
 import { BranchPredictorModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/BranchPrediction/BranchPredictorModel.ts'
 import { ReturnStackModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/ReturnStack/ReturnStackModel.ts'
 import { CpuTrace } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CpuTrace.ts'
+import { CpuCoreLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CpuCore/CpuCoreLayout.ts'
+import { SystemOverviewLayout } from '../src/components/RealSystemsAlgorithms/SystemOverview/SystemOverviewLayout.ts'
 
 test('four hardware lessons have deterministic independent snapshots and leave their source unchanged', () => {
   const cpuChoices = CpuAlgorithmCatalog.choices.filter((choice) => choice.components.includes('CPU'))
@@ -59,7 +61,7 @@ test('CPU lessons share one core map and show one explained interaction per step
       const core = scene.regions.find((region) => region.id === 'core')
       const units = scene.regions.filter((region) => region.id.startsWith('component-'))
       assert.equal(core.width, core.height)
-      assert.equal(units.length, 17)
+      assert.equal(units.length, CpuCoreLayout.componentCount)
       if (!components) components = units
       assert.deepEqual(units, components)
       const active = scene.edges.filter((edge) => edge.highlighted)
@@ -122,14 +124,16 @@ test('both physical operands arrive before the ALU result and register write are
   model.execute('I4')
   trace.record(model.snapshot('I4'), 'Execute I4', 'Read both physical operands, then write p6.', '')
   const transfers = trace.steps.filter((step) => step.scene.edges.some((edge) => edge.highlighted))
-  assert.deepEqual(transfers.map((step) => step.scene.edges.find((edge) => edge.highlighted).id), ['operand-5', 'operand-4', 'result'])
+  assert.deepEqual(transfers.map((step) => step.scene.edges.find((edge) => edge.highlighted).id), ['issue', 'operand-5', 'operand-4', 'result', 'complete'])
   const value = (step, id) => step.scene.nodes.find((node) => node.id === id).displayValue
   assert.equal(value(transfers[0], 'alu'), 'I2: 8')
   assert.equal(value(transfers[0], 'physical-6'), 'not ready')
-  assert.equal(value(transfers[1], 'alu'), 'I4: 28')
+  assert.equal(value(transfers[1], 'alu'), 'I2: 8')
   assert.equal(value(transfers[1], 'physical-6'), 'not ready')
-  assert.equal(value(transfers[2], 'physical-6'), '28')
-  assert.equal(transfers[0].scene.edges.find((edge) => edge.highlighted).message, 'Data: I4 reads p5 = 20')
+  assert.equal(value(transfers[2], 'alu'), 'I4: 28')
+  assert.equal(value(transfers[2], 'physical-6'), 'not ready')
+  assert.equal(value(transfers[3], 'physical-6'), '28')
+  assert.equal(transfers[1].scene.edges.find((edge) => edge.highlighted).message, 'Data: I4 reads p5 = 20')
 })
 
 test('out-of-order flow separates a load request, speculative execution, and architectural commit', () => {
@@ -208,6 +212,70 @@ test('renaming preserves an older source when a younger instruction overwrites i
   assert.equal(model.physical[3], null)
 })
 
+test('retirement changes committed mappings while values stay in the PRF', () => {
+  const model = new RegisterRenameModel()
+  for (let index = 0; index < 4; index += 1) model.renameNext()
+  for (const id of ['I3', 'I1', 'I2', 'I4']) model.execute(id)
+  assert.equal(model.renameMap.get('r1'), 5)
+  assert.equal(model.committedMap.get('r1'), 0)
+  assert.equal(model.architectural.get('r1'), 3)
+  model.retireNext()
+  assert.equal(model.committedMap.get('r1'), 3)
+  assert.equal(model.physical[3], 7)
+  assert.equal(model.physical[0], null)
+  assert.equal(model.architectural.get('r1'), 7)
+  model.retireNext()
+  assert.equal(model.physical[3], 7)
+  model.retireNext()
+  assert.equal(model.committedMap.get('r1'), 5)
+  assert.equal(model.physical[5], 20)
+  assert.equal(model.physical[3], null)
+  const diagram = model.snapshot().diagram
+  const commit = diagram.edges.find((edge) => edge.id === 'commit')
+  assert.match(commit.message, /Control: commit r1 -> p5/)
+  assert.match(commit.message, /stays in the PRF/)
+})
+
+test('branch recovery restores the surviving rename map and frees the wrong-path PRF destination', () => {
+  const model = new OutOfOrderModel()
+  model.execute('I2')
+  model.execute('I5')
+  assert.equal(model.physical[4], 7)
+  assert.equal(model.physical[6], 99)
+  assert.equal(model.renameMap.get('r2'), 6)
+  assert.equal(model.committedMap.get('r2'), 1)
+  assert.equal(model.architectural.get('r2'), 4)
+  for (const id of ['I1', 'I3', 'I4']) model.execute(id)
+  assert.equal(model.renameMap.get('r2'), 4)
+  assert.equal(model.physical[6], null)
+  assert.equal(model.physical[4], 7)
+  assert.equal(model.architectural.get('r2'), 4)
+  assert.equal(model.snapshot().diagram.edges.find((edge) => edge.id === 'squash-register').highlighted, true)
+  model.retireNext()
+  model.retireNext()
+  assert.equal(model.committedMap.get('r2'), 4)
+  assert.equal(model.architectural.get('r2'), 7)
+  assert.equal(model.physical[1], null)
+})
+
+test('CPU category preview reuses the lesson geometry and includes logical pipeline arrows', () => {
+  const preview = SystemOverviewLayout.create('cpu', null)
+  const core = preview.layers.find((layer) => layer.id === 'cpu-core')
+  const diagram = CpuCoreLayout.create([], false)
+  assert.deepEqual(core.scene.regions, diagram.regions)
+  assert.equal(preview.count, CpuCoreLayout.componentCount)
+  assert.ok(Math.abs(core.scene.width * core.scale - 660 * 1080 / 1560) < 0.0001)
+  const ids = new Set(diagram.regions.map((region) => region.id))
+  for (const id of ['instruction-tlb', 'data-tlb', 'rename-map', 'dispatch-allocation', 'architectural-state', 'l2-cache']) {
+    assert.ok(ids.has(`component-${id}`))
+  }
+  for (const id of ['fetch-decode', 'queue-rename', 'rename-dispatch', 'dispatch-issue', 'issue-register-read', 'issue-execute', 'execute-writeback', 'writeback-retire']) {
+    const arrow = core.scene.paths.find((path) => path.id === `pipeline-${id}`)
+    assert.equal(arrow.directed, true)
+    assert.ok(arrow.label.length > 0)
+  }
+})
+
 test('out-of-order completion cannot retire around a blocked head or commit a squashed result', () => {
   const model = new OutOfOrderModel()
   assert.equal(model.execute('I3'), false)
@@ -222,6 +290,7 @@ test('out-of-order completion cannot retire around a blocked head or commit a sq
   for (const id of ['I1', 'I2', 'I3', 'I4']) assert.equal(model.retireNext(), id)
   assert.equal(model.retireNext(), null)
   assert.deepEqual([...model.architectural], [['r1', 10], ['r2', 7], ['r3', 11]])
+  assert.equal(model.snapshot().diagram.fixtures.find((cell) => cell.id === 'retirement-head').value, 'empty')
 })
 
 test('history predictor trains the entry selected before resolution, saturates, and stays bounded', () => {
