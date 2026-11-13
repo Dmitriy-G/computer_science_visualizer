@@ -51,6 +51,7 @@ export interface SceneRegion {
   readonly label: string
   readonly shortLabel?: string
   readonly role: 'cpu' | 'cache' | 'memory' | 'interconnect' | 'observer' | 'device'
+  readonly color?: 'neutral' | 'green' | 'light-blue' | 'lavender'
   readonly x: number
   readonly y: number
   readonly width: number

@@ -2,18 +2,20 @@ import type { Scene, SceneBounds, SceneNode } from '../../../visualization/Scene
 import { CpuCoreLayout } from '../Hardware/Fundamental/CpuCore/CpuCoreLayout.ts'
 import { HddLayout } from '../Hardware/Fundamental/Hdd/HddLayout.ts'
 import { SsdLayout } from '../Hardware/Fundamental/Ssd/SsdLayout.ts'
+import { RamLayout } from '../Hardware/Fundamental/Ram/RamLayout.ts'
 
-type SystemOverviewLevel = 'system' | 'hardware' | 'cpu' | 'hdd' | 'ssd'
+type SystemOverviewLevel = 'system' | 'hardware' | 'cpu' | 'hdd' | 'ssd' | 'ram'
 
 export class SystemOverviewLayout {
   private static readonly server = { x: 1060, y: 100, scale: 1080 / 1560 }
   private static readonly cpu = { x: 75, y: 110, size: 660 }
   private static readonly hdd = { x: 75, y: 1075, width: 420, height: 220 }
   private static readonly ssd = { x: 560, y: 1075, width: 420, height: 220 }
+  private static readonly ram = { x: 825, y: 125, width: 640, height: 240 }
 
-  private static storagePlacement(level: 'hdd' | 'ssd'): { x: number, y: number, scale: number } {
-    const device = level === 'hdd' ? this.hdd : this.ssd
-    const layout = level === 'hdd' ? HddLayout : SsdLayout
+  private static componentPlacement(level: 'hdd' | 'ssd' | 'ram'): { x: number, y: number, scale: number } {
+    const device = level === 'hdd' ? this.hdd : level === 'ssd' ? this.ssd : this.ram
+    const layout = level === 'hdd' ? HddLayout : level === 'ssd' ? SsdLayout : RamLayout
     const scale = Math.min(device.width / layout.width, device.height / layout.height)
     return {
       x: this.server.x + (device.x + (device.width - layout.width * scale) / 2) * this.server.scale,
@@ -26,9 +28,9 @@ export class SystemOverviewLayout {
     if (level === 'system') return { x: 0, y: 0, width: 2200, height: 1200 }
     const server = this.server
     if (level === 'hardware') return { x: server.x - 30, y: server.y - 30, width: 1140, height: 1060 }
-    if (level === 'hdd' || level === 'ssd') {
-      const device = this.storagePlacement(level)
-      const layout = level === 'hdd' ? HddLayout : SsdLayout
+    if (level === 'hdd' || level === 'ssd' || level === 'ram') {
+      const device = this.componentPlacement(level)
+      const layout = level === 'hdd' ? HddLayout : level === 'ssd' ? SsdLayout : RamLayout
       return { x: device.x - 20 * device.scale, y: device.y - 20 * device.scale, width: (layout.width + 40) * device.scale, height: (layout.height + 40) * device.scale }
     }
     return {
@@ -54,8 +56,9 @@ export class SystemOverviewLayout {
       if (previous?.kind === 'cpu-hardware') from = this.bounds('cpu')
       else if (previous?.kind === 'hardware-component' && previous.regions?.some((region) => region.id === 'hdd-enclosure')) from = this.bounds('hdd')
       else if (previous?.kind === 'hardware-component' && previous.regions?.some((region) => region.id === 'ssd-pcb')) from = this.bounds('ssd')
+      else if (previous?.kind === 'hardware-component' && previous.regions?.some((region) => region.id === 'ram-pcb')) from = this.bounds('ram')
       else if (previous) from = to
-      else from = level === 'cpu' || level === 'hdd' || level === 'ssd' ? this.bounds('hardware') : this.bounds('system')
+      else from = level === 'cpu' || level === 'hdd' || level === 'ssd' || level === 'ram' ? this.bounds('hardware') : this.bounds('system')
     }
     const hardware = this.hardware()
     const core = CpuCoreLayout.create([], false)
@@ -71,12 +74,13 @@ export class SystemOverviewLayout {
     const cpuDetailRange = { startWidth: 850, endWidth: 500 }
     const hddScene = HddLayout.create()
     const ssdScene = SsdLayout.create()
-    const storageScene = level === 'hdd' ? hddScene : level === 'ssd' ? ssdScene : null
+    const ramScene = RamLayout.create()
+    const componentScene = level === 'hdd' ? hddScene : level === 'ssd' ? ssdScene : level === 'ram' ? ramScene : null
     return {
       ...this.scene(2200, 1200),
       camera: { from, to },
-      count: level === 'cpu' ? CpuCoreLayout.componentCount : storageScene ? storageScene.count : level === 'hardware' ? 7 : 3,
-      countLabel: storageScene ? storageScene.countLabel : 'components',
+      count: level === 'cpu' ? CpuCoreLayout.componentCount : componentScene ? componentScene.count : level === 'hardware' ? 7 : 3,
+      countLabel: componentScene ? componentScene.countLabel : 'components',
       layers: [
         {
           id: 'server-boundary', x: 0, y: 0, scale: 1,
@@ -110,11 +114,15 @@ export class SystemOverviewLayout {
           reveal: cpuDetailRange,
         },
         {
-          id: 'hdd-components', scene: hddScene, ...this.storagePlacement('hdd'),
+          id: 'hdd-components', scene: hddScene, ...this.componentPlacement('hdd'),
           reveal: { startWidth: 600, endWidth: 320 },
         },
         {
-          id: 'ssd-components', scene: ssdScene, ...this.storagePlacement('ssd'),
+          id: 'ssd-components', scene: ssdScene, ...this.componentPlacement('ssd'),
+          reveal: { startWidth: 600, endWidth: 320 },
+        },
+        {
+          id: 'ram-components', scene: ramScene, ...this.componentPlacement('ram'),
           reveal: { startWidth: 600, endWidth: 320 },
         },
       ],
@@ -143,7 +151,7 @@ export class SystemOverviewLayout {
 
   private static hardware(): Scene {
     const components: readonly [string, string, string, number, number, number, number][] = [
-      ['ram', 'RAM', 'Main memory', 1145, 245, 640, 240],
+      ['ram', 'RAM', 'Main memory', this.ram.x + this.ram.width / 2, this.ram.y + this.ram.height / 2, this.ram.width, this.ram.height],
       ['gpu', 'GPU', 'Graphics / parallel compute', 1145, 595, 640, 260],
       ['bus', 'Bus / interconnect', 'Connects processor, memory and devices', 770, 905, 1390, 100],
       ['hdd', 'HDD', 'Magnetic storage', this.hdd.x + this.hdd.width / 2, this.hdd.y + this.hdd.height / 2, this.hdd.width, this.hdd.height],

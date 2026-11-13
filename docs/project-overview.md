@@ -94,8 +94,48 @@ Algorithms browsing preserves the current diagram. Hardware Fundamental and
 Complex share the server hardware preview. Returning from CPU to Hardware Fundamental
 zooms out to that hardware view; returning to System Components Overview zooms
 out to the client/network/server view. HDD returns to the same hardware preview.
-Network and RAM
-start with a blank renderer. Selecting a lesson uses its mechanism's playback;
+RAM zooms into its server memory block to reveal RamLayout's logical component
+schematic. A concrete 8 GiB, single-rank, non-ECC DDR4 x8 example provides the
+quantity labels: approximately eight chips per module, one monolithic die per
+chip, four bank groups per die, and four banks per group (sixteen per die).
+One representative block of each type is drawn. Visible counts use "per" and
+only the closest containing type: chips per RAM board, dies per chip, groups
+per die, banks per bank group, and cells per bank. Higher-level totals remain
+in tooltips. An explicit DRAM die boundary contains control, refresh,
+read/write I/O, bank groups, banks, decoders, sense amplifiers, and memory cells.
+Transistors and Capacitors are enlarged groups inside the cell array; each
+actual cell pairs one of each. The example has 536,870,912 addressable data cells
+per bank, rounded to approximately 537M in the memory-cell label. Transistors
+and Capacitors each show approximately one per cell. The module total is
+68,719,476,736 data bits. Cell counts
+exclude physical spares; transistor counts exclude control/decoder/I/O logic.
+The Cell arrays (subarrays) block groups multiple physical subarrays per bank;
+the memory-cell count is aggregated across the bank. Subarray counts depend on
+chip design, as described in the [DRAM organization background](https://users.ece.cmu.edu/~saugatag/papers/18micro_cal.pdf).
+Subarray, decoder, and peripheral-circuit instance counts are not invented.
+The reference module organization follows the
+[Kingston 8GB 1Rx8 DDR4 datasheet](https://www.kingston.com/datasheets/KF432C16BWA_8.pdf);
+one monolithic die per chip is an explicit modeling choice. Actual configurations
+can use different chip, die, and bank counts. Internal placement is logical, not a verified
+manufacturer die floorplan. A simple DIMM socket block connects the external
+memory controller and SPD host to the module. Visible titles are names with scoped counts,
+with details retained in tooltips and accessible labels.
+RAM uses green for Chips, Memory cells, Control logic, Refresh circuitry,
+Read/write circuitry, and Bank groups. The DIMM socket, SPD, Row decoder, Cell arrays,
+Sense amplifiers, and Column decoder use light blue. DRAM dies and Banks use
+soft lavender. All other regions use the
+SPD host's neutral gray. Each region has an opaque fill, so parent colors do not
+tint nested components. These explicit region colors do not change other diagrams.
+The physical RAM-stick
+illustration, gold contact fingers, package silhouettes, pin-group panel, and
+enlargement leaders are removed, and bounds fit the remaining schematic.
+No hierarchy banner, access-sequence panel, or power-wiring overlay is shown.
+RAM lesson Reset restores this category preview.
+Organization and command differences follow [Micron's DDR4/DDR5 comparison](https://www.micron.com/products/memory/dram-components/ddr5-sdram).
+Bank-local sensing and row refresh follow the [RAIDR DRAM background](https://users.ece.cmu.edu/~omutlu/pub/raidr-dram-refresh_isca12.pdf).
+SPD devices follow Renesas's [DDR4 SPD EEPROM](https://www.renesas.com/en/products/tse2004gb2b0)
+and [DDR5 SPD hub](https://www.renesas.com/en/products/spd5118) descriptions.
+Network starts with a blank renderer. Selecting a lesson uses its mechanism's playback;
 HDD and SSD lessons retain their shared component diagrams. Component workspace
 Back and header menu return to the four categories
 in Hardware Fundamental and restore the hardware preview, ending the current lesson.

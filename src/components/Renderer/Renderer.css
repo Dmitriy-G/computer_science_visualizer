@@ -411,6 +411,26 @@
 .scene-region--memory rect { fill: #eaf6f0; stroke: #92bba9; }
 .scene-region--interconnect rect { fill: #f3effa; stroke: #baa9d2; }
 .scene-region--observer rect { fill: #f1f3f6; stroke: #bfc8d2; stroke-dasharray: 6 5; }
+.scene-region--color-neutral > rect {
+  fill: #f1f3f6;
+  fill-opacity: 1;
+  stroke: #bfc8d2;
+}
+.scene-region--color-green > rect {
+  fill: #eaf6f0;
+  fill-opacity: 1;
+  stroke: #92bba9;
+}
+.scene-region--color-light-blue > rect {
+  fill: #eef4fc;
+  fill-opacity: 1;
+  stroke: #b5c9e3;
+}
+.scene-region--color-lavender > rect {
+  fill: #f3effa;
+  fill-opacity: 1;
+  stroke: #baa9d2;
+}
 .scene-edge-flow {
   stroke: #2563bd;
   stroke-width: 2.5;

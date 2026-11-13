@@ -57,7 +57,29 @@
    mapping publication does not issue a NAND write. NAND cell primitives use
    physical commands without FTL translation and identify ECC stages without
    computing the code. Reserve fixed bounds and independent playback snapshots.
-   Network and RAM initially show a blank renderer. Selecting a lesson starts
+   RAM zooms into the logical component schematic with one representative block
+   per type. Replace index-0 titles with scoped approximate quantities using an
+   8 GiB, single-rank DDR4 x8 example: eight chips per RAM board, one die per chip,
+   four bank groups per die, and four banks per bank group. Use "per" and only
+   the closest containing type in each visible count; keep higher-level totals
+   in tooltips. Show approximately 537M cells per bank and one transistor and
+   capacitor per cell;
+   spare cells and peripheral logic are excluded. Keep the explicit DRAM die,
+   decoders, sense amplifiers, control, refresh, I/O, and memory cells.
+   Keep enlarged Transistors and Capacitors in
+   that die's cell array. Keep a simple socket block, external controller and
+   SPD host, and separate on-module SPD. Remove the physical RAM-stick drawing,
+   gold contact fingers, repeated packages, physical socket details, pin-group
+   panel, and enlargement leaders. Fit the remaining diagram to its new bounds.
+   Use names and scoped counts for visible titles, retain details in tooltips/accessibility
+   labels, and omit hierarchy/access-sequence panels.
+   Use green for Chips, Memory cells, Control logic, Refresh circuitry, Read/write
+   circuitry, and Bank groups. Use light blue for the DIMM socket, SPD, Row decoder,
+   Cell arrays, Sense amplifiers, and Column decoder. DRAM dies and Banks use
+   soft lavender; other blocks are neutral gray.
+   Apply colors only to each region's own rectangle, with opaque fills so parent
+   colors do not tint nested elements.
+   Network initially shows a blank renderer. Selecting a lesson starts
    its mechanism's playback; HDD and SSD retain their common component maps.
    Network/Fundamental
    contains Physical, Data Link, Network, Transport, Session, Presentation, and
@@ -73,7 +95,8 @@
    Components Overview zooms out to client/network/server. CPU category selection
    returns to its core map; HDD category selection and lesson Reset return to its
    common component map. SSD category selection and lesson Reset restore its
-   common SSD map. Changing groups opens
+   common SSD map. RAM category selection and lesson Reset restore the common
+   RAM map. Changing groups opens
    the corresponding category preview without starting lesson playback.
    Search results include the component subcategory and open the corresponding
    workspace with the selected lesson.

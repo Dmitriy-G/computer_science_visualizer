@@ -486,12 +486,12 @@ export default class App extends Component<Record<string, never>, AppState> {
   private selectAdvancedAlgorithmGroup = (group: AdvancedAlgorithmGroupKind): void => {
     const menu = this.state.menu.selectAdvancedAlgorithmGroup(group)
     const hardwareOverview = menu.hardwareOverviewGroup
-    if (group === 'hardware-fundamental' || group === 'hardware-complex' || group === 'hardware-cpu' || group === 'hardware-hdd' || group === 'hardware-ssd') {
-      const level = group === 'hardware-cpu' ? 'cpu' : group === 'hardware-hdd' ? 'hdd' : group === 'hardware-ssd' ? 'ssd' : 'hardware'
+    if (group === 'hardware-fundamental' || group === 'hardware-complex' || AdvancedAlgorithmCatalog.isHardwareFundamentalGroup(group)) {
+      const level = group === 'hardware-cpu' ? 'cpu' : group === 'hardware-hdd' ? 'hdd' : group === 'hardware-ssd' ? 'ssd' : group === 'hardware-ram' ? 'ram' : 'hardware'
       this.showSystemCategory(menu, SystemOverviewLayout.create(level, this.currentDiagram()), hardwareOverview !== null)
       return
     }
-    if (group === 'network' || group === 'hardware-ram') {
+    if (group === 'network') {
       this.showSystemCategory(menu, null, hardwareOverview !== null)
       return
     }
@@ -545,12 +545,12 @@ export default class App extends Component<Record<string, never>, AppState> {
   private selectCpuAlgorithm = (algorithm: CpuAlgorithmKind): void => {
     if (!CpuAlgorithmCatalog.choices.some((choice) => choice.kind === algorithm)) return
     const group = CpuAlgorithmCatalog.groupFor(algorithm)
-    const preview = group === 'hardware-cpu' ? 'cpu' : group === 'hardware-hdd' ? 'hdd' : group === 'hardware-ssd' ? 'ssd' : null
+    const preview = group === 'hardware-cpu' ? 'cpu' : group === 'hardware-hdd' ? 'hdd' : group === 'hardware-ssd' ? 'ssd' : 'ram'
     this.setState({
       hardwareOverview: group,
       hardwareAlgorithm: null, hardwareActionActive: false,
       cpuAlgorithm: algorithm, cpuSession: this.state.cpuSession + 1, cpuActionActive: true,
-      selected: null, scene: preview ? SystemOverviewLayout.still(SystemOverviewLayout.create(preview, null)) : null, actionOpen: false, selectedAction: null, actionRunning: false,
+      selected: null, scene: SystemOverviewLayout.still(SystemOverviewLayout.create(preview, null)), actionOpen: false, selectedAction: null, actionRunning: false,
       actionValue: undefined, actionUpperValue: undefined,
       inputRequest: null, overviewInformation: null, structureInformation: null,
       algorithmInformation: null, menuOpen: false, searchOpen: false,

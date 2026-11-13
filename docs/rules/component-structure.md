@@ -275,7 +275,35 @@ second lesson list inside the menu. Each workspace can open with no lesson selec
 showing all overview cards and their separate info buttons. SystemOverviewLayout
 under RealSystemsAlgorithms/SystemOverview supplies nested category previews:
 client/network/server, server hardware, the shared CPU core, and common HDD/SSD
-component maps. Keep the HDD geometry in Hardware/Fundamental/Hdd/HddLayout.ts
+component maps, and a common RAM map. Keep RAM geometry in
+Hardware/Fundamental/Ram/RamLayout.ts. Keep the logical component diagram with
+one representative chip, an explicit DRAM die, bank group, bank, decoders, row
+buffer, control, refresh, and I/O. Replace index-0 titles with realistic quantity
+labels for the specified 8 GiB, 1-rank DDR4 x8 example: eight chips per RAM board,
+one monolithic die per chip, four groups per die, and four banks per bank group.
+Use "per" instead of slash notation and show only the closest containing type;
+keep higher-level totals in tooltips. Display approximately 537M cells per bank
+and one access transistor and storage capacitor per cell. State count scopes
+and the example basis; exclude spare cells and peripheral logic from cell counts.
+Do not invent physical decoder, subarray, or peripheral-circuit counts.
+Keep enlarged Transistors and Capacitors in
+the die's memory-cell array; grouped labels represent repeated one-transistor/
+one-capacitor cells. Keep the simple socket interface, external controller and
+SPD host, and separate on-module SPD. Use names and scoped counts for visible titles and
+retain explanations in accessible labels/tooltips.
+Use explicit RAM region colors: green for Chips, Memory cells, Control logic,
+Refresh circuitry, Read/write circuitry, and Bank groups; light blue for the
+DIMM socket, SPD, Row decoder, Cell arrays, Sense amplifiers, and Column decoder;
+soft lavender for DRAM dies and Banks. All other regions are neutral gray.
+Keep fills opaque so parent colors do not
+tint nested components. Preserve semantic region roles; the optional SceneRegion
+color override controls appearance independently.
+Remove the physical RAM-stick
+illustration, package silhouettes/leads, gold contact fingers, physical socket
+details, pin-group panel, and enlargement leaders. Fit scene bounds to the
+remaining schematic without reserving space for removed illustrations.
+Do not claim exact die-floorplan positions or add hierarchy/access-sequence panels.
+Keep the HDD geometry in Hardware/Fundamental/Hdd/HddLayout.ts
 and SSD geometry in Hardware/Fundamental/Ssd/SsdLayout.ts. The SSD map uses the
 shared schematic style and connects the host connector/interface, controller,
 NAND channels/packages, optional DRAM, power management, and optional PLP.
@@ -299,8 +327,9 @@ hardware preview. Returning from CPU to Hardware Fundamental zooms out to hardwa
 returning to System Components Overview zooms out to client/network/server.
 HDD zooms into the existing storage block to reveal its enclosure, mechanical
 components, controller board, cache, and connectors. SSD zooms into its connected
-component map. Network and RAM
-begin with blank renderers. HDD lesson playback reuses the common schematic;
+component map. RAM zooms into its server memory block and restores its common
+map after lesson Reset. Network begins with a blank renderer.
+HDD lesson playback reuses the common schematic;
 other lesson scenes and playback stay unchanged.
 The Renderer supports action children without a scene and accepts
 an optional empty-state message. Selecting an animated overview starts playback; its info

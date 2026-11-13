@@ -365,7 +365,8 @@ export default class Renderer extends Component<
     const cpu = scene.regions?.some((region) => region.id === 'core') ?? false
     const hdd = scene.regions?.some((region) => region.id === 'hdd-enclosure') ?? false
     const ssd = scene.regions?.some((region) => region.id === 'ssd-pcb') ?? false
-    const schematic = cpu || hdd || ssd
+    const ram = scene.regions?.some((region) => region.id === 'ram-pcb') ?? false
+    const schematic = cpu || hdd || ssd || ram
     for (const region of scene.regions ?? []) elements.push(this.renderRegion(region))
     for (const slot of scene.slots ?? []) elements.push(this.renderSlot(slot))
     for (const node of scene.nodes) nodeMap.set(node.id, node)
@@ -471,7 +472,7 @@ export default class Renderer extends Component<
   }
 
   private renderRegion(region: SceneRegion): ReactNode {
-    return <g key={`region-${region.id}`} className={`scene-region scene-region--${region.role}${region.level === 'system' ? ' scene-region--system' : ''}`} role="group" aria-label={region.label}>
+    return <g key={`region-${region.id}`} className={`scene-region scene-region--${region.role}${region.level === 'system' ? ' scene-region--system' : ''}${region.color ? ` scene-region--color-${region.color}` : ''}`} role="group" aria-label={region.label}>
       <rect x={region.x} y={region.y} width={region.width} height={region.height} rx="16" />
     </g>
   }
