@@ -276,6 +276,16 @@ showing all overview cards and their separate info buttons. SystemOverviewLayout
 under RealSystemsAlgorithms/SystemOverview supplies nested category previews:
 client/network/server, server hardware, the shared CPU core, and the common HDD
 component map. Keep the HDD geometry in Hardware/Fundamental/Hdd/HddLayout.ts.
+Reuse it in HddSectorLayout: a circular platter, central spindle, fixed-length
+pivoting arm, and connected schematic components in the existing diagram style.
+Show the internal preamp/head driver and an underside PCB inset with separate
+read processing, write encoding, ECC, user-data cache, HDD controller, firmware
+map, servo controller, motor driver, and host/power interfaces. Keep the cache
+in the user-data path and servo positioning on a separate control/feedback path.
+These logical functions can share silicon. The head-current driver is distinct
+from the spindle/VCM motor driver. Use arrows for signal/data
+and motor control, and a distinct dashed airflow path to the passive filter.
+Electronic blocks are logical functions, not separate-chip or exact-wiring claims.
 Scene camera bounds and detail layers let Renderer animate one continuous zoom and progressively
 reveal nested internals. Respect reduced motion and cancel animation frames on
 unmount or replacement. Hardware Fundamental and Complex share the server
@@ -283,7 +293,8 @@ hardware preview. Returning from CPU to Hardware Fundamental zooms out to hardwa
 returning to System Components Overview zooms out to client/network/server.
 HDD zooms into the existing storage block to reveal its enclosure, mechanical
 components, controller board, cache, and connectors. Network, SSD, and RAM
-begin with blank renderers. Existing lesson scenes and playback stay unchanged.
+begin with blank renderers. HDD lesson playback reuses the common schematic;
+other lesson scenes and playback stay unchanged.
 The Renderer supports action children without a scene and accepts
 an optional empty-state message. Selecting an animated overview starts playback; its info
 button only opens information. Component workspace Back and header menu reopen

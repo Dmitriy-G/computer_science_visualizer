@@ -10,10 +10,10 @@ export class SystemOverviewLayout {
   private static readonly hdd = { x: 75, y: 1075, width: 420, height: 220 }
 
   private static hddPlacement(): { x: number, y: number, scale: number } {
-    const scale = this.hdd.height / 1000
+    const scale = Math.min(this.hdd.width / HddLayout.width, this.hdd.height / HddLayout.height)
     return {
-      x: this.server.x + (this.hdd.x + (this.hdd.width - 1560 * scale) / 2) * this.server.scale,
-      y: this.server.y + this.hdd.y * this.server.scale,
+      x: this.server.x + (this.hdd.x + (this.hdd.width - HddLayout.width * scale) / 2) * this.server.scale,
+      y: this.server.y + (this.hdd.y + (this.hdd.height - HddLayout.height * scale) / 2) * this.server.scale,
       scale: scale * this.server.scale,
     }
   }
@@ -24,7 +24,7 @@ export class SystemOverviewLayout {
     if (level === 'hardware') return { x: server.x - 30, y: server.y - 30, width: 1140, height: 1060 }
     if (level === 'hdd') {
       const hdd = this.hddPlacement()
-      return { x: hdd.x - 20 * hdd.scale, y: hdd.y - 20 * hdd.scale, width: 1600 * hdd.scale, height: 1040 * hdd.scale }
+      return { x: hdd.x - 20 * hdd.scale, y: hdd.y - 20 * hdd.scale, width: (HddLayout.width + 40) * hdd.scale, height: (HddLayout.height + 40) * hdd.scale }
     }
     return {
       x: server.x + (this.cpu.x - 10) * server.scale,
@@ -47,7 +47,7 @@ export class SystemOverviewLayout {
     let from = previous?.camera?.to
     if (!from) {
       if (previous?.kind === 'cpu-hardware') from = this.bounds('cpu')
-      else if (previous?.kind === 'hardware-component' && previous.regions?.some((region) => region.id === 'platter')) from = this.bounds('hdd')
+      else if (previous?.kind === 'hardware-component' && previous.regions?.some((region) => region.id === 'hdd-enclosure')) from = this.bounds('hdd')
       else if (previous) from = to
       else from = level === 'cpu' || level === 'hdd' ? this.bounds('hardware') : this.bounds('system')
     }

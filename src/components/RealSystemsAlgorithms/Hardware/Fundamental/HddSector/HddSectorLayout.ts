@@ -1,46 +1,103 @@
-import { HardwareDiagram } from '../../../../../visualization/HardwareDiagram.ts'
 import { CpuModel } from '../CpuModel.ts'
+import { HddLayout } from '../Hdd/HddLayout.ts'
 import type { HddSectorModel } from './HddSectorModel.ts'
 
 export class HddSectorLayout {
+  private static levels(values: readonly number[]): string {
+    const symbols: string[] = []
+    for (const value of values) symbols.push(value === 0 ? '0' : value > 0 ? '+' : '-')
+    return symbols.length ? symbols.join(' ') : 'pending'
+  }
+
   public static create(model: HddSectorModel): CpuModel {
-    const diagram = new HardwareDiagram(1240, 1210)
-    diagram.region('platter', 'Rotating platter / three illustrative tracks', 'memory', 30, 35, 630, 595)
-      .region('local-controller', 'Device controller and actuator', 'observer', 700, 35, 510, 595)
-    const radii = [220, 155, 90]
-    for (let track = 0; track < radii.length; track += 1) {
-      const radius = radii[track]
-      diagram.paths.push({ id: `track-${track}`, d: `M ${330 - radius} 350 a ${radius} ${radius} 0 1 0 ${radius * 2} 0 a ${radius} ${radius} 0 1 0 ${-radius * 2} 0`, label: `Track ${track}${track === model.targetTrack ? ', requested track' : ''}`, highlighted: track === model.track })
+    const diagram = HddLayout.diagram(model, 2180)
+    const phase = model.operation
+    const location = `H${model.location.head} / T${model.targetTrack} / S${model.targetSector}`
+    const status = model.eccStatus === 'corrected' ? `bit ${model.correctedBit} corrected` : model.eccStatus
+    for (let index = 0; index < diagram.fixtures.length; index += 1) {
+      const cell = diagram.fixtures[index]
+      let value = ''
+      switch (cell.id) {
+        case 'controller':
+          value = phase === 'transfer' ? 'complete' : `LBA ${model.logicalAddress}`
+          break
+        case 'firmware-map':
+          value = location
+          break
+        case 'servo-controller':
+          value = model.settled ? `hold track ${model.track}` : phase === 'seek' ? `seek track ${model.targetTrack}` : 'idle'
+          break
+        case 'cache':
+          value = model.buffer.join('')
+          break
+        case 'ecc':
+          value = phase === 'ecc-encode' ? 'encode 4 -> 8' : status
+          break
+        case 'write-channel':
+          value = phase === 'recording-encode' ? 'encode' : phase === 'write' ? 'write' : 'idle'
+          break
+        case 'read-channel':
+          value = phase === 'sense' ? 'amplify' : phase === 'detect' ? 'detect' : phase === 'recording-decode' ? 'decode' : 'idle'
+          break
+        case 'motor-driver':
+          value = phase === 'seek' ? 'seek + spin' : 'spin / hold'
+          break
+        case 'actuator':
+          value = model.settled ? `hold T${model.track}` : `track ${model.track}`
+          break
+        case 'preamp':
+          value = phase === 'write' ? 'head current' : phase === 'sense' ? 'read gain' : 'idle'
+          break
+        case 'data-connector':
+          value = model.transferred.length ? model.transferred.join('') : `LBA ${model.logicalAddress}`
+          break
+        case 'power-connector':
+          value = 'on'
+          break
+      }
+      diagram.fixtures[index] = { ...cell, value }
     }
-    const angle = (model.targetSector - model.rotation) * Math.PI / 4
-    const x1 = 330 + 155 * Math.cos(angle - 0.18)
-    const y1 = 350 + 155 * Math.sin(angle - 0.18)
-    const x2 = 330 + 155 * Math.cos(angle + 0.18)
-    const y2 = 350 + 155 * Math.sin(angle + 0.18)
-    diagram.paths.push({ id: 'sector', d: `M ${x1} ${y1} A 155 155 0 0 1 ${x2} ${y2}`, label: 'Requested sector rotating toward the head', highlighted: true })
-    diagram.paths.push({ id: 'arm', d: `M 815 385 L ${330 + radii[model.track]} 350`, label: 'Actuator arm and positioned head', highlighted: model.operation === 'seek' })
-    diagram.fixture('spindle', 'Spindle / rotation phase', `${model.rotation} / 8`, 330, 350, undefined, 130)
-      .fixture('head', 'Read/write head', `track ${model.track}`, 330 + radii[model.track], 350, model.settled ? 'settled' : 'moving', 130)
-      .fixture('sector-position', 'Requested sector 3', model.aligned() ? 'under head' : 'rotating toward head', 330, 565, undefined, 270)
-      .fixture('request', 'Host logical sector', 'LBA 7', 945, 145, undefined, 230)
-      .fixture('translation', 'Internal placement / illustrative', 'track 1 / sector 3', 945, 275, undefined, 290)
-      .fixture('servo', 'Servo position feedback', model.settled ? 'on target / settled' : `current track ${model.track}`, 945, 460, undefined, 260)
-      .connect('translate', 'request', 'translation', 'device mapping', model.operation === 'idle')
-      .connect('seek', 'translation', 'head', 'position command', model.operation === 'seek', 30)
-      .connect('feedback', 'head', 'servo', 'position signal', model.operation === 'settled', 80)
-    diagram.region('channel', 'Magnetic recording and read channel / illustrative encoding', 'memory', 30, 665, 1180, 315)
-      .fixture('write-current', 'Write current / encoded pattern', model.magneticRegions.length ? model.magneticRegions.join(' ') : 'not written', 300, 760, undefined, 450)
-      .fixture('read-signal', 'Read signal / transition differences', model.readSignal.length ? model.readSignal.join(' ') : 'not sensed', 900, 760, undefined, 450)
-      .fixture('decoded', 'Decoded sector / parity check', model.decoded.length ? `${model.decoded.join('')} / ${model.checked ? 'pass' : 'fail'}` : 'await read', 900, 915, undefined, 450)
-      .connect('record', 'write-current', 'head', 'record transitions', model.operation === 'write', -90)
-      .connect('signal', 'head', 'read-signal', 'weak magnetic signal', model.operation === 'sense', 100)
-      .connect('decode', 'read-signal', 'decoded', 'amplify / decode / check', model.operation === 'decode')
-      .connect('transfer', 'decoded', 'request', 'device interface data', model.operation === 'transfer', 95)
-    diagram.region('recorded-regions', 'Recorded magnetic regions / two regions per example channel bit, including parity', 'memory', 30, 1015, 1180, 165)
-    for (let index = 0; index < 10; index += 1) {
+    diagram.region('access-state', 'Media access / symbolic state', 'device', 20, 1040, 1960, 330)
+      .fixture('request', 'Host logical sector', `LBA ${model.logicalAddress}`, 260, 1140, undefined, 420)
+      .fixture('translation', 'Firmware-selected head / track / sector', location, 750, 1140, undefined, 420)
+      .fixture('servo', 'Servo / settling state', model.settled ? 'settled / tracking' : phase === 'seek' ? 'seeking / not settled' : 'idle', 1240, 1140, undefined, 420)
+      .fixture('sector-position', 'Rotational latency / target sector', model.aligned() ? 'under head' : 'waiting for sector', 1730, 1140, undefined, 420)
+      .fixture('spindle-state', 'Rotation phase / 8 samples', `${model.rotation} / 8`, 260, 1290, undefined, 420)
+      .fixture('head-state', 'Read/write head', `surface ${model.location.head} / track ${model.track}`, 750, 1290, undefined, 420)
+      .fixture('ecc-status', 'ECC result / one-based error location', status, 1240, 1290, undefined, 420)
+      .fixture('host-result', 'Returned sector', model.transferred.length ? model.transferred.join('') : 'not returned', 1730, 1290, undefined, 420)
+      .connect('translate', 'controller', 'firmware-map', 'firmware LBA lookup', phase === 'idle')
+      .connect('seek', 'firmware-map', 'servo-controller', 'track target', phase === 'seek')
+      .connect('feedback', 'read-channel', 'servo-controller', 'embedded servo feedback', phase === 'settled', 80)
+    diagram.region('channel', 'Teaching pipeline / Hamming (8,4) SECDED + Manchester / NRZI', 'device', 20, 1420, 1960, 480)
+      .fixture('source-data', 'Host payload / 4 bits', model.data.join(''), 260, 1510, undefined, 420)
+      .fixture('ecc-codeword', 'ECC codeword / 8 bits', model.eccCodeword.length ? model.eccCodeword.join('') : 'pending', 750, 1510, undefined, 420)
+      .fixture('recording-bits', 'Recording symbols / 16 bits', model.recordingBits.length ? model.recordingBits.join('') : 'pending', 1240, 1510, undefined, 420)
+      .fixture('write-current', 'Magnetization / + and - reference levels', this.levels(model.magneticRegions), 1730, 1510, undefined, 420)
+      .fixture('read-signal', 'Read signal / signed transitions', this.levels(model.readSignal), 260, 1660, undefined, 420)
+      .fixture('detected-bits', 'Detected recording symbols', model.detectedBits.length ? model.detectedBits.join('') : 'pending', 750, 1660, undefined, 420)
+      .fixture('received-codeword', 'Recording-decoded ECC word', model.receivedCodeword.length ? model.receivedCodeword.join('') : 'pending', 1240, 1660, undefined, 420)
+      .fixture('corrected-codeword', 'ECC output codeword', model.correctedCodeword.length ? model.correctedCodeword.join('') : 'pending', 1730, 1660, undefined, 420)
+      .fixture('syndrome', 'Hamming syndrome / overall parity', model.syndrome === null ? 'pending' : `${model.syndrome} / ${model.overallParity}`, 600, 1810, undefined, 1000)
+      .fixture('decoded', 'Validated payload', model.checked ? model.decoded.join('') : model.eccStatus === 'uncorrectable' ? 'blocked / uncorrectable' : 'pending', 1600, 1810, undefined, 600)
+      .connect('receive', 'data-connector', 'cache', 'host payload to data buffer', phase === 'idle')
+      .connect('ecc-encode', 'source-data', 'ecc-codeword', 'add SECDED redundancy', phase === 'ecc-encode')
+      .connect('recording-encode', 'ecc-codeword', 'recording-bits', 'encode recording symbols', phase === 'recording-encode')
+      .connect('record', 'recording-bits', 'write-current', 'NRZI current / magnetization', phase === 'write')
+      .connect('signal', 'read-channel', 'read-signal', 'condition readback signal', phase === 'sense', 100)
+      .connect('detect', 'read-signal', 'detected-bits', 'detect transitions', phase === 'detect')
+      .connect('recording-decode', 'detected-bits', 'received-codeword', 'decode recording symbols', phase === 'recording-decode')
+      .connect('correct', 'received-codeword', 'corrected-codeword', 'ECC decode / correction', phase === 'ecc-decode')
+      .connect('decode', 'corrected-codeword', 'decoded', 'validated user bits', phase === 'ecc-decode' && model.checked)
+      .connect('buffer-sector', 'decoded', 'cache', 'buffer validated payload', phase === 'buffer-read', 100)
+      .connect('transfer', 'cache', 'data-connector', 'return validated sector to host', phase === 'transfer')
+      .connect('complete-request', 'controller', 'data-connector', 'command completion', phase === 'transfer')
+    diagram.region('recorded-regions', 'Illustrative magnetization intervals / one NRZI interval per recording symbol', 'device', 20, 1980, 1960, 180)
+    for (let index = 0; index < 16; index += 1) {
       const polarity = model.magneticRegions[index]
-      diagram.fixture(`magnetic-${index}`, `region ${index}`, polarity === undefined ? '?' : polarity > 0 ? 'N > S' : 'S > N', 95 + index * 115, 1100, undefined, 80)
+      diagram.fixture(`magnetic-${index}`, `interval ${index}`, polarity === undefined ? '?' : polarity > 0 ? '+' : '-', 90 + index * 120, 2070, undefined, 90)
     }
-    return new CpuModel([], 'head', 0, diagram)
+    const focus = phase === 'read-error' ? 'received-codeword' : phase === 'ecc-decode' ? 'decoded' : 'head'
+    return new CpuModel([], focus, 0, diagram)
   }
 }

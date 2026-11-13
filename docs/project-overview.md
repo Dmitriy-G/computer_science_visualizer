@@ -28,7 +28,25 @@ closer into the same nested CPU block, progressively revealing the shared core
 map. HDD zooms into its storage block to reveal a common component map, grouping
 platters, the spindle motor, heads, actuator arms, the voice-coil actuator, and
 filters inside the enclosure, alongside the controller board, cache, and connectors.
-HddLayout owns that reusable map. SystemOverviewLayout owns these navigation
+HddLayout owns that reusable schematic and the sector-access lesson's geometry.
+It uses a circular platter and central spindle, a fixed-length pivoting arm,
+and connected functional blocks for the internal preamp/head driver, distinct
+read processing and write encoding, ECC, user-data cache, HDD controller,
+firmware address map, servo controller, motor driver, and host/power interfaces.
+User data follows host interface / cache / ECC / read-write processing; servo
+positioning uses a separate control and feedback path. The PCB appears beside
+the mechanism as an underside inset. Directed paths show data and control;
+the passive filter has a separate dashed airflow path. Sector-access playback
+adds state and channel-code cells below the same diagram, with sector rotation
+aligned to the head's actual illustrated position. Firmware resolves LBA 7 to
+head 0 / track 1 / sector 3 through an explicit teaching map. Platter rotation
+continues during seeking and settling. The lesson separates Hamming (8,4)
+SECDED, Manchester recording symbols, NRZI current/magnetization, transition
+detection, recording decoding, and ECC correction. A deliberate read-codeword
+error is corrected before buffering and returning data; detected double-bit
+errors block return. These small codes are teaching choices, not production HDD
+recording formats or ECC implementations.
+SystemOverviewLayout owns these navigation
 scenes; Renderer animates the camera and detail visibility, respecting reduced
 motion and cleaning up frames.
 Zooming into a component hides the surrounding boundaries and unrelated

@@ -363,11 +363,16 @@ export default class Renderer extends Component<
     const nodeMap = new Map<string, SceneNode>()
     const elements: ReactNode[] = []
     const cpu = scene.regions?.some((region) => region.id === 'core') ?? false
+    const hdd = scene.regions?.some((region) => region.id === 'hdd-enclosure') ?? false
+    const schematic = cpu || hdd
     for (const region of scene.regions ?? []) elements.push(this.renderRegion(region))
     for (const slot of scene.slots ?? []) elements.push(this.renderSlot(slot))
     for (const node of scene.nodes) nodeMap.set(node.id, node)
     for (const path of scene.paths ?? []) elements.push(
-      <path key={`path-${path.id}`} className={`scene-edge${path.highlighted ? ' scene-edge-highlighted' : ''}`} d={path.d} markerEnd={path.directed ? 'url(#default-arrow)' : undefined} role="img" aria-label={path.label}><title>{path.label}</title></path>,
+      <g key={`path-${path.id}`}>
+        <path className={`scene-edge${path.highlighted ? ' scene-edge-highlighted' : ''}${path.dashed ? ' scene-edge--dashed' : ''}`} d={path.d} markerStart={path.bidirectional ? `url(#${path.highlighted ? 'active-arrow' : 'default-arrow'})` : undefined} markerEnd={path.directed ? `url(#${path.highlighted ? 'active-arrow' : 'default-arrow'})` : undefined} style={{ fill: path.fill, stroke: path.highlighted ? undefined : path.stroke, strokeWidth: path.strokeWidth }} role="img" aria-label={path.label}><title>{path.label}</title></path>
+        {path.caption && <text className="scene-path-caption" x={path.caption.x} y={path.caption.y}>{path.caption.text}</text>}
+      </g>,
     )
     for (const edge of scene.edges)
       elements.push(this.renderEdge(edge, nodeMap))
@@ -375,8 +380,8 @@ export default class Renderer extends Component<
       const lines: string[] = []
       const label = region.shortLabel ?? region.label
       const fontSize = region.level === 'system' ? 32 : 26
-      if (scene.kind === 'system-overview' || scene.kind === 'cpu-hardware') {
-        const limit = Math.max(cpu ? 8 : 12, Math.floor((region.width - 32) / (cpu ? fontSize * 0.62 : 9)))
+      if (scene.kind === 'system-overview' || scene.kind === 'cpu-hardware' || hdd) {
+        const limit = Math.max(schematic ? 8 : 12, Math.floor((region.width - 32) / (schematic ? fontSize * 0.62 : 9)))
         let line = ''
         for (const word of label.split(' ')) {
           if (line && line.length + word.length + 1 > limit) {
@@ -387,9 +392,9 @@ export default class Renderer extends Component<
         if (line) lines.push(line)
       } else lines.push(label)
       const titles: ReactNode[] = []
-      for (let index = 0; index < lines.length; index += 1) titles.push(<tspan key={index} x={region.x + 16} dy={index === 0 ? 0 : cpu ? 28 : 19}>{lines[index]}</tspan>)
+      for (let index = 0; index < lines.length; index += 1) titles.push(<tspan key={index} x={region.x + 16} dy={index === 0 ? 0 : schematic ? 28 : 19}>{lines[index]}</tspan>)
       elements.push(
-        <text key={`region-title-${region.id}`} className={`scene-region-title${region.level === 'system' ? ' scene-region-title--system' : ''}${cpu ? ' scene-region-title--cpu' : ''}`} x={region.x + 16} y={region.y + (cpu ? region.level === 'system' ? 36 : 30 : 29)}>
+        <text key={`region-title-${region.id}`} className={`scene-region-title${region.level === 'system' ? ' scene-region-title--system' : ''}${schematic ? ' scene-region-title--schematic' : ''}`} x={region.x + 16} y={region.y + (schematic ? region.level === 'system' ? 36 : 30 : 29)}>
           {region.shortLabel && <title>{region.label}</title>}
           {titles}
         </text>,

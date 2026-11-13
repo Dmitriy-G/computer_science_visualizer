@@ -397,6 +397,22 @@ inventing CPU/cache context for local memory or device mechanisms. Component
 traces preserve explicit transactions even when successive payload values match.
 HardwareDiagram paths support latch waveforms and HDD tracks inside the shared
 Renderer; do not introduce a separate renderer or timing loop.
+HDD category and sector-access playback share HddLayout's schematic components
+and connections. Draw the platter and spindle as circles and use a fixed pivot
+and arm length for track changes. Rotate the target sector to the actual head
+position at alignment. Show PCB electronics as an underside inset with directed
+data/control paths; distinguish passive-filter airflow with a dashed path.
+Keep state and toy channel-code details below the common device geometry.
+Separate HDD and servo controllers, read and write processing, and head-current
+and motor drivers. Route user data through host interface, cache, ECC, and the
+recording/readback path; do not route the user-data cache through servo control.
+Resolve the example LBA with a firmware table to head/surface, track, and sector.
+Keep platter rotation during seek and settling and show rotational latency before
+media transfer. The bounded HDD teaching pipeline uses Hamming (8,4) SECDED,
+Manchester symbols, NRZI magnetization with a known initial reference, detection,
+recording decoding, and ECC correction. Label these as teaching choices. Correct
+the deliberate one-bit read-codeword error; detected double-bit errors must block
+buffering/return. Do not claim protection against arbitrary larger error patterns.
 
 Follow the boundaries in coverage.md: distinguish transparent latches from edge
 triggered flip-flops; identify conventional 6T SRAM and SLC NAND; restore DRAM
@@ -406,7 +422,8 @@ mapping changes only after successful programming; preserve live pages before
 garbage collection erases; track erase counts separately from validity. Show
 relocation write costs and distinguish space reclamation from wear balancing.
 All time intervals are symbolic. Mapping durability, analog transistor behavior,
-vendor firmware, and bit-level controller ECC are outside these bounded examples.
+vendor firmware, and production bit-level controller ECC are outside these bounded
+examples. The HDD lesson's small SECDED code demonstrates error correction only.
 
 ## Real-system CPU hardware lessons
 

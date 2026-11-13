@@ -6,6 +6,9 @@ import { LatchModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fun
 import { SramCellModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/SramCell/SramCellModel.ts'
 import { DramRowModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/DramRow/DramRowModel.ts'
 import { HddSectorModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/HddSector/HddSectorModel.ts'
+import { HddLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Hdd/HddLayout.ts'
+import { HddEcc } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/HddSector/HddEcc.ts'
+import { HddRecordingCode } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/HddSector/HddRecordingCode.ts'
 import { NandCellModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/NandCell/NandCellModel.ts'
 import { SsdFtlModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/SsdFtl/SsdFtlModel.ts'
 import { SsdGarbageCollectionModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/SsdGarbageCollection/SsdGarbageCollectionModel.ts'
@@ -128,17 +131,133 @@ test('equal-valued DRAM row-hit reads and HDD completion still show explicit tra
 test('HDD write waits for positioning and its illustrative channel round trips data', () => {
   const model = new HddSectorModel()
   assert.throws(() => model.write())
+  assert.throws(() => model.encodeRecording(), /ECC/)
+  model.encodeEcc()
+  model.encodeRecording()
   model.seek()
   assert.throws(() => model.write())
   model.settle()
   while (!model.aligned()) model.rotate()
   model.write()
-  assert.equal(model.magneticRegions.length, (model.data.length + 1) * 2)
+  assert.equal(model.eccCodeword.length, 8)
+  assert.equal(model.recordingBits.length, 16)
+  assert.equal(model.magneticRegions.length, model.recordingBits.length)
   for (let sample = 0; sample < 8; sample += 1) model.rotate()
   model.sense()
+  model.detect()
+  model.decodeRecording()
   model.decode()
   assert.equal(model.checked, true)
   assert.deepEqual(model.decoded, model.data)
+})
+
+test('HDD head follows a fixed-length pivoting arm and the target sector arrives under it', () => {
+  for (let track = 0; track < HddLayout.trackRadii.length; track += 1) {
+    const head = HddLayout.headPosition(track)
+    assert.ok(Math.abs(Math.hypot(head.x - HddLayout.pivot.x, head.y - HddLayout.pivot.y) - HddLayout.armLength) < 1e-8)
+    assert.ok(Math.abs(Math.hypot(head.x - HddLayout.spindle.x, head.y - HddLayout.spindle.y) - HddLayout.trackRadii[track]) < 1e-8)
+  }
+  const model = new HddSectorModel()
+  model.seek()
+  model.settle()
+  const head = HddLayout.headPosition(model.targetTrack)
+  for (let rotation = 0; rotation < 8; rotation += 1) {
+    const sector = HddLayout.sectorPosition(model)
+    const separation = Math.hypot(head.x - sector.x, head.y - sector.y)
+    if (model.aligned()) assert.ok(separation < 1e-8)
+    else assert.ok(separation > 1)
+    model.rotate()
+  }
+})
+
+test('HDD sector playback shares the category schematic and its connected components', () => {
+  const common = HddLayout.diagram()
+  const lesson = new HddSectorModel().snapshot().diagram
+  assert.deepEqual(lesson.regions.slice(0, common.regions.length), common.regions)
+  for (const id of ['head-preamp', 'write-preamp', 'preamp-read', 'cache-ecc', 'host-cache', 'controller-map', 'map-servo', 'servo-driver', 'servo-feedback', 'driver-actuator', 'driver-spindle', 'power-driver']) {
+    assert.equal(common.paths.find((path) => path.id === id).directed, true)
+    assert.ok(lesson.paths.some((path) => path.id === id))
+  }
+  const copy = common.clone()
+  const original = common.paths.find((path) => path.id === 'platter')
+  copy.paths.find((path) => path.id === 'platter').caption.text = 'changed caption'
+  assert.equal(original.caption.text, 'Platter')
+})
+
+test('HDD teaching ECC corrects every single-bit error and detects every double-bit error for all payloads', () => {
+  for (let value = 0; value < 16; value += 1) {
+    const data = [value >> 3 & 1, value >> 2 & 1, value >> 1 & 1, value & 1]
+    const encoded = HddEcc.encode(data)
+    assert.deepEqual(HddEcc.decode(encoded).data, data)
+    assert.equal(HddEcc.decode(encoded).status, 'clean')
+    for (let first = 0; first < 8; first += 1) {
+      const single = [...encoded]
+      single[first] ^= 1
+      const result = HddEcc.decode(single)
+      assert.equal(result.status, 'corrected')
+      assert.equal(result.overallParity, 1)
+      assert.equal(result.correctedBit, first + 1)
+      assert.deepEqual(result.codeword, encoded)
+      assert.deepEqual(result.data, data)
+      for (let second = first + 1; second < 8; second += 1) {
+        const double = [...single]
+        double[second] ^= 1
+        const rejected = HddEcc.decode(double)
+        assert.equal(rejected.status, 'uncorrectable')
+        assert.equal(rejected.overallParity, 0)
+        assert.deepEqual(rejected.data, [])
+      }
+    }
+    const symbols = HddRecordingCode.encode(encoded)
+    const levels = HddRecordingCode.magnetize(symbols)
+    const detected = HddRecordingCode.detect(HddRecordingCode.sense(levels))
+    assert.deepEqual(detected, symbols)
+    assert.deepEqual(HddRecordingCode.decode(detected), encoded)
+  }
+  assert.throws(() => HddRecordingCode.decode([0, 0]), /Invalid/)
+})
+
+test('HDD firmware mapping is internal and failed ECC prevents buffering or returning data', () => {
+  const model = new HddSectorModel()
+  const location = model.translate(7)
+  assert.deepEqual(location, { head: 0, track: 1, sector: 3 })
+  location.track = 2
+  assert.equal(model.translate(7).track, 1)
+  assert.throws(() => model.translate(99), /mapping/)
+  model.encodeEcc()
+  model.encodeRecording()
+  model.seek()
+  assert.equal(model.rotation, 1)
+  model.settle()
+  assert.equal(model.rotation, 2)
+  while (!model.aligned()) model.rotate()
+  model.write()
+  model.sense()
+  model.detect()
+  model.decodeRecording()
+  model.injectReadError(2)
+  model.injectReadError(5)
+  assert.equal(model.decode(), false)
+  assert.equal(model.eccStatus, 'uncorrectable')
+  assert.throws(() => model.bufferRead(), /ECC/)
+  assert.throws(() => model.transfer(), /validated/)
+  assert.deepEqual(model.transferred, [])
+})
+
+test('HDD lesson separates controller/servo and read/write processing and corrects its injected error before return', () => {
+  const plan = CpuAlgorithmCatalog.definition('hdd-sector').create(new CpuModel(), 0)
+  const units = new Map(plan.steps[0].scene.regions.map((region) => [region.id, region]))
+  for (const id of ['controller', 'firmware-map', 'servo-controller', 'cache', 'ecc', 'read-channel', 'write-channel']) assert.ok(units.has(`hdd-${id}`))
+  const index = (title) => plan.steps.findIndex((step) => step.title === title)
+  assert.ok(index('Seek while the platter rotates') < index('Settle and begin track following'))
+  assert.ok(index('Settle and begin track following') < index('Wait for rotational latency'))
+  assert.ok(index('Wait for rotational latency') < index('Drive the write head'))
+  const corrected = plan.steps[index('Correct the read error with ECC')].scene
+  assert.equal(corrected.nodes.find((node) => node.id === 'decoded').displayValue, '1011')
+  assert.equal(corrected.nodes.find((node) => node.id === 'ecc-status').displayValue, 'bit 3 corrected')
+  const last = plan.steps.at(-1).scene
+  assert.equal(last.nodes.find((node) => node.id === 'host-result').displayValue, '1011')
+  assert.ok(last.edges.some((edge) => edge.id === 'transfer' && edge.highlighted))
 })
 
 test('NAND rejects an arbitrary overwrite and erases neighboring pages together', () => {

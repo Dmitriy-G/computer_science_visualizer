@@ -49,7 +49,7 @@ export class HardwareSceneLayout {
       nodes.push({
         id: cell.id, value: nodes.length, displayValue: cell.value,
         label: cell.label, status: cell.status, x: position.x, y: position.y,
-        width: position.width, height: 46, opacity: 1,
+        width: position.width, height: position.height ?? 46, opacity: 1,
         tone: cell.tone ?? (cell.id === model.focusId ? 'active' : 'default'),
       })
     }
@@ -58,7 +58,7 @@ export class HardwareSceneLayout {
     const regions = []
     for (const region of diagram.regions) regions.push({ ...region })
     const paths = []
-    for (const path of diagram.paths) paths.push({ ...path })
+    for (const path of diagram.paths) paths.push(path.caption ? { ...path, caption: { ...path.caption } } : { ...path })
     return {
       kind, nodes, edges, regions, paths, width: diagram.width, height: diagram.height,
       focusId: model.focusId, count: model.events, countLabel: 'hardware events',

@@ -50,7 +50,7 @@ export interface SceneRegion {
   readonly id: string
   readonly label: string
   readonly shortLabel?: string
-  readonly role: 'cpu' | 'cache' | 'memory' | 'interconnect' | 'observer'
+  readonly role: 'cpu' | 'cache' | 'memory' | 'interconnect' | 'observer' | 'device'
   readonly x: number
   readonly y: number
   readonly width: number
@@ -66,6 +66,12 @@ export interface ScenePath {
   readonly label: string
   readonly highlighted: boolean
   readonly directed?: boolean
+  readonly bidirectional?: boolean
+  readonly dashed?: boolean
+  readonly fill?: string
+  readonly stroke?: string
+  readonly strokeWidth?: number
+  readonly caption?: { readonly text: string, readonly x: number, readonly y: number }
 }
 
 export interface Scene {

@@ -234,6 +234,7 @@
   stroke: #578eaf;
   stroke-width: 2;
 }
+.scene-edge--dashed { stroke-dasharray: 6 5; }
 #default-arrow path {
   fill: none;
   stroke: #a6b7c9;
@@ -382,8 +383,16 @@
 }
 .scene-region--system > rect { fill-opacity: 0.28; stroke-width: 2.5; }
 .scene-region-title--system { font-size: 18px; font-weight: 700; }
-.scene-region-title--cpu { font-size: 26px; }
-.scene-region-title--cpu.scene-region-title--system { font-size: 32px; }
+.scene-region-title--schematic { font-size: 26px; }
+.scene-region-title--schematic.scene-region-title--system { font-size: 32px; }
+.scene-path-caption {
+  fill: #314e73;
+  font: 600 26px var(--mono);
+  paint-order: stroke;
+  stroke: #f8fafc;
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
 .scene-region--cache rect { fill: #fff7e7; stroke: #d8bd85; }
 .scene-region--memory rect { fill: #eaf6f0; stroke: #92bba9; }
 .scene-region--interconnect rect { fill: #f3effa; stroke: #baa9d2; }

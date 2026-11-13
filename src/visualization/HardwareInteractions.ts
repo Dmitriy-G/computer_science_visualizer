@@ -68,7 +68,7 @@ export class HardwareInteractions {
     const regions = []
     for (const region of target.regions ?? []) regions.push({ ...region })
     const paths = []
-    for (const path of target.paths ?? []) paths.push({ ...path })
+    for (const path of target.paths ?? []) paths.push(path.caption ? { ...path, caption: { ...path.caption } } : { ...path })
     return { ...target, nodes, edges, regions, paths, focusId }
   }
 }

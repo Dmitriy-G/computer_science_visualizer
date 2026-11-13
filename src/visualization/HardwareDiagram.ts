@@ -13,6 +13,7 @@ export interface HardwarePosition {
   readonly x: number
   readonly y: number
   readonly width: number
+  readonly height?: number
 }
 
 export class HardwareDiagram {
@@ -35,14 +36,15 @@ export class HardwareDiagram {
     return this
   }
 
-  public place(id: string, x: number, y: number, width = 180): this {
-    this.positions.push({ id, x, y, width })
+  public place(id: string, x: number, y: number, width = 180, height?: number): this {
+    const position: HardwarePosition = { id, x, y, width }
+    this.positions.push(height === undefined ? position : { ...position, height })
     return this
   }
 
-  public fixture(id: string, label: string, value: string, x: number, y: number, status?: string, width = 180): this {
+  public fixture(id: string, label: string, value: string, x: number, y: number, status?: string, width = 180, height?: number): this {
     this.fixtures.push({ id, label, value, status })
-    return this.place(id, x, y, width)
+    return this.place(id, x, y, width, height)
   }
 
   public connect(id: string, from: string, to: string, label: string, active = false, curveOffset = 0, message?: string): this {
@@ -56,7 +58,7 @@ export class HardwareDiagram {
     for (const position of this.positions) copy.positions.push({ ...position })
     for (const fixture of this.fixtures) copy.fixtures.push({ ...fixture })
     for (const edge of this.edges) copy.edges.push({ ...edge })
-    for (const path of this.paths) copy.paths.push({ ...path })
+    for (const path of this.paths) copy.paths.push(path.caption ? { ...path, caption: { ...path.caption } } : { ...path })
     return copy
   }
 }
