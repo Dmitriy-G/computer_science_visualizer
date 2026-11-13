@@ -1,5 +1,5 @@
 import { ComponentInformation, ComponentLesson } from '../ComponentLesson.ts'
-import type { CpuTrace } from '../CpuTrace.ts'
+import type { HardwareTrace } from '../HardwareTrace.ts'
 import { SramCellModel } from './SramCellModel.ts'
 import { SramCellOverview } from './SramCellOverview.ts'
 
@@ -7,7 +7,7 @@ export class SramCellAnimation extends ComponentLesson {
   public readonly title = SramCellOverview.describe().name
   public static describe() { return ComponentInformation.describe(SramCellOverview.describe()) }
 
-  protected build(trace: CpuTrace): void {
+  protected build(trace: HardwareTrace): void {
     const model = new SramCellModel()
     trace.record(model.snapshot(), 'Feedback holds a powered bit', 'Two inverters hold Q = 1 and its complement = 0. With the word line low, both access transistors isolate the cell.', 'WL = 0\nQ = 1; Q_bar = 0\nfeedback holds while powered', 0)
     model.precharge()

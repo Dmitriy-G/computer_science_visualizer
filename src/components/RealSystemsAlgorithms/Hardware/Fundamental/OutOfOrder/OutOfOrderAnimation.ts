@@ -1,5 +1,5 @@
-import { CpuLesson, CpuLessonInformation } from '../CpuLesson.ts'
-import type { CpuTrace } from '../CpuTrace.ts'
+import { CpuLesson, CpuLessonInformation } from '../Cpu/CpuLesson.ts'
+import type { HardwareTrace } from '../HardwareTrace.ts'
 import { OutOfOrderModel } from './OutOfOrderModel.ts'
 
 export class OutOfOrderAnimation extends CpuLesson {
@@ -13,7 +13,7 @@ export class OutOfOrderAnimation extends CpuLesson {
       'Five illustrative operations use seven physical registers and preassigned renamed operands. The PRF stores values; the ROB tracks completion and in-order retirement. Committed mappings select architectural values. Branch recovery restores surviving mappings and releases wrong-path destinations. Execution widths, address translation, cache behavior, and memory latency are not simulated.')
   }
 
-  protected build(trace: CpuTrace): void {
+  protected build(trace: HardwareTrace): void {
     const model = new OutOfOrderModel()
     trace.record(model.snapshot(), 'Dispatch in program order', 'Instructions already have captured physical operands and allocated ROB / issue-queue entries. I1 is a slow load. I4 is predicted not taken, so I5 enters the speculative window.', 'ROB = [I1, I2, I3, I4, I5]\npredict(I4) = not_taken', 0)
     model.requestLoad()

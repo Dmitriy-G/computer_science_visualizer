@@ -18,7 +18,7 @@ System Components Overview opens Hardware Fundamental, Complex, and Network in
 that order. Hardware Fundamental directly contains CPU, HDD, SSD, and RAM in
 that order. Choosing one opens a workspace whose overview cards are filtered by
 component and storage device tags, with separate info buttons. CPU contains four
-lessons, HDD one, SSD four, and RAM three. NAND belongs to SSD alongside FTL,
+lessons, HDD one, SSD four, and RAM two. NAND belongs to SSD alongside FTL,
 garbage collection, and wear leveling. Complex opens its flat workspace directly
 from the overview root; Network retains Fundamental and Complex subcategories.
 System Components Overview displays a client, abstract network, and server.
@@ -152,12 +152,28 @@ the PRF; committed mappings identify architectural values. The ROB tracks
 completion and retirement. Wrong-path recovery restores surviving rename mappings
 and releases discarded physical destinations. The temporary static test overview has
 been removed from the catalog and search.
-Alongside the four animated CPU overviews, Fundamental implements the latch, conventional
-6T SRAM cell, DRAM row access, conventional HDD sector access, SLC NAND, page-mapped
+Alongside the four animated CPU overviews, Fundamental implements Write one bit,
+Read one bit, conventional HDD sector access, SLC NAND, page-mapped
 SSD FTL, SSD garbage collection, and SSD wear-leveling lessons from coverage.md.
 Each owns its model, layout, animation, and sourced overview in a named folder
-under Hardware/Fundamental. ComponentLesson reuses the existing CpuModel/CpuTrace
-snapshot and playback adapters with hardware-component scenes. FlashStorage and
+under Hardware/Fundamental. CPU, RAM, HDD, and SSD own separate catalogs and
+workspaces in Cpu, Ram, Hdd, and Ssd. HardwareOverviewCatalog delegates to these
+catalogs for menu/search routing. ComponentWorkspace supplies shared workspace UI;
+HardwareSnapshot, HardwareTrace, and HardwareOverviewLesson supply neutral snapshot
+and playback contracts. ComponentLesson uses hardware-component scenes, while
+Cpu/CpuLesson selects CPU interaction tracing. The two RAM overviews reuse
+RamLayout's common geometry and colors, with cell state inside the existing blocks.
+Approximate quantity suffixes appear only in the static preview. Playback replaces
+the existing RAM scene layer, preserving the outer canvas, camera, layer transform,
+component sizes, and component positions. The workspace renderer stays mounted
+between lessons, retaining Fit/Actual size and scrolling. No lower detail panel
+or extra canvas height is introduced; Reset restores static quantity labels.
+They show ACTIVATE, charge sharing, sensing and restoration, column read/write,
+write recovery, and PRECHARGE. Each follows one selected bit within a wider DDR
+burst, not a physical single-bit bus command. Bounds stay fixed and snapshots
+remain independent; Reset restores the common category preview. The former
+latch, SRAM, and DRAM-row cards are removed from menu/search; their underlying
+models remain available as tested primitives. FlashStorage and
 FlashLayout share flash media/mapping primitives and geometry; the FTL,
 garbage-collection, and wear-leveling models own their distinct policies.
 Network/Fundamental contains the seven OSI layers. Complex covers mechanisms

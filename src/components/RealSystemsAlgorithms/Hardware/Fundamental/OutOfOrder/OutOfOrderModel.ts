@@ -1,6 +1,6 @@
-import { CpuModel } from '../CpuModel.ts'
+import { HardwareSnapshot } from '../HardwareSnapshot.ts'
 import { OutOfOrderLayout } from './OutOfOrderLayout.ts'
-import type { CpuCell } from '../CpuModel.ts'
+import type { HardwareCell } from '../HardwareSnapshot.ts'
 
 interface ReorderEntry {
   readonly id: string
@@ -111,9 +111,9 @@ export class OutOfOrderModel {
     return entry.id
   }
 
-  public snapshot(focus: string | null = null): CpuModel {
-    const program: CpuCell[] = []
-    const reorder: CpuCell[] = []
+  public snapshot(focus: string | null = null): HardwareSnapshot {
+    const program: HardwareCell[] = []
+    const reorder: HardwareCell[] = []
     for (let index = 0; index < this.entries.length; index += 1) {
       const entry = this.entries[index]
       program.push({ id: `program-${entry.id}`, label: entry.id, value: entry.text })
@@ -123,13 +123,13 @@ export class OutOfOrderModel {
         status: entry.state.toUpperCase(),
       })
     }
-    const committed: CpuCell[] = []
+    const committed: HardwareCell[] = []
     for (const [name, value] of this.architectural) committed.push({ id: `arch-${name}`, label: name, value: String(value) })
     const registers: string[] = []
     for (const [name, physical] of this.committedMap) registers.push(`${name}:p${physical}=${this.physical[physical]}`)
     const mappings: string[] = []
     for (const [name, physical] of this.renameMap) mappings.push(`${name}:p${physical}`)
-    const physical: CpuCell[] = []
+    const physical: HardwareCell[] = []
     for (let index = 0; index < this.physical.length; index += 1) physical.push({
       id: `physical-${index}`, label: `p${index}`, value: !this.allocated.has(index) ? 'free' : this.physical[index] === null ? 'not ready' : String(this.physical[index]),
     })
@@ -143,7 +143,7 @@ export class OutOfOrderModel {
       mapping: mappings.join(' '), destination: current.destination,
       physicalDestination: current.physicalDestination, physicalSource: current.physicalSource, previousPhysical: current.previousPhysical,
     })
-    return new CpuModel([
+    return new HardwareSnapshot([
       { name: 'Program', cells: program }, { name: 'ROB', cells: reorder }, { name: 'Physical', cells: physical }, { name: 'Committed', cells: committed },
       { name: 'Fetch', cells: [{ id: 'pc', label: 'next PC register', value: this.nextPc, status: this.mispredicted ? 'redirected' : 'predict not taken' }, { id: 'prediction', label: 'I4', value: this.mispredicted ? 'redirected' : 'predict not taken' }] },
     ], focus, 0, diagram)

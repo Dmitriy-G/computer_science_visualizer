@@ -1,5 +1,5 @@
-import { CpuLesson, CpuLessonInformation } from '../CpuLesson.ts'
-import type { CpuTrace } from '../CpuTrace.ts'
+import { CpuLesson, CpuLessonInformation } from '../Cpu/CpuLesson.ts'
+import type { HardwareTrace } from '../HardwareTrace.ts'
 import { BranchPredictorModel } from './BranchPredictorModel.ts'
 
 export class BranchPredictionAnimation extends CpuLesson {
@@ -13,7 +13,7 @@ export class BranchPredictionAnimation extends CpuLesson {
       'Illustrative global-history predictor: three history bits, eight two-bit saturating counters, and history-only indexing. Arm does not identify these exact rules as the Cortex-A53 implementation. The lesson explains the documented mechanism without claiming a replica.')
   }
 
-  protected build(trace: CpuTrace): void {
+  protected build(trace: HardwareTrace): void {
     const model = new BranchPredictorModel()
     trace.record(model.snapshot(), 'Cold predictor', 'All teaching counters start weakly not taken. The branch outcome is unknown when prediction is made.', 'history = 0b000\nPHT[0..7] = 1  // teaching model', 0)
     const outcomes = [true, true, false, true, true, false, true, true, false, true, true, false]

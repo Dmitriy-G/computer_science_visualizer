@@ -283,9 +283,14 @@ import { AdvancedAlgorithmCatalog } from '../MainMenu/AdvancedAlgorithmCatalog.t
 import HardwareWorkspace from '../RealSystemsAlgorithms/Hardware/Complex/HardwareWorkspace.tsx'
 import { HardwareAlgorithmCatalog } from '../RealSystemsAlgorithms/Hardware/Complex/HardwareAlgorithmCatalog.ts'
 import type { HardwareAlgorithmKind } from '../RealSystemsAlgorithms/Hardware/Complex/HardwareModel.ts'
-import CpuWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/CpuWorkspace.tsx'
-import { CpuAlgorithmCatalog } from '../RealSystemsAlgorithms/Hardware/Fundamental/CpuAlgorithmCatalog.ts'
-import type { CpuAlgorithmKind } from '../RealSystemsAlgorithms/Hardware/Fundamental/CpuModel.ts'
+import type ComponentWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/ComponentWorkspace.tsx'
+import type { ComponentWorkspaceProps } from '../RealSystemsAlgorithms/Hardware/Fundamental/ComponentWorkspace.tsx'
+import CpuWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Cpu/CpuWorkspace.tsx'
+import RamWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Ram/RamWorkspace.tsx'
+import SsdWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Ssd/SsdWorkspace.tsx'
+import HddWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Hdd/HddWorkspace.tsx'
+import { HardwareOverviewCatalog } from '../RealSystemsAlgorithms/Hardware/Fundamental/HardwareOverviewCatalog.ts'
+import type { HardwareOverviewKind } from '../RealSystemsAlgorithms/Hardware/Fundamental/HardwareOverviewKind.ts'
 import type { MenuSearchResult } from '../MainMenu/Search/MenuSearchIndex.ts'
 import type { MenuStructureGroupKind } from '../MainMenu/MenuStructureCatalog.ts'
 import Renderer from '../Renderer/Renderer.tsx'
@@ -332,9 +337,9 @@ interface AppState {
   readonly hardwareAlgorithm: HardwareAlgorithmKind | null
   readonly hardwareSession: number
   readonly hardwareActionActive: boolean
-  readonly cpuAlgorithm: CpuAlgorithmKind | null
-  readonly cpuSession: number
-  readonly cpuActionActive: boolean
+  readonly componentAlgorithm: HardwareOverviewKind | null
+  readonly componentSession: number
+  readonly componentActionActive: boolean
   readonly treeInput: TreeInputValues
   readonly selected: StructureKind | null
   readonly selectedScope: ActionScope
@@ -377,7 +382,7 @@ export default class App extends Component<Record<string, never>, AppState> {
   private readonly actionMenu = createRef<ActionMenu>()
   private readonly renderer = createRef<Renderer>()
   private readonly hardwareWorkspace = createRef<HardwareWorkspace>()
-  private readonly cpuWorkspace = createRef<CpuWorkspace>()
+  private componentWorkspace: ComponentWorkspace | null = null
   private graph = Graph.createDefault()
   private graphModels = GraphCatalog.createModels(this.graph)
   private stack = Stack.createDefault()
@@ -394,12 +399,12 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.state = {
       emptyRenderer: false,
       hardwareOverview: null,
-      cpuAlgorithm: null,
+      componentAlgorithm: null,
       hardwareAlgorithm: null,
       hardwareSession: 0,
       hardwareActionActive: false,
-      cpuSession: 0,
-      cpuActionActive: false,
+      componentSession: 0,
+      componentActionActive: false,
       treeInput: {},
       selected: null,
       selectedScope: 'overview',
@@ -468,7 +473,7 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private focusActions = (): void => {
     if (this.state.hardwareOverview === 'hardware-complex') this.hardwareWorkspace.current?.focusFirstAction()
-    else if (AdvancedAlgorithmCatalog.isHardwareFundamentalGroup(this.state.hardwareOverview)) this.cpuWorkspace.current?.focusFirstAction()
+    else if (AdvancedAlgorithmCatalog.isHardwareFundamentalGroup(this.state.hardwareOverview)) this.componentWorkspace?.focusFirstAction()
     else this.actionMenu.current?.focusFirstAction()
   }
 
@@ -500,7 +505,7 @@ export default class App extends Component<Record<string, never>, AppState> {
 
   private currentDiagram(): Scene | null {
     if (this.state.hardwareOverview === 'hardware-complex') return this.hardwareWorkspace.current?.getScene() ?? this.state.scene
-    if (AdvancedAlgorithmCatalog.isHardwareFundamentalGroup(this.state.hardwareOverview)) return this.cpuWorkspace.current?.getScene() ?? this.state.scene
+    if (AdvancedAlgorithmCatalog.isHardwareFundamentalGroup(this.state.hardwareOverview)) return this.componentWorkspace?.getScene() ?? this.state.scene
     return this.renderer.current?.getScene() ?? this.state.scene
   }
 
@@ -509,8 +514,8 @@ export default class App extends Component<Record<string, never>, AppState> {
       emptyRenderer: true,
       hardwareOverview: menu.hardwareOverviewGroup,
       hardwareAlgorithm: null, hardwareActionActive: false,
-      cpuAlgorithm: null, cpuActionActive: false,
-      hardwareSession: this.state.hardwareSession + 1, cpuSession: this.state.cpuSession + 1,
+      componentAlgorithm: null, componentActionActive: false,
+      hardwareSession: this.state.hardwareSession + 1, componentSession: this.state.componentSession + 1,
       selected: null, scene, actionOpen: false, selectedAction: null, actionRunning: false,
       actionValue: undefined, actionUpperValue: undefined,
       inputRequest: null, overviewInformation: null, structureInformation: null,
@@ -523,7 +528,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.setState({
       hardwareOverview: 'hardware-complex',
       hardwareAlgorithm: algorithm, hardwareSession: this.state.hardwareSession + 1, hardwareActionActive: true,
-      cpuAlgorithm: null, cpuActionActive: false,
+      componentAlgorithm: null, componentActionActive: false,
       selected: null, scene: SystemOverviewLayout.still(SystemOverviewLayout.create('hardware', null)), actionOpen: false, selectedAction: null, actionRunning: false,
       actionValue: undefined, actionUpperValue: undefined,
       inputRequest: null, overviewInformation: null, structureInformation: null,
@@ -542,14 +547,14 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.setState({ hardwareActionActive: false, overviewInformation: null })
   }
 
-  private selectCpuAlgorithm = (algorithm: CpuAlgorithmKind): void => {
-    if (!CpuAlgorithmCatalog.choices.some((choice) => choice.kind === algorithm)) return
-    const group = CpuAlgorithmCatalog.groupFor(algorithm)
+  private selectComponentAlgorithm = (algorithm: HardwareOverviewKind): void => {
+    if (!HardwareOverviewCatalog.choices.some((choice) => choice.kind === algorithm)) return
+    const group = HardwareOverviewCatalog.groupFor(algorithm)
     const preview = group === 'hardware-cpu' ? 'cpu' : group === 'hardware-hdd' ? 'hdd' : group === 'hardware-ssd' ? 'ssd' : 'ram'
     this.setState({
       hardwareOverview: group,
       hardwareAlgorithm: null, hardwareActionActive: false,
-      cpuAlgorithm: algorithm, cpuSession: this.state.cpuSession + 1, cpuActionActive: true,
+      componentAlgorithm: algorithm, componentSession: this.state.componentSession + 1, componentActionActive: true,
       selected: null, scene: SystemOverviewLayout.still(SystemOverviewLayout.create(preview, null)), actionOpen: false, selectedAction: null, actionRunning: false,
       actionValue: undefined, actionUpperValue: undefined,
       inputRequest: null, overviewInformation: null, structureInformation: null,
@@ -558,14 +563,38 @@ export default class App extends Component<Record<string, never>, AppState> {
     })
   }
 
-  private showCpuInformation = (algorithm: CpuAlgorithmKind): void => {
-    this.setState({ overviewInformation: CpuAlgorithmCatalog.describeOverview(algorithm) })
+  private showComponentInformation = (algorithm: HardwareOverviewKind): void => {
+    this.setState({ overviewInformation: HardwareOverviewCatalog.describeOverview(algorithm) })
   }
 
-  private resetCpu = (): void => { this.cpuWorkspace.current?.reset() }
+  private resetComponent = (): void => { this.componentWorkspace?.reset() }
 
-  private cpuReset = (): void => {
-    this.setState({ cpuActionActive: false, overviewInformation: null })
+  private setComponentWorkspace = (workspace: ComponentWorkspace | null): void => {
+    this.componentWorkspace = workspace
+  }
+
+  private renderComponentWorkspace(): ReactNode {
+    const props: ComponentWorkspaceProps = {
+      session: this.state.componentSession,
+      algorithm: this.state.componentAlgorithm,
+      previewScene: this.state.scene,
+      onBack: this.openMenu,
+      onSelect: this.selectComponentAlgorithm,
+      onInformation: this.showComponentInformation,
+      onReset: this.componentReset,
+    }
+    const key = `component-${this.state.componentSession}`
+    switch (this.state.hardwareOverview) {
+      case 'hardware-cpu': return <CpuWorkspace key={key} ref={this.setComponentWorkspace} {...props} />
+      case 'hardware-ram': return <RamWorkspace key="component-ram" ref={this.setComponentWorkspace} {...props} />
+      case 'hardware-ssd': return <SsdWorkspace key={key} ref={this.setComponentWorkspace} {...props} />
+      case 'hardware-hdd': return <HddWorkspace key={key} ref={this.setComponentWorkspace} {...props} />
+      default: return null
+    }
+  }
+
+  private componentReset = (): void => {
+    this.setState({ componentActionActive: false, overviewInformation: null })
   }
 
   private selectGroup = (group: MenuStructureGroupKind): void => {
@@ -589,8 +618,8 @@ export default class App extends Component<Record<string, never>, AppState> {
       this.selectHardwareAlgorithm(result.hardwareAlgorithm)
       return
     }
-    if ('cpuAlgorithm' in result) {
-      this.selectCpuAlgorithm(result.cpuAlgorithm)
+    if ('componentAlgorithm' in result) {
+      this.selectComponentAlgorithm(result.componentAlgorithm)
       return
     }
     const menu = MenuNavigation.forStructure(result.structure, result.scope)
@@ -627,8 +656,8 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.setState({
       emptyRenderer: false,
       hardwareOverview: null,
-      cpuAlgorithm: null,
-      cpuActionActive: false,
+      componentAlgorithm: null,
+      componentActionActive: false,
       hardwareAlgorithm: null,
       hardwareActionActive: false,
       selected: kind,
@@ -1498,11 +1527,11 @@ export default class App extends Component<Record<string, never>, AppState> {
           </div>
           {(selected || this.state.hardwareOverview) && (
             <div className="header-playback">
-              {(this.state.selectedAction !== null || this.state.cpuActionActive || this.state.hardwareActionActive) && (
+              {(this.state.selectedAction !== null || this.state.componentActionActive || this.state.hardwareActionActive) && (
                 <button
                   className="primary-button header-action-button"
-                  onClick={this.state.hardwareAlgorithm ? this.resetHardware : this.state.cpuAlgorithm ? this.resetCpu : this.resetStructure}
-                  aria-label={this.state.hardwareAlgorithm || this.state.cpuAlgorithm ? 'Reset hardware lesson' : 'Reset structure'}
+                  onClick={this.state.hardwareAlgorithm ? this.resetHardware : this.state.componentAlgorithm ? this.resetComponent : this.resetStructure}
+                  aria-label={this.state.hardwareAlgorithm || this.state.componentAlgorithm ? 'Reset hardware lesson' : 'Reset structure'}
                 >
                   <svg
                     width="18"
@@ -1512,7 +1541,7 @@ export default class App extends Component<Record<string, never>, AppState> {
                     aria-hidden="true"
                   >
                     <path
-                      d="M4 10a8 8 0 1 1 1.8 7M4 4v6h6"
+                      d="M6 6l12 12M18 6 6 18"
                       stroke="currentColor"
                       strokeWidth="1.8"
                       strokeLinecap="round"
@@ -1597,17 +1626,7 @@ export default class App extends Component<Record<string, never>, AppState> {
               onReset={this.hardwareReset}
             />
           ) : AdvancedAlgorithmCatalog.isHardwareFundamentalGroup(this.state.hardwareOverview) ? (
-            <CpuWorkspace
-              key={`cpu-${this.state.cpuSession}`}
-              ref={this.cpuWorkspace}
-              group={this.state.hardwareOverview}
-              algorithm={this.state.cpuAlgorithm}
-              previewScene={scene}
-              onBack={this.openMenu}
-              onSelect={this.selectCpuAlgorithm}
-              onInformation={this.showCpuInformation}
-              onReset={this.cpuReset}
-            />
+            this.renderComponentWorkspace()
           ) : (
             <>
               <Renderer

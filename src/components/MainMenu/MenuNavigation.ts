@@ -6,8 +6,8 @@ import type { StructureDefinition } from '../../visualization/StructureCatalog.t
 import type { ActionScope } from '../../visualization/ActionCatalog.ts'
 import { AdvancedAlgorithmCatalog } from './AdvancedAlgorithmCatalog.ts'
 import type { AdvancedAlgorithmGroup, AdvancedAlgorithmGroupKind, HardwareOverviewGroupKind } from './AdvancedAlgorithmCatalog.ts'
-import { CpuAlgorithmCatalog } from '../RealSystemsAlgorithms/Hardware/Fundamental/CpuAlgorithmCatalog.ts'
-import type { CpuAlgorithmChoice } from '../RealSystemsAlgorithms/Hardware/Fundamental/CpuAlgorithmCatalog.ts'
+import { HardwareOverviewCatalog } from '../RealSystemsAlgorithms/Hardware/Fundamental/HardwareOverviewCatalog.ts'
+import type { HardwareOverviewChoice } from '../RealSystemsAlgorithms/Hardware/Fundamental/HardwareOverviewCatalog.ts'
 import { HardwareAlgorithmCatalog } from '../RealSystemsAlgorithms/Hardware/Complex/HardwareAlgorithmCatalog.ts'
 import type { HardwareAlgorithmChoice } from '../RealSystemsAlgorithms/Hardware/Complex/HardwareAlgorithmCatalog.ts'
 
@@ -107,9 +107,9 @@ export class MenuNavigation {
     return this.screen === 'advanced-algorithms' && this.advancedAlgorithmGroup === 'hardware-complex' ? HardwareAlgorithmCatalog.choices : []
   }
 
-  public getCpuAlgorithms(): readonly CpuAlgorithmChoice[] {
+  public getComponentAlgorithms(): readonly HardwareOverviewChoice[] {
     return this.screen === 'advanced-algorithms' && AdvancedAlgorithmCatalog.isHardwareFundamentalGroup(this.advancedAlgorithmGroup)
-      ? CpuAlgorithmCatalog.forGroup(this.advancedAlgorithmGroup) : []
+      ? HardwareOverviewCatalog.forGroup(this.advancedAlgorithmGroup) : []
   }
 
   public selectAdvancedAlgorithmGroup(kind: AdvancedAlgorithmGroupKind): MenuNavigation {

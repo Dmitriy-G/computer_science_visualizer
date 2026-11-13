@@ -1,50 +1,45 @@
-import { Component, createRef } from 'react'
+import { Component, Fragment, createRef } from 'react'
 import type { MouseEvent, ReactNode } from 'react'
 import type { Scene } from '../../../../visualization/Scene.ts'
 import Renderer from '../../../Renderer/Renderer.tsx'
-import { CpuAlgorithmCatalog } from './CpuAlgorithmCatalog.ts'
+import type { HardwareOverviewChoice } from './HardwareOverviewChoice.ts'
+import type { ActionViewProps } from '../../../ActionPlayback/ActionView.tsx'
 import { AdvancedAlgorithmCatalog } from '../../../MainMenu/AdvancedAlgorithmCatalog.ts'
 import type { HardwareFundamentalGroupKind } from '../../../MainMenu/AdvancedAlgorithmCatalog.ts'
-import { CpuModel } from './CpuModel.ts'
-import type { CpuAlgorithmKind } from './CpuModel.ts'
+import { HardwareSnapshot } from './HardwareSnapshot.ts'
+import type { HardwareOverviewKind } from './HardwareOverviewKind.ts'
 import OverviewTags from '../../../OverviewTags/OverviewTags.tsx'
-import BranchPrediction from './BranchPrediction/BranchPrediction.tsx'
-import OutOfOrder from './OutOfOrder/OutOfOrder.tsx'
-import RegisterRenaming from './RegisterRenaming/RegisterRenaming.tsx'
-import ReturnStack from './ReturnStack/ReturnStack.tsx'
-import Latch from './Latch/Latch.tsx'
-import SramCell from './SramCell/SramCell.tsx'
-import DramRow from './DramRow/DramRow.tsx'
-import HddSector from './HddSector/HddSector.tsx'
-import NandCell from './NandCell/NandCell.tsx'
-import SsdFtl from './SsdFtl/SsdFtl.tsx'
-import SsdGarbageCollection from './SsdGarbageCollection/SsdGarbageCollection.tsx'
-import SsdWearLeveling from './SsdWearLeveling/SsdWearLeveling.tsx'
 import '../../../MainMenu/ActionMenu/ActionMenu.css'
-import './CpuWorkspace.css'
+import './ComponentWorkspace.css'
 
-interface CpuWorkspaceProps {
+export type ComponentPlaybackProps = ActionViewProps<HardwareSnapshot>
+
+export interface ComponentWorkspaceProps {
+  readonly session: number
   readonly previewScene: Scene | null
-  readonly group: HardwareFundamentalGroupKind
-  readonly algorithm: CpuAlgorithmKind | null
+  readonly algorithm: HardwareOverviewKind | null
   readonly onBack: () => void
-  readonly onSelect: (algorithm: CpuAlgorithmKind) => void
-  readonly onInformation: (algorithm: CpuAlgorithmKind) => void
+  readonly onSelect: (algorithm: HardwareOverviewKind) => void
+  readonly onInformation: (algorithm: HardwareOverviewKind) => void
   readonly onReset: () => void
 }
 
-interface CpuWorkspaceState {
+interface ComponentWorkspaceState {
   readonly scene: Scene | null
   readonly active: boolean
   readonly running: boolean
 }
 
-export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorkspaceState> {
-  private readonly model = new CpuModel()
+export default abstract class ComponentWorkspace extends Component<ComponentWorkspaceProps, ComponentWorkspaceState> {
+  protected abstract readonly group: HardwareFundamentalGroupKind
+  protected abstract readonly choices: readonly HardwareOverviewChoice[]
+  protected abstract renderLesson(props: ComponentPlaybackProps): ReactNode
+
+  private readonly model = new HardwareSnapshot()
   private readonly renderer = createRef<Renderer>()
   private readonly heading = createRef<HTMLHeadingElement>()
   private readonly firstAlgorithm = createRef<HTMLButtonElement>()
-  public state: CpuWorkspaceState = {
+  public state: ComponentWorkspaceState = {
     scene: null,
     active: this.props.algorithm !== null,
     running: this.props.algorithm !== null,
@@ -54,6 +49,16 @@ export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorksp
     if (this.props.algorithm === null) this.focusFirstAction()
     else this.heading.current?.focus()
   }
+
+  public componentDidUpdate(previous: ComponentWorkspaceProps): void {
+    if (previous.session === this.props.session) return
+    const active = this.props.algorithm !== null
+    this.setState({ active, running: active }, () => {
+      if (active) this.heading.current?.focus({ preventScroll: true })
+    })
+  }
+
+  protected presentScene(scene: Scene | null): Scene | null { return scene }
 
   public focusFirstAction(): void {
     if (this.state.running) this.heading.current?.focus()
@@ -76,16 +81,16 @@ export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorksp
 
   private select = (event: MouseEvent<HTMLButtonElement>): void => {
     if (this.state.running) return
-    for (const choice of CpuAlgorithmCatalog.forGroup(this.props.group)) if (choice.kind === event.currentTarget.dataset.algorithm) this.props.onSelect(choice.kind)
+    for (const choice of this.choices) if (choice.kind === event.currentTarget.dataset.algorithm) this.props.onSelect(choice.kind)
   }
 
   private information = (event: MouseEvent<HTMLButtonElement>): void => {
-    for (const choice of CpuAlgorithmCatalog.forGroup(this.props.group)) if (choice.kind === event.currentTarget.dataset.algorithm) this.props.onInformation(choice.kind)
+    for (const choice of this.choices) if (choice.kind === event.currentTarget.dataset.algorithm) this.props.onInformation(choice.kind)
   }
 
   private renderAlgorithms(): ReactNode[] {
     const rows: ReactNode[] = []
-    for (const choice of CpuAlgorithmCatalog.forGroup(this.props.group)) rows.push(
+    for (const choice of this.choices) rows.push(
       <div className="canvas-action-row" key={choice.kind}>
         <button type="button" className="canvas-action canvas-action--labeled" ref={rows.length === 0 ? this.firstAlgorithm : undefined} data-algorithm={choice.kind} onClick={this.select} disabled={this.state.running} aria-current={this.state.active && this.props.algorithm === choice.kind ? 'true' : undefined}>
           <OverviewTags components={choice.components} architectures={choice.architectures} devices={choice.devices} />
@@ -106,28 +111,14 @@ export default class CpuWorkspace extends Component<CpuWorkspaceProps, CpuWorksp
 
   private renderPlayback(): ReactNode {
     if (!this.state.active || this.props.algorithm === null) return null
-    const props = { model: this.model, onSceneChange: this.updateScene, onComplete: this.complete }
-    switch (this.props.algorithm) {
-      case 'latch': return <Latch {...props} />
-      case 'sram-cell': return <SramCell {...props} />
-      case 'dram-row': return <DramRow {...props} />
-      case 'hdd-sector': return <HddSector {...props} />
-      case 'nand-cell': return <NandCell {...props} />
-      case 'ssd-ftl': return <SsdFtl {...props} />
-      case 'ssd-garbage-collection': return <SsdGarbageCollection {...props} />
-      case 'ssd-wear-leveling': return <SsdWearLeveling {...props} />
-      case 'branch-prediction': return <BranchPrediction {...props} />
-      case 'out-of-order': return <OutOfOrder {...props} />
-      case 'register-renaming': return <RegisterRenaming {...props} />
-      case 'return-stack': return <ReturnStack {...props} />
-    }
+    return <Fragment key={this.props.session}>{this.renderLesson({ model: this.model, onSceneChange: this.updateScene, onComplete: this.complete })}</Fragment>
   }
 
   public render(): ReactNode {
-    const group = AdvancedAlgorithmCatalog.getGroup(this.props.group)
+    const group = AdvancedAlgorithmCatalog.getGroup(this.group)
     const parent = AdvancedAlgorithmCatalog.getGroup('hardware-fundamental')
     return <>
-      <Renderer ref={this.renderer} scene={this.state.scene ?? this.props.previewScene} onOpenMenu={this.props.onBack} emptyState={<></>}>
+      <Renderer ref={this.renderer} scene={this.presentScene(this.state.scene ?? this.props.previewScene)} onOpenMenu={this.props.onBack} emptyState={<></>}>
         <aside className="action-menu" aria-label={`${group.name} hardware overviews`}>
           <button type="button" className="text-button action-menu-back-button" onClick={this.props.onBack}>← {parent.name}</button>
           <h2 ref={this.heading} tabIndex={-1}>{parent.name} / {group.name}</h2>

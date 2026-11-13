@@ -1,6 +1,6 @@
 import type { SystemOverviewInformation } from '../../../../../visualization/SystemOverviewInformation.ts'
 import { RegisterRenamingAnimation } from './RegisterRenamingAnimation.ts'
-import { CpuLessonInformation } from '../CpuLesson.ts'
+import { CpuLessonInformation } from '../Cpu/CpuLesson.ts'
 
 export class RegisterRenamingOverview {
   public static describe(): SystemOverviewInformation {

@@ -1,5 +1,5 @@
 import { ComponentInformation, ComponentLesson } from '../ComponentLesson.ts'
-import type { CpuTrace } from '../CpuTrace.ts'
+import type { HardwareTrace } from '../HardwareTrace.ts'
 import { DramRowModel } from './DramRowModel.ts'
 import { DramRowOverview } from './DramRowOverview.ts'
 
@@ -7,7 +7,7 @@ export class DramRowAnimation extends ComponentLesson {
   public readonly title = DramRowOverview.describe().name
   public static describe() { return ComponentInformation.describe(DramRowOverview.describe()) }
 
-  protected build(trace: CpuTrace): void {
+  protected build(trace: HardwareTrace): void {
     const model = new DramRowModel()
     trace.record(model.snapshot(), 'Precharged bank', 'Both rows are isolated. Bit lines start equalized near half supply, ready for a small cell signal.', 'all_word_lines = 0\nbit_lines = VDD / 2', 0)
     model.activate(0)

@@ -1,10 +1,10 @@
 import type { AlgorithmInformation } from '../../../../visualization/AlgorithmInformation.ts'
 import type { SystemOverviewInformation } from '../../../../visualization/SystemOverviewInformation.ts'
-import { CpuLesson } from './CpuLesson.ts'
-import { CpuTrace } from './CpuTrace.ts'
+import { HardwareOverviewLesson } from './HardwareOverviewLesson.ts'
+import { HardwareTrace } from './HardwareTrace.ts'
 
-export abstract class ComponentLesson extends CpuLesson {
-  protected createTrace(): CpuTrace { return new CpuTrace('hardware-component') }
+export abstract class ComponentLesson extends HardwareOverviewLesson {
+  protected createTrace(): HardwareTrace { return new HardwareTrace('hardware-component') }
 }
 
 export class ComponentInformation {

@@ -34,7 +34,7 @@ export class AdvancedAlgorithmCatalog {
     { kind: 'hardware-cpu', parent: 'hardware-fundamental', name: 'CPU', description: 'Explore instruction execution, register renaming, and prediction inside a CPU core.', component: 'CPU' },
     { kind: 'hardware-hdd', parent: 'hardware-fundamental', name: 'HDD', description: 'Explore magnetic storage, sector access, and read/write mechanisms.', component: 'Disk', device: 'HDD' },
     { kind: 'hardware-ssd', parent: 'hardware-fundamental', name: 'SSD', description: 'Explore NAND storage, flash translation, garbage collection, and wear leveling.', component: 'Disk', device: 'SSD' },
-    { kind: 'hardware-ram', parent: 'hardware-fundamental', name: 'RAM', description: 'Explore latches, SRAM cells, and DRAM row access.', component: 'RAM' },
+    { kind: 'hardware-ram', parent: 'hardware-fundamental', name: 'RAM', description: 'Follow writing and reading one selected bit through a DRAM module.', component: 'RAM' },
     { kind: 'network-fundamental', parent: 'network', name: 'Fundamental', description: 'Overviews focused on one OSI layer and the tasks it performs.' },
     { kind: 'network-complex', parent: 'network', name: 'Complex', description: 'Combine network layers into working systems, such as secure web communication.' },
     { kind: 'physical', parent: 'network-fundamental', name: 'Physical', description: 'Layer 1: transmit bits as physical signals.' },

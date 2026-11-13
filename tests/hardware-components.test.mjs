@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { CpuAlgorithmCatalog } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CpuAlgorithmCatalog.ts'
-import { CpuModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CpuModel.ts'
+import { HardwareOverviewCatalog } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/HardwareOverviewCatalog.ts'
+import { HardwareSnapshot } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/HardwareSnapshot.ts'
 import { LatchModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Latch/LatchModel.ts'
 import { SramCellModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/SramCell/SramCellModel.ts'
 import { DramRowModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/DramRow/DramRowModel.ts'
@@ -17,15 +17,15 @@ import { SsdLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fund
 import { SystemOverviewLayout } from '../src/components/RealSystemsAlgorithms/SystemOverview/SystemOverviewLayout.ts'
 import { MenuSearchIndex } from '../src/components/MainMenu/Search/MenuSearchIndex.ts'
 
-const choices = CpuAlgorithmCatalog.choices.filter((choice) => !choice.components.includes('CPU'))
+const choices = HardwareOverviewCatalog.choices.filter((choice) => !choice.components.includes('CPU'))
 
-test('eight component lessons retain independent deterministic scenes and fundamental search destinations', () => {
-  assert.equal(choices.length, 8)
+test('seven component lessons retain independent deterministic scenes and fundamental search destinations', () => {
+  assert.equal(choices.length, 7)
   const index = new MenuSearchIndex(() => null)
   for (const choice of choices) {
-    const source = new CpuModel()
+    const source = new HardwareSnapshot()
     const original = source.clone()
-    const definition = CpuAlgorithmCatalog.definition(choice.kind)
+    const definition = HardwareOverviewCatalog.definition(choice.kind)
     const plan = definition.create(source, 0)
     assert.deepEqual(source, original)
     assert.deepEqual(plan, definition.create(source, 0))
@@ -50,10 +50,10 @@ test('eight component lessons retain independent deterministic scenes and fundam
     plan.steps.at(-1).scene.nodes[0].displayValue = 'changed final snapshot'
     plan.result.diagram.fixtures[0].value = 'changed result'
     assert.deepEqual(plan.steps[0].scene, first)
-    const information = CpuAlgorithmCatalog.describeOverview(choice.kind)
+    const information = HardwareOverviewCatalog.describeOverview(choice.kind)
     assert.ok(information.steps.length > 0 && information.steps.length <= 10)
     assert.ok(information.realWorldUsage.technologies.length > 0)
-    const results = index.find('algorithms', choice.name).filter((result) => result.cpuAlgorithm === choice.kind)
+    const results = index.find('algorithms', choice.name).filter((result) => result.componentAlgorithm === choice.kind)
     assert.equal(results.length, 1)
     assert.deepEqual(results[0].components, choice.components)
     const category = choice.devices?.[0] ?? choice.components[0]
@@ -65,7 +65,7 @@ test('eight component lessons retain independent deterministic scenes and fundam
 test('all four SSD overviews retain the category schematic and return to its camera bounds', () => {
   const common = SsdLayout.create()
   for (const kind of ['nand-cell', 'ssd-ftl', 'ssd-garbage-collection', 'ssd-wear-leveling']) {
-    const plan = CpuAlgorithmCatalog.definition(kind).create(new CpuModel(), 0)
+    const plan = HardwareOverviewCatalog.definition(kind).create(new HardwareSnapshot(), 0)
     for (const step of plan.steps) {
       assert.equal(step.scene.width, common.width)
       assert.ok(step.scene.height > common.height)
@@ -136,7 +136,7 @@ test('SSD relocation uses both ECC paths without host traffic and erase bypasses
 })
 
 test('NAND overview identifies ECC encoding before programs and physical access without FTL lookup', () => {
-  const plan = CpuAlgorithmCatalog.definition('nand-cell').create(new CpuModel(), 0)
+  const plan = HardwareOverviewCatalog.definition('nand-cell').create(new HardwareSnapshot(), 0)
   let programs = 0
   for (let index = 0; index < plan.steps.length; index += 1) {
     const scene = plan.steps[index].scene
@@ -218,11 +218,12 @@ test('DRAM enforces activation, restoration, write recovery, and precharge aroun
   assert.equal(model.read(0), 0)
 })
 
-test('equal-valued DRAM row-hit reads and HDD completion still show explicit transfers', () => {
-  const dram = CpuAlgorithmCatalog.definition('dram-row').create(new CpuModel(), 0)
-  const hit = dram.steps.find((step) => step.title === 'Another column is a row hit')
-  assert.ok(hit.scene.edges.some((edge) => edge.id === 'column-io' && edge.highlighted))
-  const hdd = CpuAlgorithmCatalog.definition('hdd-sector').create(new CpuModel(), 0)
+test('RAM read delivery and HDD completion show explicit data transfers', () => {
+  const dram = HardwareOverviewCatalog.definition('ram-read-bit').create(new HardwareSnapshot(), 0)
+  const delivery = dram.steps.find((step) => step.title === 'Receive the read bit')
+  assert.ok(delivery.scene.paths.some((path) => path.id === 'ram-controller-data' && path.highlighted))
+  assert.equal(delivery.scene.nodes.find((node) => node.id === 'ram-state-controller').displayValue, '1')
+  const hdd = HardwareOverviewCatalog.definition('hdd-sector').create(new HardwareSnapshot(), 0)
   assert.ok(hdd.steps.at(-1).scene.edges.some((edge) => edge.id === 'transfer' && edge.highlighted))
 })
 
@@ -343,7 +344,7 @@ test('HDD firmware mapping is internal and failed ECC prevents buffering or retu
 })
 
 test('HDD lesson separates controller/servo and read/write processing and corrects its injected error before return', () => {
-  const plan = CpuAlgorithmCatalog.definition('hdd-sector').create(new CpuModel(), 0)
+  const plan = HardwareOverviewCatalog.definition('hdd-sector').create(new HardwareSnapshot(), 0)
   const units = new Map(plan.steps[0].scene.regions.map((region) => [region.id, region]))
   for (const id of ['controller', 'firmware-map', 'servo-controller', 'cache', 'ecc', 'read-channel', 'write-channel']) assert.ok(units.has(`hdd-${id}`))
   const index = (title) => plan.steps.findIndex((step) => step.title === title)

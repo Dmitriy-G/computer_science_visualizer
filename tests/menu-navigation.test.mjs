@@ -6,7 +6,7 @@ import { StructureCatalog } from '../src/visualization/StructureCatalog.ts'
 import { ActionCatalog } from '../src/visualization/ActionCatalog.ts'
 import { ActionOrdering } from '../src/components/MainMenu/ActionMenu/ActionOrdering.ts'
 import { ShellSortAnimation } from '../src/components/DataStructuresAlgorithms/Sorting/Array/ShellSort/ShellSortAnimation.ts'
-import { CpuAlgorithmCatalog } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CpuAlgorithmCatalog.ts'
+import { HardwareOverviewCatalog } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/HardwareOverviewCatalog.ts'
 
 test('algorithm action ordering is alphabetical by default without changing catalog order', () => {
   const actions = ActionCatalog.getScopedActions('array', 'sorting')
@@ -279,9 +279,9 @@ test('advanced hardware categories have reversible paths and no structure select
   assert.deepEqual(fundamental.getStructures(), [])
   assert.deepEqual(fundamental.getGroups(), [])
   assert.throws(() => fundamental.selectStructure('array'), /current group/)
-  assert.deepEqual(fundamental.getCpuAlgorithms(), [])
+  assert.deepEqual(fundamental.getComponentAlgorithms(), [])
   const seen = new Set()
-  const counts = { CPU: 4, HDD: 1, SSD: 4, RAM: 3 }
+  const counts = { CPU: 4, HDD: 1, SSD: 4, RAM: 2 }
   for (const group of fundamental.getAdvancedAlgorithmGroups()) {
     const component = fundamental.selectAdvancedAlgorithmGroup(group.kind)
     assert.equal(component.hardwareOverviewGroup, group.kind)
@@ -290,19 +290,19 @@ test('advanced hardware categories have reversible paths and no structure select
     assert.equal(component.backLabel, 'Hardware Fundamental')
     assert.deepEqual(component.back(), fundamental)
     assert.deepEqual(component.back().back(), advanced)
-    const overviews = component.getCpuAlgorithms()
+    const overviews = component.getComponentAlgorithms()
     assert.equal(overviews.length, counts[group.name])
-    assert.deepEqual(overviews, CpuAlgorithmCatalog.forGroup(group.kind))
+    assert.deepEqual(overviews, HardwareOverviewCatalog.forGroup(group.kind))
     for (const overview of overviews) {
       assert.ok(overview.components.includes(group.component))
       if (group.device) assert.ok(overview.devices.includes(group.device))
-      assert.equal(CpuAlgorithmCatalog.groupFor(overview.kind), group.kind)
+      assert.equal(HardwareOverviewCatalog.groupFor(overview.kind), group.kind)
       assert.ok(!seen.has(overview.kind), `${overview.kind} appears in multiple component groups`)
       seen.add(overview.kind)
     }
   }
-  assert.equal(seen.size, CpuAlgorithmCatalog.choices.length)
-  assert.deepEqual(advanced.getCpuAlgorithms(), [])
+  assert.equal(seen.size, HardwareOverviewCatalog.choices.length)
+  assert.deepEqual(advanced.getComponentAlgorithms(), [])
   assert.deepEqual(fundamental.getHardwareAlgorithms(), [])
   for (const kind of ['hardware', 'hardware-disk', 'disks', 'memory', 'cpu']) {
     assert.throws(() => fundamental.selectAdvancedAlgorithmGroup(kind), /Unknown advanced algorithm group/)
@@ -335,7 +335,7 @@ test('advanced network categories follow OSI layer order and preserve their pare
   assert.deepEqual(network.back(), advanced)
   const complex = network.selectAdvancedAlgorithmGroup('network-complex')
   assert.deepEqual(complex.getAdvancedAlgorithmGroups(), [])
-  assert.deepEqual(complex.getCpuAlgorithms(), [])
+  assert.deepEqual(complex.getComponentAlgorithms(), [])
   assert.deepEqual(complex.back(), network)
 })
 

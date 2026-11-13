@@ -1,22 +1,22 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { CpuModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CpuModel.ts'
-import { CpuAlgorithmCatalog } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CpuAlgorithmCatalog.ts'
+import { HardwareSnapshot } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/HardwareSnapshot.ts'
+import { HardwareOverviewCatalog } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/HardwareOverviewCatalog.ts'
 import { RegisterRenameModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/RegisterRenaming/RegisterRenameModel.ts'
 import { OutOfOrderModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/OutOfOrder/OutOfOrderModel.ts'
 import { BranchPredictorModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/BranchPrediction/BranchPredictorModel.ts'
 import { ReturnStackModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/ReturnStack/ReturnStackModel.ts'
-import { CpuTrace } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CpuTrace.ts'
+import { HardwareTrace } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/HardwareTrace.ts'
 import { CpuCoreLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CpuCore/CpuCoreLayout.ts'
 import { SystemOverviewLayout } from '../src/components/RealSystemsAlgorithms/SystemOverview/SystemOverviewLayout.ts'
 
 test('four hardware lessons have deterministic independent snapshots and leave their source unchanged', () => {
-  const cpuChoices = CpuAlgorithmCatalog.choices.filter((choice) => choice.components.includes('CPU'))
+  const cpuChoices = HardwareOverviewCatalog.choices.filter((choice) => choice.components.includes('CPU'))
   assert.equal(cpuChoices.length, 4)
   for (const choice of cpuChoices) {
-    const source = new CpuModel()
+    const source = new HardwareSnapshot()
     const before = source.clone()
-    const definition = CpuAlgorithmCatalog.definition(choice.kind)
+    const definition = HardwareOverviewCatalog.definition(choice.kind)
     const plan = definition.create(source, 0)
     assert.deepEqual(source, before)
     assert.deepEqual(plan, definition.create(source, 0))
@@ -46,16 +46,16 @@ test('four hardware lessons have deterministic independent snapshots and leave t
     const firstValue = plan.steps[0].scene.nodes[0].displayValue
     plan.steps.at(-1).scene.nodes[0].displayValue = 'changed final snapshot'
     assert.equal(plan.steps[0].scene.nodes[0].displayValue, firstValue)
-    assert.ok(CpuAlgorithmCatalog.describe(choice.kind).realWorldUsage.technologies.length > 0)
+    assert.ok(HardwareOverviewCatalog.describe(choice.kind).realWorldUsage.technologies.length > 0)
     assert.ok(plan.steps.some((step) => step.scene.edges.some((edge) => edge.highlighted)))
-    assert.ok(CpuAlgorithmCatalog.describe(choice.kind).modelNotes.includes('not simulated'))
+    assert.ok(HardwareOverviewCatalog.describe(choice.kind).modelNotes.includes('not simulated'))
   }
 })
 
 test('CPU lessons share one core map and show one explained interaction per step', () => {
   let components
-  for (const choice of CpuAlgorithmCatalog.choices.filter((entry) => entry.components.includes('CPU'))) {
-    const plan = CpuAlgorithmCatalog.definition(choice.kind).create(new CpuModel(), 0)
+  for (const choice of HardwareOverviewCatalog.choices.filter((entry) => entry.components.includes('CPU'))) {
+    const plan = HardwareOverviewCatalog.definition(choice.kind).create(new HardwareSnapshot(), 0)
     for (let index = 0; index < plan.steps.length; index += 1) {
       const scene = plan.steps[index].scene
       const core = scene.regions.find((region) => region.id === 'core')
@@ -97,7 +97,7 @@ test('CPU lessons share one core map and show one explained interaction per step
       }
     }
   }
-  assert.ok(!CpuAlgorithmCatalog.choices.some((choice) => choice.kind === 'cpu-core'))
+  assert.ok(!HardwareOverviewCatalog.choices.some((choice) => choice.kind === 'cpu-core'))
 })
 
 test('rename operand arrows retain the captured physical source after a later write renames r1', () => {
@@ -119,7 +119,7 @@ test('both physical operands arrive before the ALU result and register write are
   const model = new RegisterRenameModel()
   for (let index = 0; index < 4; index += 1) model.renameNext()
   for (const id of ['I3', 'I1', 'I2']) model.execute(id)
-  const trace = new CpuTrace()
+  const trace = new HardwareTrace()
   trace.record(model.snapshot(), 'Initial', 'I4 waits for its operands.', '', 0)
   model.execute('I4')
   trace.record(model.snapshot('I4'), 'Execute I4', 'Read both physical operands, then write p6.', '')

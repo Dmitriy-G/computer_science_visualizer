@@ -382,7 +382,7 @@ export default class Renderer extends Component<
       const lines: string[] = []
       const label = region.shortLabel ?? region.label
       const fontSize = region.level === 'system' ? 32 : 26
-      if (scene.kind === 'system-overview' || scene.kind === 'cpu-hardware' || hdd || ssd) {
+      if (scene.kind === 'system-overview' || scene.kind === 'cpu-hardware' || hdd || ssd || ram) {
         const limit = Math.max(schematic ? 8 : 12, Math.floor((region.width - 32) / (schematic ? fontSize * 0.62 : 9)))
         let line = ''
         for (const word of label.split(' ')) {

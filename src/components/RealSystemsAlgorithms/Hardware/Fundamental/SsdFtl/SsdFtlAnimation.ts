@@ -1,5 +1,5 @@
 import { ComponentInformation, ComponentLesson } from '../ComponentLesson.ts'
-import type { CpuTrace } from '../CpuTrace.ts'
+import type { HardwareTrace } from '../HardwareTrace.ts'
 import { SsdFtlModel } from './SsdFtlModel.ts'
 import { SsdFtlOverview } from './SsdFtlOverview.ts'
 
@@ -7,7 +7,7 @@ export class SsdFtlAnimation extends ComponentLesson {
   public readonly title = SsdFtlOverview.describe().name
   public static describe() { return ComponentInformation.describe(SsdFtlOverview.describe()) }
 
-  protected build(trace: CpuTrace): void {
+  protected build(trace: HardwareTrace): void {
     const model = new SsdFtlModel()
     trace.record(model.snapshot(), 'Logical and physical state', 'Two host writes already mapped logical pages zero and one to separate physical pages. Other flash pages are erased.', 'L2P[0] = B0.P0  // A\nL2P[1] = B0.P1  // B', 0)
     model.lookup(0)

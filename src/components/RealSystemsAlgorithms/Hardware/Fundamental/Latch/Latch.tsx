@@ -1,8 +1,8 @@
 import ActionView from '../../../../ActionPlayback/ActionView.tsx'
-import type { CpuModel } from '../CpuModel.ts'
+import type { HardwareSnapshot } from '../HardwareSnapshot.ts'
 import { LatchAnimation } from './LatchAnimation.ts'
 import './Latch.css'
 
-export default class Latch extends ActionView<CpuModel> {
+export default class Latch extends ActionView<HardwareSnapshot> {
   protected readonly definition = new LatchAnimation()
 }

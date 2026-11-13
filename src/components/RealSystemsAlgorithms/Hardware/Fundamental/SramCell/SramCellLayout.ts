@@ -1,9 +1,9 @@
 import { HardwareDiagram } from '../../../../../visualization/HardwareDiagram.ts'
-import { CpuModel } from '../CpuModel.ts'
+import { HardwareSnapshot } from '../HardwareSnapshot.ts'
 import type { SramCellModel } from './SramCellModel.ts'
 
 export class SramCellLayout {
-  public static create(model: SramCellModel): CpuModel {
+  public static create(model: SramCellModel): HardwareSnapshot {
     const diagram = new HardwareDiagram(1280, 870)
     diagram.region('cell', 'Conventional 6T SRAM cell / four inverter transistors + two access transistors', 'memory', 30, 40, 850, 590)
       .fixture('wl', 'Word line', model.wordLine ? '1 / access on' : '0 / isolated', 450, 140)
@@ -32,6 +32,6 @@ export class SramCellLayout {
       .connect('sense-bl-bar', 'bl-bar', 'sense', 'read differential', model.operation === 'sense', -80)
       .connect('write-drive', 'driver', 'bl-bar', 'write drive', model.operation.startsWith('write'), 85)
       .connect('write-drive-left', 'driver', 'bl', 'complementary write drive', model.operation.startsWith('write'), -95)
-    return new CpuModel([], 'q', 0, diagram)
+    return new HardwareSnapshot([], 'q', 0, diagram)
   }
 }

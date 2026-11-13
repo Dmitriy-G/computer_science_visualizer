@@ -1,8 +1,8 @@
 import ActionView from '../../../../ActionPlayback/ActionView.tsx'
-import type { CpuModel } from '../CpuModel.ts'
+import type { HardwareSnapshot } from '../HardwareSnapshot.ts'
 import { BranchPredictionAnimation } from './BranchPredictionAnimation.ts'
 import './BranchPrediction.css'
 
-export default class BranchPrediction extends ActionView<CpuModel> {
+export default class BranchPrediction extends ActionView<HardwareSnapshot> {
   protected readonly definition = new BranchPredictionAnimation()
 }

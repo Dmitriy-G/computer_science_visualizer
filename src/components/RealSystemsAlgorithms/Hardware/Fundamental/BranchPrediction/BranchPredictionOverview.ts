@@ -1,6 +1,6 @@
 import type { SystemOverviewInformation } from '../../../../../visualization/SystemOverviewInformation.ts'
 import { BranchPredictionAnimation } from './BranchPredictionAnimation.ts'
-import { CpuLessonInformation } from '../CpuLesson.ts'
+import { CpuLessonInformation } from '../Cpu/CpuLesson.ts'
 
 export class BranchPredictionOverview {
   public static describe(): SystemOverviewInformation {

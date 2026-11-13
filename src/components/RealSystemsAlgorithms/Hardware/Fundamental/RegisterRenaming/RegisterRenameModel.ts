@@ -1,6 +1,6 @@
-import { CpuModel } from '../CpuModel.ts'
+import { HardwareSnapshot } from '../HardwareSnapshot.ts'
 import { RegisterRenamingLayout } from './RegisterRenamingLayout.ts'
-import type { CpuBank, CpuCell } from '../CpuModel.ts'
+import type { HardwareBank, HardwareCell } from '../HardwareSnapshot.ts'
 
 interface RenameInstruction {
   readonly id: string
@@ -89,8 +89,8 @@ export class RegisterRenameModel {
     return entry.instruction.id
   }
 
-  public snapshot(focus: string | null = null): CpuModel {
-    const instructions: CpuCell[] = []
+  public snapshot(focus: string | null = null): HardwareSnapshot {
+    const instructions: HardwareCell[] = []
     for (const instruction of RegisterRenameModel.program) {
       const entry = this.instructions.find((candidate) => candidate.instruction.id === instruction.id)
       let value = instruction.text
@@ -105,15 +105,15 @@ export class RegisterRenameModel {
         status: entry?.retired ? 'RETIRED' : entry?.done ? 'EXECUTED' : entry ? 'RENAMED' : 'WAITING',
       })
     }
-    const mappings: CpuCell[] = []
+    const mappings: HardwareCell[] = []
     for (const [name, physical] of this.renameMap) mappings.push({ id: `map-${name}`, label: name, value: `p${physical}` })
-    const values: CpuCell[] = []
+    const values: HardwareCell[] = []
     for (let index = 0; index < this.physical.length; index += 1) values.push({
       id: `physical-${index}`, label: `p${index}`, value: !this.allocated.has(index) ? 'free' : this.physical[index] === null ? 'not ready' : String(this.physical[index]),
     })
-    const committed: CpuCell[] = []
+    const committed: HardwareCell[] = []
     for (const [name, value] of this.architectural) committed.push({ id: `arch-${name}`, label: name, value: String(value) })
-    const banks: CpuBank[] = [
+    const banks: HardwareBank[] = [
       { name: 'Operation', cells: instructions }, { name: 'Rename map', cells: mappings },
       { name: 'Physical', cells: values }, { name: 'Committed', cells: committed },
     ]
@@ -136,6 +136,6 @@ export class RegisterRenameModel {
       result: this.executionResult,
     })
     const focusId = focus === null ? null : this.phase === 'rename' ? 'rename-map' : this.phase === 'execute' ? 'alu' : 'committed-registers'
-    return new CpuModel(banks, focusId, 0, diagram)
+    return new HardwareSnapshot(banks, focusId, 0, diagram)
   }
 }

@@ -1,6 +1,6 @@
-import { CpuModel } from '../CpuModel.ts'
+import { HardwareSnapshot } from '../HardwareSnapshot.ts'
 import { ReturnStackLayout } from './ReturnStackLayout.ts'
-import type { CpuCell } from '../CpuModel.ts'
+import type { HardwareCell } from '../HardwareSnapshot.ts'
 
 export class ReturnStackModel {
   public readonly predictions: number[] = []
@@ -67,13 +67,13 @@ export class ReturnStackModel {
 
   private hex(value: number): string { return `0x${value.toString(16).toUpperCase()}` }
 
-  public snapshot(): CpuModel {
-    const slots: CpuCell[] = []
+  public snapshot(): HardwareSnapshot {
+    const slots: HardwareCell[] = []
     for (let index = 0; index < 8; index += 1) slots.push({
       id: `return-${index}`, label: `slot ${index}`, value: index < this.predictions.length ? this.hex(this.predictions[index]) : 'empty',
       tone: index === this.predictions.length - 1 ? 'active' : 'default', status: this.flow.startsWith('return-') && index === this.lastSlot ? 'POPPED' : index === this.predictions.length - 1 ? 'TOP' : undefined,
     })
-    return new CpuModel([
+    return new HardwareSnapshot([
       { name: 'Return stack', cells: slots },
       { name: 'Flow', cells: [
         { id: 'depth', label: 'call depth', value: String(this.actualReturns.length) },

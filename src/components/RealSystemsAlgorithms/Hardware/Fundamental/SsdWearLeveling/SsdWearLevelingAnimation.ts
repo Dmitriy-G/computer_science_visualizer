@@ -1,5 +1,5 @@
 import { ComponentInformation, ComponentLesson } from '../ComponentLesson.ts'
-import type { CpuTrace } from '../CpuTrace.ts'
+import type { HardwareTrace } from '../HardwareTrace.ts'
 import { SsdWearLevelingModel } from './SsdWearLevelingModel.ts'
 import { SsdWearLevelingOverview } from './SsdWearLevelingOverview.ts'
 
@@ -7,7 +7,7 @@ export class SsdWearLevelingAnimation extends ComponentLesson {
   public readonly title = SsdWearLevelingOverview.describe().name
   public static describe() { return ComponentInformation.describe(SsdWearLevelingOverview.describe()) }
 
-  protected build(trace: CpuTrace): void {
+  protected build(trace: HardwareTrace): void {
     const model = new SsdWearLevelingModel()
     trace.record(model.snapshot(), 'Separate data validity from wear', 'B0 holds cold data and has zero erases; B1 and B2 are free with counts four and six. Free does not mean unworn.', 'erase_counts = [0, 4, 6]\nL2P[0] = B0.P0  // cold data', 0)
     model.compareAllocations()

@@ -1,6 +1,6 @@
 import type { SystemOverviewInformation } from '../../../../../visualization/SystemOverviewInformation.ts'
 import { ReturnStackAnimation } from './ReturnStackAnimation.ts'
-import { CpuLessonInformation } from '../CpuLesson.ts'
+import { CpuLessonInformation } from '../Cpu/CpuLesson.ts'
 
 export class ReturnStackOverview {
   public static describe(): SystemOverviewInformation {

@@ -1,8 +1,8 @@
 import ActionView from '../../../../ActionPlayback/ActionView.tsx'
-import type { CpuModel } from '../CpuModel.ts'
+import type { HardwareSnapshot } from '../HardwareSnapshot.ts'
 import { ReturnStackAnimation } from './ReturnStackAnimation.ts'
 import './ReturnStack.css'
 
-export default class ReturnStack extends ActionView<CpuModel> {
+export default class ReturnStack extends ActionView<HardwareSnapshot> {
   protected readonly definition = new ReturnStackAnimation()
 }

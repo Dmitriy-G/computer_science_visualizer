@@ -1,4 +1,4 @@
-import { CpuModel } from '../CpuModel.ts'
+import { HardwareSnapshot } from '../HardwareSnapshot.ts'
 import { HddLayout } from '../Hdd/HddLayout.ts'
 import type { HddSectorModel } from './HddSectorModel.ts'
 
@@ -9,7 +9,7 @@ export class HddSectorLayout {
     return symbols.length ? symbols.join(' ') : 'pending'
   }
 
-  public static create(model: HddSectorModel): CpuModel {
+  public static create(model: HddSectorModel): HardwareSnapshot {
     const diagram = HddLayout.diagram(model, 2180)
     const phase = model.operation
     const location = `H${model.location.head} / T${model.targetTrack} / S${model.targetSector}`
@@ -98,6 +98,6 @@ export class HddSectorLayout {
       diagram.fixture(`magnetic-${index}`, `interval ${index}`, polarity === undefined ? '?' : polarity > 0 ? '+' : '-', 90 + index * 120, 2070, undefined, 90)
     }
     const focus = phase === 'read-error' ? 'received-codeword' : phase === 'ecc-decode' ? 'decoded' : 'head'
-    return new CpuModel([], focus, 0, diagram)
+    return new HardwareSnapshot([], focus, 0, diagram)
   }
 }

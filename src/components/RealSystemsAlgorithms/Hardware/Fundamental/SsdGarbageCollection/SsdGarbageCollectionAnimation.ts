@@ -1,5 +1,5 @@
 import { ComponentInformation, ComponentLesson } from '../ComponentLesson.ts'
-import type { CpuTrace } from '../CpuTrace.ts'
+import type { HardwareTrace } from '../HardwareTrace.ts'
 import { SsdGarbageCollectionModel } from './SsdGarbageCollectionModel.ts'
 import { SsdGarbageCollectionOverview } from './SsdGarbageCollectionOverview.ts'
 
@@ -7,7 +7,7 @@ export class SsdGarbageCollectionAnimation extends ComponentLesson {
   public readonly title = SsdGarbageCollectionOverview.describe().name
   public static describe() { return ComponentInformation.describe(SsdGarbageCollectionOverview.describe()) }
 
-  protected build(trace: CpuTrace): void {
+  protected build(trace: HardwareTrace): void {
     const model = new SsdGarbageCollectionModel()
     trace.record(model.snapshot(), 'Updates left obsolete copies', 'Three initial host writes plus two replacements left two invalid pages and one live page in B0. Five host writes have caused five flash page programs.', 'write L0=A; write L1=B; write L2=C\nupdate L0=A2; update L2=C2\nhost_writes = flash_programs = 5', 0)
     const victim = model.chooseVictim()

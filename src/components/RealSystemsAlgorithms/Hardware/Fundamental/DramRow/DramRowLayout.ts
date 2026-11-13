@@ -1,9 +1,9 @@
 import { HardwareDiagram } from '../../../../../visualization/HardwareDiagram.ts'
-import { CpuModel } from '../CpuModel.ts'
+import { HardwareSnapshot } from '../HardwareSnapshot.ts'
 import type { DramRowModel } from './DramRowModel.ts'
 
 export class DramRowLayout {
-  public static create(model: DramRowModel): CpuModel {
+  public static create(model: DramRowModel): HardwareSnapshot {
     const diagram = new HardwareDiagram(1130, 1000)
     diagram.region('dram', 'DRAM bank / symbolic command intervals', 'memory', 30, 30, 1070, 940)
       .fixture('command', 'Bank command / state', model.stage, 260, 125, undefined, 300)
@@ -29,6 +29,6 @@ export class DramRowLayout {
     diagram.fixture('io', 'Selected-column data I/O', model.output === null ? 'no read yet' : String(model.output), 560, 920, undefined, 270)
     if (model.selectedColumn !== null) diagram.connect('column-io', `sense-${model.selectedColumn}`, 'io', 'column READ', model.stage === 'read')
     if (model.selectedColumn !== null) diagram.connect('column-write', 'io', `sense-${model.selectedColumn}`, 'column WRITE', model.stage === 'write recovery', 55)
-    return new CpuModel([], 'command', 0, diagram)
+    return new HardwareSnapshot([], 'command', 0, diagram)
   }
 }

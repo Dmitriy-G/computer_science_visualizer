@@ -1,9 +1,9 @@
 import { HardwareDiagram } from '../../../../../visualization/HardwareDiagram.ts'
-import { CpuModel } from '../CpuModel.ts'
+import { HardwareSnapshot } from '../HardwareSnapshot.ts'
 import type { LatchModel } from './LatchModel.ts'
 
 export class LatchLayout {
-  public static create(model: LatchModel): CpuModel {
+  public static create(model: LatchModel): HardwareSnapshot {
     const diagram = new HardwareDiagram(1060, 760)
     diagram.region('latch', 'Level-sensitive D latch / one powered bit', 'memory', 30, 35, 1000, 400)
       .fixture('data', 'Data input D', String(model.data), 165, 170)
@@ -31,6 +31,6 @@ export class LatchLayout {
       diagram.fixture(`wave-${row}`, signals[row], row === 0 ? String(model.data) : row === 1 ? String(Number(model.enabled)) : String(model.stored), 95, baseline, undefined, 70)
       if (path) diagram.paths.push({ id: `waveform-${row}`, d: path, label: `${signals[row]} waveform; upper level is one, lower level is zero`, highlighted: row === 2 })
     }
-    return new CpuModel([], 'stored', 0, diagram)
+    return new HardwareSnapshot([], 'stored', 0, diagram)
   }
 }

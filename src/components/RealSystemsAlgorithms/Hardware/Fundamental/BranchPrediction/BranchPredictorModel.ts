@@ -1,6 +1,6 @@
-import { CpuModel } from '../CpuModel.ts'
+import { HardwareSnapshot } from '../HardwareSnapshot.ts'
 import { BranchPredictionLayout } from './BranchPredictionLayout.ts'
-import type { CpuCell } from '../CpuModel.ts'
+import type { HardwareCell } from '../HardwareSnapshot.ts'
 
 export class BranchPredictorModel {
   public readonly counters = [1, 1, 1, 1, 1, 1, 1, 1]
@@ -39,14 +39,14 @@ export class BranchPredictorModel {
     return matched
   }
 
-  public snapshot(): CpuModel {
-    const counters: CpuCell[] = []
+  public snapshot(): HardwareSnapshot {
+    const counters: HardwareCell[] = []
     const labels = ['strong N', 'weak N', 'weak T', 'strong T']
     for (let index = 0; index < this.counters.length; index += 1) counters.push({
       id: `counter-${index}`, label: index.toString(2).padStart(3, '0'), value: `${this.counters[index]} · ${labels[this.counters[index]]}`,
       tone: this.predicted !== null && index === this.lastIndex ? 'active' : 'default', status: this.predicted !== null && index === this.lastIndex ? 'SELECTED ENTRY' : undefined,
     })
-    return new CpuModel([
+    return new HardwareSnapshot([
       { name: 'Predictor', cells: [
         { id: 'history', label: 'history', value: this.history.toString(2).padStart(3, '0') },
         { id: 'branch-pc', label: 'branch PC', value: this.pc },

@@ -1,4 +1,4 @@
-import { CpuModel } from './CpuModel.ts'
+import { HardwareSnapshot } from './HardwareSnapshot.ts'
 import type { FlashStorage } from './FlashStorage.ts'
 import { SsdLessonLayout } from './Ssd/SsdLessonLayout.ts'
 import type { SsdActivity, SsdFirmwareFeature } from './Ssd/SsdLessonLayout.ts'
@@ -6,7 +6,7 @@ import type { SsdActivity, SsdFirmwareFeature } from './Ssd/SsdLessonLayout.ts'
 export class FlashLayout {
   public static readonly height = SsdLessonLayout.detailTop + 970
 
-  public static create(model: FlashStorage, controllerLabel: string, feature: SsdFirmwareFeature, height: number = this.height): CpuModel {
+  public static create(model: FlashStorage, controllerLabel: string, feature: SsdFirmwareFeature, height: number = this.height): HardwareSnapshot {
     const physical = this.selectedPage(model)
     const activity = this.activity(model)
     const location = physical === null ? model.selectedBlock === null ? 'CH0 / T0 / D0 / PL0' : SsdLessonLayout.address(model.selectedBlock) : SsdLessonLayout.address(Math.floor(physical / 3), physical % 3)
@@ -39,7 +39,7 @@ export class FlashLayout {
       diagram.fixture(`erase-${block}`, `B${block} erase count`, String(model.erases[block]), x + 280, top + 850, undefined, 460)
     }
     if (model.flowFrom && model.flowTo) diagram.connect('transaction', model.flowFrom, model.flowTo, `logical ${model.operation === 'mapping committed' ? 'mapping publication' : model.operation.startsWith('program') ? 'program attempt' : model.operation}`, true, -65)
-    return new CpuModel([], model.flowTo ?? 'ssd-state-controller', 0, diagram)
+    return new HardwareSnapshot([], model.flowTo ?? 'ssd-state-controller', 0, diagram)
   }
 
   private static selectedPage(model: FlashStorage): number | null {

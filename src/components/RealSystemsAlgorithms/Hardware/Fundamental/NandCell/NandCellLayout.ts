@@ -1,10 +1,10 @@
-import { CpuModel } from '../CpuModel.ts'
+import { HardwareSnapshot } from '../HardwareSnapshot.ts'
 import { SsdLessonLayout } from '../Ssd/SsdLessonLayout.ts'
 import type { SsdActivity } from '../Ssd/SsdLessonLayout.ts'
 import type { NandCellModel } from './NandCellModel.ts'
 
 export class NandCellLayout {
-  public static create(model: NandCellModel): CpuModel {
+  public static create(model: NandCellModel): HardwareSnapshot {
     const top = SsdLessonLayout.detailTop
     const diagram = SsdLessonLayout.create(top + 970, {
       feature: 'nand', activity: this.activity(model),
@@ -34,7 +34,7 @@ export class NandCellLayout {
       .connect('ecc-check', 'sense', 'ecc', 'controller decode / check', model.operation === 'ECC check')
     for (let page = 0; page < model.pages.length; page += 1) diagram.connect(`erase-${page}`, 'erase', `page-${page}`, 'block ERASE', model.operation === 'block erase', -50 - page * 30)
     const focus = model.operation === 'ECC encode' ? 'ssd-state-ecc-encode' : model.operation === 'ECC check' ? 'ssd-state-ecc-decode' : model.operation === 'block erase' ? 'erase' : model.operation === 'sense' ? 'sense' : 'charge'
-    return new CpuModel([], focus, 0, diagram)
+    return new HardwareSnapshot([], focus, 0, diagram)
   }
 
   private static activity(model: NandCellModel): SsdActivity {

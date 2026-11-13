@@ -1,5 +1,5 @@
-import { CpuLesson, CpuLessonInformation } from '../CpuLesson.ts'
-import type { CpuTrace } from '../CpuTrace.ts'
+import { CpuLesson, CpuLessonInformation } from '../Cpu/CpuLesson.ts'
+import type { HardwareTrace } from '../HardwareTrace.ts'
 import { RegisterRenameModel } from './RegisterRenameModel.ts'
 
 export class RegisterRenamingAnimation extends CpuLesson {
@@ -13,7 +13,7 @@ export class RegisterRenamingAnimation extends CpuLesson {
       'The lesson uses a PRF with three architectural names, seven physical registers, a speculative rename map, and committed mappings. Committed values remain in the PRF. Register counts, instruction selection, and event ordering are illustrative.')
   }
 
-  protected build(trace: CpuTrace): void {
+  protected build(trace: HardwareTrace): void {
     const model = new RegisterRenameModel()
     trace.record(model.snapshot(), 'Architectural names', 'r1 starts at 3. I1 and I3 both write r1, while I2 must use I1’s value.', 'r1 = 3; r2 = 4; r3 = 0', 0)
     for (let index = 0; index < RegisterRenameModel.program.length; index += 1) {

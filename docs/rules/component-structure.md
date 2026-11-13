@@ -265,7 +265,19 @@ data-structure algorithm scopes. The overview root contains Hardware Fundamental
 Complex, and Network in that fixed order. Hardware Fundamental opens CPU, HDD,
 SSD, and RAM directly in that fixed order. Network retains Fundamental and Complex,
 in that order. Each hardware component subcategory closes MainMenu and opens its
-own workspace, filtered from CpuAlgorithmCatalog by component and device tags.
+own workspace and scoped catalog under Cpu, Ram, Hdd, or Ssd. CpuAlgorithmCatalog
+and CpuWorkspace contain CPU lessons only; the other categories own equivalent
+catalogs and workspaces. HardwareOverviewCatalog delegates shared menu/search
+routing, while ComponentWorkspace shares workspace UI. Keep generic snapshots
+and tracing in HardwareSnapshot, HardwareTrace, and HardwareOverviewLesson.
+RAM offers only Write one bit and Read one bit, using its common diagram with
+in-place cell state. Keep approximate quantity suffixes only in static RAM titles.
+Playback and static views share canvas bounds, component geometry, and the same
+camera/layer transform. Preserve the RAM renderer across lesson sessions; replace
+only its playback child. Do not add a lower detail panel or resize/reposition
+components when starting or resetting a RAM lesson.
+Remove the previous latch, SRAM-cell, and
+DRAM-row cards from menu/search; keep reusable model primitives.
 HDD contains sector access; SSD contains NAND, FTL, garbage collection, and wear
 leveling. Both retain Disk component tags and use HDD or SSD device tags.
 Keep lesson source folders in their existing
@@ -368,15 +380,16 @@ writeback, and in-order retirement; these paths do not imply clock cycles.
 Keep unused units idle and adapt each lesson's state and
 dataflow to the relevant units. The temporary CPU core test entry is removed;
 its shared core concept belongs to the existing lessons.
-CpuTrace uses shared HardwareInteractions to publish exactly one explained arrow
+HardwareTrace in CPU mode uses shared HardwareInteractions to publish exactly one explained arrow
 or one local state update per animation step, with receiver updates on arrival.
 Keep captions below the legend for cpu-hardware and hardware-system scenes.
 Highlight actual instruction, operand, result, retirement, and prediction flows. Cache accesses,
 hit/miss timing, and precise physical wiring are outside these bounded models.
-CpuModel, HardwareSceneLayout, CpuTrace, and CpuLesson share only visual-state snapshots,
+HardwareSnapshot, HardwareSceneLayout, HardwareTrace, and HardwareOverviewLesson share only visual-state snapshots,
 scene generation, and playback contracts. Use the cpu-hardware Scene kind and
 distinct CPU search/menu destinations, preserving data-structure and Complex
-destinations. CpuWorkspace reuses Renderer, ActionView, ActionPlayback, and the
+destinations. Cpu/CpuLesson selects CPU-specific tracing. Scoped workspaces reuse
+ComponentWorkspace, Renderer, ActionView, ActionPlayback, and the
 SystemOverviewInfo dialog and shared info icon styling. Keep CPU operating-system
 schedulers out of this branch. Cross-component cache/memory mechanisms belong
 directly under `RealSystemsAlgorithms/Hardware/Complex/`, without CPU, cache,

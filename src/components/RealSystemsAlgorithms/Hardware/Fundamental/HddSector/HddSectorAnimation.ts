@@ -1,5 +1,5 @@
 import { ComponentInformation, ComponentLesson } from '../ComponentLesson.ts'
-import type { CpuTrace } from '../CpuTrace.ts'
+import type { HardwareTrace } from '../HardwareTrace.ts'
 import { HddSectorModel } from './HddSectorModel.ts'
 import { HddSectorOverview } from './HddSectorOverview.ts'
 
@@ -7,7 +7,7 @@ export class HddSectorAnimation extends ComponentLesson {
   public readonly title = HddSectorOverview.describe().name
   public static describe() { return ComponentInformation.describe(HddSectorOverview.describe()) }
 
-  protected build(trace: CpuTrace): void {
+  protected build(trace: HardwareTrace): void {
     const model = new HddSectorModel()
     trace.record(model.snapshot(), 'Resolve LBA in firmware', 'The HDD controller accepts LBA 7 and buffers payload 1011. Its firmware table selects head 0, track 1, sector 3. This is an internal mapping, not host-visible CHS geometry.', 'location = firmware_map[LBA]\ncache = host_payload', 0)
     model.encodeEcc()

@@ -1,6 +1,6 @@
 import type { SystemOverviewInformation } from '../../../../../visualization/SystemOverviewInformation.ts'
 import { OutOfOrderAnimation } from './OutOfOrderAnimation.ts'
-import { CpuLessonInformation } from '../CpuLesson.ts'
+import { CpuLessonInformation } from '../Cpu/CpuLesson.ts'
 
 export class OutOfOrderOverview {
   public static describe(): SystemOverviewInformation {

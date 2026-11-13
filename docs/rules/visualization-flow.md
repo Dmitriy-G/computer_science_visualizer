@@ -428,19 +428,34 @@ identify structures with previews but no animated actions clearly.
 
 ## Fundamental memory and storage scope
 
-Hardware > Fundamental includes latch, SRAM cell, DRAM row access, HDD sector
+Hardware > Fundamental includes RAM Write one bit and Read one bit, HDD sector
 access, NAND cell/page/block operations, SSD FTL, garbage collection, and wear
-leveling. Use RAM or Disk tags in the existing flat workspace; do not add memory
-or disk menu subcategories. Keep OS disk scheduling outside these overviews.
+leveling. Use the separate CPU, RAM, HDD, and SSD catalogs/workspaces and their
+component/device tags. Keep OS disk scheduling outside these overviews.
 
 Each lesson owns a mechanism model, layout, class component, stylesheet, animation,
 and sourced overview. Reuse the existing workspace, automatic playback, reset,
-information dialog, and search destinations. ComponentLesson shares CpuTrace and
-CpuModel as visual snapshot adapters using hardware-component scenes, without
+information dialog, and search destinations. ComponentLesson shares HardwareTrace and
+HardwareSnapshot as visual snapshot adapters using hardware-component scenes, without
 inventing CPU/cache context for local memory or device mechanisms. Component
 traces preserve explicit transactions even when successive payload values match.
-HardwareDiagram paths support latch waveforms and HDD tracks inside the shared
+HardwareDiagram paths support cell details and HDD tracks inside the shared
 Renderer; do not introduce a separate renderer or timing loop.
+Both RAM lessons preserve RamLayout's component positions, sizes, colors, and
+canvas bounds. Show selected-cell, wordline, bitline, transistor, capacitor, and
+neighboring data inside existing blocks; do not append a separate detail panel.
+Hide approximate quantity suffixes during playback and restore them in the static
+view. Replace only the existing RAM layer using the preview's camera and transform,
+and preserve the mounted renderer, Fit/Actual size, and scrolling across sessions.
+Use the same title wrapping in static and animated RAM scenes.
+Show ACTIVATE, charge sharing, sensing and
+restoration before column access, then PRECHARGE after recovery. On write, deliver
+data through socket, chip I/O, column path, row buffer, bitline, and capacitor in
+order. On read, return sensed data through the column path and I/O to the
+controller. Receiver values change on arrival. Preserve neighboring data and
+restore the common category preview on Reset. Explicitly follow one bit of a
+wider DDR burst; do not imply a physical one-bit DDR bus transaction. Symbolic
+charge indicators and waits do not claim analog accuracy or measured timings.
 HDD category and sector-access playback share HddLayout's schematic components
 and connections. Draw the platter and spindle as circles and use a fixed pivot
 and arm length for track changes. Rotate the target sector to the actual head

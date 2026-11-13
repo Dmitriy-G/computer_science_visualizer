@@ -1,5 +1,5 @@
 import { ComponentInformation, ComponentLesson } from '../ComponentLesson.ts'
-import type { CpuTrace } from '../CpuTrace.ts'
+import type { HardwareTrace } from '../HardwareTrace.ts'
 import { NandCellModel } from './NandCellModel.ts'
 import { NandCellOverview } from './NandCellOverview.ts'
 
@@ -7,7 +7,7 @@ export class NandCellAnimation extends ComponentLesson {
   public readonly title = NandCellOverview.describe().name
   public static describe() { return ComponentInformation.describe(NandCellOverview.describe()) }
 
-  protected build(trace: CpuTrace): void {
+  protected build(trace: HardwareTrace): void {
     const model = new NandCellModel()
     trace.record(model.snapshot(), 'Erased SLC cells', 'All pages in this conceptual block contain erased ones. Low threshold permits conduction at the read reference.', 'block.pages = [1111, 1111, 1111]\nall_pages_erased = true', 0)
     model.operation = 'load page buffer'
@@ -35,7 +35,7 @@ export class NandCellAnimation extends ComponentLesson {
     trace.record(model.snapshot(), 'Reuse erased space', 'Page zero can now hold 0101. Page one remains erased; its old data was removed by the whole-block erase.', 'PROGRAM(page = 0, data = 0101)\npage[1] == 1111', 2)
   }
 
-  private showEncoding(trace: CpuTrace, model: NandCellModel): void {
+  private showEncoding(trace: HardwareTrace, model: NandCellModel): void {
     model.operation = 'ECC encode'
     trace.record(model.snapshot(), 'Controller ECC encoding stage', 'Before page programming, the payload passes through controller ECC encoding. This cell-storage lesson identifies that stage without computing parity bits or a production ECC code.', 'controller_ecc_encode_stage(page_buffer)  // identified, not computed')
   }

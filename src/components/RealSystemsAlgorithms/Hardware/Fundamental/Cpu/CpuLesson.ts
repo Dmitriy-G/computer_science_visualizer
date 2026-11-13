@@ -1,28 +1,9 @@
-import type { ActionDefinition, ActionPlan } from '../../../../visualization/ActionDefinition.ts'
-import type { AlgorithmInformation } from '../../../../visualization/AlgorithmInformation.ts'
-import type { AnimationStep } from '../../../../visualization/Scene.ts'
-import type { CpuModel } from './CpuModel.ts'
-import { CpuTrace } from './CpuTrace.ts'
+import type { AlgorithmInformation } from '../../../../../visualization/AlgorithmInformation.ts'
+import { HardwareOverviewLesson } from '../HardwareOverviewLesson.ts'
+import { HardwareTrace } from '../HardwareTrace.ts'
 
-export abstract class CpuLesson implements ActionDefinition<CpuModel> {
-  public abstract readonly title: string
-  protected abstract build(trace: CpuTrace): void
-
-  protected createTrace(): CpuTrace { return new CpuTrace() }
-
-  public create(_source: CpuModel): ActionPlan<CpuModel> {
-    const trace = this.createTrace()
-    this.build(trace)
-    let width = 745
-    let height = 250
-    for (const step of trace.steps) {
-      width = Math.max(width, step.scene.width)
-      height = Math.max(height, step.scene.height)
-    }
-    const steps: AnimationStep[] = []
-    for (const step of trace.steps) steps.push({ ...step, scene: { ...step.scene, width, height } })
-    return { steps, result: trace.result.clone() }
-  }
+export abstract class CpuLesson extends HardwareOverviewLesson {
+  protected createTrace(): HardwareTrace { return new HardwareTrace('cpu-hardware') }
 }
 
 export class CpuLessonInformation {

@@ -1,5 +1,5 @@
-import { CpuLesson, CpuLessonInformation } from '../CpuLesson.ts'
-import type { CpuTrace } from '../CpuTrace.ts'
+import { CpuLesson, CpuLessonInformation } from '../Cpu/CpuLesson.ts'
+import type { HardwareTrace } from '../HardwareTrace.ts'
 import { ReturnStackModel } from './ReturnStackModel.ts'
 
 export class ReturnStackAnimation extends CpuLesson {
@@ -13,7 +13,7 @@ export class ReturnStackAnimation extends CpuLesson {
       'Overflow discards the oldest entry in this teaching model; underflow reports no prediction. These policies are not claims about undocumented A53 boundary behavior. Correct architectural return targets are represented separately.')
   }
 
-  protected build(trace: CpuTrace): void {
+  protected build(trace: HardwareTrace): void {
     const model = new ReturnStackModel()
     trace.record(model.snapshot(), 'Empty return predictor', 'A predicted return target is a hint for instruction fetch. The actual program return address determines correctness.', 'return_predictor = []\nactual_call_depth = 0', 0)
     for (let depth = 0; depth < 3; depth += 1) {

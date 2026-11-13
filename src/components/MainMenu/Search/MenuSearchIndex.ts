@@ -7,9 +7,9 @@ import type { AlgorithmInformation, AlgorithmTechnology } from '../../../visuali
 import type { StructureKind } from '../../../visualization/Scene.ts'
 import type { OverviewArchitectureKind, OverviewComponentKind, OverviewDeviceKind } from '../../../visualization/OverviewComponent.ts'
 import { StructureInformation } from '../../StructureInfo/StructureInformation.ts'
-import { CpuAlgorithmCatalog } from '../../RealSystemsAlgorithms/Hardware/Fundamental/CpuAlgorithmCatalog.ts'
+import { HardwareOverviewCatalog } from '../../RealSystemsAlgorithms/Hardware/Fundamental/HardwareOverviewCatalog.ts'
 import { AdvancedAlgorithmCatalog } from '../AdvancedAlgorithmCatalog.ts'
-import type { CpuAlgorithmKind } from '../../RealSystemsAlgorithms/Hardware/Fundamental/CpuModel.ts'
+import type { HardwareOverviewKind } from '../../RealSystemsAlgorithms/Hardware/Fundamental/HardwareOverviewKind.ts'
 import { HardwareAlgorithmCatalog } from '../../RealSystemsAlgorithms/Hardware/Complex/HardwareAlgorithmCatalog.ts'
 import type { HardwareAlgorithmKind } from '../../RealSystemsAlgorithms/Hardware/Complex/HardwareModel.ts'
 
@@ -29,9 +29,9 @@ export interface StructureSearchResult {
   readonly popular: boolean
 }
 
-export interface CpuSearchResult {
+export interface ComponentSearchResult {
   readonly key: string
-  readonly cpuAlgorithm: CpuAlgorithmKind
+  readonly componentAlgorithm: HardwareOverviewKind
   readonly name: string
   readonly description: string
   readonly context: string
@@ -53,7 +53,7 @@ export interface HardwareSearchResult {
   readonly devices?: readonly OverviewDeviceKind[]
 }
 
-export type MenuSearchResult = StructureSearchResult | CpuSearchResult | HardwareSearchResult
+export type MenuSearchResult = StructureSearchResult | ComponentSearchResult | HardwareSearchResult
 
 interface SearchDocument {
   readonly target: SearchTarget
@@ -79,15 +79,15 @@ export class MenuSearchIndex {
         },
       })
     }
-    for (const algorithm of CpuAlgorithmCatalog.choices) {
-      const information = CpuAlgorithmCatalog.describeOverview(algorithm.kind)
-      const group = AdvancedAlgorithmCatalog.getGroup(CpuAlgorithmCatalog.groupFor(algorithm.kind))
+    for (const algorithm of HardwareOverviewCatalog.choices) {
+      const information = HardwareOverviewCatalog.describeOverview(algorithm.kind)
+      const group = AdvancedAlgorithmCatalog.getGroup(HardwareOverviewCatalog.groupFor(algorithm.kind))
       let text = `${algorithm.name} ${information.name}`
       if (information.realWorldUsage) text += this.technologyNames(information.realWorldUsage.technologies) + this.technologyNames(information.realWorldUsage.products)
       this.documents.push({
         target: 'algorithms', text: this.normalize(text),
         result: {
-          key: `cpu:${algorithm.kind}`, cpuAlgorithm: algorithm.kind,
+          key: `component:${algorithm.kind}`, componentAlgorithm: algorithm.kind,
           name: algorithm.name, description: algorithm.description,
           context: `System Components Overview / Hardware Fundamental / ${group.name}`, symbol: group.device ?? group.component ?? 'CPU',
           components: algorithm.components, architectures: algorithm.architectures, devices: algorithm.devices,

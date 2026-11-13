@@ -1,8 +1,8 @@
 import ActionView from '../../../../ActionPlayback/ActionView.tsx'
-import type { CpuModel } from '../CpuModel.ts'
+import type { HardwareSnapshot } from '../HardwareSnapshot.ts'
 import { HddSectorAnimation } from './HddSectorAnimation.ts'
 import './HddSector.css'
 
-export default class HddSector extends ActionView<CpuModel> {
+export default class HddSector extends ActionView<HardwareSnapshot> {
   protected readonly definition = new HddSectorAnimation()
 }

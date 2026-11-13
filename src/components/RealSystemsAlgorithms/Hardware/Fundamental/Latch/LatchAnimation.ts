@@ -1,5 +1,5 @@
 import { ComponentInformation, ComponentLesson } from '../ComponentLesson.ts'
-import type { CpuTrace } from '../CpuTrace.ts'
+import type { HardwareTrace } from '../HardwareTrace.ts'
 import { LatchModel } from './LatchModel.ts'
 import { LatchOverview } from './LatchOverview.ts'
 
@@ -7,7 +7,7 @@ export class LatchAnimation extends ComponentLesson {
   public readonly title = LatchOverview.describe().name
   public static describe() { return ComponentInformation.describe(LatchOverview.describe()) }
 
-  protected build(trace: CpuTrace): void {
+  protected build(trace: HardwareTrace): void {
     const model = new LatchModel()
     model.apply(0, false)
     trace.record(model.snapshot(), 'Start with a known bit', 'The powered latch begins holding Q = 0. This initialized state is a teaching choice.', 'D = 0; LE = 0; Q = 0', 0)
