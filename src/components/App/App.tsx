@@ -585,7 +585,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     }
     const key = `component-${this.state.componentSession}`
     switch (this.state.hardwareOverview) {
-      case 'hardware-cpu': return <CpuWorkspace key={key} ref={this.setComponentWorkspace} {...props} />
+      case 'hardware-cpu': return <CpuWorkspace key="component-cpu" ref={this.setComponentWorkspace} {...props} />
       case 'hardware-ram': return <RamWorkspace key="component-ram" ref={this.setComponentWorkspace} {...props} />
       case 'hardware-ssd': return <SsdWorkspace key={key} ref={this.setComponentWorkspace} {...props} />
       case 'hardware-hdd': return <HddWorkspace key={key} ref={this.setComponentWorkspace} {...props} />

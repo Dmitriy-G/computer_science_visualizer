@@ -21,10 +21,8 @@ export class HardwareOverviewCatalog {
 
   public static definition(kind: HardwareOverviewKind): ActionDefinition<HardwareSnapshot> {
     switch (kind) {
-      case 'branch-prediction':
-      case 'out-of-order':
-      case 'register-renaming':
-      case 'return-stack':
+      case 'cpu-non-atomic-increment':
+      case 'cpu-atomic-load':
         return CpuAlgorithmCatalog.definition(kind)
       case 'ram-write-bit':
       case 'ram-read-bit':
@@ -42,10 +40,8 @@ export class HardwareOverviewCatalog {
 
   public static describeOverview(kind: HardwareOverviewKind): SystemOverviewInformation {
     switch (kind) {
-      case 'branch-prediction':
-      case 'out-of-order':
-      case 'register-renaming':
-      case 'return-stack':
+      case 'cpu-non-atomic-increment':
+      case 'cpu-atomic-load':
         return CpuAlgorithmCatalog.describeOverview(kind)
       case 'ram-write-bit':
       case 'ram-read-bit':
@@ -63,10 +59,8 @@ export class HardwareOverviewCatalog {
 
   public static describe(kind: HardwareOverviewKind): AlgorithmInformation {
     switch (kind) {
-      case 'branch-prediction':
-      case 'out-of-order':
-      case 'register-renaming':
-      case 'return-stack':
+      case 'cpu-non-atomic-increment':
+      case 'cpu-atomic-load':
         return CpuAlgorithmCatalog.describe(kind)
       case 'ram-write-bit':
       case 'ram-read-bit':
@@ -93,10 +87,8 @@ export class HardwareOverviewCatalog {
 
   public static groupFor(kind: HardwareOverviewKind): HardwareFundamentalGroupKind {
     switch (kind) {
-      case 'branch-prediction':
-      case 'out-of-order':
-      case 'register-renaming':
-      case 'return-stack':
+      case 'cpu-non-atomic-increment':
+      case 'cpu-atomic-load':
         return 'hardware-cpu'
       case 'ram-write-bit':
       case 'ram-read-bit':

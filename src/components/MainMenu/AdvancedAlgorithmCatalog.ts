@@ -31,7 +31,7 @@ export class AdvancedAlgorithmCatalog {
     { kind: 'hardware-fundamental', parent: null, name: 'Hardware Fundamental', description: 'Explore CPU, HDD, SSD, and RAM components and their mechanisms.' },
     { kind: 'hardware-complex', parent: null, name: 'Complex', description: 'Combine hardware components into systems, such as caching between CPU and memory.' },
     { kind: 'network', parent: null, name: 'Network', description: 'Explore individual OSI layers and mechanisms that combine layers into working networks.' },
-    { kind: 'hardware-cpu', parent: 'hardware-fundamental', name: 'CPU', description: 'Explore instruction execution, register renaming, and prediction inside a CPU core.', component: 'CPU' },
+    { kind: 'hardware-cpu', parent: 'hardware-fundamental', name: 'CPU', description: 'Follow a non-atomic increment and an atomic word load through a CPU core.', component: 'CPU' },
     { kind: 'hardware-hdd', parent: 'hardware-fundamental', name: 'HDD', description: 'Explore magnetic storage, sector access, and read/write mechanisms.', component: 'Disk', device: 'HDD' },
     { kind: 'hardware-ssd', parent: 'hardware-fundamental', name: 'SSD', description: 'Explore NAND storage, flash translation, garbage collection, and wear leveling.', component: 'Disk', device: 'SSD' },
     { kind: 'hardware-ram', parent: 'hardware-fundamental', name: 'RAM', description: 'Follow writing and reading one selected bit through a DRAM module.', component: 'RAM' },

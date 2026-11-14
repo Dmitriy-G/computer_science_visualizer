@@ -55,6 +55,15 @@
   margin-left: auto;
   gap: 6px;
 }
+.diagram-tools--cpu {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.diagram-tools--cpu .hardware-transfer {
+  grid-column: 1 / -1;
+  height: 40px;
+  overflow: auto;
+}
 .hardware-transfer {
   display: flex;
   flex-basis: 100%;

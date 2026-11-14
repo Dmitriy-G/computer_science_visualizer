@@ -81,14 +81,16 @@ test('removed OS disk schedulers have no algorithm or structure search destinati
 
 test('CPU hardware search provides distinct fundamental algorithm destinations', () => {
   assert.deepEqual(index.find('algorithms', 'CPU core components'), [])
-  for (const name of ['Register renaming', 'Out-of-order execution', 'History-based branch prediction', 'Return-address stack prediction']) {
+  for (const name of ['Non-atomic operation: i = i + 1', 'Atomic operation: i = j']) {
     const results = index.find('algorithms', name).filter((result) => 'componentAlgorithm' in result)
     assert.equal(results.length, 1)
     assert.deepEqual(results[0].components, ['CPU'])
+    assert.deepEqual(results[0].architectures, ['x86'])
     assert.equal(results[0].context, 'System Components Overview / Hardware Fundamental / CPU')
   }
-  assert.equal(index.find('algorithms', 'Intel Core').filter((result) => 'componentAlgorithm' in result).length, 3)
-  assert.equal(index.find('algorithms', 'Arm Cortex-A53').filter((result) => 'componentAlgorithm' in result).length, 2)
+  for (const removed of ['Register renaming', 'Out-of-order execution', 'History-based branch prediction', 'Return-address stack prediction', 'Intel Core', 'Arm Cortex-A53']) {
+    assert.deepEqual(index.find('algorithms', removed).filter((result) => 'componentAlgorithm' in result), [])
+  }
   for (const name of ['EEVDF', 'CFS', 'SCHED_FIFO', 'SCHED_RR', 'SCHED_DEADLINE', 'ULE', 'FreeRTOS', 'Windows Priority', 'MOESI', 'DMB']) {
     assert.deepEqual(index.find('algorithms', name).filter((result) => 'componentAlgorithm' in result), [])
   }

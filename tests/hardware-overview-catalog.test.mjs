@@ -8,7 +8,7 @@ import { SsdAlgorithmCatalog } from '../src/components/RealSystemsAlgorithms/Har
 
 test('scoped hardware catalogs own disjoint lessons and shared routing delegates to each owner', () => {
   const owners = [
-    ['hardware-cpu', CpuAlgorithmCatalog, ['branch-prediction', 'out-of-order', 'register-renaming', 'return-stack']],
+    ['hardware-cpu', CpuAlgorithmCatalog, ['cpu-non-atomic-increment', 'cpu-atomic-load']],
     ['hardware-ram', RamAlgorithmCatalog, ['ram-write-bit', 'ram-read-bit']],
     ['hardware-hdd', HddAlgorithmCatalog, ['hdd-sector']],
     ['hardware-ssd', SsdAlgorithmCatalog, ['nand-cell', 'ssd-ftl', 'ssd-garbage-collection', 'ssd-wear-leveling']],

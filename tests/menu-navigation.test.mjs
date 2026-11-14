@@ -281,7 +281,7 @@ test('advanced hardware categories have reversible paths and no structure select
   assert.throws(() => fundamental.selectStructure('array'), /current group/)
   assert.deepEqual(fundamental.getComponentAlgorithms(), [])
   const seen = new Set()
-  const counts = { CPU: 4, HDD: 1, SSD: 4, RAM: 2 }
+  const counts = { CPU: 2, HDD: 1, SSD: 4, RAM: 2 }
   for (const group of fundamental.getAdvancedAlgorithmGroups()) {
     const component = fundamental.selectAdvancedAlgorithmGroup(group.kind)
     assert.equal(component.hardwareOverviewGroup, group.kind)

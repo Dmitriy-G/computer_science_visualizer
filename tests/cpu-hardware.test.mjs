@@ -10,14 +10,25 @@ import { HardwareTrace } from '../src/components/RealSystemsAlgorithms/Hardware/
 import { CpuCoreLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CpuCore/CpuCoreLayout.ts'
 import { CpuLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Cpu/CpuLayout.ts'
 import { SystemOverviewLayout } from '../src/components/RealSystemsAlgorithms/SystemOverview/SystemOverviewLayout.ts'
+import { BranchPredictionAnimation } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/BranchPrediction/BranchPredictionAnimation.ts'
+import { OutOfOrderAnimation } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/OutOfOrder/OutOfOrderAnimation.ts'
+import { RegisterRenamingAnimation } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/RegisterRenaming/RegisterRenamingAnimation.ts'
+import { ReturnStackAnimation } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/ReturnStack/ReturnStackAnimation.ts'
 
-test('four hardware lessons have deterministic independent snapshots and leave their source unchanged', () => {
-  const cpuChoices = HardwareOverviewCatalog.choices.filter((choice) => choice.components.includes('CPU'))
+const legacyCpuChoices = [
+  { kind: 'branch-prediction', definition: new BranchPredictionAnimation() },
+  { kind: 'out-of-order', definition: new OutOfOrderAnimation() },
+  { kind: 'register-renaming', definition: new RegisterRenamingAnimation() },
+  { kind: 'return-stack', definition: new ReturnStackAnimation() },
+]
+
+test('legacy CPU mechanism primitives retain deterministic independent snapshots', () => {
+  const cpuChoices = legacyCpuChoices
   assert.equal(cpuChoices.length, 4)
   for (const choice of cpuChoices) {
     const source = new HardwareSnapshot()
     const before = source.clone()
-    const definition = HardwareOverviewCatalog.definition(choice.kind)
+    const definition = choice.definition
     const plan = definition.create(source, 0)
     assert.deepEqual(source, before)
     assert.deepEqual(plan, definition.create(source, 0))
@@ -47,16 +58,16 @@ test('four hardware lessons have deterministic independent snapshots and leave t
     const firstValue = plan.steps[0].scene.nodes[0].displayValue
     plan.steps.at(-1).scene.nodes[0].displayValue = 'changed final snapshot'
     assert.equal(plan.steps[0].scene.nodes[0].displayValue, firstValue)
-    assert.ok(HardwareOverviewCatalog.describe(choice.kind).realWorldUsage.technologies.length > 0)
+    assert.ok(definition.constructor.describe().realWorldUsage.technologies.length > 0)
     assert.ok(plan.steps.some((step) => step.scene.edges.some((edge) => edge.highlighted)))
-    assert.ok(HardwareOverviewCatalog.describe(choice.kind).modelNotes.includes('not simulated'))
+    assert.ok(definition.constructor.describe().modelNotes.includes('not simulated'))
   }
 })
 
-test('CPU lessons share one core map and show one explained interaction per step', () => {
+test('legacy CPU mechanism traces retain one explained interaction per step', () => {
   let components
-  for (const choice of HardwareOverviewCatalog.choices.filter((entry) => entry.components.includes('CPU'))) {
-    const plan = HardwareOverviewCatalog.definition(choice.kind).create(new HardwareSnapshot(), 0)
+  for (const choice of legacyCpuChoices) {
+    const plan = choice.definition.create(new HardwareSnapshot(), 0)
     for (let index = 0; index < plan.steps.length; index += 1) {
       const scene = plan.steps[index].scene
       const core = scene.regions.find((region) => region.id === 'core')

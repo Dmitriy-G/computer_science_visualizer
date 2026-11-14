@@ -17,7 +17,7 @@ examples live in the latter.
 System Components Overview opens Hardware Fundamental, Complex, and Network in
 that order. Hardware Fundamental directly contains CPU, HDD, SSD, and RAM in
 that order. Choosing one opens a workspace whose overview cards are filtered by
-component and storage device tags, with separate info buttons. CPU contains four
+component and storage device tags, with separate info buttons. CPU contains two
 lessons, HDD one, SSD four, and RAM two. NAND belongs to SSD alongside FTL,
 garbage collection, and wear leveling. Complex opens its flat workspace directly
 from the overview root; Network retains Fundamental and Complex subcategories.
@@ -147,7 +147,7 @@ enlargement leaders are removed, and bounds fit the remaining schematic.
 No hierarchy banner, access-sequence panel, or power-wiring overlay is shown.
 RAM lesson Reset restores this category preview.
 Organization and command differences follow [Micron's DDR4/DDR5 comparison](https://www.micron.com/products/memory/dram-components/ddr5-sdram).
-Bank-local sensing and row refresh follow the [RAIDR DRAM background](https://users.ece.cmu.edu/~omutlu/pub/raidr-dram-refresh_isca12.pdf).
+Bank-local iensing and row refresh follow the [RAIDR DRAM background](https://users.ece.cmu.edu/~omutlu/pub/raidr-dram-refresh_isca12.pdf).
 SPD devices follow Renesas's [DDR4 SPD EEPROM](https://www.renesas.com/en/products/tse2004gb2b0)
 and [DDR5 SPD hub](https://www.renesas.com/en/products/spd5118) descriptions.
 Network starts with a blank renderer. Selecting a lesson uses its mechanism's playback;
@@ -156,20 +156,23 @@ Back and header menu return to the four categories
 in Hardware Fundamental and restore the hardware preview, ending the current lesson.
 Complex returns directly to System Components Overview and its system preview.
 Search selections open the matching component workspace and lesson.
-The four CPU overviews share a square CPU-core boundary with the same twenty-three
-component locations. Each supplies its own dataflow; unused units remain idle.
-CpuCoreLayout owns this common lesson geometry and logical pipeline arrows.
-CpuLayout reuses it as the expanded core inside the static package preview;
-the four current CPU overview cards and animations remain unchanged.
-ITLB and DTLB are separate, with shared MMU/page-walk context.
-The RAT, rename/physical allocation, dispatch/queue allocation, PRF, committed
-architectural state, and L2 cache have distinct regions. L2 may be private or shared.
-The renaming and out-of-order lessons keep speculative and committed values in
-the PRF; committed mappings identify architectural values. The ROB tracks
-completion and retirement. Wrong-path recovery restores surviving rename mappings
-and releases discarded physical destinations. The temporary static test overview has
-been removed from the catalog and search.
-Alongside the four animated CPU overviews, Fundamental implements Write one bit,
+CPU offers Non-atomic operation: i = i + 1 and Atomic operation: i = j. Both
+reuse CpuLayout's full package and expanded representative core, preserving its
+geometry and light-orange colors. The non-atomic trace uses separate LOAD, ADD,
+and STORE instructions and a peer update to demonstrate a lost increment (8
+instead of 9). Retirement into the store buffer is separate from publication.
+The atomic trace captures one complete aligned 32-bit normal-cacheable x86 word
+from shared j into private local i; a later peer store changes j without changing
+i. It does not present a shared-to-shared assignment as atomic. C++ analogies use
+atomic objects; ordinary unsynchronized objects are subject to data-race rules.
+CpuOperationModel owns the operation state, CpuOperationTrace records one transfer
+or local update per step, and CpuOperationLayout adds state inside the existing
+blocks. Fixed bounds, independent snapshots, hidden approximate count suffixes,
+and the retained camera/renderer prevent shifts when playback starts or resets.
+A fixed-height caption area shows the current transfer below the legend in both
+static and animated CPU views. The old four cards are removed from menu/search;
+their mechanism primitives remain available to legacy unit tests.
+Alongside the two CPU operation overviews, Fundamental implements Write one bit,
 Read one bit, conventional HDD sector access, SLC NAND, page-mapped
 SSD FTL, SSD garbage collection, and SSD wear-leveling lessons from coverage.md.
 Each owns its model, layout, animation, and sourced overview in a named folder
@@ -178,7 +181,7 @@ workspaces in Cpu, Ram, Hdd, and Ssd. HardwareOverviewCatalog delegates to these
 catalogs for menu/search routing. ComponentWorkspace supplies shared workspace UI;
 HardwareSnapshot, HardwareTrace, and HardwareOverviewLesson supply neutral snapshot
 and playback contracts. ComponentLesson uses hardware-component scenes, while
-Cpu/CpuLesson selects CPU interaction tracing. The two RAM overviews reuse
+Cpu/CpuLesson retains legacy CPU interaction tracing. The two RAM overviews reuse
 RamLayout's common geometry and colors, with cell state inside the existing blocks.
 Approximate quantity suffixes appear only in the static preview. Playback replaces
 the existing RAM scene layer, preserving the outer canvas, camera, layer transform,
@@ -196,19 +199,11 @@ garbage-collection, and wear-leveling models own their distinct policies.
 Network/Fundamental contains the seven OSI layers. Complex covers mechanisms
 combining components or layers into systems. The hierarchy lives in
 MainMenu/AdvancedAlgorithmCatalog.ts. Operating-system disk schedulers have been
-removed from the hardware branch. Fundamental lists register renaming,
-out-of-order execution with in-order retirement, history-based branch prediction,
-and return-address stack prediction. Their source files remain under
-Hardware/Fundamental. Each owns
-its mechanism model and layout. Diagrams show the CPU core, instruction/data
-cache context, registers, and the current operand, result, retirement, or
-prediction flow. Cache behavior and exact wiring are not simulated. Shared CPU
-helpers handle scene snapshots and playback. CPU lessons share HardwareInteractions
-with Complex lessons, showing one transfer or one local update per step, with
-receiver values updated on arrival and an arrow-content caption below the legend.
-CPU traces are bounded to 256 interactions with fixed scene bounds; memory/storage
-component lessons retain their existing trace and playback behavior. The common
-core map is conceptual and does not claim that all units exist in every cited CPU.
+removed from the hardware branch. CPU operation playback follows the selected
+instruction and data paths with receiver updates on arrival, bounded to 96 frames.
+The shared core map is conceptual and does not claim that all units exist in every
+processor. Cache hit, mapping, permissions, and ready operands are assumptions;
+coherence is abstracted and exact hardware timing is not simulated.
 Operating-system CPU scheduler lessons have been removed. Root Complex
 implements the twelve cross-component lessons from coverage.md directly in one
 flat list: store buffering, x86 fences, DMB, DSB, acquire/release, exclusive loops,

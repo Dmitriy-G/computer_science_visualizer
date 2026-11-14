@@ -363,13 +363,13 @@ Do not add empty hardware-component categories or operating-system disk scheduli
 policies. The former mq-deadline, BFQ, and Kyber lessons and destinations were removed.
 
 Keep CPU hardware lessons under `RealSystemsAlgorithms/Hardware/Fundamental/`,
-with RegisterRenaming, OutOfOrder, BranchPrediction, and ReturnStack action folders.
+with Cpu/NonAtomicIncrement and Cpu/AtomicLoad as the two catalogued action folders.
 Search selections open Hardware Fundamental / CPU and start the selected CPU lesson.
 Menu reopening and workspace Back lead to Hardware Fundamental; its Back leads
 to System Components Overview. HDD, SSD, and RAM follow the same navigation pattern.
 Each owns its mechanism model, component, CSS, animation, layout, and sourced
 information. CpuCoreLayout supplies one enclosing square CPU-core boundary and
-the same twenty-three internal component regions for all four CPU lessons. Group
+the same twenty-three internal component regions reused by the static preview and CPU operation lessons. Group
 the components into front end, scheduling and registers, execution and retirement,
 and memory access. Separate ITLB and DTLB, rename map (RAT), rename/physical
 allocation, dispatch/ROB and queue allocation, PRF, committed architectural state,
@@ -378,7 +378,7 @@ show committed mappings rather than a separate architectural register file.
 The static CPU category preview lives in Cpu/CpuLayout.ts. Show an illustrative
 four-core, single-die package with one representative expanded core reusing
 CpuCoreLayout. Use "Cores (~4 per die)" only in this static preview; omit indexed
-peer-core blocks and their wires. Keep the existing CPU lessons unchanged.
+peer-core blocks and their wires. The two CPU operation lessons reuse this package view.
 Arrange shared components alongside the expanded core with visible communication
 paths. Add shared L3 cache, on-die interconnect, integrated
 memory and I/O controllers, clock/power/thermal control, package contacts, and a
@@ -391,9 +391,8 @@ three socket signal/power blocks, shared L3, on-die interconnect, memory/I/O
 controllers, front-end components, rename/RAT/dispatch/issue components,
 execution/retirement components, memory-access components, and cache/bus interface.
 Keep surrounding group colors, PRF, committed state, and L2 unchanged. Apply these
-overrides to the static core instance without changing CpuCoreLayout's lesson colors.
-Do not change the four existing CPU overview cards or animations for this static
-preview. Its expanded core includes logical pipeline paths with register read,
+overrides to the representative core instance and preserve them in operation playback.
+Replace the former four CPU cards with non-atomic increment and atomic-load overviews. Its expanded core includes logical pipeline paths with register read,
 writeback, and in-order retirement; these paths do not imply clock cycles.
 Focused CPU, RAM, HDD, and SSD previews include only their own detailed layer,
 so neighboring hardware schematics cannot leak into the view.
@@ -408,7 +407,7 @@ hit/miss timing, and precise physical wiring are outside these bounded models.
 HardwareSnapshot, HardwareSceneLayout, HardwareTrace, and HardwareOverviewLesson share only visual-state snapshots,
 scene generation, and playback contracts. Use the cpu-hardware Scene kind and
 distinct CPU search/menu destinations, preserving data-structure and Complex
-destinations. Cpu/CpuLesson selects CPU-specific tracing. Scoped workspaces reuse
+destinations. CpuOperationModel, CpuOperationLayout, and CpuOperationTrace own the replacement CPU operation state, geometry adapters, and bounded recording; Cpu/CpuLesson supports legacy mechanism primitives. Scoped workspaces reuse
 ComponentWorkspace, Renderer, ActionView, ActionPlayback, and the
 SystemOverviewInfo dialog and shared info icon styling. Keep CPU operating-system
 schedulers out of this branch. Cross-component cache/memory mechanisms belong

@@ -23,10 +23,11 @@
    Hardware Fundamental opens CPU, HDD, SSD, and RAM directly in that order.
    Network retains Fundamental and Complex subcategories.
    Choosing a component closes the menu and opens its workspace with overview
-   cards filtered by component and device tags. CPU contains four execution and
-   prediction overviews sharing one CPU-core map; HDD contains sector access;
+   cards filtered by component and device tags. CPU contains two operation overviews:
+   a non-atomic increment and an atomic word load. The old
+   prediction/renaming overviews are removed from menu/search. HDD contains sector access;
    SSD contains NAND, FTL, garbage collection, and wear leveling; RAM contains
-   three memory overviews. No static test entry is offered. Root Complex opens
+   two DRAM bit-access overviews. No static test entry is offered. Root Complex opens
    its flat workspace directly.
    Keep separate information buttons and start no lesson playback until an overview
    is selected. Category navigation renders a client, abstract network, and server
@@ -486,57 +487,38 @@ examples. The HDD lesson's small SECDED code demonstrates error correction only.
 
 ## Real-system CPU hardware lessons
 
-System Components Overview > Hardware > Fundamental offers register renaming,
-out-of-order execution with in-order retirement, history-based branch prediction,
-and return-address stack prediction. Reuse shared playback, header Reset/progress,
-renderer, algorithm search, and information dialogs. Menu browsing and
-information preserve playback; selecting a different lesson or structure disposes
-the previous session. Header Reset clears the lesson without starting another run
-and returns focus to the first hardware choice.
+CPU exposes only Non-atomic operation: i = i + 1 and Atomic operation: i = j.
+Keep the former branch-prediction, out-of-order, register-renaming, and return-stack
+cards out of menu/search. Legacy mechanism primitives may remain unit-tested.
+The replacement action folders live under Hardware/Fundamental/Cpu.
 
-Each mechanism owns actual state transitions: physical source identities and
-renaming/retirement; dependency readiness, reorder-buffer completion and branch
-squashing; history/counter training; or bounded return prediction independent of
-actual return addresses. Record independent snapshots with fixed diagram bounds
-per CPU lesson, at most 256 diagram interactions, and no hardware timing claims.
-Use the shared square CPU-core map with all twenty-three component regions; leave
-unneeded units idle. Distinguish ITLB, DTLB, shared translation context, RAT,
-rename/physical allocation, dispatch/ROB and queue allocation, PRF, committed
-architectural state, and private-or-shared L2. The static category preview wraps
-this core geometry in a separate four-core package example, drawing only one
-representative core titled "Cores (~4 per die)" without empty peer-core blocks.
-Keep its communications to the surrounding shared cache,
-interconnect, memory/I/O controllers, contacts, and a CPU socket. Keep its layout
-in CpuLayout without changing the existing four overview cards or animations.
-Only the focused component's detailed scene layer is included in a category
-preview. The expanded core shows logical pipeline paths through issue, register
-read, execution, writeback, and retirement.
-Lesson playback keeps these context paths out of the active interaction sequence.
-Renaming and out-of-order lessons keep values in the PRF, update committed mappings
-at retirement, and release superseded registers. Branch recovery restores surviving
-rename mappings and frees wrong-path destinations. Show one arrow or one local
-state change per step. Preserve
-unchanged-value transactions and update receivers when data arrives, including
-waiting for all operands before displaying a combined execution result.
-Describe the active arrow's instruction, data, request, or control contents in
-the caption below the legend. Keep narrative-only conclusions on an existing
-result frame rather than replaying its last transfer. The map is a conceptual
-superset, with visible qualifications in each overview's information dialog.
-Renaming shows captured operands, physical destinations, and retirement; the
-out-of-order lesson separates load request/response, execution, commitment, and
-fetch recovery. Branch prediction shows history lookup, direction selection,
-training, and redirect; return prediction shows push/pop and actual-target
-validation. The predictor tables and return stack are not data/instruction caches.
-Keep cache lookup/replacement and exact physical wiring explicitly out of scope.
+Reuse CpuLayout's package, representative core, palette, and component positions.
+Put instruction/operand/result state inside those blocks, hide approximate core
+count suffixes only during playback, and replace only the existing CPU scene layer.
+Retain the mounted renderer, camera, Fit/Actual size, scrolling, and fixed bounds
+across lesson sessions and Reset. Reserve a fixed-height arrow-caption area below
+the legend in static and animated CPU views. Use existing automatic playback and
+the header Reset/progress controls without additional timers or player controls.
 
-Reference the documented processor in information. Intel Core examples use
-illustrative register counts and execution events. Cortex-A53 documents global
-history and an eight-entry return stack; the small counter table, its exact
-indexing/training, and stack overflow/underflow policies are teaching choices.
-Show those distinctions in overview information. Complexity bounds
-describe fixed visualizer examples, not production hardware latency. Keep
-coherence, memory barriers, and other cross-component topics in Complex.
+Model the increment as distinct LOAD, ADD, and STORE instructions. Capture i = 7,
+allow a peer increment to publish 8, compute from the captured 7, retire a buffered
+store, and publish 8. Show retirement and global visibility as distinct events;
+the lost increment demonstrates why atomic word accesses do not make the compound
+expression atomic. Model i = j as one aligned 32-bit normal-cacheable x86 read
+into private local/register state. A later peer store updates j while i retains
+the complete captured value. Do not imply an atomic shared-to-shared copy, arbitrary
+alignment/width guarantees, or that atomicity supplies memory ordering. Give a
+valid C++ analogy using atomic objects and distinguish ordinary-object data races.
 
+CpuOperationModel owns guarded state transitions. CpuOperationTrace records one
+explicit transfer or local update per step, updates receivers on arrival, preserves
+unchanged-value transactions, and records at most 96 independent snapshots.
+Keep a coherent L1 hit, valid DTLB mapping/permissions, and ready operands as fixed
+assumptions. Show peer publication as an abstract coherent store, not an invented
+coherence protocol. Other cache levels, memory controller, socket, and DRAM remain
+idle for these cache-hit examples. Pipeline and clock timing, speculative scheduling,
+cache replacement, and exact wiring are not simulated. Include sourced information
+with no more than ten flow steps. Keep Complex lessons unchanged.
 ## Applied structure operations
 
 Applied structures listed in README follow the Fundamental and Advanced menu

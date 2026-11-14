@@ -489,12 +489,16 @@ export default class Renderer extends Component<
 
   public render() {
     const scene = this.props.scene
+    const packageScene = scene?.countLabel === 'CPU functional components'
+      ? scene.layers?.find((layer) => layer.id === 'cpu-components')?.scene ?? scene : null
+    const coreScene = packageScene?.layers?.find((layer) => layer.id === 'cpu-core')?.scene
+    const flowScene = coreScene ?? scene
     let transfer: SceneEdge | undefined
     let local: SceneNode | undefined
-    if (scene?.kind === 'hardware-system' || scene?.kind === 'cpu-hardware') {
-      for (const edge of scene.edges) if (edge.highlighted) transfer = edge
+    if (flowScene?.kind === 'hardware-system' || flowScene?.kind === 'cpu-hardware') {
+      for (const edge of flowScene.edges) if (edge.highlighted) transfer = edge
       if (!transfer) {
-        for (const node of scene.nodes) if (node.id === scene.focusId) local = node
+        for (const node of flowScene.nodes) if (node.id === flowScene.focusId) local = node
       }
     }
     return (
@@ -503,8 +507,8 @@ export default class Renderer extends Component<
           {this.props.children}
           <div className="renderer-stage">
             {scene && (
-              <div className="diagram-tools" ref={this.tools}>
-                {scene.kind !== 'system-overview' && <div className="scene-legend" role="group" aria-label="Node states">
+              <div className={`diagram-tools${coreScene ? ' diagram-tools--cpu' : ''}`} ref={this.tools}>
+                {(scene.kind !== 'system-overview' || coreScene) && <div className="scene-legend" role="group" aria-label="Node states">
                   <span>
                     <i className="legend-dot current" />
                     Current
@@ -547,7 +551,7 @@ export default class Renderer extends Component<
                     </button>
                   </div>
                 )}
-                {(scene.kind === 'hardware-system' || scene.kind === 'cpu-hardware') && (
+                {(scene.kind === 'hardware-system' || scene.kind === 'cpu-hardware' || coreScene) && (
                   <div className="hardware-transfer" role="status" aria-live="polite" aria-atomic="true">
                     {transfer ? <>
                       <svg width="30" height="16" viewBox="0 0 30 16" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true" focusable="false">
@@ -555,7 +559,7 @@ export default class Renderer extends Component<
                         <path d="m22 3 6 5-6 5" />
                       </svg>
                       <span>{transfer.message ?? transfer.label}</span>
-                    </> : local ? <span>Local update: {local.label} = {local.displayValue ?? local.value}{local.status ? ` (${local.status})` : ''}</span> : <span>Initial state · no transfer</span>}
+                    </> : local ? <span>Local update: {local.label} = {local.displayValue ?? local.value}{local.status ? ` (${local.status})` : ''}</span> : <span>{coreScene ? 'No active transfer' : 'Initial state · no transfer'}</span>}
                   </div>
                 )}
               </div>

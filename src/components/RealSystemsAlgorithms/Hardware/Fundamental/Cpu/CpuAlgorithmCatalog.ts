@@ -3,51 +3,39 @@ import type { AlgorithmInformation } from '../../../../../visualization/Algorith
 import type { SystemOverviewInformation } from '../../../../../visualization/SystemOverviewInformation.ts'
 import type { HardwareSnapshot } from '../HardwareSnapshot.ts'
 import type { HardwareOverviewChoice } from '../HardwareOverviewChoice.ts'
-import { BranchPredictionAnimation } from '../BranchPrediction/BranchPredictionAnimation.ts'
-import { BranchPredictionOverview } from '../BranchPrediction/BranchPredictionOverview.ts'
-import { OutOfOrderAnimation } from '../OutOfOrder/OutOfOrderAnimation.ts'
-import { OutOfOrderOverview } from '../OutOfOrder/OutOfOrderOverview.ts'
-import { RegisterRenamingAnimation } from '../RegisterRenaming/RegisterRenamingAnimation.ts'
-import { RegisterRenamingOverview } from '../RegisterRenaming/RegisterRenamingOverview.ts'
-import { ReturnStackAnimation } from '../ReturnStack/ReturnStackAnimation.ts'
-import { ReturnStackOverview } from '../ReturnStack/ReturnStackOverview.ts'
+import { NonAtomicIncrementAnimation } from './NonAtomicIncrement/NonAtomicIncrementAnimation.ts'
+import { NonAtomicIncrementOverview } from './NonAtomicIncrement/NonAtomicIncrementOverview.ts'
+import { AtomicLoadAnimation } from './AtomicLoad/AtomicLoadAnimation.ts'
+import { AtomicLoadOverview } from './AtomicLoad/AtomicLoadOverview.ts'
 
-export type CpuAlgorithmKind = 'branch-prediction' | 'out-of-order' | 'register-renaming' | 'return-stack'
+export type CpuAlgorithmKind = 'cpu-non-atomic-increment' | 'cpu-atomic-load'
 
 export class CpuAlgorithmCatalog {
   public static readonly choices: readonly HardwareOverviewChoice<CpuAlgorithmKind>[] = [
-    { kind: 'branch-prediction', name: 'History-based branch prediction', description: 'Avoid fetch stalls by predicting unresolved branch direction.', components: ['CPU'], architectures: [] },
-    { kind: 'out-of-order', name: 'Out-of-order execution', description: 'Keep ready work moving while an older instruction waits.', components: ['CPU'], architectures: [] },
-    { kind: 'register-renaming', name: 'Register renaming', description: 'Remove false dependencies caused by reused register names.', components: ['CPU'], architectures: [] },
-    { kind: 'return-stack', name: 'Return-address stack prediction', description: 'Predict changing return targets by tracking nested calls.', components: ['CPU'], architectures: [] },
+    { kind: 'cpu-non-atomic-increment', name: 'Non-atomic operation: i = i + 1', description: 'Follow separate LOAD, ADD, and STORE instructions and see how another core can cause a lost update.', components: ['CPU'], architectures: ['x86'] },
+    { kind: 'cpu-atomic-load', name: 'Atomic operation: i = j', description: 'Load one aligned word from shared j into local i, capturing a complete value in one atomic read.', components: ['CPU'], architectures: ['x86'] },
   ]
 
   public static definition(kind: CpuAlgorithmKind): ActionDefinition<HardwareSnapshot> {
     switch (kind) {
-      case 'branch-prediction': return new BranchPredictionAnimation()
-      case 'out-of-order': return new OutOfOrderAnimation()
-      case 'register-renaming': return new RegisterRenamingAnimation()
-      case 'return-stack': return new ReturnStackAnimation()
+      case 'cpu-non-atomic-increment': return new NonAtomicIncrementAnimation()
+      case 'cpu-atomic-load': return new AtomicLoadAnimation()
     }
     throw new RangeError('Unknown CPU overview')
   }
 
   public static describeOverview(kind: CpuAlgorithmKind): SystemOverviewInformation {
     switch (kind) {
-      case 'branch-prediction': return BranchPredictionOverview.describe()
-      case 'out-of-order': return OutOfOrderOverview.describe()
-      case 'register-renaming': return RegisterRenamingOverview.describe()
-      case 'return-stack': return ReturnStackOverview.describe()
+      case 'cpu-non-atomic-increment': return NonAtomicIncrementOverview.describe()
+      case 'cpu-atomic-load': return AtomicLoadOverview.describe()
     }
     throw new RangeError('Unknown CPU overview')
   }
 
   public static describe(kind: CpuAlgorithmKind): AlgorithmInformation {
     switch (kind) {
-      case 'branch-prediction': return BranchPredictionAnimation.describe()
-      case 'out-of-order': return OutOfOrderAnimation.describe()
-      case 'register-renaming': return RegisterRenamingAnimation.describe()
-      case 'return-stack': return ReturnStackAnimation.describe()
+      case 'cpu-non-atomic-increment': return NonAtomicIncrementAnimation.describe()
+      case 'cpu-atomic-load': return AtomicLoadAnimation.describe()
     }
     throw new RangeError('Unknown CPU overview')
   }
