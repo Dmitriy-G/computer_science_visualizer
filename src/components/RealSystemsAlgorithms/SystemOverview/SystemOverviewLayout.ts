@@ -20,7 +20,7 @@ export class SystemOverviewLayout {
   }
 
   private static componentPlacement(level: SystemOverviewComponent): { x: number, y: number, scale: number } {
-    const device = ServerHardwareLayout.components[level]
+    const device = level === 'bus' ? ServerHardwareLayout.motherboard : ServerHardwareLayout.components[level]
     const layout = this.layouts[level]
     const scale = Math.min(device.width / layout.width, device.height / layout.height)
     return {
@@ -63,6 +63,8 @@ export class SystemOverviewLayout {
     const cpuScene = CpuLayout.create()
     const server = this.server
     const cpuDetailRange = { startWidth: 850, endWidth: 500 }
+    const motherboardPreview = level === 'bus' || previous?.countLabel === 'motherboard component groups'
+    const hardwareConceal = motherboardPreview ? { startWidth: hardwareWidth, endWidth: 720 } : cpuDetailRange
     const hddScene = HddLayout.create()
     const ssdScene = SsdLayout.create()
     const ramScene = RamLayout.create()
@@ -78,7 +80,7 @@ export class SystemOverviewLayout {
           ...this.scene(this.width, 1200),
           regions: [{ id: 'server', label: 'Server', role: 'cpu', level: 'system', x: server.x, y: server.y, width: 1080, height: 1440 * server.scale }],
         },
-        conceal: cpuDetailRange,
+        conceal: hardwareConceal,
       },
       { id: 'system', scene: this.system(), x: 0, y: 0, scale: 1, conceal: { startWidth: 1800, endWidth: hardwareWidth } },
       {
@@ -86,7 +88,7 @@ export class SystemOverviewLayout {
         scene: this.scene(1560, 1440, [this.label('server-summary', 'Server', 'Compute, memory and storage', 780, 670, 960, 380)]),
         conceal: { startWidth: 2000, endWidth: hardwareWidth },
       },
-      { id: 'hardware', scene: hardware, ...server, reveal: { startWidth: 1800, endWidth: hardwareWidth }, conceal: cpuDetailRange },
+      { id: 'hardware', scene: hardware, ...server, reveal: { startWidth: 1800, endWidth: hardwareWidth }, conceal: hardwareConceal },
       {
         id: 'cpu-components', scene: cpuScene, ...this.componentPlacement('cpu'),
         reveal: cpuDetailRange,
@@ -113,13 +115,14 @@ export class SystemOverviewLayout {
       },
       {
         id: 'bus-components', scene: busScene, ...this.componentPlacement('bus'),
-        reveal: { startWidth: 600, endWidth: 160 },
+        reveal: { startWidth: hardwareWidth, endWidth: 720 },
       },
     ]
     const focusedLayers: SceneLayer[] = []
     const focused = componentScene ? `${level}-components` : null
     for (const layer of layers) {
       if (focused && layer.id.endsWith('-components') && layer.id !== focused) continue
+      if (layer.id === 'bus-components' && !motherboardPreview) continue
       focusedLayers.push(layer)
     }
     return {

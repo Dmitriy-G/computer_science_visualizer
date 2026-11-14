@@ -27,7 +27,6 @@ export class HardwareOverviewCatalog {
 
   public static definition(kind: HardwareOverviewKind): ActionDefinition<HardwareSnapshot> {
     switch (kind) {
-      case 'bus-network-byte-to-ssd': return BusAlgorithmCatalog.definition(kind)
       case 'gpu-frame-rendering':
       case 'gpu-hashcat-iteration':
         return GpuAlgorithmCatalog.definition(kind)
@@ -53,7 +52,6 @@ export class HardwareOverviewCatalog {
 
   public static describeOverview(kind: HardwareOverviewKind): SystemOverviewInformation {
     switch (kind) {
-      case 'bus-network-byte-to-ssd': return BusAlgorithmCatalog.describeOverview(kind)
       case 'gpu-frame-rendering':
       case 'gpu-hashcat-iteration':
         return GpuAlgorithmCatalog.describeOverview(kind)
@@ -79,7 +77,6 @@ export class HardwareOverviewCatalog {
 
   public static describe(kind: HardwareOverviewKind): AlgorithmInformation {
     switch (kind) {
-      case 'bus-network-byte-to-ssd': return BusAlgorithmCatalog.describe(kind)
       case 'gpu-frame-rendering':
       case 'gpu-hashcat-iteration':
         return GpuAlgorithmCatalog.describe(kind)
@@ -117,7 +114,6 @@ export class HardwareOverviewCatalog {
 
   public static groupFor(kind: HardwareOverviewKind): HardwareFundamentalGroupKind {
     switch (kind) {
-      case 'bus-network-byte-to-ssd': return 'hardware-bus'
       case 'gpu-frame-rendering':
       case 'gpu-hashcat-iteration':
         return 'hardware-gpu'

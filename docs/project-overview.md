@@ -16,36 +16,45 @@ in MainMenu/MenuStructureCatalog.ts. Data Structures Algorithms contains Sorting
 examples live in the latter.
 System Components Overview opens Hardware Fundamental, Complex, and Network in
 that order. Hardware Fundamental directly contains CPU, HDD, SSD, RAM, GPU,
-Network Adapter, and Bus/Interconnect in that order. They open workspaces whose overview cards are filtered by
+Network Adapter, and Motherboard in that order. They open workspaces whose overview cards are filtered by
 component and storage device tags, with separate info buttons. CPU contains two
-lessons, HDD one, SSD four, RAM two, GPU two, Network Adapter two, and Bus/Interconnect one. NAND belongs to SSD alongside FTL,
+lessons, HDD one, SSD four, RAM two, GPU two, Network Adapter two, and Motherboard none. NAND belongs to SSD alongside FTL,
 garbage collection, and wear leveling. Complex opens its flat workspace directly
 from the overview root; Network retains Fundamental and Complex subcategories.
-Bus/Interconnect opens its static diagram and one Network byte to SSD overview
-card, without starting playback until selected. Its class-based model follows a
-three-byte SAVE/offset/value message in a minimum Ethernet frame, adapter receive
-DMA into RAM, CPU parsing and block preparation, an SSD doorbell, SSD DMA read,
-nonvolatile FUA commitment, and completion through RAM back to the CPU. The update
-changes byte 7 to 0x41 in an already loaded 512-byte logical block, preserving
-neighboring bytes. BusLessonTrace reuses the static map, highlights one directed
-transfer per event, and places compact device values below their boxes. Keep
-explanatory narration in the info dialog and accessible descriptions. Reset
-restores the static map; GPU, HDD, and optional bridge/coherence logic stay idle.
-BusLayout in Hardware/Fundamental/Bus owns a logical switched-fabric map with
-interface ports, physical links, protocol controllers, address decoding/routing,
-arbitration/scheduling, switch/router, buffers/queues, flow control, bridges,
-clock/reset/synchronization, error detection/recovery, and optional cache coherence.
-CPU, GPU, RAM, HDD, SSD, and Network Adapter have separate external blocks and
-interface ports, with multiple branches at the switch. Address decoding selects
-memory-mapped targets; other traffic can use destination IDs. Arbitration resolves
-contention for shared resources. The bridge/adapter is explicitly optional for
-protocol or interface adaptation, with a direct Network Adapter route alongside
-the adapted route. Dashed support/coherence connections
-are separate from payload routes. These are logical functions, not a specific
-physical bus or a claim that every interconnect contains every block.
-The preview zooms into the existing hardware bus bar and uses the shared renderer,
-opaque palettes, schematic titles, Fit/Actual size, reduced-motion handling,
-and focused-layer filtering. The header menu returns to Hardware Fundamental.
+Motherboard opens its static diagram with an empty overview list. The former
+Network byte to SSD lesson is excluded from menu, search, public overview kinds,
+and playback dispatch. Its model/trace primitives remain for legacy regression
+coverage; the motherboard workspace has no selectable lesson.
+BusLayout in Hardware/Fundamental/Bus owns the detailed Motherboard map.
+Use a compact 2840 by 1680 landscape scene, with a 2240 by 1600 motherboard.
+Keep socket and connector rows close together, use short routing corridors,
+and size PCH, firmware, and power blocks to their contents. External component
+references remain outside the board. Every connection retains named anchors.
+Motherboard contains physical chips, sockets, connectors, power circuits, and
+PCB traces. The central region is PCB traces / signal routing, a drawing area
+for separate physical links rather than a chip, switch, or protocol controller.
+Do not render routing/packet/buffer/flow/error logic or blue logical-association
+arrows here. Protocol processing remains inside CPU, PCH, and connected devices.
+Show independent PCIe traces from separate CPU socket contact groups to GPU,
+NVMe M.2, and NIC connectors. Different trace colors identify distinct links;
+crossings on separate PCB layers are not electrical junctions.
+DDR connects CPU socket memory contacts directly to the DIMM socket. DMI/chipset
+uplink connects CPU socket chipset contacts to the physical PCH chip.
+Separate SATA and USB traces connect PCH to the SATA connector and USB headers.
+The firmware SPI flash chip connects to the PCH SPI interface in this platform.
+Clock generator/buffer and reset circuitry are physical board support blocks.
+Separate reference-clock and reset traces reach CPU socket control contacts,
+PCH, GPU slot, M.2 contacts, and NIC slot. Clock frequencies, reset sourcing,
+and sequencing are platform-dependent; do not add CPU internals to explain them.
+PSU DC input, VRMs, and physical power distribution feed CPU socket, DIMM,
+PCH, expansion slots, M.2, clock generator, and reset circuitry. AC stays at PSU.
+Every data/support/power arrow ends on a named physical component boundary.
+Retain compact external device references and an empty motherboard overview list.
+The physical chipset/clock examples follow [Intel's C600 chipset datasheet](https://www.intel.com/content/dam/www/public/us/en/documents/datasheets/c600-series-chipset-datasheet.pdf).
+The Motherboard preview zooms from the shared server motherboard footprint
+and uses the existing bus-components layer, shared renderer, opaque palettes,
+schematic titles, Fit/Actual size, reduced-motion support, and focused layers.
+The header menu returns to Hardware Fundamental.
 System Components Overview displays a client, abstract network, and server.
 Hardware Fundamental moves the SVG camera into that server. ServerHardwareLayout
 owns the shared chassis map and the component slots used for subsequent zooms.

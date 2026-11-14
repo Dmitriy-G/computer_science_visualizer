@@ -5,6 +5,7 @@ export class ServerHardwareLayout {
   public static readonly width = 2000
   public static readonly height = 1440
   public static readonly chassis = { x: 0, y: 0, width: 1560, height: 1440 }
+  public static readonly motherboard = { x: 45, y: 90, width: 970, height: 970 }
   public static readonly componentCount = 15
   public static readonly components = {
     cpu: { x: 90, y: 170, width: 420, height: 420 },
@@ -19,7 +20,7 @@ export class ServerHardwareLayout {
   public static create(): Scene {
     const diagram = new HardwareDiagram(this.width, this.height)
     this.region(diagram, 'server-chassis', 'Server chassis / contains the motherboard, discrete expansion cards, power supply, and drive bays. Labeled cable connections extend outside the chassis. This illustrative single-socket server uses a separate PCH and BMC; integrated SoC and other server topologies differ', 'device', this.chassis, undefined, 'Server', 'neutral', 'system')
-    this.region(diagram, 'motherboard', 'Motherboard / system board with socketed CPU and DIMMs, onboard PCH and BMC, firmware flash, USB ports, and a dedicated management network interface. Discrete GPU, host network, and optional storage-controller cards are drawn separately and attach through PCIe slots or risers', 'memory', { x: 45, y: 90, width: 970, height: 970 }, 'server-chassis', 'Motherboard', 'green', 'system')
+    this.region(diagram, 'motherboard', 'Motherboard / system board with socketed CPU and DIMMs, onboard PCH and BMC, firmware flash, USB ports, and a dedicated management network interface. Discrete GPU, host network, and optional storage-controller cards are drawn separately and attach through PCIe slots or risers', 'memory', this.motherboard, 'server-chassis', 'Motherboard', 'green', 'system')
     this.region(diagram, 'cpu', 'CPU / processor package installed in a motherboard socket. Its integrated memory controller connects directly to RAM; PCIe and a chipset link connect the processor to I/O. Expand this same block for the existing CPU map', 'cpu', this.components.cpu, 'motherboard', 'CPU', 'light-orange')
     this.region(diagram, 'ram', 'RAM / DIMMs installed in motherboard memory sockets, directly connected to the CPU memory controller rather than routed through the PCH', 'memory', this.components.ram, 'motherboard', 'RAM', 'light-blue')
     this.region(diagram, 'gpu', 'GPU / discrete graphics expansion card, physically separate from the motherboard PCB and connected through a PCIe slot or riser. Integrated GPUs are another arrangement', 'device', this.components.gpu, 'server-chassis', 'GPU / discrete card', 'light-orange')

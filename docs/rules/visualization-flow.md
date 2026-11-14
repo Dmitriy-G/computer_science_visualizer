@@ -20,27 +20,30 @@
    **Data Structures Algorithms**, and **Advanced Data Structures**, in that order.
    These category lists are excluded from alphabetical menu ordering. System Components Overview
    opens Hardware Fundamental, Complex, and Network in that fixed order.
-   Hardware Fundamental opens CPU, HDD, SSD, RAM, GPU, Network Adapter, and Bus/Interconnect directly in that order.
+   Hardware Fundamental opens CPU, HDD, SSD, RAM, GPU, Network Adapter, and Motherboard directly in that order.
    Network retains Fundamental and Complex subcategories.
-   Bus/Interconnect closes the menu and zooms from the hardware bus bar into a
-   static logical component diagram. Show ports, links, protocol controllers,
-   address decoding/routing, arbitration, switching, queues, flow control,
-   bridging, clock/reset/synchronization, error handling, and optional coherence.
-   Give CPU, GPU, RAM, HDD, SSD, and Network Adapter separate external blocks and
-   ports, connected through multiple switch branches. Mark bridge/adapter optional
-   for protocol/interface adaptation and retain a direct route. Distinguish
-   memory-mapped address decoding from destination-ID routing and explain that
-   arbitration resolves contention for shared resources.
+   Motherboard retains hardware-bus routing and BusLayout, zooming from the server
+   motherboard footprint. Keep six compact external component references plus
+   the PSU DC-output box. Do not expand CPU internals in this motherboard map.
+   Use compact landscape bounds and closely spaced connector rows. Group power,
+   chipset, and firmware below the signal-routing area; keep their boxes only as tall as
+   their contents require. Reroute data and power together with moved anchors.
+   The motherboard scene depicts physical chips, sockets, connectors, support
+   circuits, and PCB copper traces. Replace the logical bus-function inset with
+   PCB traces / signal routing. Remove packet/routing/buffer/flow/error logic
+   and logical association arrows; active processing stays in CPU/PCH/devices.
+   Show separate physical PCIe routes from CPU socket contacts to GPU, M.2,
+   and NIC connectors. DDR directly connects CPU socket to DIMM, and DMI/chipset
+   traces connect socket to the physical PCH. Show separate PCH SATA, USB,
+   and firmware-flash SPI traces. Clock generator/buffer and reset circuitry
+   connect to CPU socket control contacts, PCH, and GPU/M.2/NIC interfaces.
+   Retain PSU DC input, VRMs, and physical power distribution to CPU, DIMM,
+   PCH, slots, M.2, clock, and reset circuits. Keep all arrow endpoints anchored.
    Use the shared schematic styles, focused-layer filtering, and view controls.
-   Offer one Network byte to SSD overview card and start playback only on selection.
-   Follow a minimal Ethernet frame carrying SAVE, offset 7, data 0x41 through
-   adapter DMA to RAM, CPU parsing and preparation of an already loaded 512-byte
-   block, an SSD doorbell, SSD DMA read, nonvolatile FUA commitment, and completion
-   through RAM back to the CPU. Preserve neighboring block bytes. Reuse the same
-   diagram geometry, camera, and view controls with one directed transfer or
-   local update per event and compact device states. Keep narration in info and
-   accessible descriptions, abstract queue fetches/CPU read requests/SSD internals,
-   leave GPU/HDD/optional bridge idle, and restore the static map on Reset.
+   Motherboard has an empty overview list and no lesson playback. Remove Network
+   byte to SSD from menu/search and public action dispatch; keep its existing
+   model/trace primitives only for legacy regression coverage. Focus the heading
+   when no action button exists, retaining the static diagram and view controls.
    The header menu returns to Hardware Fundamental and its hardware preview.
    GPU and Network Adapter close the menu and zoom directly into their maps,
    with two overview cards each and no automatic playback until one is selected.
@@ -70,7 +73,7 @@
    the CPU; DDR channels connect its integrated memory controller to RAM. CPU
    software configures DMA engines and those engines transfer payloads; retain
    shared PCIe control traffic and platform-specific signal limits in accessible labels.
-   Bus/HDD/SSD interfaces remain as implemented.
+   HDD/SSD interfaces remain as implemented; Motherboard expands the bus map.
    GPU VRAM expands a representative GDDR chip/die/bank with row/column decoders,
    row-buffer sense amplifiers, refresh, I/O, and a magnified 1T1C cell showing its
    access transistor and storage capacitor. Keep this shared geometry in both lessons.

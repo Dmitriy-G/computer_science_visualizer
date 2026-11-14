@@ -264,33 +264,40 @@ Keep the System Components Overview category hierarchy in
 `MainMenu/AdvancedAlgorithmCatalog.ts`, separate from structure membership and
 data-structure algorithm scopes. The overview root contains Hardware Fundamental,
 Complex, and Network in that fixed order. Hardware Fundamental opens CPU, HDD,
-SSD, RAM, GPU, Network Adapter, and Bus/Interconnect directly in that fixed order. Network retains Fundamental and Complex,
+SSD, RAM, GPU, Network Adapter, and Motherboard directly in that fixed order. Network retains Fundamental and Complex,
 in that order. GPU and Network Adapter close MainMenu and show their common maps
 with two overview cards each. Keep their class-based layouts in
 Hardware/Fundamental/Gpu/GpuLayout.ts and
 Hardware/Fundamental/NetworkAdapter/NetworkAdapterLayout.ts, reusing HardwareDiagram,
 Renderer schematic titles/palettes, and SystemOverviewLayout's focused layers and camera.
-Bus/Interconnect closes MainMenu and shows BusLayout's diagram with one overview
-card, Network byte to SSD. Start playback only when the card is selected.
-Keep the implemented layout in Hardware/Fundamental/Bus/BusLayout.ts and reuse
-HardwareDiagram, schematic colors/titles, Fit/Actual size, and camera navigation.
-Expand the existing hardware bus bar through the bus-components detail layer.
-Depict all twelve logical component groups, label cache coherence and bridge/adapter
-optional, and distinguish direct and bridged payload routes from dashed support/control
-paths. Show separate CPU, GPU, RAM, HDD, SSD, and Network Adapter external blocks
-and interface ports with multiple switch branches. Clarify memory-mapped address
-decoding versus destination-ID routing, and arbitration for shared-resource contention.
-BusAlgorithmCatalog and BusWorkspace own its single action in NetworkByteToSsd/,
-with a model, animation, React component/CSS, and sourced overview description.
-BusLessonTrace reuses ComponentFlowTrace and the static map, keeping each transfer
-directed and separate. Compact state pills sit below external device boxes.
-Follow adapter receive DMA to RAM, CPU interpretation of SAVE/offset/value,
-preparation of a preloaded 512-byte block preserving neighboring bytes, SSD
-doorbell and DMA read, nonvolatile FUA commitment, then completion via RAM to CPU.
-Abstract queue fetches, CPU read requests, caches, filesystem metadata, and SSD
-internals explicitly in info/accessibility text. Do not imply one-byte hardware
-transfers or persistence before storage commitment. Reset restores the static map.
-The header menu reopens Hardware Fundamental and restores its hardware preview.
+Motherboard replaces the former Bus/Interconnect menu entry while retaining
+hardware-bus routing, BusLayout, and the bus-components scene layer. Reuse
+HardwareDiagram, camera, renderer, and shared playback; zoom from the server
+motherboard footprint. Keep the six component references compact outside the
+board, plus a small external PSU DC-output source.
+Keep the motherboard layout compact: align connector rows in side columns,
+place physical signal routes between them, and group power, chipset, and firmware
+below. Shorten route corridors and avoid tall empty component rectangles.
+The shared static and legacy scenes use the same 2840 by 1680 bounds.
+Keep CPU internals out of the motherboard map. CPU remains a compact external
+reference connected to its passive socket. The central bus-fabric region is
+labeled PCB traces / signal routing and represents physical copper routing.
+Do not put address routing, packet logic, buffers, flow control, error checking,
+or logical bus-interface association arrows on this physical motherboard map.
+Use actual independent PCIe traces from CPU socket contacts to GPU/M.2/NIC
+contacts, plus direct DDR socket-to-DIMM and DMI/socket-to-PCH traces.
+Show PCH-to-SATA, PCH-to-USB, and PCH-to-firmware-flash SPI traces separately.
+Clock generator/buffer and reset circuitry are physical board blocks, with
+separate support traces to CPU control contacts, PCH, and GPU/M.2/NIC connectors.
+Keep VRMs, PSU DC input, and copper power distribution to the CPU, DIMM, chipset,
+expansion slots, M.2, clock, and reset circuitry. Keep AC at the PSU.
+Each data, support, and power arrow terminates at named physical boundaries.
+BusAlgorithmCatalog exposes an empty choices list; BusWorkspace displays the
+static motherboard diagram and empty overview navigation. The removed Network
+byte to SSD action is absent from HardwareOverviewKind and public dispatch,
+and cannot appear in search. Its existing model/trace code remains as legacy
+regression coverage, without a selectable action. Focus the workspace heading
+when no first overview button exists. Back returns to Hardware Fundamental.
 Gpu and NetworkAdapter own their catalogs, workspaces, and action folders:
 FrameRendering / HashcatIteration and ServerToNetwork / NetworkToServer.
 Each action owns its model, component/CSS, animation, and sourced overview.
@@ -305,7 +312,7 @@ internal wires, nested CPU core, state pills, and DRAM charge indicators aligned
 Use DDR/PCIe/chipset links for CPU, CPU/SoC and SPD context for RAM, PCIe/display
 for GPU, and PCIe/Ethernet for NIC. Show DC supply inputs with dashed amber lines;
 these components do not receive AC mains directly. Preserve map bounds and paths
-between static previews, lessons, and Reset. Do not alter bus/HDD/SSD interfaces.
+between static previews, lessons, and Reset. Keep HDD/SSD interfaces as implemented; Motherboard owns the expanded bus map.
 Label GPU/NIC PCIe connectors and external host lines PCIe / DMA. On CPU, separate
 PCIe lanes (device DMA traffic) from the chipset link (Intel DMI / equivalent),
 using two-line captions. DMA is a transfer mechanism over PCIe or another supported

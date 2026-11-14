@@ -17,7 +17,7 @@ test('scoped hardware catalogs own disjoint lessons and shared routing delegates
     ['hardware-ssd', SsdAlgorithmCatalog, ['nand-cell', 'ssd-ftl', 'ssd-garbage-collection', 'ssd-wear-leveling']],
     ['hardware-gpu', GpuAlgorithmCatalog, ['gpu-frame-rendering', 'gpu-hashcat-iteration']],
     ['hardware-network-adapter', NetworkAdapterAlgorithmCatalog, ['nic-server-to-network', 'nic-network-to-server']],
-    ['hardware-bus', BusAlgorithmCatalog, ['bus-network-byte-to-ssd']],
+    ['hardware-bus', BusAlgorithmCatalog, []],
   ]
   const seen = new Set()
   for (const [group, owner, expected] of owners) {
@@ -33,4 +33,10 @@ test('scoped hardware catalogs own disjoint lessons and shared routing delegates
     }
   }
   assert.deepEqual(new Set(HardwareOverviewCatalog.choices.map((choice) => choice.kind)), seen)
+})
+
+test('motherboard exposes no overviews and rejects its removed lesson', () => {
+  assert.deepEqual(HardwareOverviewCatalog.forGroup('hardware-bus'), [])
+  assert.ok(!HardwareOverviewCatalog.choices.some((choice) => choice.kind === 'bus-network-byte-to-ssd'))
+  assert.throws(() => HardwareOverviewCatalog.definition('bus-network-byte-to-ssd'), /Unknown hardware component overview/)
 })

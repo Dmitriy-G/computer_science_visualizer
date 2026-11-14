@@ -69,31 +69,143 @@ for (const [layout, prefix, keys] of [
   })
 }
 
-test('bus map connects six separate endpoints and keeps adaptation optional', () => {
+test('motherboard shows physical PCB routing without protocol controller blocks', () => {
   const scene = BusLayout.create()
   const regions = new Map(scene.regions.map((region) => [region.id, region]))
   const paths = new Map(scene.paths.map((path) => [path.id, path]))
-  const endpoints = [
-    ['cpu', 'CPU'], ['gpu', 'GPU'], ['ram', 'RAM'],
-    ['hdd', 'HDD'], ['ssd', 'SSD'], ['network-adapter', 'Network Adapter'],
-  ]
-  assert.equal(scene.regions.filter((region) => region.role === 'device' && !region.parentId).length, endpoints.length)
+  const endpoints = [['cpu', 'CPU'], ['gpu', 'GPU'], ['ram', 'RAM'], ['hdd', 'HDD'], ['ssd', 'SSD'], ['network-adapter', 'Network Adapter']]
+  const board = regions.get('bus-motherboard')
+  const routing = regions.get('bus-fabric')
+  assert.ok(scene.width <= 3000 && scene.height <= 1800, 'motherboard keeps its compact canvas')
   for (const [key, name] of endpoints) {
     const device = regions.get(`bus-${key}-device`)
+    const connector = regions.get(`bus-${key}-port`)
     assert.equal(device.shortLabel, name)
     assert.equal(device.parentId, undefined)
-    assert.equal(regions.get(`bus-${key}-port`).parentId, 'bus-fabric')
-    assert.equal(paths.get(`bus-${key}-external-link`).bidirectional, true)
-    assert.equal(paths.get(`bus-${key}-port-data`).bidirectional, true)
-    const fabricPath = paths.get(key === 'cpu' || key === 'gpu' ? `bus-${key}-queues` : `bus-switch-${key}`)
-    assert.equal(fabricPath.bidirectional, true)
-    assert.ok(!fabricPath.dashed, `${name} has a payload connection`)
+    assert.ok(device.width <= 240 && device.height <= 100)
+    assert.ok(device.x + device.width <= board.x || device.x >= board.x + board.width)
+    assert.equal(connector.parentId, board.id)
+    assert.ok(connector.x + connector.width <= routing.x || connector.x >= routing.x + routing.width)
   }
-  assert.match(regions.get('bus-bridge').shortLabel, /optional/i)
-  assert.ok(paths.has('bus-switch-network-adapter'), 'direct adapter path is available')
-  assert.ok(paths.has('bus-switch-bridge') && paths.has('bus-bridge-target'), 'adapted route is an alternative')
-  assert.match(regions.get('bus-routing').label, /memory-mapped.*address decoding.*destination IDs/)
-  assert.match(regions.get('bus-arbiter').label, /multiple requesters.*compete for a shared resource/)
+  assert.equal(routing.shortLabel, 'PCB traces / signal routing')
+  assert.match(routing.label, /physical copper connections.*not a chip or controller/)
+  assert.ok(!scene.regions.some((region) => region.parentId === routing.id), 'routing area contains traces, not processing blocks')
+  for (const id of ['bus-cpu-context', 'bus-cpu-protocol', 'bus-ram-protocol', 'bus-cpu-chipset', 'bus-cpu-cores', 'bus-coherence', 'bus-switch', 'bus-buffers', 'bus-arbiter']) {
+    assert.ok(!regions.has(id), `${id} is absent from the motherboard map`)
+  }
+  assert.ok(!scene.regions.some((region) => region.id.startsWith('bus-detail-')))
+  assert.ok(!scene.paths.some((path) => path.id.startsWith('bus-detail-') || path.id.startsWith('bus-interface-')))
+  assert.ok(!scene.regions.some((region) => /optional/i.test(region.label)))
+  const lanes = new Set()
+  for (const key of ['gpu', 'ssd', 'network-adapter']) {
+    const direct = paths.get(`bus-${key}-direct`)
+    assert.equal(direct.bidirectional, true)
+    assert.ok(!direct.dashed)
+    assert.match(direct.label, /point-to-point/)
+    lanes.add(direct.d)
+    assert.equal(regions.get(`bus-cpu-${key}-contacts`).parentId, 'bus-cpu-port')
+  }
+  assert.equal(lanes.size, 3)
+  assert.match(paths.get('bus-chipset-uplink').label, /DMI.*CPU socket.*PCH/)
+  assert.match(paths.get('bus-ram-port-data').label, /DDR.*bypassing PCIe and PCH/)
+  assert.match(regions.get('bus-clock-reset').shortLabel, /Clock generator/)
+  assert.match(regions.get('bus-reset-circuit').shortLabel, /Reset circuitry/)
+  assert.equal(regions.get('bus-clock-reset').role, 'device')
+  assert.equal(regions.get('bus-reset-circuit').role, 'device')
+})
+
+test('every motherboard arrow touches component boundaries, including DC input and load rails', () => {
+  const scene = BusLayout.create()
+  const regions = new Map(scene.regions.map((region) => [region.id, region]))
+  const paths = new Map(scene.paths.map((path) => [path.id, path]))
+  const points = (path) => {
+    const result = []
+    const tokens = path.d.match(/[MHV]|-?\d+(?:\.\d+)?/g)
+    let x = 0
+    let y = 0
+    for (let index = 0; index < tokens.length;) {
+      const command = tokens[index++]
+      if (command === 'M') {
+        x = Number(tokens[index++])
+        y = Number(tokens[index++])
+      }
+      else if (command === 'H') x = Number(tokens[index++])
+      else if (command === 'V') y = Number(tokens[index++])
+      else assert.fail('Motherboard routes must stay orthogonal')
+      result.push({ x, y })
+    }
+    return result
+  }
+  const touches = (point, region) => {
+    const near = (a, b) => Math.abs(a - b) < 0.000001
+    return ((near(point.x, region.x) || near(point.x, region.x + region.width)) && point.y >= region.y && point.y <= region.y + region.height)
+      || ((near(point.y, region.y) || near(point.y, region.y + region.height)) && point.x >= region.x && point.x <= region.x + region.width)
+  }
+  for (const path of scene.paths) {
+    const route = points(path)
+    assert.ok(route.length > 1, `${path.id} has a visible route`)
+    for (const point of [route[0], route.at(-1)]) {
+      assert.ok(scene.regions.some((region) => touches(point, region)), `${path.id} cannot end in empty space`)
+    }
+  }
+  const connections = [
+    ['bus-gpu-direct', 'bus-cpu-gpu-contacts', 'bus-gpu-link'],
+    ['bus-ssd-direct', 'bus-cpu-ssd-contacts', 'bus-ssd-link'],
+    ['bus-network-adapter-direct', 'bus-cpu-network-adapter-contacts', 'bus-network-adapter-link'],
+    ['bus-ram-port-data', 'bus-cpu-ddr-contacts', 'bus-ram-link'],
+    ['bus-chipset-uplink', 'bus-cpu-chipset-contacts', 'bus-pch'],
+    ['bus-switch-hdd', 'bus-pch', 'bus-hdd-link'],
+    ['bus-pch-usb', 'bus-pch', 'bus-usb-port'],
+    ['bus-pch-flash', 'bus-pch', 'bus-flash'],
+  ]
+  for (const [id, source, destination] of connections) {
+    const path = paths.get(id)
+    const route = points(path)
+    assert.ok(touches(route[0], regions.get(source)), `${id} starts at its physical source`)
+    assert.ok(touches(route.at(-1), regions.get(destination)), `${id} reaches its physical destination`)
+    assert.equal(path.directed, true)
+    assert.equal(path.bidirectional, true)
+    assert.ok(!path.dashed, `${id} is a physical data trace`)
+  }
+  for (const [source, routes] of [
+    ['bus-clock-reset', [['bus-cpu-clock', 'bus-cpu-control-contacts'], ['bus-requester-clock', 'bus-gpu-port'], ['bus-pch-clock', 'bus-pch'], ['bus-ssd-clock', 'bus-ssd-link'], ['bus-network-adapter-clock', 'bus-network-adapter-link']]],
+    ['bus-reset-circuit', [['bus-cpu-reset', 'bus-cpu-control-contacts'], ['bus-gpu-reset', 'bus-gpu-port'], ['bus-pch-reset', 'bus-pch'], ['bus-ssd-reset', 'bus-ssd-link'], ['bus-network-adapter-reset', 'bus-network-adapter-link']]],
+  ]) {
+    for (const [id, destination] of routes) {
+      const path = paths.get(id)
+      const route = points(path)
+      assert.ok(touches(route[0], regions.get(source)), `${id} starts at board support circuitry`)
+      assert.ok(touches(route.at(-1), regions.get(destination)), `${id} reaches the consumer`)
+      assert.equal(path.directed, true)
+      assert.equal(path.bidirectional, false)
+      assert.equal(path.dashed, true)
+    }
+  }
+  const supplies = [
+    ['bus-dc-input', 'bus-dc-source', 'bus-power-connectors'],
+    ['bus-power-dimm', 'bus-power-rails', 'bus-ram-port'],
+    ['bus-power-pch', 'bus-power-rails', 'bus-pch'],
+    ['bus-power-m2', 'bus-power-rails', 'bus-ssd-port'],
+    ['bus-power-slots', 'bus-power-rails', 'bus-gpu-port'],
+    ['bus-power-nic', 'bus-power-rails', 'bus-network-adapter-port'],
+    ['bus-power-cpu', 'bus-power-rails', 'bus-cpu-power-contacts'],
+    ['bus-power-clock', 'bus-power-rails', 'bus-clock-reset'],
+    ['bus-power-reset', 'bus-power-rails', 'bus-reset-circuit'],
+  ]
+  for (const [id, source, destination] of supplies) {
+    const path = paths.get(id)
+    const route = points(path)
+    assert.ok(touches(route[0], regions.get(source)), `${id} starts at its power source`)
+    assert.ok(touches(route.at(-1), regions.get(destination)), `${id} reaches its load`)
+    assert.equal(path.dashed, true)
+    assert.equal(path.bidirectional, false)
+    assert.equal(path.stroke, '#b58a45')
+  }
+  assert.match(paths.get('bus-dc-input').caption.text, /DC input from PSU/)
+  assert.match(regions.get('bus-power-connectors').label, /no AC mains/)
+  const uplink = points(paths.get('bus-chipset-uplink'))
+  assert.ok(touches(uplink[0], regions.get('bus-cpu-chipset-contacts')))
+  assert.ok(touches(uplink.at(-1), regions.get('bus-pch')))
 })
 
 for (const [level, layout] of [['cpu', CpuLayout], ['ram', RamLayout], ['gpu', GpuLayout], ['network-adapter', NetworkAdapterLayout], ['bus', BusLayout]]) {

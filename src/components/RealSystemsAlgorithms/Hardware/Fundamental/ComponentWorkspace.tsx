@@ -61,7 +61,7 @@ export default abstract class ComponentWorkspace extends Component<ComponentWork
   protected presentScene(scene: Scene | null): Scene | null { return scene }
 
   public focusFirstAction(): void {
-    if (this.state.running) this.heading.current?.focus()
+    if (this.state.running || this.choices.length === 0) this.heading.current?.focus()
     else this.firstAlgorithm.current?.focus()
   }
 

@@ -21,24 +21,37 @@ export class BusLessonTrace extends ComponentFlowTrace {
   }
 
   public deviceToFabric(key: 'cpu' | 'network-adapter' | 'ssd', title: string, description: string): void {
-    const left = key === 'cpu'
-    this.signal(`bus-${key}-external-link`, title, description, !left)
-    this.signal(`bus-${key}-port-data`, title, description, !left)
-    this.signal(left ? 'bus-cpu-queues' : `bus-switch-${key}`, title, description, !left)
-    if (left) this.signal('bus-queues-switch', title, description)
+    if (key === 'cpu') {
+      this.signal('bus-cpu-external-link', title, description)
+      return
+    }
+    this.signal(`bus-${key}-external-link`, title, description, true)
+    this.signal(`bus-${key}-direct`, title, description, true)
   }
 
-  public fabricToDevice(key: 'cpu' | 'ram' | 'ssd', value: string, title: string, description: string): void {
-    const left = key === 'cpu'
-    if (left) this.signal('bus-queues-switch', title, description, true)
-    this.signal(left ? 'bus-cpu-queues' : `bus-switch-${key}`, title, description, left)
-    this.signal(`bus-${key}-port-data`, title, description, left)
-    this.transfer(`bus-${key}-external-link`, `bus-${key}-device`, value, title, description, left)
+  public fabricToDevice(key: 'ram' | 'ssd', value: string, title: string, description: string): void {
+    if (key === 'ram') {
+      this.signal('bus-ram-port-data', title, description)
+    } else {
+      this.signal('bus-ssd-direct', title, description)
+    }
+    this.transfer(`bus-${key}-external-link`, `bus-${key}-device`, value, title, description)
   }
 
   public ramToFabric(title: string, description: string): void {
     this.signal('bus-ram-external-link', title, description, true)
     this.signal('bus-ram-port-data', title, description, true)
-    this.signal('bus-switch-ram', title, description, true)
+  }
+
+  public cpuToRam(value: string, title: string, description: string): void {
+    this.signal('bus-cpu-external-link', title, description)
+    this.signal('bus-ram-port-data', title, description)
+    this.transfer('bus-ram-external-link', 'bus-ram-device', value, title, description)
+  }
+
+  public ramToCpu(value: string, title: string, description: string): void {
+    this.signal('bus-ram-external-link', title, description, true)
+    this.signal('bus-ram-port-data', title, description, true)
+    this.transfer('bus-cpu-external-link', 'bus-cpu-device', value, title, description, true)
   }
 }
