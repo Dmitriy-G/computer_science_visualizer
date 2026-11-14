@@ -6,30 +6,21 @@ import { RamLayout } from '../Hardware/Fundamental/Ram/RamLayout.ts'
 import { GpuLayout } from '../Hardware/Fundamental/Gpu/GpuLayout.ts'
 import { NetworkAdapterLayout } from '../Hardware/Fundamental/NetworkAdapter/NetworkAdapterLayout.ts'
 import { BusLayout } from '../Hardware/Fundamental/Bus/BusLayout.ts'
+import { ServerHardwareLayout } from './ServerHardwareLayout.ts'
 
 type SystemOverviewComponent = 'cpu' | 'hdd' | 'ssd' | 'ram' | 'gpu' | 'network-adapter' | 'bus'
 type SystemOverviewLevel = 'system' | 'hardware' | SystemOverviewComponent
 
 export class SystemOverviewLayout {
-  private static readonly server = { x: 1060, y: 100, scale: 1080 / 1560 }
-  private static readonly cpu = { x: 75, y: 110, size: 660 }
-  private static readonly hdd = { x: 75, y: 1075, width: 420, height: 220 }
-  private static readonly ssd = { x: 560, y: 1075, width: 420, height: 220 }
-  private static readonly ram = { x: 825, y: 125, width: 640, height: 240 }
-  private static readonly gpu = { x: 825, y: 465, width: 640, height: 260 }
-  private static readonly networkAdapter = { x: 1045, y: 1075, width: 420, height: 220 }
-  private static readonly bus = { x: 75, y: 855, width: 1390, height: 100 }
+  private static readonly width = 2500
+  private static readonly server = { x: 1060, y: 100, scale: 1080 / ServerHardwareLayout.chassis.width }
   private static readonly layouts = {
     cpu: CpuLayout, hdd: HddLayout, ssd: SsdLayout, ram: RamLayout,
     gpu: GpuLayout, 'network-adapter': NetworkAdapterLayout, bus: BusLayout,
   }
 
   private static componentPlacement(level: SystemOverviewComponent): { x: number, y: number, scale: number } {
-    const devices = {
-      cpu: { x: this.cpu.x, y: this.cpu.y, width: this.cpu.size, height: this.cpu.size },
-      hdd: this.hdd, ssd: this.ssd, ram: this.ram, gpu: this.gpu, 'network-adapter': this.networkAdapter, bus: this.bus,
-    }
-    const device = devices[level]
+    const device = ServerHardwareLayout.components[level]
     const layout = this.layouts[level]
     const scale = Math.min(device.width / layout.width, device.height / layout.height)
     return {
@@ -40,9 +31,9 @@ export class SystemOverviewLayout {
   }
 
   private static bounds(level: SystemOverviewLevel): SceneBounds {
-    if (level === 'system') return { x: 0, y: 0, width: 2200, height: 1200 }
+    if (level === 'system') return { x: 0, y: 0, width: this.width, height: 1200 }
     const server = this.server
-    if (level === 'hardware') return { x: server.x - 30, y: server.y - 30, width: 1140, height: 1060 }
+    if (level === 'hardware') return { x: server.x - 30, y: server.y - 30, width: ServerHardwareLayout.width * server.scale + 60, height: ServerHardwareLayout.height * server.scale + 60 }
     const device = this.componentPlacement(level)
     const layout = this.layouts[level]
     return { x: device.x - 20 * device.scale, y: device.y - 20 * device.scale, width: (layout.width + 40) * device.scale, height: (layout.height + 40) * device.scale }
@@ -67,7 +58,8 @@ export class SystemOverviewLayout {
       else if (previous) from = to
       else from = level !== 'system' && level !== 'hardware' ? this.bounds('hardware') : this.bounds('system')
     }
-    const hardware = this.hardware()
+    const hardware = ServerHardwareLayout.create()
+    const hardwareWidth = this.bounds('hardware').width
     const cpuScene = CpuLayout.create()
     const server = this.server
     const cpuDetailRange = { startWidth: 850, endWidth: 500 }
@@ -83,27 +75,18 @@ export class SystemOverviewLayout {
       {
         id: 'server-boundary', x: 0, y: 0, scale: 1,
         scene: {
-          ...this.scene(2200, 1200),
+          ...this.scene(this.width, 1200),
           regions: [{ id: 'server', label: 'Server', role: 'cpu', level: 'system', x: server.x, y: server.y, width: 1080, height: 1440 * server.scale }],
         },
         conceal: cpuDetailRange,
       },
-      { id: 'system', scene: this.system(), x: 0, y: 0, scale: 1, conceal: { startWidth: 1800, endWidth: 1140 } },
+      { id: 'system', scene: this.system(), x: 0, y: 0, scale: 1, conceal: { startWidth: 1800, endWidth: hardwareWidth } },
       {
         id: 'server-summary', x: server.x, y: server.y, scale: server.scale,
         scene: this.scene(1560, 1440, [this.label('server-summary', 'Server', 'Compute, memory and storage', 780, 670, 960, 380)]),
-        conceal: { startWidth: 2000, endWidth: 1250 },
+        conceal: { startWidth: 2000, endWidth: hardwareWidth },
       },
-      { id: 'hardware', scene: hardware, ...server, reveal: { startWidth: 1800, endWidth: 1140 }, conceal: cpuDetailRange },
-      {
-        id: 'cpu-summary', ...server,
-        scene: {
-          ...this.scene(1560, 1440, [this.label('cpu-summary', 'CPU', 'Processor package / cores and shared components', 405, 440, 520, 160)]),
-          regions: [{ id: 'cpu-package', label: 'CPU', role: 'cpu', x: this.cpu.x, y: this.cpu.y, width: this.cpu.size, height: this.cpu.size }],
-        },
-        reveal: { startWidth: 1800, endWidth: 1140 },
-        conceal: cpuDetailRange,
-      },
+      { id: 'hardware', scene: hardware, ...server, reveal: { startWidth: 1800, endWidth: hardwareWidth }, conceal: cpuDetailRange },
       {
         id: 'cpu-components', scene: cpuScene, ...this.componentPlacement('cpu'),
         reveal: cpuDetailRange,
@@ -140,9 +123,9 @@ export class SystemOverviewLayout {
       focusedLayers.push(layer)
     }
     return {
-      ...this.scene(2200, 1200), camera: { from, to },
-      count: componentScene ? componentScene.count : level === 'hardware' ? 7 : 3,
-      countLabel: componentScene ? componentScene.countLabel : 'components',
+      ...this.scene(this.width, 1200), camera: { from, to },
+      count: componentScene ? componentScene.count : level === 'hardware' ? hardware.count : 3,
+      countLabel: componentScene ? componentScene.countLabel : level === 'hardware' ? hardware.countLabel : 'components',
       layers: focusedLayers,
     }
   }
@@ -159,7 +142,7 @@ export class SystemOverviewLayout {
       { ...this.label('server-link', '', '', 1060, 600, 0, 0), opacity: 0 },
     ]
     return {
-      ...this.scene(2200, 1200, nodes),
+      ...this.scene(this.width, 1200, nodes),
       edges: [
         { id: 'client-network', from: 'client', to: 'network', directed: false, highlighted: false, opacity: 1, label: 'Communication link' },
         { id: 'network-server', from: 'network', to: 'server-link', directed: false, highlighted: false, opacity: 1, label: 'Communication link' },
@@ -167,27 +150,4 @@ export class SystemOverviewLayout {
     }
   }
 
-  private static hardware(): Scene {
-    const components: readonly [string, string, string, number, number, number, number][] = [
-      ['ram', 'RAM', 'Main memory', this.ram.x + this.ram.width / 2, this.ram.y + this.ram.height / 2, this.ram.width, this.ram.height],
-      ['gpu', 'GPU', 'Graphics / parallel compute', this.gpu.x + this.gpu.width / 2, this.gpu.y + this.gpu.height / 2, this.gpu.width, this.gpu.height],
-      ['bus', 'Bus / interconnect', 'Connects processor, memory and devices', this.bus.x + this.bus.width / 2, this.bus.y + this.bus.height / 2, this.bus.width, this.bus.height],
-      ['hdd', 'HDD', 'Magnetic storage', this.hdd.x + this.hdd.width / 2, this.hdd.y + this.hdd.height / 2, this.hdd.width, this.hdd.height],
-      ['ssd', 'SSD', 'Flash storage', this.ssd.x + this.ssd.width / 2, this.ssd.y + this.ssd.height / 2, this.ssd.width, this.ssd.height],
-      ['network-adapter', 'Network Adapter', 'Network connection', this.networkAdapter.x + this.networkAdapter.width / 2, this.networkAdapter.y + this.networkAdapter.height / 2, this.networkAdapter.width, this.networkAdapter.height],
-    ]
-    const nodes: SceneNode[] = []
-    for (const [id, name, description, x, y, width, height] of components) nodes.push(this.label(id, name, description, x, y, width, height))
-    return {
-      ...this.scene(1560, 1440, nodes),
-      paths: [
-        { id: 'cpu-bus', d: 'M405 770V855', label: 'CPU to interconnect', highlighted: false },
-        { id: 'ram-bus', d: 'M1465 245H1510V905H1465', label: 'RAM to interconnect', highlighted: false },
-        { id: 'gpu-bus', d: 'M1145 725V855', label: 'GPU to interconnect', highlighted: false },
-        { id: 'hdd-bus', d: 'M285 955V1075', label: 'HDD to interconnect', highlighted: false },
-        { id: 'ssd-bus', d: 'M770 955V1075', label: 'SSD to interconnect', highlighted: false },
-        { id: 'adapter-bus', d: 'M1255 955V1075', label: 'Network adapter to interconnect', highlighted: false },
-      ],
-    }
-  }
 }

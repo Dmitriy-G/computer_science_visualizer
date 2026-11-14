@@ -1,9 +1,11 @@
 import { HardwareDiagram } from '../../../../../visualization/HardwareDiagram.ts'
 import type { Scene, SceneRegion } from '../../../../../visualization/Scene.ts'
+import { HardwareDiagramFrame } from '../../../../../visualization/HardwareDiagramFrame.ts'
 import { GpuVramLayout } from './GpuVramLayout.ts'
 
 export class GpuLayout {
-  public static readonly width = 3400
+  public static readonly externalLeft = 550
+  public static readonly width = 3400 + this.externalLeft + 500
   public static readonly height = 1450
   public static readonly componentCount = 9
 
@@ -17,9 +19,9 @@ export class GpuLayout {
   }
 
   public static diagram(): HardwareDiagram {
-    const diagram = new HardwareDiagram(this.width, this.height)
+    const diagram = new HardwareDiagram(3400, this.height)
     diagram.region('gpu-board', 'GPU / illustrative discrete graphics card. Blocks represent logical functions, not a manufacturer floorplan. Unit counts and cache organization vary; integrated GPUs usually share system RAM instead of dedicated VRAM', 'device', 20, 20, 3360, 1410, 'system', undefined, 'GPU / discrete graphics card')
-      .region('gpu-connector', 'Host connector / a discrete graphics card commonly connects to the computer through PCIe', 'interconnect', 60, 220, 260, 180, 'component', 'gpu-board', 'PCIe connector')
+      .region('gpu-connector', 'Host PCIe connector / carries GPU DMA transfers between host RAM and the GPU memory system, alongside commands and other control transactions. DMA is a transfer mechanism using PCIe, not a second connector', 'interconnect', 60, 220, 260, 180, 'component', 'gpu-board', 'PCIe / DMA')
       .region('gpu-die', 'GPU chip / graphics, parallel computation, memory access, and display functions; this grouping does not specify exact physical placement or wiring', 'cpu', 380, 120, 1440, 1110, 'component', 'gpu-board', 'GPU chip')
       .region('gpu-host-interface', 'Host interface / exchanges commands and data with the computer over PCIe', 'interconnect', 440, 240, 260, 140, 'component', 'gpu-die', 'Host interface')
       .region('gpu-scheduler', 'Command processor and schedulers / accept work and schedule graphics or compute operations on available execution resources', 'device', 440, 450, 260, 170, 'component', 'gpu-die', 'Commands / scheduling')
@@ -35,7 +37,13 @@ export class GpuLayout {
     GpuVramLayout.add(diagram)
     this.connect(diagram)
     this.applyColors(diagram)
-    return diagram
+    const framed = HardwareDiagramFrame.create(diagram, this.externalLeft, 500)
+    framed.paths.push(
+      { id: 'gpu-external-host', d: 'M610 310H40', label: 'PCIe / DMA / GPU transfer engines move data between mapped host RAM and the GPU memory system over this host link. Commands, MMIO, and completions also share PCIe; not every transaction is DMA', directed: true, bidirectional: true, highlighted: false, caption: { text: 'PCIe / DMA', x: 60, y: 288 } },
+      { id: 'gpu-external-display', d: 'M3830 1340H4410', label: 'HDMI / DisplayPort connector to an external display / driven by the Display Engine, independently of VRAM memory-controller signals', directed: true, highlighted: false, caption: { text: 'HDMI / DisplayPort', x: 3980, y: 1318 } },
+      { id: 'gpu-external-power', d: 'M40 1360H990', label: 'DC input from PCIe slot and auxiliary graphics-card power connectors where fitted / grouped supply to card regulators, not AC power', directed: true, dashed: true, stroke: '#b58a45', highlighted: false, caption: { text: 'Slot / auxiliary DC', x: 60, y: 1338 } },
+    )
+    return framed
   }
 
   private static addCompute(diagram: HardwareDiagram): void {
@@ -48,7 +56,7 @@ export class GpuLayout {
 
   private static connect(diagram: HardwareDiagram): void {
     diagram.paths.push(
-      { id: 'gpu-host-link', d: 'M320 310H440', label: 'Host commands and data / PCIe connection', highlighted: false, directed: true, bidirectional: true },
+      { id: 'gpu-host-link', d: 'M320 310H440', label: 'PCIe host commands and data / includes DMA transfers between host RAM and GPU memory through the host interface', highlighted: false, directed: true, bidirectional: true },
       { id: 'gpu-command-input', d: 'M570 380V450', label: 'Commands from the host interface to the command processor', highlighted: false, directed: true },
       { id: 'gpu-schedule-compute', d: 'M700 535H760V395H840', label: 'Scheduled shader and compute work', highlighted: false, directed: true },
       { id: 'gpu-schedule-graphics', d: 'M570 620V760', label: 'Graphics commands to geometry and rasterization', highlighted: false, directed: true },
@@ -64,7 +72,7 @@ export class GpuLayout {
       { id: 'gpu-cache-memory', d: 'M1500 950V1050', label: 'Cache fills and memory writeback through the memory controllers', highlighted: false, directed: true, bidirectional: true },
       { id: 'gpu-memory-vram', d: 'M1700 1110H1880V490H1980V950H2060', label: 'Memory channels exchange payload data with GDDR data I/O / multiple channels grouped', highlighted: false, directed: true, bidirectional: true },
       { id: 'gpu-memory-vram-command', d: 'M1700 1090H1860V430H2060', label: 'Memory controllers issue GDDR commands and addresses separately from payload data', highlighted: false, directed: true },
-      { id: 'gpu-host-memory', d: 'M700 310H730V1200H1760V1140H1700', label: 'Host data transfers to and from the GPU memory system / transfer engines abstracted', highlighted: false, directed: true, bidirectional: true },
+      { id: 'gpu-host-memory', d: 'M700 310H730V1200H1760V1140H1700', label: 'Host DMA data transfers to and from the GPU memory system / PCIe host interface to memory controllers, with transfer engines abstracted', highlighted: false, directed: true, bidirectional: true },
       { id: 'gpu-frame-scanout', d: 'M1300 910H1240V990H740V1100H700', label: 'Display engine frame requests and returned data through the memory system / logical scanout path', highlighted: false, directed: true, bidirectional: true },
       { id: 'gpu-display-output', d: 'M570 1170V1260H1920V1340H2420', label: 'Display Engine to HDMI / DisplayPort / display signals originate only at the display engine; separate from memory-controller and VRAM traffic', highlighted: false, directed: true },
       { id: 'gpu-chip-power', d: 'M690 1320V1230', label: 'Regulated power to the GPU chip / dashed supply path', highlighted: false, directed: true, dashed: true },

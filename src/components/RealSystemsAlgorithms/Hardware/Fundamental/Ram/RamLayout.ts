@@ -1,8 +1,10 @@
 ﻿import { HardwareDiagram } from '../../../../../visualization/HardwareDiagram.ts'
 import type { Scene, SceneRegion } from '../../../../../visualization/Scene.ts'
+import { HardwareDiagramFrame } from '../../../../../visualization/HardwareDiagramFrame.ts'
 
 export class RamLayout {
-  public static readonly width = 2700
+  public static readonly externalLeft = 600
+  public static readonly width = 2700 + this.externalLeft
   public static readonly height = 1400
   public static readonly componentCount = 7
   private static readonly example = {
@@ -26,14 +28,27 @@ export class RamLayout {
   }
 
   public static diagram(): HardwareDiagram {
-    const diagram = new HardwareDiagram(this.width, this.height)
+    const diagram = new HardwareDiagram(2700, this.height)
     this.addInterfaces(diagram)
     this.addChip(diagram)
     this.addBank(diagram)
     this.addCellWiring(diagram)
     this.connect(diagram)
     this.applyColors(diagram)
-    return diagram
+    const framed = HardwareDiagramFrame.create(diagram, this.externalLeft, 0)
+    framed.regions.push({
+      id: 'ram-pcie-root', role: 'interconnect', level: 'component', color: 'light-blue',
+      x: 640, y: 560, width: 320, height: 200, shortLabel: 'PCIe root complex',
+      label: 'External CPU/SoC PCIe root complex / host bridge context for device DMA to system RAM. It routes PCIe memory requests into the host memory fabric and memory controller. Address translation, IOMMU protection, and cache coherence are abstracted. This block is outside the DIMM; the RAM module itself uses DDR, not PCIe',
+    })
+    framed.paths.push(
+      { id: 'ram-external-host', d: 'M640 330H40', label: 'CPU memory requests and returned data at the shown memory-controller context / distinct from the device DMA ingress below. Both use the DDR command/address and data paths between the memory controller and DIMM socket', directed: true, bidirectional: true, highlighted: false, caption: { text: 'CPU / SoC fabric', x: 60, y: 308 } },
+      { id: 'ram-external-dma', d: 'M640 660H40', label: 'External PCIe devices such as a GPU or Network Adapter use DMA to read or write host RAM through the CPU/SoC root complex. Software prepares and maps the memory buffers; ordinary control transactions also use PCIe. This is not a PCIe socket on the RAM module', directed: true, bidirectional: true, highlighted: false, caption: { text: 'PCIe / DMA', x: 60, y: 638 } },
+      { id: 'ram-dma-memory-controller', d: 'M800 560V520H580V410H640', label: 'Device DMA / root complex and host memory fabric route requests to the memory controller; responses return on the same logical path. The controller then accesses DIMM memory over DDR', directed: true, bidirectional: true, highlighted: false },
+      { id: 'ram-external-sideband', d: 'M640 1180H40', label: 'Platform management connection to the SPD sideband host / separate from DDR memory payload traffic; DDR4 SPD uses its configuration sideband', directed: true, bidirectional: true, highlighted: false, caption: { text: 'SPD / platform host', x: 60, y: 1158 } },
+      { id: 'ram-external-power', d: 'M40 1350H1150V1320', label: 'Motherboard DC supply and ground enter the DIMM socket for distribution to the module / DDR4 power rails are grouped, not an AC input', directed: true, dashed: true, stroke: '#b58a45', highlighted: false, caption: { text: 'DIMM DC power', x: 60, y: 1328 } },
+    )
+    return framed
   }
 
   private static applyColors(diagram: HardwareDiagram): void {
@@ -66,7 +81,7 @@ export class RamLayout {
   private static addInterfaces(diagram: HardwareDiagram): void {
     diagram.region('ram-memory-controller', 'External CPU/SoC memory controller / sends commands and addresses, manages timing and refresh scheduling, and exchanges read/write data through the socket', 'device', 40, 180, 320, 300, 'component', undefined, 'Memory controller')
       .region('ram-sideband-host', 'Platform SPD sideband host / accesses module configuration independently of normal memory payloads', 'observer', 40, 1080, 320, 200, 'component', undefined, 'SPD sideband host')
-      .region('ram-socket', 'DIMM socket / external communication interface between the motherboard and RAM module; carries command/address, bidirectional memory data, and separate SPD sideband traffic', 'interconnect', 420, 120, 260, 1200, 'component', undefined, 'DIMM socket')
+      .region('ram-socket', 'DIMM socket / external communication interface between the motherboard and RAM module; carries command/address, bidirectional memory data, separate SPD sideband traffic, and module DC supply and ground', 'interconnect', 420, 120, 260, 1200, 'component', undefined, 'DIMM socket')
       .region('ram-pcb', 'DDR4 RAM example / 8 GiB, single rank, non-ECC, eight 8-Gbit x8 chips, modeled as one monolithic die per chip. Counts describe this configuration, not all RAM. One representative instance of each component is drawn; placement remains logical', 'device', 740, 20, 1920, 1360, 'system', undefined, `DDR4 RAM (${this.example.moduleGiB} GiB, 1 rank)`)
       .region('ram-spd', 'SPD / separate on-module DDR4 configuration EEPROM, outside the DRAM chips; stores module organization and supported timings and is accessed through the platform sideband interface', 'observer', 780, 1080, 240, 200, 'component', 'ram-pcb', 'SPD')
   }

@@ -1,0 +1,17 @@
+import { HardwareDiagram } from './HardwareDiagram.ts'
+
+export class HardwareDiagramFrame {
+  public static create(source: HardwareDiagram, left: number, right: number): HardwareDiagram {
+    const diagram = new HardwareDiagram(source.width + left + right, source.height)
+    for (const region of source.regions) diagram.regions.push({ ...region, x: region.x + left })
+    for (const position of source.positions) diagram.positions.push({ ...position, x: position.x + left })
+    for (const fixture of source.fixtures) diagram.fixtures.push({ ...fixture })
+    for (const edge of source.edges) diagram.edges.push({ ...edge })
+    // Shift whole SVG paths so reversed transfers and relative charge-fill commands retain their geometry.
+    for (const path of source.paths) diagram.paths.push({
+      ...path, translateX: (path.translateX ?? 0) + left,
+      caption: path.caption ? { ...path.caption, x: path.caption.x + left } : undefined,
+    })
+    return diagram
+  }
+}

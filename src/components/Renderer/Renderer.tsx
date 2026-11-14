@@ -369,14 +369,15 @@ export default class Renderer extends Component<
     const gpu = scene.regions?.some((region) => region.id === 'gpu-board') ?? false
     const networkAdapter = scene.regions?.some((region) => region.id === 'nic-board') ?? false
     const bus = scene.regions?.some((region) => region.id === 'bus-fabric') ?? false
-    const schematic = cpu || hdd || ssd || ram || gpu || networkAdapter || bus
+    const server = scene.regions?.some((region) => region.id === 'motherboard') ?? false
+    const schematic = cpu || hdd || ssd || ram || gpu || networkAdapter || bus || server
     for (const region of scene.regions ?? []) elements.push(this.renderRegion(region))
     for (const slot of scene.slots ?? []) elements.push(this.renderSlot(slot))
     for (const node of scene.nodes) nodeMap.set(node.id, node)
     for (const path of scene.paths ?? []) elements.push(
       <g key={`path-${path.id}`}>
-        <path className={`scene-edge${path.highlighted ? ' scene-edge-highlighted' : ''}${path.dashed ? ' scene-edge--dashed' : ''}`} d={path.d} markerStart={path.bidirectional ? `url(#${path.highlighted ? 'active-arrow' : 'default-arrow'})` : undefined} markerEnd={path.directed ? `url(#${path.highlighted ? 'active-arrow' : 'default-arrow'})` : undefined} style={{ fill: path.fill, stroke: path.highlighted ? undefined : path.stroke, strokeWidth: path.strokeWidth }} role="img" aria-label={path.label}><title>{path.label}</title></path>
-        {path.caption && <text className="scene-path-caption" x={path.caption.x} y={path.caption.y}>{path.caption.text}</text>}
+        <path className={`scene-edge${path.highlighted ? ' scene-edge-highlighted' : ''}${path.dashed ? ' scene-edge--dashed' : ''}`} d={path.d} transform={path.translateX ? `translate(${path.translateX} 0)` : undefined} markerStart={path.bidirectional ? `url(#${path.highlighted ? 'active-arrow' : 'default-arrow'})` : undefined} markerEnd={path.directed ? `url(#${path.highlighted ? 'active-arrow' : 'default-arrow'})` : undefined} style={{ fill: path.fill, stroke: path.highlighted ? undefined : path.stroke, strokeWidth: path.strokeWidth }} role="img" aria-label={path.label}><title>{path.label}</title></path>
+        {path.caption && <text className="scene-path-caption" x={path.caption.x} y={path.caption.y}>{path.caption.text.split('\n').map((line, index) => <tspan key={index} x={path.caption!.x} dy={index === 0 ? 0 : 32}>{line}</tspan>)}</text>}
       </g>,
     )
     for (const edge of scene.edges)

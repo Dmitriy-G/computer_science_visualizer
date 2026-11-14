@@ -298,6 +298,26 @@ ComponentFlowTrace shares bounded snapshots and single-transfer routing;
 ComponentFlowWorkspace replaces only the matching detail layer. Preserve bounds,
 camera and scrolling across playback and Reset. Keep narration in info dialogs
 and accessible descriptions, without a visible renderer caption.
+CPU, RAM, GPU, and Network Adapter show concise external-interface captions on
+lines outside their component maps, matching the server overview. Add space using
+visualization/HardwareDiagramFrame and ScenePath.translateX; keep component regions,
+internal wires, nested CPU core, state pills, and DRAM charge indicators aligned.
+Use DDR/PCIe/chipset links for CPU, CPU/SoC and SPD context for RAM, PCIe/display
+for GPU, and PCIe/Ethernet for NIC. Show DC supply inputs with dashed amber lines;
+these components do not receive AC mains directly. Preserve map bounds and paths
+between static previews, lessons, and Reset. Do not alter bus/HDD/SSD interfaces.
+Label GPU/NIC PCIe connectors and external host lines PCIe / DMA. On CPU, separate
+PCIe lanes (device DMA traffic) from the chipset link (Intel DMI / equivalent),
+using two-line captions. DMA is a transfer mechanism over PCIe or another supported
+interconnect, not an independent physical channel. CPU software configures the
+transfer while the device/DMA engine moves the payload. Add a socket Clock / Reset
+block with separate reference-clock and reset input lines and routed contacts to
+on-die clock/reset logic. The socket is an electrical connector, with memory/I/O
+controllers inside the CPU die. DDR channels connect the integrated memory
+controller to RAM. RAM shows a separate PCIe / DMA device path into an external
+CPU/SoC root complex, then the memory controller. Keep this host context outside
+the DIMM, whose connection remains DDR; do not add a PCIe connector to the module
+or imply that every PCIe transaction is DMA. CPU requests and SPD stay distinct.
 GpuVramLayout expands GDDR VRAM into a representative chip/die/bank, decoders,
 cell array, sense amplifiers / row buffer, refresh, command logic, and data I/O.
 Show an enlarged 1T1C cell with separate transistor and capacitor blocks and
@@ -403,6 +423,25 @@ reveal nested internals. Respect reduced motion and cancel animation frames on
 unmount or replacement. Hardware Fundamental and Complex share the server
 hardware preview. Returning from CPU to Hardware Fundamental zooms out to hardware;
 returning to System Components Overview zooms out to client/network/server.
+SystemOverview/ServerHardwareLayout owns the server hierarchy and placement slots
+shared by SystemOverviewLayout's component zooms. Keep PSU, drive bays, discrete
+GPU/host NIC cards, and the optional RAID/HBA card inside the chassis but outside
+the Motherboard boundary. Connect expansion cards through PCIe. Motherboard
+containment includes socketed CPU/DIMMs and onboard PCH/BMC/flash. Nest BIOS/UEFI
+in SPI flash, and show independent USB and dedicated Management NIC / LAN blocks.
+The BMC connects through that management NIC/PHY to Ethernet; shared-NIC management
+is an alternative. Rename only the common map's bus block to PCIe / I/O Interconnect.
+Keep CPU-to-RAM DDR separate. Show distinct NVMe/direct-PCIe and SATA/SAS-through-HBA
+SSD interface examples, not dual interfaces on one SSD. Retain PCH USB/SPI links
+and distinct dashed power/sideband paths.
+Keep platform variants in tooltips/accessibility descriptions. Do not add empty
+categories for these new context blocks or duplicate the CPU summary in another layer.
+Extend labeled HDMI/DisplayPort, host LAN/Ethernet, USB, BMC Management LAN, and
+PSU AC-input paths outside the chassis. Give external cable labels their own scene
+margin while keeping chassis dimensions and internal component slots stable.
+Fit hardware/system cameras to this margin and align reveal/conceal thresholds
+with the widened hardware view. Use concise connection captions, separate host
+and management LAN, and retain power/data direction and styling distinctions.
 HDD zooms into the existing storage block to reveal its enclosure, mechanical
 components, controller board, cache, and connectors. SSD zooms into its connected
 component map. RAM zooms into its server memory block and restores its common
@@ -448,12 +487,13 @@ peer-core blocks and their wires. The two CPU operation lessons reuse this packa
 Arrange shared components alongside the expanded core with visible communication
 paths. Add shared L3 cache, on-die interconnect, integrated
 memory and I/O controllers, clock/power/thermal control, package contacts, and a
-distinct CPU socket. Show bidirectional memory and I/O paths through the contacts
-and socket; separate power connections with dashed paths. Titles use component
+distinct CPU socket. Show bidirectional DDR, PCIe, and separate chipset-link paths
+through package/socket contacts; show reference-clock/reset inputs separately from
+dashed power connections. Titles use component
 names, with organization and placement limits in accessible descriptions. The
 socket is logically unfolded beside the package, not physically beside the die.
 Use explicit light-orange (#faf6ec) overrides in the static CPU preview for the
-three socket signal/power blocks, shared L3, on-die interconnect, memory/I/O
+five socket signal/power blocks, shared L3, on-die interconnect, memory/I/O
 controllers, front-end components, rename/RAT/dispatch/issue components,
 execution/retirement components, memory-access components, and cache/bus interface.
 Keep surrounding group colors, PRF, committed state, and L2 unchanged. Apply these

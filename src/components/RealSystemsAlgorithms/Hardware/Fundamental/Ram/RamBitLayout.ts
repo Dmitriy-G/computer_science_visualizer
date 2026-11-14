@@ -43,7 +43,11 @@ export class RamBitLayout {
     diagram.fixture('ram-detail-row-0', '', `Row 0: [${model.rows[0].join(' ')}]`, 2200, 475, '', 450, 28)
       .fixture('ram-detail-row-1', '', `Row 1: [${model.rows[1].join(' ')}]`, 2200, 760, '', 450, 24)
       .fixture('ram-detail-wordline', 'Wordline', model.wordline ? 'HIGH' : 'LOW', 1705, 545, '', 200, 40)
-    DramCellVisual.addChargeIndicator(diagram, 'ram-detail-charge', model.capacitorCharge, 2260, 625)
+    for (let index = 0; index < diagram.positions.length; index += 1) {
+      const position = diagram.positions[index]
+      diagram.positions[index] = { ...position, x: position.x + RamLayout.externalLeft }
+    }
+    DramCellVisual.addChargeIndicator(diagram, 'ram-detail-charge', model.capacitorCharge, 2260 + RamLayout.externalLeft, 625)
   }
 
   private static state(diagram: HardwareDiagram, id: string, value: string, x: number, y: number, width: number, height = 50): void {

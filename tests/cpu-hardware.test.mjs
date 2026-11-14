@@ -10,6 +10,7 @@ import { HardwareTrace } from '../src/components/RealSystemsAlgorithms/Hardware/
 import { CpuCoreLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CpuCore/CpuCoreLayout.ts'
 import { CpuLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Cpu/CpuLayout.ts'
 import { SystemOverviewLayout } from '../src/components/RealSystemsAlgorithms/SystemOverview/SystemOverviewLayout.ts'
+import { ServerHardwareLayout } from '../src/components/RealSystemsAlgorithms/SystemOverview/ServerHardwareLayout.ts'
 import { BranchPredictionAnimation } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/BranchPrediction/BranchPredictionAnimation.ts'
 import { OutOfOrderAnimation } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/OutOfOrder/OutOfOrderAnimation.ts'
 import { RegisterRenamingAnimation } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/RegisterRenaming/RegisterRenamingAnimation.ts'
@@ -284,7 +285,7 @@ test('CPU category preview expands the package while preserving the existing cor
   assert.equal(core.scene.layers?.length ?? 0, 0)
   assert.ok(cpu.scene.regions.every((region) => !/^cpu-core-\d+$/.test(region.id)))
   assert.equal(preview.count, CpuLayout.componentCount)
-  assert.ok(Math.abs(cpu.scene.width * cpu.scale - 660 * 1080 / 1560) < 0.0001)
+  assert.ok(Math.abs(cpu.scene.width * cpu.scale - ServerHardwareLayout.components.cpu.width * 1080 / ServerHardwareLayout.chassis.width) < 0.0001)
   assert.equal(core.scale, 1)
   assert.equal(core.scene.width, CpuCoreLayout.size)
   assert.equal(core.scene.height, CpuCoreLayout.size)
@@ -308,11 +309,15 @@ test('CPU category preview expands the package while preserving the existing cor
   assert.ok(core.y + core.scene.height <= die.y + die.height)
   const paths = new Map(cpu.scene.paths.map((path) => [path.id, path]))
   assert.ok(cpu.scene.paths.every((path) => !/^cpu-core-\d+-fabric$/.test(path.id)))
-  for (const id of ['cpu-core-fabric', 'cpu-cache-fabric', 'cpu-fabric-memory', 'cpu-fabric-io', 'cpu-memory-contacts', 'cpu-io-contacts', 'cpu-socket-memory', 'cpu-socket-io']) {
+  for (const id of ['cpu-core-fabric', 'cpu-cache-fabric', 'cpu-fabric-memory', 'cpu-fabric-io', 'cpu-memory-contacts', 'cpu-io-contacts', 'cpu-chipset-contacts', 'cpu-socket-memory', 'cpu-socket-io', 'cpu-socket-chipset']) {
     assert.equal(paths.get(id).bidirectional, true)
     assert.equal(paths.get(id).directed, true)
   }
   assert.equal(paths.get('cpu-socket-power-contacts').dashed, true)
+  for (const id of ['cpu-socket-clock-reset-contacts', 'cpu-contacts-clock-reset']) {
+    assert.equal(paths.get(id).directed, true)
+    assert.equal(paths.get(id).dashed, true)
+  }
   const ids = new Set(diagram.regions.map((region) => region.id))
   for (const id of ['instruction-tlb', 'data-tlb', 'rename-map', 'dispatch-allocation', 'architectural-state', 'l2-cache']) {
     assert.ok(ids.has(`component-${id}`))

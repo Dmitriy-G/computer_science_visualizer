@@ -53,6 +53,24 @@
    detail layer, preserve geometry/camera/scrolling, and show one directed transfer
    or local update per step. Keep explanatory narration in info dialogs and
    accessible descriptions, without renderer captions. Reset restores the static map.
+   CPU, RAM, GPU, and Network Adapter also show concise external port labels on
+   lines extending into side margins: CPU memory/I/O, RAM CPU/SoC and SPD context,
+   GPU PCIe and HDMI/DisplayPort, NIC PCIe and Ethernet, and each component's DC
+   supply. Preserve internal path/state alignment and the same framed scene during
+   lessons and Reset. Keep these port labels distinct from explanatory narration.
+   Label GPU/NIC PCIe connectors and host lines PCIe / DMA. In RAM, show device
+   DMA entering a CPU/SoC PCIe root complex and then the memory controller, separate
+   from CPU requests and SPD traffic. The memory controller still reaches the DIMM
+   over DDR; PCIe terminates in host I/O, not on the DIMM itself. Identify DMA on
+   the CPU PCIe lane link as device DMA traffic, with a separate chipset link
+   labeled Intel DMI / equivalent. DMA uses an existing supported interconnect,
+   not a separate physical channel. Add a Clock / Reset socket block and separate
+   reference-clock/reset input lines through contacts to on-die management logic.
+   Clarify that socket groups are electrical contacts and controllers are inside
+   the CPU; DDR channels connect its integrated memory controller to RAM. CPU
+   software configures DMA engines and those engines transfer payloads; retain
+   shared PCIe control traffic and platform-specific signal limits in accessible labels.
+   Bus/HDD/SSD interfaces remain as implemented.
    GPU VRAM expands a representative GDDR chip/die/bank with row/column decoders,
    row-buffer sense amplifiers, refresh, I/O, and a magnified 1T1C cell showing its
    access transistor and storage capacitor. Keep this shared geometry in both lessons.
@@ -82,8 +100,22 @@
    its flat workspace directly.
    Keep separate information buttons and start no lesson playback until an overview
    is selected. Category navigation renders a client, abstract network, and server
-   at System Components Overview. Hardware Fundamental zooms into that server to reveal CPU,
-   RAM, bus, HDD, SSD, GPU, and network adapter; CPU zooms into the same CPU block
+   at System Components Overview. Hardware Fundamental zooms into the server chassis,
+   showing Motherboard alongside discrete GPU/host NIC expansion cards, optional
+   RAID/HBA card, PSU, and HDD/SSD drive bays. The Motherboard contains CPU, RAM,
+   PCIe / I/O Interconnect, PCH, BMC/IPMI, SPI flash with nested BIOS/UEFI, independent
+   USB ports, and a dedicated Management NIC / LAN block. Connect the GPU and other
+   cards through PCIe; keep the direct CPU-to-RAM DDR channel separate. Show separate
+   SSD interface examples for NVMe/direct PCIe and SATA/SAS through the optional HBA.
+   BMC management Ethernet uses its dedicated NIC/PHY; shared host-NIC management is
+   an alternative, and USB remains a separate PCH function. Host firmware flash also
+   connects through PCH. Distinguish dashed PSU/standby-power and management-sideband
+   links from data; note platform variants in accessible descriptions.
+   Keep component and port labels on the diagram. Extend external lines for GPU
+   HDMI/DisplayPort, host LAN/Ethernet, USB, BMC Management LAN, and PSU AC input
+   beyond the chassis, with their labels in a dedicated scene margin. Fit the
+   widened camera to those labels and fully reveal the map, preserving internal
+   placement slots for existing detail zooms. CPU zooms into the same CPU block
    to reveal the common core map. Use continuous SVG camera movement and reveal
    nested details as they grow, with reduced-motion support. Algorithms browsing
    leaves the diagram unchanged. Hardware Fundamental and Complex share the

@@ -2,6 +2,7 @@ import type { HardwareDiagram } from '../../../../../visualization/HardwareDiagr
 import { ComponentFlowTrace } from '../ComponentFlowTrace.ts'
 import { DramCellVisual } from '../DramCellVisual.ts'
 import { GpuVramModel } from './GpuVramModel.ts'
+import { GpuLayout } from './GpuLayout.ts'
 import type { GpuVramBuffer } from './GpuVramModel.ts'
 
 export class GpuVramTrace extends ComponentFlowTrace {
@@ -25,8 +26,8 @@ export class GpuVramTrace extends ComponentFlowTrace {
       const position = diagram.positions[index]
       if (position.id === 'gpu-vram-transistor-state' || position.id === 'gpu-vram-capacitor-state') diagram.positions[index] = { ...position, height: 24 }
     }
-    diagram.fixture('gpu-vram-bitline-state', '', DramCellVisual.bitlineLabel(this.memory.bitlineLevel), 2930, 815, '', 380, 34)
-    DramCellVisual.addChargeIndicator(diagram, 'gpu-vram-charge', this.memory.capacitorCharge, 2975, 620)
+    diagram.fixture('gpu-vram-bitline-state', '', DramCellVisual.bitlineLabel(this.memory.bitlineLevel), 2930 + GpuLayout.externalLeft, 815, '', 380, 34)
+    DramCellVisual.addChargeIndicator(diagram, 'gpu-vram-charge', this.memory.capacitorCharge, 2975 + GpuLayout.externalLeft, 620)
   }
 
   public read(id: string): GpuVramBuffer {

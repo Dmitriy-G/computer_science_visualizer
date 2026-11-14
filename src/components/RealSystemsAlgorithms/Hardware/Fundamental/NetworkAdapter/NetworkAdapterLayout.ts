@@ -1,8 +1,10 @@
 import { HardwareDiagram } from '../../../../../visualization/HardwareDiagram.ts'
 import type { Scene, SceneRegion } from '../../../../../visualization/Scene.ts'
+import { HardwareDiagramFrame } from '../../../../../visualization/HardwareDiagramFrame.ts'
 
 export class NetworkAdapterLayout {
-  public static readonly width = 2600
+  public static readonly externalLeft = 550
+  public static readonly width = 2600 + this.externalLeft + 500
   public static readonly height = 1400
   public static readonly componentCount = 9
 
@@ -16,9 +18,9 @@ export class NetworkAdapterLayout {
   }
 
   public static diagram(): HardwareDiagram {
-    const diagram = new HardwareDiagram(this.width, this.height)
+    const diagram = new HardwareDiagram(2600, this.height)
     diagram.region('nic-board', 'Network adapter / logical PCIe Ethernet example, not a manufacturer floorplan. Functions can share silicon. USB adapters use a different host interface; Wi-Fi adapters use radio/baseband circuitry and antennas instead of this Ethernet physical connection', 'device', 20, 20, 2560, 1360, 'system', undefined, 'Network adapter / Ethernet example')
-      .region('nic-host-connector', 'Host connector / connects the adapter to the computer; PCIe is shown, while some adapters connect through USB or are integrated into the platform', 'interconnect', 60, 600, 260, 220, 'component', 'nic-board', 'PCIe connector')
+      .region('nic-host-connector', 'Host PCIe connector / carries receive DMA writes and transmit DMA reads to/from mapped host RAM, plus configuration, descriptors, and completions. DMA uses PCIe rather than a separate cable. USB and integrated adapters have different host interfaces', 'interconnect', 60, 600, 260, 220, 'component', 'nic-board', 'PCIe / DMA')
       .region('nic-controller', 'Network controller / coordinates sending and receiving frames. Host interface, DMA, buffers, MAC, and offload blocks are logical functions and can be integrated into the same controller chip', 'cpu', 400, 160, 1420, 1140, 'component', 'nic-board', 'Network controller')
       .region('nic-firmware', 'Firmware and configuration memory / stores adapter configuration, such as the assigned MAC address, and firmware where supported. Internal or external memory organization varies', 'memory', 440, 300, 520, 150, 'component', 'nic-controller', 'Firmware / configuration memory')
       .region('nic-control', 'Control and queue management / coordinates transmit and receive queues, descriptor processing, device configuration, and completion notifications to the host', 'device', 1100, 300, 680, 150, 'component', 'nic-controller', 'Control / queue management')
@@ -33,7 +35,13 @@ export class NetworkAdapterLayout {
       .region('nic-offload', 'Optional offload engines / accelerate supported tasks such as IP/TCP/UDP checksums and transmit segmentation. Capabilities vary; offloads assist packet processing rather than replacing the MAC or PHY', 'device', 800, 1040, 640, 180, 'component', 'nic-controller', 'Checksum / segmentation offloads (optional)')
     this.connect(diagram)
     this.applyColors(diagram)
-    return diagram
+    const framed = HardwareDiagramFrame.create(diagram, this.externalLeft, 500)
+    framed.paths.push(
+      { id: 'nic-external-host', d: 'M610 710H40', label: 'PCIe / DMA / the adapter DMA engine reads transmit data from mapped host RAM and writes receive data into it through this host link. Descriptors, control, and completions also use PCIe', directed: true, bidirectional: true, highlighted: false, caption: { text: 'PCIe / DMA', x: 60, y: 688 } },
+      { id: 'nic-external-network', d: 'M3090 710H3610', label: 'Ethernet connector or optical module to the external LAN / bidirectional link for transmit and receive', directed: true, bidirectional: true, highlighted: false, caption: { text: 'LAN / Ethernet', x: 3180, y: 688 } },
+      { id: 'nic-external-power', d: 'M40 1100H570', label: 'DC power from the motherboard PCIe slot enters the adapter board / local distribution and regulation are abstracted', directed: true, dashed: true, stroke: '#b58a45', highlighted: false, caption: { text: 'PCIe slot DC power', x: 60, y: 1078 } },
+    )
+    return framed
   }
 
   private static connect(diagram: HardwareDiagram): void {

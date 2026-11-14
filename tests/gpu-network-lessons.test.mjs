@@ -166,6 +166,11 @@ for (const [kind, layout] of [
       const expectedRegions = common.regions.map((region) => region.id.startsWith('gpu-vram')
         ? { ...region, shortLabel: region.shortLabel.replace(/\s*\(~[^)]*\)/g, '') } : region)
       assert.deepEqual(step.scene.regions, expectedRegions)
+      if (kind.startsWith('gpu-')) {
+        const region = step.scene.regions.find((candidate) => candidate.id === 'gpu-vram-capacitor')
+        const state = step.scene.nodes.find((candidate) => candidate.id === 'gpu-vram-capacitor-state')
+        assert.equal(state.x, region.x + region.width / 2, 'VRAM state follows the framed component')
+      }
       assert.equal(step.scene.width, common.width)
       assert.equal(step.scene.height, common.height)
       assert.ok(step.scene.paths.filter((path) => path.highlighted).length <= 1)

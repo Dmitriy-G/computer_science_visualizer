@@ -47,14 +47,69 @@ The preview zooms into the existing hardware bus bar and uses the shared rendere
 opaque palettes, schematic titles, Fit/Actual size, reduced-motion handling,
 and focused-layer filtering. The header menu returns to Hardware Fundamental.
 System Components Overview displays a client, abstract network, and server.
-Hardware Fundamental moves the SVG camera into that
-server, revealing CPU, RAM, bus, HDD, SSD, GPU, and network adapter. CPU moves
+Hardware Fundamental moves the SVG camera into that server. ServerHardwareLayout
+owns the shared chassis map and the component slots used for subsequent zooms.
+The chassis contains the Motherboard, discrete GPU and host Network Adapter
+expansion cards, an optional RAID/HBA card, PSU, and HDD/SSD drive bays. Draw the
+cards physically outside the Motherboard boundary and connect them through PCIe.
+The Motherboard contains socketed CPU/RAM, PCIe / I/O Interconnect, Chipset/PCH,
+BMC, SPI flash, independent USB ports, and a dedicated Management NIC / LAN block.
+BIOS/UEFI nests inside SPI flash. BMC is the management processor; IPMI is an
+interface it implements. The BMC reaches management Ethernet through the dedicated
+NIC/PHY; shared-host-NIC management is a documented alternative, not a USB function.
+The SSD group shows two interface examples: NVMe directly on PCIe host I/O and
+SATA/SAS through the optional SAS/SATA RAID/HBA. These are distinct endpoint
+examples, not simultaneous connections to one drive. RAM uses a separately
+labeled direct CPU DDR connection. Host USB and SPI flash connect to the PCH.
+Dashed amber paths distinguish PSU and standby power from
+data paths; a separate dashed sideband connects PCH/BMC. Short component names
+appear in the renderer, with topology details in tooltips/accessibility text.
+Five labeled cables extend beyond the chassis into a dedicated right margin:
+GPU HDMI/DisplayPort output, host LAN/Ethernet, USB, dedicated BMC Management LAN,
+and AC power input to the PSU. Network and USB links are bidirectional, display
+is output-only, and the dashed amber AC input points toward the PSU. Keep the
+1560-unit chassis and internal zoom slots separate from the wider 2000-unit scene.
+The hardware camera fits the external labels and fully reveals the map; system
+camera bounds also include the extra margin. Only concise port labels appear on
+the cables, with explanations retained in tooltips/accessibility descriptions.
+CPU, RAM, GPU, and Network Adapter maps use the same labeled external-line style.
+HardwareDiagramFrame adds side margins while preserving internal coordinates via
+ScenePath.translateX and matching region/state offsets. CPU exposes DDR channels,
+separate PCIe lanes and chipset uplink, reference-clock/reset inputs, and motherboard
+DC power. The socket's memory, PCIe, chipset, clock/reset, and power groups are
+electrical contacts; memory and I/O controllers remain inside the CPU die.
+RAM exposes CPU/SoC request context,
+SPD platform context, and DIMM DC power; its existing controller-to-socket DDR
+paths remain distinct. GPU exposes host PCIe, HDMI/DisplayPort, and slot/auxiliary
+DC input. Network Adapter exposes host PCIe, external Ethernet LAN, and slot DC.
+GPU and NIC PCIe connectors and external lines explicitly say PCIe / DMA. The
+CPU PCIe caption reads "PCIe lanes (device DMA traffic)" on two lines; its separate
+chipset caption identifies Intel DMI or a platform-specific equivalent. DMA uses
+an existing supported interconnect and is not another physical channel. Reference
+clock (such as BCLK) and reset inputs reach on-die management logic via distinct
+socket/package control paths; exact signals and platform availability vary.
+RAM adds a separate PCIe / DMA ingress
+through an external CPU/SoC root-complex context block into the memory controller;
+the DIMM socket remains DDR and has no PCIe connector. DMA shares PCIe with control
+traffic, while software prepares buffers and address mappings. This distinction
+follows the [Linux DMA mapping guide](https://docs.kernel.org/core-api/dma-api-howto.html).
+RAM/VRAM state pills and charge indicators follow the same offsets during playback.
+Bus, HDD, and SSD component diagrams retain their existing external interfaces.
+The example follows the motherboard organization in
+[Supermicro's X12DPG-U6 manual](https://www.supermicro.com/manuals/motherboard/X12/MNL-2365.pdf)
+and the chassis/management-port arrangement in
+[Dell's PowerEdge T620 manual](https://www.dell.com/support/manuals/en-in/poweredge-t620/t620ownersmanual-v3/back-panel-features-and-indicators?guid=guid-85b7434c-b809-49aa-be48-64863c20a5e2&lang=en-us).
+NVMe attachment follows [NVM Express's PCIe transport description](https://nvmexpress.org/specification/nvme-over-pcie-transport-specification/);
+dedicated/shared management arrangements follow
+[Supermicro's management interface guidance](https://www.supermicro.com/en/support/faqs/faq.php?faq=21188).
+Existing component categories and detail diagrams remain available. CPU moves
 closer into the same nested CPU block, revealing CpuLayout's static package map.
 Its illustrative single-die, four-core example expands one representative core
 using the existing core geometry, titled "Cores (~4 per die)". It shows no empty
 peer-core blocks. Surrounding components include shared L3 cache, on-die
 interconnect, integrated memory and I/O controllers, clock/power/thermal control,
-package contacts, and a separate CPU socket with memory, I/O, and power connections.
+package contacts, and a separate electrical CPU socket with DDR memory, PCIe,
+chipset-link, reference-clock/reset, and power connections.
 The socket is drawn beside the package for clarity; physically it sits underneath.
 Core count, cache organization, packaging, and interfaces vary between processors;
 the map is logical rather than a manufacturer floorplan. Cache and controller

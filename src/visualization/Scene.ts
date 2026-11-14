@@ -64,6 +64,7 @@ export interface SceneRegion {
 export interface ScenePath {
   readonly id: string
   readonly d: string
+  readonly translateX?: number
   readonly label: string
   readonly highlighted: boolean
   readonly directed?: boolean

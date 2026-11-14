@@ -120,6 +120,9 @@ test('both RAM animations retain common geometry/colors, fixed bounds, and indep
         assert.deepEqual(step.scene.regions.find((candidate) => candidate.id === region.id), expected)
       }
       assert.ok(step.scene.regions.every((region) => !region.shortLabel.includes('(~')))
+      const capacitor = step.scene.regions.find((region) => region.id === 'ram-capacitor')
+      const capacitorState = step.scene.nodes.find((node) => node.id === 'ram-state-capacitor')
+      assert.equal(capacitorState.x, capacitor.x + capacitor.width / 2, 'cell state follows the framed RAM diagram')
       for (const node of step.scene.nodes) {
         assert.ok(node.x - node.width / 2 >= 0 && node.x + node.width / 2 <= common.width)
         assert.ok(node.y - node.height / 2 >= 0 && node.y + node.height / 2 <= common.height)
