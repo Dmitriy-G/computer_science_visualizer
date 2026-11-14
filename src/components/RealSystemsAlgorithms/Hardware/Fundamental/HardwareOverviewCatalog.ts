@@ -12,6 +12,7 @@ import { HddAlgorithmCatalog } from './Hdd/HddAlgorithmCatalog.ts'
 import { SsdAlgorithmCatalog } from './Ssd/SsdAlgorithmCatalog.ts'
 import { GpuAlgorithmCatalog } from './Gpu/GpuAlgorithmCatalog.ts'
 import { NetworkAdapterAlgorithmCatalog } from './NetworkAdapter/NetworkAdapterAlgorithmCatalog.ts'
+import { BusAlgorithmCatalog } from './Bus/BusAlgorithmCatalog.ts'
 
 export class HardwareOverviewCatalog {
   public static readonly choices: readonly HardwareOverviewChoice[] = [
@@ -21,10 +22,12 @@ export class HardwareOverviewCatalog {
     ...CpuAlgorithmCatalog.choices,
     ...GpuAlgorithmCatalog.choices,
     ...NetworkAdapterAlgorithmCatalog.choices,
+    ...BusAlgorithmCatalog.choices,
   ]
 
   public static definition(kind: HardwareOverviewKind): ActionDefinition<HardwareSnapshot> {
     switch (kind) {
+      case 'bus-network-byte-to-ssd': return BusAlgorithmCatalog.definition(kind)
       case 'gpu-frame-rendering':
       case 'gpu-hashcat-iteration':
         return GpuAlgorithmCatalog.definition(kind)
@@ -50,6 +53,7 @@ export class HardwareOverviewCatalog {
 
   public static describeOverview(kind: HardwareOverviewKind): SystemOverviewInformation {
     switch (kind) {
+      case 'bus-network-byte-to-ssd': return BusAlgorithmCatalog.describeOverview(kind)
       case 'gpu-frame-rendering':
       case 'gpu-hashcat-iteration':
         return GpuAlgorithmCatalog.describeOverview(kind)
@@ -75,6 +79,7 @@ export class HardwareOverviewCatalog {
 
   public static describe(kind: HardwareOverviewKind): AlgorithmInformation {
     switch (kind) {
+      case 'bus-network-byte-to-ssd': return BusAlgorithmCatalog.describe(kind)
       case 'gpu-frame-rendering':
       case 'gpu-hashcat-iteration':
         return GpuAlgorithmCatalog.describe(kind)
@@ -106,11 +111,13 @@ export class HardwareOverviewCatalog {
       case 'hardware-ssd': return SsdAlgorithmCatalog.choices
       case 'hardware-gpu': return GpuAlgorithmCatalog.choices
       case 'hardware-network-adapter': return NetworkAdapterAlgorithmCatalog.choices
+      case 'hardware-bus': return BusAlgorithmCatalog.choices
     }
   }
 
   public static groupFor(kind: HardwareOverviewKind): HardwareFundamentalGroupKind {
     switch (kind) {
+      case 'bus-network-byte-to-ssd': return 'hardware-bus'
       case 'gpu-frame-rendering':
       case 'gpu-hashcat-iteration':
         return 'hardware-gpu'

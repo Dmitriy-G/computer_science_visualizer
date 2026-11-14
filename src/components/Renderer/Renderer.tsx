@@ -368,7 +368,8 @@ export default class Renderer extends Component<
     const ram = scene.regions?.some((region) => region.id === 'ram-pcb') ?? false
     const gpu = scene.regions?.some((region) => region.id === 'gpu-board') ?? false
     const networkAdapter = scene.regions?.some((region) => region.id === 'nic-board') ?? false
-    const schematic = cpu || hdd || ssd || ram || gpu || networkAdapter
+    const bus = scene.regions?.some((region) => region.id === 'bus-fabric') ?? false
+    const schematic = cpu || hdd || ssd || ram || gpu || networkAdapter || bus
     for (const region of scene.regions ?? []) elements.push(this.renderRegion(region))
     for (const slot of scene.slots ?? []) elements.push(this.renderSlot(slot))
     for (const node of scene.nodes) nodeMap.set(node.id, node)

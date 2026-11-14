@@ -1,6 +1,6 @@
 import type { OverviewComponentKind, OverviewDeviceKind } from '../../visualization/OverviewComponent.ts'
 
-export type HardwareFundamentalGroupKind = 'hardware-cpu' | 'hardware-hdd' | 'hardware-ssd' | 'hardware-ram' | 'hardware-gpu' | 'hardware-network-adapter'
+export type HardwareFundamentalGroupKind = 'hardware-cpu' | 'hardware-hdd' | 'hardware-ssd' | 'hardware-ram' | 'hardware-gpu' | 'hardware-network-adapter' | 'hardware-bus'
 export type HardwareOverviewGroupKind = HardwareFundamentalGroupKind | 'hardware-complex'
 
 export type AdvancedAlgorithmGroupKind =
@@ -28,7 +28,7 @@ export interface AdvancedAlgorithmGroup {
 
 export class AdvancedAlgorithmCatalog {
   public static readonly groups: readonly AdvancedAlgorithmGroup[] = [
-    { kind: 'hardware-fundamental', parent: null, name: 'Hardware Fundamental', description: 'Explore CPU, disks, RAM, GPU, and network adapter components.' },
+    { kind: 'hardware-fundamental', parent: null, name: 'Hardware Fundamental', description: 'Explore processors, memory, storage, network adapters, and interconnects.' },
     { kind: 'hardware-complex', parent: null, name: 'Complex', description: 'Combine hardware components into systems, such as caching between CPU and memory.' },
     { kind: 'network', parent: null, name: 'Network', description: 'Explore individual OSI layers and mechanisms that combine layers into working networks.' },
     { kind: 'hardware-cpu', parent: 'hardware-fundamental', name: 'CPU', description: 'Follow a non-atomic increment and an atomic word load through a CPU core.', component: 'CPU' },
@@ -37,6 +37,7 @@ export class AdvancedAlgorithmCatalog {
     { kind: 'hardware-ram', parent: 'hardware-fundamental', name: 'RAM', description: 'Follow writing and reading one selected bit through a DRAM module.', component: 'RAM' },
     { kind: 'hardware-gpu', parent: 'hardware-fundamental', name: 'GPU', description: 'Follow one rendered frame and one Hashcat candidate through the GPU.', component: 'GPU' },
     { kind: 'hardware-network-adapter', parent: 'hardware-fundamental', name: 'Network Adapter', description: 'Follow minimal Ethernet transfers from server to network and network to server.', component: 'Network Adapter' },
+    { kind: 'hardware-bus', parent: 'hardware-fundamental', name: 'Bus/Interconnect', description: 'Follow a received network byte through RAM and the CPU into an SSD write.', component: 'Bus' },
     { kind: 'network-fundamental', parent: 'network', name: 'Fundamental', description: 'Overviews focused on one OSI layer and the tasks it performs.' },
     { kind: 'network-complex', parent: 'network', name: 'Complex', description: 'Combine network layers into working systems, such as secure web communication.' },
     { kind: 'physical', parent: 'network-fundamental', name: 'Physical', description: 'Layer 1: transmit bits as physical signals.' },
@@ -64,7 +65,7 @@ export class AdvancedAlgorithmCatalog {
   }
 
   public static isHardwareFundamentalGroup(kind: AdvancedAlgorithmGroupKind | null): kind is HardwareFundamentalGroupKind {
-    return kind === 'hardware-cpu' || kind === 'hardware-hdd' || kind === 'hardware-ssd' || kind === 'hardware-ram' || kind === 'hardware-gpu' || kind === 'hardware-network-adapter'
+    return kind === 'hardware-cpu' || kind === 'hardware-hdd' || kind === 'hardware-ssd' || kind === 'hardware-ram' || kind === 'hardware-gpu' || kind === 'hardware-network-adapter' || kind === 'hardware-bus'
   }
 
   public static fundamentalGroupFor(components: readonly OverviewComponentKind[], devices: readonly OverviewDeviceKind[] = []): HardwareFundamentalGroupKind {

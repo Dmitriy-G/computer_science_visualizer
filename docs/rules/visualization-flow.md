@@ -20,8 +20,28 @@
    **Data Structures Algorithms**, and **Advanced Data Structures**, in that order.
    These category lists are excluded from alphabetical menu ordering. System Components Overview
    opens Hardware Fundamental, Complex, and Network in that fixed order.
-   Hardware Fundamental opens CPU, HDD, SSD, RAM, GPU, and Network Adapter directly in that order.
+   Hardware Fundamental opens CPU, HDD, SSD, RAM, GPU, Network Adapter, and Bus/Interconnect directly in that order.
    Network retains Fundamental and Complex subcategories.
+   Bus/Interconnect closes the menu and zooms from the hardware bus bar into a
+   static logical component diagram. Show ports, links, protocol controllers,
+   address decoding/routing, arbitration, switching, queues, flow control,
+   bridging, clock/reset/synchronization, error handling, and optional coherence.
+   Give CPU, GPU, RAM, HDD, SSD, and Network Adapter separate external blocks and
+   ports, connected through multiple switch branches. Mark bridge/adapter optional
+   for protocol/interface adaptation and retain a direct route. Distinguish
+   memory-mapped address decoding from destination-ID routing and explain that
+   arbitration resolves contention for shared resources.
+   Use the shared schematic styles, focused-layer filtering, and view controls.
+   Offer one Network byte to SSD overview card and start playback only on selection.
+   Follow a minimal Ethernet frame carrying SAVE, offset 7, data 0x41 through
+   adapter DMA to RAM, CPU parsing and preparation of an already loaded 512-byte
+   block, an SSD doorbell, SSD DMA read, nonvolatile FUA commitment, and completion
+   through RAM back to the CPU. Preserve neighboring block bytes. Reuse the same
+   diagram geometry, camera, and view controls with one directed transfer or
+   local update per event and compact device states. Keep narration in info and
+   accessible descriptions, abstract queue fetches/CPU read requests/SSD internals,
+   leave GPU/HDD/optional bridge idle, and restore the static map on Reset.
+   The header menu returns to Hardware Fundamental and its hardware preview.
    GPU and Network Adapter close the menu and zoom directly into their maps,
    with two overview cards each and no automatic playback until one is selected.
    GPU offers Render one frame and Hashcat: one candidate iteration; Network

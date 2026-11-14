@@ -27,6 +27,12 @@ export class ComponentFlowTrace extends HardwareTrace {
     this.capture(title, description, null, destination)
   }
 
+  public signal(path: string, title: string, description: string, reverse = false): void {
+    const connection = this.diagram.paths.find((candidate) => candidate.id === path)
+    if (!connection || reverse && !connection.bidirectional) throw new Error(`Invalid component transfer: ${path}`)
+    this.capture(title, description, path, null, reverse)
+  }
+
   public finish(title: string, description: string): void { this.capture(title, description, null, null, false, 2) }
 
   public static present(scene: Scene, preview: Scene, componentLayer: string): Scene {

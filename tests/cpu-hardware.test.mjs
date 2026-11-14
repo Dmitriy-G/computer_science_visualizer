@@ -325,7 +325,7 @@ test('CPU category preview expands the package while preserving the existing cor
 })
 
 test('focused hardware previews exclude unrelated detailed component layers', () => {
-  for (const level of ['cpu', 'hdd', 'ssd', 'ram', 'gpu', 'network-adapter']) {
+  for (const level of ['cpu', 'hdd', 'ssd', 'ram', 'gpu', 'network-adapter', 'bus']) {
     const preview = SystemOverviewLayout.create(level, null)
     assert.deepEqual(preview.layers.filter((layer) => layer.id.endsWith('-components')).map((layer) => layer.id), [`${level}-components`])
     const layer = preview.layers.find((candidate) => candidate.id === `${level}-components`)

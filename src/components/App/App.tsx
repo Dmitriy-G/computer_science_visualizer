@@ -289,6 +289,7 @@ import CpuWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Cpu/CpuW
 import RamWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Ram/RamWorkspace.tsx'
 import GpuWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Gpu/GpuWorkspace.tsx'
 import NetworkAdapterWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/NetworkAdapter/NetworkAdapterWorkspace.tsx'
+import BusWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Bus/BusWorkspace.tsx'
 import SsdWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Ssd/SsdWorkspace.tsx'
 import HddWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Hdd/HddWorkspace.tsx'
 import { HardwareOverviewCatalog } from '../RealSystemsAlgorithms/Hardware/Fundamental/HardwareOverviewCatalog.ts'
@@ -498,6 +499,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         'hardware-fundamental': 'hardware', 'hardware-complex': 'hardware',
         'hardware-cpu': 'cpu', 'hardware-hdd': 'hdd', 'hardware-ssd': 'ssd',
         'hardware-ram': 'ram', 'hardware-gpu': 'gpu', 'hardware-network-adapter': 'network-adapter',
+        'hardware-bus': 'bus',
       } as const
       const level = levels[group]
       this.showSystemCategory(menu, SystemOverviewLayout.create(level, this.currentDiagram()), hardwareOverview !== null)
@@ -560,6 +562,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     const previews = {
       'hardware-cpu': 'cpu', 'hardware-hdd': 'hdd', 'hardware-ssd': 'ssd',
       'hardware-ram': 'ram', 'hardware-gpu': 'gpu', 'hardware-network-adapter': 'network-adapter',
+      'hardware-bus': 'bus',
     } as const
     const preview = previews[group]
     this.setState({
@@ -600,6 +603,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       case 'hardware-ram': return <RamWorkspace key="component-ram" ref={this.setComponentWorkspace} {...props} />
       case 'hardware-gpu': return <GpuWorkspace key="component-gpu" ref={this.setComponentWorkspace} {...props} />
       case 'hardware-network-adapter': return <NetworkAdapterWorkspace key="component-network-adapter" ref={this.setComponentWorkspace} {...props} />
+      case 'hardware-bus': return <BusWorkspace key="component-bus" ref={this.setComponentWorkspace} {...props} />
       case 'hardware-ssd': return <SsdWorkspace key={key} ref={this.setComponentWorkspace} {...props} />
       case 'hardware-hdd': return <HddWorkspace key={key} ref={this.setComponentWorkspace} {...props} />
       default: return null

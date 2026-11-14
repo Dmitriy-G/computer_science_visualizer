@@ -5,8 +5,9 @@ import { SsdLayout } from '../Hardware/Fundamental/Ssd/SsdLayout.ts'
 import { RamLayout } from '../Hardware/Fundamental/Ram/RamLayout.ts'
 import { GpuLayout } from '../Hardware/Fundamental/Gpu/GpuLayout.ts'
 import { NetworkAdapterLayout } from '../Hardware/Fundamental/NetworkAdapter/NetworkAdapterLayout.ts'
+import { BusLayout } from '../Hardware/Fundamental/Bus/BusLayout.ts'
 
-type SystemOverviewComponent = 'cpu' | 'hdd' | 'ssd' | 'ram' | 'gpu' | 'network-adapter'
+type SystemOverviewComponent = 'cpu' | 'hdd' | 'ssd' | 'ram' | 'gpu' | 'network-adapter' | 'bus'
 type SystemOverviewLevel = 'system' | 'hardware' | SystemOverviewComponent
 
 export class SystemOverviewLayout {
@@ -17,15 +18,16 @@ export class SystemOverviewLayout {
   private static readonly ram = { x: 825, y: 125, width: 640, height: 240 }
   private static readonly gpu = { x: 825, y: 465, width: 640, height: 260 }
   private static readonly networkAdapter = { x: 1045, y: 1075, width: 420, height: 220 }
+  private static readonly bus = { x: 75, y: 855, width: 1390, height: 100 }
   private static readonly layouts = {
     cpu: CpuLayout, hdd: HddLayout, ssd: SsdLayout, ram: RamLayout,
-    gpu: GpuLayout, 'network-adapter': NetworkAdapterLayout,
+    gpu: GpuLayout, 'network-adapter': NetworkAdapterLayout, bus: BusLayout,
   }
 
   private static componentPlacement(level: SystemOverviewComponent): { x: number, y: number, scale: number } {
     const devices = {
       cpu: { x: this.cpu.x, y: this.cpu.y, width: this.cpu.size, height: this.cpu.size },
-      hdd: this.hdd, ssd: this.ssd, ram: this.ram, gpu: this.gpu, 'network-adapter': this.networkAdapter,
+      hdd: this.hdd, ssd: this.ssd, ram: this.ram, gpu: this.gpu, 'network-adapter': this.networkAdapter, bus: this.bus,
     }
     const device = devices[level]
     const layout = this.layouts[level]
@@ -74,7 +76,8 @@ export class SystemOverviewLayout {
     const ramScene = RamLayout.create()
     const gpuScene = GpuLayout.create()
     const networkAdapterScene = NetworkAdapterLayout.create()
-    const scenes = { cpu: cpuScene, hdd: hddScene, ssd: ssdScene, ram: ramScene, gpu: gpuScene, 'network-adapter': networkAdapterScene }
+    const busScene = BusLayout.create()
+    const scenes = { cpu: cpuScene, hdd: hddScene, ssd: ssdScene, ram: ramScene, gpu: gpuScene, 'network-adapter': networkAdapterScene, bus: busScene }
     const componentScene = level === 'system' || level === 'hardware' ? null : scenes[level]
     const layers: SceneLayer[] = [
       {
@@ -125,6 +128,10 @@ export class SystemOverviewLayout {
         id: 'network-adapter-components', scene: networkAdapterScene, ...this.componentPlacement('network-adapter'),
         reveal: { startWidth: 600, endWidth: 320 },
       },
+      {
+        id: 'bus-components', scene: busScene, ...this.componentPlacement('bus'),
+        reveal: { startWidth: 600, endWidth: 160 },
+      },
     ]
     const focusedLayers: SceneLayer[] = []
     const focused = componentScene ? `${level}-components` : null
@@ -164,7 +171,7 @@ export class SystemOverviewLayout {
     const components: readonly [string, string, string, number, number, number, number][] = [
       ['ram', 'RAM', 'Main memory', this.ram.x + this.ram.width / 2, this.ram.y + this.ram.height / 2, this.ram.width, this.ram.height],
       ['gpu', 'GPU', 'Graphics / parallel compute', this.gpu.x + this.gpu.width / 2, this.gpu.y + this.gpu.height / 2, this.gpu.width, this.gpu.height],
-      ['bus', 'Bus / interconnect', 'Connects processor, memory and devices', 770, 905, 1390, 100],
+      ['bus', 'Bus / interconnect', 'Connects processor, memory and devices', this.bus.x + this.bus.width / 2, this.bus.y + this.bus.height / 2, this.bus.width, this.bus.height],
       ['hdd', 'HDD', 'Magnetic storage', this.hdd.x + this.hdd.width / 2, this.hdd.y + this.hdd.height / 2, this.hdd.width, this.hdd.height],
       ['ssd', 'SSD', 'Flash storage', this.ssd.x + this.ssd.width / 2, this.ssd.y + this.ssd.height / 2, this.ssd.width, this.ssd.height],
       ['network-adapter', 'Network Adapter', 'Network connection', this.networkAdapter.x + this.networkAdapter.width / 2, this.networkAdapter.y + this.networkAdapter.height / 2, this.networkAdapter.width, this.networkAdapter.height],

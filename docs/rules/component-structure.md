@@ -264,12 +264,33 @@ Keep the System Components Overview category hierarchy in
 `MainMenu/AdvancedAlgorithmCatalog.ts`, separate from structure membership and
 data-structure algorithm scopes. The overview root contains Hardware Fundamental,
 Complex, and Network in that fixed order. Hardware Fundamental opens CPU, HDD,
-SSD, RAM, GPU, and Network Adapter directly in that fixed order. Network retains Fundamental and Complex,
+SSD, RAM, GPU, Network Adapter, and Bus/Interconnect directly in that fixed order. Network retains Fundamental and Complex,
 in that order. GPU and Network Adapter close MainMenu and show their common maps
 with two overview cards each. Keep their class-based layouts in
 Hardware/Fundamental/Gpu/GpuLayout.ts and
 Hardware/Fundamental/NetworkAdapter/NetworkAdapterLayout.ts, reusing HardwareDiagram,
 Renderer schematic titles/palettes, and SystemOverviewLayout's focused layers and camera.
+Bus/Interconnect closes MainMenu and shows BusLayout's diagram with one overview
+card, Network byte to SSD. Start playback only when the card is selected.
+Keep the implemented layout in Hardware/Fundamental/Bus/BusLayout.ts and reuse
+HardwareDiagram, schematic colors/titles, Fit/Actual size, and camera navigation.
+Expand the existing hardware bus bar through the bus-components detail layer.
+Depict all twelve logical component groups, label cache coherence and bridge/adapter
+optional, and distinguish direct and bridged payload routes from dashed support/control
+paths. Show separate CPU, GPU, RAM, HDD, SSD, and Network Adapter external blocks
+and interface ports with multiple switch branches. Clarify memory-mapped address
+decoding versus destination-ID routing, and arbitration for shared-resource contention.
+BusAlgorithmCatalog and BusWorkspace own its single action in NetworkByteToSsd/,
+with a model, animation, React component/CSS, and sourced overview description.
+BusLessonTrace reuses ComponentFlowTrace and the static map, keeping each transfer
+directed and separate. Compact state pills sit below external device boxes.
+Follow adapter receive DMA to RAM, CPU interpretation of SAVE/offset/value,
+preparation of a preloaded 512-byte block preserving neighboring bytes, SSD
+doorbell and DMA read, nonvolatile FUA commitment, then completion via RAM to CPU.
+Abstract queue fetches, CPU read requests, caches, filesystem metadata, and SSD
+internals explicitly in info/accessibility text. Do not imply one-byte hardware
+transfers or persistence before storage commitment. Reset restores the static map.
+The header menu reopens Hardware Fundamental and restores its hardware preview.
 Gpu and NetworkAdapter own their catalogs, workspaces, and action folders:
 FrameRendering / HashcatIteration and ServerToNetwork / NetworkToServer.
 Each action owns its model, component/CSS, animation, and sourced overview.

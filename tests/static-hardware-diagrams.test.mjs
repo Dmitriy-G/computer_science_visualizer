@@ -3,8 +3,36 @@ import { test } from 'node:test'
 import { GpuLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Gpu/GpuLayout.ts'
 import { NetworkAdapterLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/NetworkAdapter/NetworkAdapterLayout.ts'
 import { SystemOverviewLayout } from '../src/components/RealSystemsAlgorithms/SystemOverview/SystemOverviewLayout.ts'
+import { BusLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Bus/BusLayout.ts'
 
-for (const [level, layout] of [['gpu', GpuLayout], ['network-adapter', NetworkAdapterLayout]]) {
+test('bus map connects six separate endpoints and keeps adaptation optional', () => {
+  const scene = BusLayout.create()
+  const regions = new Map(scene.regions.map((region) => [region.id, region]))
+  const paths = new Map(scene.paths.map((path) => [path.id, path]))
+  const endpoints = [
+    ['cpu', 'CPU'], ['gpu', 'GPU'], ['ram', 'RAM'],
+    ['hdd', 'HDD'], ['ssd', 'SSD'], ['network-adapter', 'Network Adapter'],
+  ]
+  assert.equal(scene.regions.filter((region) => region.role === 'device' && !region.parentId).length, endpoints.length)
+  for (const [key, name] of endpoints) {
+    const device = regions.get(`bus-${key}-device`)
+    assert.equal(device.shortLabel, name)
+    assert.equal(device.parentId, undefined)
+    assert.equal(regions.get(`bus-${key}-port`).parentId, 'bus-fabric')
+    assert.equal(paths.get(`bus-${key}-external-link`).bidirectional, true)
+    assert.equal(paths.get(`bus-${key}-port-data`).bidirectional, true)
+    const fabricPath = paths.get(key === 'cpu' || key === 'gpu' ? `bus-${key}-queues` : `bus-switch-${key}`)
+    assert.equal(fabricPath.bidirectional, true)
+    assert.ok(!fabricPath.dashed, `${name} has a payload connection`)
+  }
+  assert.match(regions.get('bus-bridge').shortLabel, /optional/i)
+  assert.ok(paths.has('bus-switch-network-adapter'), 'direct adapter path is available')
+  assert.ok(paths.has('bus-switch-bridge') && paths.has('bus-bridge-target'), 'adapted route is an alternative')
+  assert.match(regions.get('bus-routing').label, /memory-mapped.*address decoding.*destination IDs/)
+  assert.match(regions.get('bus-arbiter').label, /multiple requesters.*compete for a shared resource/)
+})
+
+for (const [level, layout] of [['gpu', GpuLayout], ['network-adapter', NetworkAdapterLayout], ['bus', BusLayout]]) {
   test(`${level} static map keeps components inside their logical boundaries`, () => {
     const scene = layout.create()
     const regions = new Map(scene.regions.map((region) => [region.id, region]))
