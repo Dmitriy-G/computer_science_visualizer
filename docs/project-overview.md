@@ -58,26 +58,34 @@ The header menu returns to Hardware Fundamental.
 System Components Overview displays a client, abstract network, and server.
 Hardware Fundamental moves the SVG camera into that server. ServerHardwareLayout
 owns the shared chassis map and the component slots used for subsequent zooms.
-The chassis contains the Motherboard, discrete GPU and host Network Adapter
-expansion cards, an optional RAID/HBA card, PSU, and HDD/SSD drive bays. Draw the
-cards physically outside the Motherboard boundary and connect them through PCIe.
-The Motherboard contains socketed CPU/RAM, PCIe / I/O Interconnect, Chipset/PCH,
-BMC, SPI flash, independent USB ports, and a dedicated Management NIC / LAN block.
-BIOS/UEFI nests inside SPI flash. BMC is the management processor; IPMI is an
-interface it implements. The BMC reaches management Ethernet through the dedicated
-NIC/PHY; shared-host-NIC management is a documented alternative, not a USB function.
-The SSD group shows two interface examples: NVMe directly on PCIe host I/O and
-SATA/SAS through the optional SAS/SATA RAID/HBA. These are distinct endpoint
-examples, not simultaneous connections to one drive. RAM uses a separately
-labeled direct CPU DDR connection. Host USB and SPI flash connect to the PCH.
-Dashed amber paths distinguish PSU and standby power from
-data paths; a separate dashed sideband connects PCH/BMC. Short component names
+The chassis shows CPU, RAM, discrete GPU, host Network Adapter, optional RAID/HBA,
+PSU, HDD, SATA SSD, and NVMe SSD as independent blocks outside the Motherboard.
+This is a system connection map rather than a literal installed floorplan.
+The Motherboard contains CPU/DIMM sockets, expansion slots, an NVMe connector,
+Chipset/PCH, BMC, SPI firmware flash, SATA/USB connectors, and a dedicated
+Management NIC / LAN block. It has no shared PCIe / I/O Interconnect hub.
+Separate labeled PCIe links run from CPU socket contacts to GPU, NIC, NVMe, and
+HBA connectors. DDR runs directly between CPU and DIMM sockets, with the memory
+controller inside the CPU. DMI / chipset uplink connects CPU socket to PCH.
+The SATA SSD uses PCH SATA; the HDD illustrates storage behind the optional
+SATA/SAS RAID/HBA. Each drive has one controller path. NVMe bypasses SATA/HBA.
+Place the HDD below the optional HBA so its short SATA/SAS cable never crosses
+the NVMe or native SATA cables. Label all three storage routes explicitly and
+use distinct blue PCIe/NVMe, green native SATA, and purple HBA SATA/SAS lines.
+Native SATA also supports SATA HDDs; a compatible SATA/SAS SSD may use the HBA
+instead. These are alternative device examples, not extra controller attachments.
+Host USB and SPI firmware flash connect to the PCH. BMC is the management
+processor; IPMI is an interface it implements. Its dedicated NIC/PHY connects
+to management Ethernet; shared-host-NIC management is a documented alternative.
+All data links, including PCH/BMC sideband, are solid. Dashed amber paths show
+PSU delivery to the motherboard, GPU, and drives, plus BMC standby power.
+Named component-boundary anchors keep internal arrows attached. Short component names
 appear in the renderer, with topology details in tooltips/accessibility text.
 Five labeled cables extend beyond the chassis into a dedicated right margin:
 GPU HDMI/DisplayPort output, host LAN/Ethernet, USB, dedicated BMC Management LAN,
 and AC power input to the PSU. Network and USB links are bidirectional, display
 is output-only, and the dashed amber AC input points toward the PSU. Keep the
-1560-unit chassis and internal zoom slots separate from the wider 2000-unit scene.
+1800-unit chassis and internal zoom slots separate from the wider 2320-unit scene.
 The hardware camera fits the external labels and fully reveals the map; system
 camera bounds also include the extra margin. Only concise port labels appear on
 the cables, with explanations retained in tooltips/accessibility descriptions.
@@ -112,7 +120,7 @@ NVMe attachment follows [NVM Express's PCIe transport description](https://nvmex
 dedicated/shared management arrangements follow
 [Supermicro's management interface guidance](https://www.supermicro.com/en/support/faqs/faq.php?faq=21188).
 Existing component categories and detail diagrams remain available. CPU moves
-closer into the same nested CPU block, revealing CpuLayout's static package map.
+closer into the independent CPU block, revealing CpuLayout's static package map.
 Its illustrative single-die, four-core example expands one representative core
 using the existing core geometry, titled "Cores (~4 per die)". It shows no empty
 peer-core blocks. Surrounding components include shared L3 cache, on-die

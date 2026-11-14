@@ -385,7 +385,9 @@ export default class Renderer extends Component<
     for (const region of scene.regions ?? []) {
       const lines: string[] = []
       const label = region.shortLabel ?? region.label
-      const fontSize = region.level === 'system' ? 32 : 26
+      const fontSize = region.titleFontSize ?? (region.level === 'system' ? 32 : 26)
+      const lineHeight = region.titleFontSize !== undefined ? fontSize + 2 : schematic ? 28 : 19
+      const titleOffset = region.titleFontSize !== undefined ? fontSize + 4 : schematic ? region.level === 'system' ? 36 : 30 : 29
       if (scene.kind === 'system-overview' || scene.kind === 'cpu-hardware' || schematic) {
         const limit = Math.max(schematic ? 8 : 12, Math.floor((region.width - 32) / (schematic ? fontSize * 0.62 : 9)))
         let line = ''
@@ -398,9 +400,9 @@ export default class Renderer extends Component<
         if (line) lines.push(line)
       } else lines.push(label)
       const titles: ReactNode[] = []
-      for (let index = 0; index < lines.length; index += 1) titles.push(<tspan key={index} x={region.x + 16} dy={index === 0 ? 0 : schematic ? 28 : 19}>{lines[index]}</tspan>)
+      for (let index = 0; index < lines.length; index += 1) titles.push(<tspan key={index} x={region.x + 16} dy={index === 0 ? 0 : lineHeight}>{lines[index]}</tspan>)
       elements.push(
-        <text key={`region-title-${region.id}`} className={`scene-region-title${region.level === 'system' ? ' scene-region-title--system' : ''}${schematic ? ' scene-region-title--schematic' : ''}`} x={region.x + 16} y={region.y + (schematic ? region.level === 'system' ? 36 : 30 : 29)}>
+        <text key={`region-title-${region.id}`} className={`scene-region-title${region.level === 'system' ? ' scene-region-title--system' : ''}${schematic ? ' scene-region-title--schematic' : ''}`} x={region.x + 16} y={region.y + titleOffset} style={{ fontSize: region.titleFontSize }}>
           {region.shortLabel && <title>{region.label}</title>}
           {titles}
         </text>,

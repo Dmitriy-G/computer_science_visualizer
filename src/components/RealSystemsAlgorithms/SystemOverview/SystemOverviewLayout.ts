@@ -78,14 +78,14 @@ export class SystemOverviewLayout {
         id: 'server-boundary', x: 0, y: 0, scale: 1,
         scene: {
           ...this.scene(this.width, 1200),
-          regions: [{ id: 'server', label: 'Server', role: 'cpu', level: 'system', x: server.x, y: server.y, width: 1080, height: 1440 * server.scale }],
+          regions: [{ id: 'server', label: 'Server', role: 'cpu', level: 'system', x: server.x, y: server.y, width: 1080, height: ServerHardwareLayout.chassis.height * server.scale }],
         },
         conceal: hardwareConceal,
       },
       { id: 'system', scene: this.system(), x: 0, y: 0, scale: 1, conceal: { startWidth: 1800, endWidth: hardwareWidth } },
       {
         id: 'server-summary', x: server.x, y: server.y, scale: server.scale,
-        scene: this.scene(1560, 1440, [this.label('server-summary', 'Server', 'Compute, memory and storage', 780, 670, 960, 380)]),
+        scene: this.scene(ServerHardwareLayout.chassis.width, ServerHardwareLayout.chassis.height, [this.label('server-summary', 'Server', 'Compute, memory and storage', ServerHardwareLayout.chassis.width / 2, ServerHardwareLayout.chassis.height / 2, 960, 380)]),
         conceal: { startWidth: 2000, endWidth: hardwareWidth },
       },
       { id: 'hardware', scene: hardware, ...server, reveal: { startWidth: 1800, endWidth: hardwareWidth }, conceal: hardwareConceal },
@@ -103,7 +103,7 @@ export class SystemOverviewLayout {
       },
       {
         id: 'ram-components', scene: ramScene, ...this.componentPlacement('ram'),
-        reveal: { startWidth: 600, endWidth: 320 },
+        reveal: { startWidth: 600, endWidth: 440 },
       },
       {
         id: 'gpu-components', scene: gpuScene, ...this.componentPlacement('gpu'),

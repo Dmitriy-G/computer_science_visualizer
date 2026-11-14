@@ -104,16 +104,19 @@
    Keep separate information buttons and start no lesson playback until an overview
    is selected. Category navigation renders a client, abstract network, and server
    at System Components Overview. Hardware Fundamental zooms into the server chassis,
-   showing Motherboard alongside discrete GPU/host NIC expansion cards, optional
-   RAID/HBA card, PSU, and HDD/SSD drive bays. The Motherboard contains CPU, RAM,
-   PCIe / I/O Interconnect, PCH, BMC/IPMI, SPI flash with nested BIOS/UEFI, independent
-   USB ports, and a dedicated Management NIC / LAN block. Connect the GPU and other
-   cards through PCIe; keep the direct CPU-to-RAM DDR channel separate. Show separate
-   SSD interface examples for NVMe/direct PCIe and SATA/SAS through the optional HBA.
-   BMC management Ethernet uses its dedicated NIC/PHY; shared host-NIC management is
-   an alternative, and USB remains a separate PCH function. Host firmware flash also
-   connects through PCH. Distinguish dashed PSU/standby-power and management-sideband
-   links from data; note platform variants in accessible descriptions.
+   showing CPU, RAM, GPU, host NIC, optional RAID/HBA, PSU, HDD, SATA SSD, and NVMe
+   SSD as independent blocks outside the Motherboard boundary. The motherboard
+   contains physical sockets, slots, connectors, PCH, BMC, firmware flash, and
+   dedicated management NIC/PHY. Separate labeled PCIe links connect CPU socket
+   contacts to GPU/NIC/NVMe/HBA connectors. Direct DDR connects CPU socket to DIMM
+   socket; the memory controller remains inside the CPU. DMI / chipset uplink
+   connects CPU socket to PCH. Do not draw a shared PCIe / I/O Interconnect hub.
+   NVMe uses direct PCIe, SATA SSD uses PCH SATA, and HDD illustrates storage
+   through the optional SATA/SAS HBA. Each device has one controller path.
+   USB and SPI firmware flash connect to PCH. BMC management Ethernet uses its
+   dedicated NIC/PHY; shared host-NIC management is an alternative. Use solid
+   data/sideband links and dashed amber PSU/standby-power links. Anchor arrows
+   to named component boundaries; note platform variants in accessible descriptions.
    Keep component and port labels on the diagram. Extend external lines for GPU
    HDMI/DisplayPort, host LAN/Ethernet, USB, BMC Management LAN, and PSU AC input
    beyond the chassis, with their labels in a dedicated scene margin. Fit the

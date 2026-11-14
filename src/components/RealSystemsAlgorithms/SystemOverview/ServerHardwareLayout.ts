@@ -1,94 +1,132 @@
 import { HardwareDiagram } from '../../../visualization/HardwareDiagram.ts'
 import type { Scene, SceneBounds, ScenePath, SceneRegion } from '../../../visualization/Scene.ts'
 
+type ServerAnchor = readonly [string, 'left' | 'right' | 'top' | 'bottom', number?]
+type ServerPoint = readonly [number, number]
+type ServerLinkStyle = Pick<ScenePath, 'caption' | 'dashed' | 'stroke' | 'bidirectional'>
+
 export class ServerHardwareLayout {
-  public static readonly width = 2000
+  public static readonly width = 2320
   public static readonly height = 1440
-  public static readonly chassis = { x: 0, y: 0, width: 1560, height: 1440 }
-  public static readonly motherboard = { x: 45, y: 90, width: 970, height: 970 }
-  public static readonly componentCount = 15
+  public static readonly chassis = { x: 0, y: 0, width: 1800, height: 1440 }
+  public static readonly motherboard = { x: 450, y: 400, width: 940, height: 720 }
+  public static readonly componentCount = 22
   public static readonly components = {
-    cpu: { x: 90, y: 170, width: 420, height: 420 },
-    ram: { x: 570, y: 170, width: 400, height: 200 },
-    gpu: { x: 1030, y: 170, width: 420, height: 200 },
-    'network-adapter': { x: 1030, y: 430, width: 420, height: 160 },
-    bus: { x: 90, y: 660, width: 880, height: 80 },
-    hdd: { x: 600, y: 1150, width: 380, height: 180 },
-    ssd: { x: 1070, y: 1150, width: 380, height: 180 },
+    cpu: { x: 50, y: 170, width: 340, height: 300 },
+    ram: { x: 500, y: 130, width: 600, height: 180 },
+    gpu: { x: 1440, y: 130, width: 300, height: 190 },
+    'network-adapter': { x: 1440, y: 420, width: 300, height: 150 },
+    bus: this.motherboard,
+    hdd: { x: 1440, y: 1020, width: 300, height: 100 },
+    ssd: { x: 1380, y: 1230, width: 360, height: 140 },
   } as const
 
   public static create(): Scene {
     const diagram = new HardwareDiagram(this.width, this.height)
-    this.region(diagram, 'server-chassis', 'Server chassis / contains the motherboard, discrete expansion cards, power supply, and drive bays. Labeled cable connections extend outside the chassis. This illustrative single-socket server uses a separate PCH and BMC; integrated SoC and other server topologies differ', 'device', this.chassis, undefined, 'Server', 'neutral', 'system')
-    this.region(diagram, 'motherboard', 'Motherboard / system board with socketed CPU and DIMMs, onboard PCH and BMC, firmware flash, USB ports, and a dedicated management network interface. Discrete GPU, host network, and optional storage-controller cards are drawn separately and attach through PCIe slots or risers', 'memory', this.motherboard, 'server-chassis', 'Motherboard', 'green', 'system')
-    this.region(diagram, 'cpu', 'CPU / processor package installed in a motherboard socket. Its integrated memory controller connects directly to RAM; PCIe and a chipset link connect the processor to I/O. Expand this same block for the existing CPU map', 'cpu', this.components.cpu, 'motherboard', 'CPU', 'light-orange')
-    this.region(diagram, 'ram', 'RAM / DIMMs installed in motherboard memory sockets, directly connected to the CPU memory controller rather than routed through the PCH', 'memory', this.components.ram, 'motherboard', 'RAM', 'light-blue')
-    this.region(diagram, 'gpu', 'GPU / discrete graphics expansion card, physically separate from the motherboard PCB and connected through a PCIe slot or riser. Integrated GPUs are another arrangement', 'device', this.components.gpu, 'server-chassis', 'GPU / discrete card', 'light-orange')
-    this.region(diagram, 'network-adapter', 'Network Adapter / host data-network expansion card connected through PCIe in this example. Onboard NICs are another arrangement. This card is separate from the dedicated BMC management interface', 'device', this.components['network-adapter'], 'server-chassis', 'Network Adapter', 'light-blue')
-    this.region(diagram, 'chipset-pch', 'Chipset / Platform Controller Hub (PCH) / provides platform I/O such as USB and SPI flash access, linked to the CPU through a chipset uplink. A separate PCH is platform-dependent; some server SoCs integrate these functions', 'device', { x: 570, y: 430, width: 400, height: 160 }, 'motherboard', 'Chipset / PCH', 'lavender')
-    this.region(diagram, 'bus', 'PCIe / I/O Interconnect / logical grouping of CPU host-I/O links and the PCH uplink. PCIe connects expansion cards and the local NVMe SSD example. The CPU to RAM DDR memory channel is a separate connection, not part of this I/O group', 'interconnect', this.components.bus, 'motherboard', 'PCIe / I/O Interconnect', 'lavender')
-    this.region(diagram, 'firmware-flash', 'SPI flash memory / nonvolatile motherboard storage holding the host BIOS/UEFI firmware image. Host firmware is distinct from the BMC firmware', 'memory', { x: 90, y: 840, width: 300, height: 140 }, 'motherboard', 'SPI flash', 'light-blue')
-    this.region(diagram, 'bios-uefi', 'BIOS / UEFI / host boot firmware stored in the SPI flash and executed by the CPU to initialize the platform and start an operating system. Firmware is software, not another processor', 'device', { x: 110, y: 900, width: 260, height: 60 }, 'firmware-flash', 'BIOS / UEFI', 'neutral')
-    this.region(diagram, 'bmc', 'BMC / Baseboard Management Controller / independent management processor on the motherboard, with its own firmware and standby power. IPMI is a management interface/protocol implemented by the BMC, not a separate chip. Its network traffic reaches Management LAN through the dedicated management NIC/PHY shown beside it; shared host-NIC arrangements are another platform option', 'device', { x: 440, y: 840, width: 260, height: 140 }, 'motherboard', 'BMC / IPMI', 'light-orange')
-    this.region(diagram, 'raid-hba', 'Optional RAID / HBA Controller / separate PCIe storage-controller card in this example. A RAID controller can manage arrays; an HBA exposes drives without implying hardware RAID. Its SAS/SATA links serve the HDD and SATA/SAS SSD example. The local NVMe SSD example bypasses this SAS/SATA controller and attaches directly through PCIe; NVMe-capable RAID variants are not modeled', 'device', { x: 1030, y: 840, width: 420, height: 140 }, 'server-chassis', 'RAID / HBA (optional)', 'light-orange')
-    this.region(diagram, 'host-usb-ports', 'USB ports / independent host peripheral connectors backed by the PCH USB controller. Management LAN is a separate Ethernet function, not part of USB', 'interconnect', { x: 740, y: 820, width: 230, height: 70 }, 'motherboard', 'USB ports', 'light-blue')
-    this.region(diagram, 'management-lan-port', 'Management NIC / LAN / dedicated management Ethernet network interface, PHY, and port serving the BMC. This independent Ethernet block is separate from USB and the host network card. Shared-NIC management is an alternative arrangement, not an additional serial stage', 'interconnect', { x: 740, y: 930, width: 230, height: 90 }, 'motherboard', 'Management NIC / LAN', 'light-blue')
-    this.region(diagram, 'psu', 'Power Supply (PSU) / chassis-mounted AC-to-DC supply. Power distribution, motherboard voltage regulators, redundant supplies, and cables are abstracted. Dashed amber paths show power, including standby power for the BMC; they are not data links', 'device', { x: 90, y: 1150, width: 420, height: 180 }, 'server-chassis', 'Power Supply (PSU)', 'light-orange')
-    this.region(diagram, 'hdd', 'HDD / magnetic drive in a chassis drive bay, outside the motherboard. The shown SAS/SATA data path uses the optional RAID/HBA controller and an abstracted backplane or cable', 'device', this.components.hdd, 'server-chassis', 'HDD', 'neutral')
-    this.region(diagram, 'ssd', 'SSD / two separate interface examples in chassis drive bays: NVMe attaches directly to PCIe host I/O, while a SATA/SAS SSD connects through the optional SAS/SATA RAID/HBA card. These are alternative endpoint types, not two simultaneous host interfaces on one drive', 'device', this.components.ssd, 'server-chassis', 'SSD interfaces', 'neutral')
-    this.region(diagram, 'ssd-nvme', 'NVMe SSD example / local PCIe connection directly to host I/O, bypassing the depicted SAS/SATA RAID/HBA. PCIe switches, NVMe-capable RAID, and other storage topologies can also exist', 'device', { x: 1090, y: 1210, width: 160, height: 100 }, 'ssd', 'NVMe', 'light-blue')
-    this.region(diagram, 'ssd-sata-sas', 'SATA / SAS SSD example / connects through the depicted optional RAID/HBA controller and storage backplane or cables', 'device', { x: 1270, y: 1210, width: 160, height: 100 }, 'ssd', 'SATA / SAS', 'light-orange')
-    this.connect(diagram)
+    this.region(diagram, 'server-chassis', 'Server / independent compute, memory, expansion-card, storage, and power components attach to a physical motherboard. CPU and RAM are drawn apart from their sockets for clarity; this is a system connection map, not a literal chassis floorplan', 'device', this.chassis, undefined, 'Server', 'neutral', 'system')
+    this.region(diagram, 'motherboard', 'Motherboard / physical connection platform containing sockets, slots, chipset, firmware flash, USB and storage connectors, BMC, and dedicated management networking. CPU, RAM, expansion cards, drives, and PSU are separate system components. Communication standards label individual links rather than an interconnect chip', 'memory', this.motherboard, 'server-chassis', 'Motherboard', 'green', 'system')
+    this.region(diagram, 'cpu', 'CPU / independent processor package, shown apart from its motherboard socket. Its integrated memory controller directly serves RAM over DDR, and separate CPU PCIe links serve GPU, host NIC, NVMe SSD, and the storage-controller card. Chipset traffic uses a distinct DMI or equivalent uplink', 'cpu', this.components.cpu, 'server-chassis', 'CPU', 'light-orange')
+    this.region(diagram, 'ram', 'RAM / independent DIMM modules shown apart from the physical DIMM sockets. DDR connects directly to the integrated memory controller inside the CPU, without passing through PCH', 'memory', this.components.ram, 'server-chassis', 'RAM', 'light-blue')
+    this.region(diagram, 'gpu', 'GPU / discrete graphics card attached through its own PCIe motherboard slot. Display output belongs to this card; auxiliary DC power comes from the PSU', 'device', this.components.gpu, 'server-chassis', 'GPU', 'light-orange')
+    this.region(diagram, 'network-adapter', 'Network Adapter / independent host Ethernet card with its own PCIe link and Ethernet cable connection. The dedicated BMC network interface is separate', 'device', this.components['network-adapter'], 'server-chassis', 'Network Adapter', 'light-blue')
+    this.region(diagram, 'cpu-socket', 'CPU socket / passive package attachment carrying separate DDR, PCIe, chipset-link, and power contact groups. Controllers remain inside the CPU package; the single package-to-socket attachment groups those contacts for readability', 'interconnect', { x: 500, y: 470, width: 280, height: 160 }, 'motherboard', 'CPU socket', 'light-blue')
+    this.region(diagram, 'dimm-sockets', 'DIMM sockets / physical memory-module connectors, with direct DDR PCB traces from CPU socket contacts. No separate motherboard memory controller is shown', 'interconnect', { x: 1020, y: 470, width: 320, height: 100 }, 'motherboard', 'DIMM sockets', 'light-blue')
+    this.region(diagram, 'gpu-slot', 'GPU PCIe slot / passive motherboard connector for the independent GPU card', 'interconnect', { x: 1020, y: 650, width: 320, height: 70 }, 'motherboard', 'GPU PCIe slot', 'light-blue')
+    this.region(diagram, 'nic-slot', 'Host NIC PCIe slot / passive motherboard connector on an independent CPU PCIe link', 'interconnect', { x: 1020, y: 750, width: 320, height: 70 }, 'motherboard', 'NIC PCIe slot', 'light-blue')
+    this.region(diagram, 'hba-slot', 'Storage-controller PCIe slot / physical motherboard attachment for the separately drawn optional RAID/HBA card', 'interconnect', { x: 1020, y: 850, width: 320, height: 70 }, 'motherboard', 'RAID / HBA slot', 'light-blue')
+    this.region(diagram, 'nvme-connector', 'NVMe storage connector / independent CPU PCIe lanes attach the cabled NVMe SSD drive-bay example. Connector families and backplanes vary; this is not a SATA connection', 'interconnect', { x: 1020, y: 940, width: 320, height: 60 }, 'motherboard', 'NVMe connector', 'light-blue')
+    this.region(diagram, 'chipset-pch', 'Chipset / PCH / physical motherboard I/O chip attached to the CPU by DMI or a platform equivalent. Native SATA, USB, and SPI firmware interfaces are provided here in this example', 'device', { x: 500, y: 700, width: 410, height: 120 }, 'motherboard', 'Chipset / PCH', 'lavender')
+    this.region(diagram, 'sata-ports', 'SATA ports / physical motherboard connectors served by native PCH SATA. The SATA SSD uses this path, while the HDD uses the separate RAID/HBA in the illustrated configuration', 'interconnect', { x: 500, y: 850, width: 180, height: 70 }, 'motherboard', 'SATA ports', 'light-blue')
+    this.region(diagram, 'firmware-flash', 'SPI flash / physical nonvolatile firmware chip storing BIOS/UEFI, connected to the PCH SPI interface. Firmware is software stored in this chip, not another processor', 'memory', { x: 730, y: 850, width: 180, height: 100 }, 'motherboard', 'SPI / UEFI', 'light-blue')
+    this.region(diagram, 'host-usb-ports', 'USB ports / physical peripheral connectors served by the PCH USB host controller, separate from management Ethernet', 'interconnect', { x: 500, y: 1020, width: 180, height: 70 }, 'motherboard', 'USB ports', 'light-blue')
+    this.region(diagram, 'bmc', 'BMC / independent motherboard management processor with standby power and its own firmware. IPMI is a management interface/protocol implemented by the BMC, not a separate chip. Its Ethernet connection uses the dedicated management NIC/PHY and LAN port', 'device', { x: 730, y: 1020, width: 180, height: 70 }, 'motherboard', 'BMC / IPMI', 'light-orange')
+    this.region(diagram, 'management-lan-port', 'Management NIC / LAN / dedicated management Ethernet NIC/PHY and port for the BMC, separate from the independent host Network Adapter. Shared-host-NIC management is another platform arrangement', 'interconnect', { x: 1020, y: 1020, width: 320, height: 70 }, 'motherboard', 'Management NIC / LAN', 'light-blue')
+    this.region(diagram, 'raid-hba', 'RAID / HBA / optional independent PCIe storage-controller card. Its SATA/SAS link serves the HDD here; a SATA HDD can instead use native PCH SATA in a different configuration. The native SATA SSD and direct NVMe SSD do not pass through this card', 'device', { x: 1440, y: 800, width: 300, height: 150 }, 'server-chassis', 'RAID / HBA (optional)', 'light-orange')
+    this.region(diagram, 'psu', 'Power Supply / independent chassis PSU converts external AC to DC. Dashed lines simplify DC distribution to motherboard, GPU, drives, and BMC standby support; slot power and CPU/DIMM regulation are supplied through the motherboard', 'device', { x: 50, y: 1230, width: 340, height: 140 }, 'server-chassis', 'Power Supply (PSU)', 'light-orange')
+    this.region(diagram, 'hdd', 'HDD / actual SATA/SAS hard drive, connected to the optional RAID/HBA in this configuration and powered from the PSU. A native PCH SATA connection is another supported configuration, not a simultaneous second controller attachment', 'device', this.components.hdd, 'server-chassis', 'HDD', 'neutral')
+    this.region(diagram, 'sata-ssd', 'SATA SSD / actual solid-state drive attached to native PCH SATA through the motherboard SATA connector. This is a separate device from the NVMe SSD', 'device', { x: 940, y: 1230, width: 360, height: 140 }, 'server-chassis', 'SATA SSD', 'neutral')
+    this.region(diagram, 'ssd', 'NVMe SSD / actual cabled PCIe drive-bay device attached directly to CPU PCIe lanes through the motherboard NVMe connector, bypassing the SATA/SAS RAID/HBA and PCH SATA', 'device', this.components.ssd, 'server-chassis', 'NVMe SSD', 'neutral')
+    this.connectData(diagram)
+    this.connectPower(diagram)
     this.connectExternal(diagram)
     return { kind: 'system-overview', width: this.width, height: this.height, nodes: [], edges: [], regions: diagram.regions, paths: diagram.paths, count: this.componentCount, countLabel: 'server component groups', focusId: null }
   }
 
   private static region(diagram: HardwareDiagram, id: string, label: string, role: SceneRegion['role'], bounds: SceneBounds, parent: string | undefined, title: string, color: SceneRegion['color'], level: SceneRegion['level'] = 'component'): void {
-    diagram.regions.push({ id, label, shortLabel: title, role, ...bounds, parentId: parent, color, level })
+    diagram.regions.push({ id, label, shortLabel: title, role, ...bounds, parentId: parent, color, level, titleFontSize: parent === 'motherboard' ? 20 : undefined })
   }
 
-  private static connect(diagram: HardwareDiagram): void {
-    const data: readonly [string, string, string, ScenePath['caption']?][] = [
-      ['cpu-ram', 'M510 270H570', 'DDR memory channels / CPU integrated memory controller directly to RAM, separate from PCIe / I/O', { text: 'DDR', x: 515, y: 248 }],
-      ['cpu-bus', 'M300 590V660', 'CPU host I/O / PCIe and chipset-uplink context'],
-      ['gpu-bus', 'M1030 270H1000V630H920V660', 'Discrete GPU expansion card / motherboard PCIe slot or riser to CPU host I/O'],
-      ['adapter-bus', 'M1030 510H1020V620H800V660', 'Host Network Adapter expansion card / PCIe data path'],
-      ['pch-bus', 'M770 590V660', 'PCH / chipset uplink to the CPU through the logical host-I/O group'],
-      ['raid-bus', 'M1030 910H1000V780H900V740', 'Optional RAID/HBA card / PCIe host connection'],
-      ['raid-hdd', 'M1130 980V1110H790V1150', 'SAS/SATA HDD data / controller through abstracted backplane or cable'],
-      ['raid-ssd', 'M1350 980V1210', 'SATA/SAS SSD data / optional SAS/SATA RAID/HBA card to the SATA/SAS example only'],
-      ['nvme-ssd', 'M970 710H1020V1100H1170V1210', 'Local NVMe SSD / direct PCIe attachment to CPU host I/O, bypassing the SAS/SATA RAID/HBA', { text: 'PCIe', x: 1040, y: 1078 }],
-      ['pch-usb', 'M970 520H990V800H720V855H740', 'Host USB / PCH USB controller to independent USB connectors'],
-      ['bmc-management-lan', 'M700 940H720V975H740', 'Out-of-band Ethernet management / BMC to its dedicated management NIC/PHY and LAN port; shared host-NIC management is an alternative'],
-      ['pch-firmware', 'M570 540H530V620H65V820H240V840', 'Host boot-firmware access / PCH SPI connection to BIOS/UEFI flash'],
-    ]
-    for (const [id, d, label, caption] of data) diagram.paths.push({ id, d, label, caption, directed: true, bidirectional: true, highlighted: false })
-    diagram.paths.push({ id: 'pch-bmc', d: 'M970 560H980V790H570V840', label: 'Host/BMC management sideband / platform-specific eSPI/LPC or other management connection; not bulk disk or network payload traffic', directed: true, bidirectional: true, dashed: true, highlighted: false })
-    const power: readonly [string, string, string][] = [
-      ['psu-motherboard', 'M90 1240H25V190H45', 'Power / PSU DC output to motherboard power distribution and regulators'],
-      ['psu-bmc-standby', 'M300 1150V1100H590V980', 'Standby power / PSU standby rail powers the BMC through motherboard distribution while main host power is off'],
-      ['psu-hdd', 'M300 1330V1380H790V1330', 'Drive power / PSU distribution to the HDD bay'],
-      ['psu-ssd', 'M300 1330V1400H1260V1330', 'Drive power / PSU distribution to the SSD bay'],
-    ]
-    for (const [id, d, label] of power) diagram.paths.push({ id, d, label, directed: true, dashed: true, stroke: '#b58a45', highlighted: false })
+  private static connectData(diagram: HardwareDiagram): void {
+    this.link(diagram, 'cpu-socket-attachment', ['cpu', 'right'], ['cpu-socket', 'left'], 'CPU package contacts / electrical attachment to its motherboard socket', [[420, 320], [420, 550]])
+    this.link(diagram, 'cpu-ram', ['cpu-socket', 'right', 0.15], ['dimm-sockets', 'left'], 'DDR / CPU integrated memory controller directly to RAM through CPU socket contacts, PCB traces, and DIMM sockets; bypasses PCH', [[1000, 494], [1000, 520]], { caption: { text: 'DDR', x: 820, y: 474 } })
+    this.link(diagram, 'dimm-ram', ['dimm-sockets', 'top'], ['ram', 'bottom'], 'DDR module attachment / physical DIMM sockets to the independently shown RAM modules', [[1180, 350], [800, 350]])
+    this.link(diagram, 'cpu-gpu', ['cpu-socket', 'right', 0.45], ['gpu-slot', 'left'], 'PCIe / separate CPU lane group to the GPU slot', [[940, 542], [940, 685]], { caption: { text: 'PCIe', x: 945, y: 663 } })
+    this.link(diagram, 'cpu-nic', ['cpu-socket', 'right', 0.65], ['nic-slot', 'left'], 'PCIe / independent CPU lane group to the host NIC slot', [[960, 574], [960, 785]], { caption: { text: 'PCIe', x: 945, y: 763 } })
+    this.link(diagram, 'cpu-nvme', ['cpu-socket', 'right', 0.85], ['nvme-connector', 'left'], 'PCIe / independent CPU lane group to the NVMe storage connector', [[980, 606], [980, 970]], { caption: { text: 'PCIe', x: 945, y: 948 } })
+    this.link(diagram, 'cpu-hba', ['cpu-socket', 'bottom', 0.8], ['hba-slot', 'left'], 'PCIe / separate CPU lane group to the optional storage-controller slot', [[920, 630], [920, 885]], { caption: { text: 'PCIe', x: 945, y: 863 } })
+    this.link(diagram, 'cpu-pch', ['cpu-socket', 'bottom'], ['chipset-pch', 'top'], 'DMI / equivalent chipset uplink / separate CPU socket link to PCH', [[640, 660], [705, 660]], { caption: { text: 'DMI', x: 740, y: 685 } })
+    this.link(diagram, 'gpu-slot-card', ['gpu-slot', 'right'], ['gpu', 'left'], 'PCIe slot / physical GPU card attachment', [[1410, 685], [1410, 225]])
+    this.link(diagram, 'nic-slot-card', ['nic-slot', 'right'], ['network-adapter', 'left'], 'PCIe slot / physical host NIC card attachment', [[1420, 785], [1420, 495]])
+    this.link(diagram, 'hba-slot-card', ['hba-slot', 'right'], ['raid-hba', 'left', 17 / 30], 'PCIe slot / physical attachment of optional RAID/HBA card')
+    this.link(diagram, 'nvme-ssd', ['nvme-connector', 'right'], ['ssd', 'top'], 'Direct PCIe / NVMe SSD connection, bypassing the SATA/SAS controller', [[1410, 970], [1410, 1190], [1560, 1190]], { stroke: '#5279ad', caption: { text: 'PCIe / NVMe', x: 1420, y: 1170 } })
+    this.link(diagram, 'pch-sata', ['chipset-pch', 'bottom', 0.2], ['sata-ports', 'top'], 'SATA / PCH native storage controller to motherboard SATA ports', [[582, 835], [590, 835]], { stroke: '#3f8068', caption: { text: 'SATA', x: 500, y: 840 } })
+    this.link(diagram, 'pch-sata-ssd', ['sata-ports', 'bottom'], ['sata-ssd', 'top'], 'SATA / motherboard native SATA port to actual SATA SSD; a SATA HDD may use another native port in the same way', [[590, 1000], [920, 1000], [920, 1190], [1120, 1190]], { stroke: '#3f8068', caption: { text: 'SATA', x: 1010, y: 1170 } })
+    this.link(diagram, 'raid-hdd', ['raid-hba', 'bottom'], ['hdd', 'top'], 'SATA / SAS / optional RAID/HBA to the actual HDD; a compatible SATA/SAS SSD may use this controller path instead. Alternative PCH SATA attachment is not drawn simultaneously', [], { stroke: '#9369a6', caption: { text: 'SATA / SAS', x: 1450, y: 995 } })
+    this.link(diagram, 'pch-usb', ['chipset-pch', 'left', 0.7], ['host-usb-ports', 'left'], 'USB / PCH host controller to motherboard USB connectors', [[480, 784], [480, 1055]], { caption: { text: 'USB', x: 500, y: 1000 } })
+    this.link(diagram, 'pch-firmware', ['chipset-pch', 'bottom', 0.8], ['firmware-flash', 'top'], 'SPI / PCH firmware interface to BIOS/UEFI flash chip', [[828, 835], [820, 835]], { caption: { text: 'SPI', x: 850, y: 835 } })
+    this.link(diagram, 'pch-bmc', ['chipset-pch', 'bottom'], ['bmc', 'top'], 'eSPI / LPC / platform-specific host-to-BMC management sideband', [[705, 990], [820, 990]])
+    this.link(diagram, 'bmc-management-lan', ['bmc', 'right'], ['management-lan-port', 'left'], 'Dedicated management Ethernet / BMC to its separate management NIC/PHY and LAN port')
+  }
+
+  private static connectPower(diagram: HardwareDiagram): void {
+    const power: ServerLinkStyle = { dashed: true, bidirectional: false, stroke: '#b58a45' }
+    this.link(diagram, 'psu-motherboard', ['psu', 'top'], ['motherboard', 'bottom', 0.1], 'DC power / PSU to motherboard regulation, CPU/DIMM sockets, and slot power', [[220, 1160], [544, 1160]], power)
+    this.link(diagram, 'psu-bmc-standby', ['psu', 'top', 0.8], ['bmc', 'bottom'], 'Standby DC power / motherboard distribution to BMC', [[322, 1150], [820, 1150]], power)
+    this.link(diagram, 'psu-gpu', ['psu', 'bottom', 0.8], ['gpu', 'right', 0.8], 'GPU auxiliary DC power / PSU to graphics card; slot power comes from motherboard', [[322, 1410], [1760, 1410], [1760, 282]], power)
+    this.link(diagram, 'psu-hdd', ['psu', 'bottom', 0.35], ['hdd', 'right'], 'HDD DC power / PSU to drive', [[169, 1390], [1780, 1390], [1780, 1070]], power)
+    this.link(diagram, 'psu-sata-ssd', ['psu', 'bottom'], ['sata-ssd', 'bottom'], 'SATA SSD DC power / PSU to drive', [[220, 1400], [1120, 1400]], power)
+    this.link(diagram, 'psu-ssd', ['psu', 'bottom', 0.65], ['ssd', 'bottom'], 'NVMe SSD DC power / PSU to drive bay', [[271, 1420], [1560, 1420]], power)
   }
 
   private static connectExternal(diagram: HardwareDiagram): void {
-    const connections: readonly [string, string, string, string, number, boolean][] = [
-      ['external-display', 'M1450 270H1950', 'HDMI / DisplayPort', 'GPU display output to an external monitor / available outputs depend on the graphics card; display signals originate in its display engine', 248, false],
-      ['external-lan', 'M1450 510H1950', 'LAN / Ethernet', 'Host Network Adapter to the external data network / separate from the dedicated BMC management network', 488, true],
-      ['external-usb', 'M970 855H1010V810H1530V855H1950', 'USB', 'Independent host USB connectors to external peripherals; management Ethernet is a separate block and path', 833, true],
-      ['external-management-lan', 'M970 975H1010V1030H1540V975H1950', 'Management LAN', 'Dedicated BMC management NIC/PHY and Ethernet port to an external management network / IPMI and other supported management interfaces', 953, true],
+    const outputs: readonly [string, ServerAnchor, number, string, string, boolean, (readonly ServerPoint[])?][] = [
+      ['external-display', ['gpu', 'right'], 225, 'HDMI / DisplayPort', 'GPU display output to an external monitor', false],
+      ['external-lan', ['network-adapter', 'right'], 495, 'LAN / Ethernet', 'Independent host NIC Ethernet connection to the data network', true],
+      ['external-usb', ['host-usb-ports', 'right'], 650, 'USB', 'Motherboard USB port connection to an external peripheral', true, [[700, 1055], [700, 1140], [1810, 1140], [1810, 650]]],
+      ['external-management-lan', ['management-lan-port', 'right'], 1055, 'Management LAN', 'Separate dedicated BMC management Ethernet connection', true, [[1370, 1055], [1370, 1130], [1830, 1130], [1830, 1055]]],
     ]
-    for (const [id, d, text, label, y, bidirectional] of connections) diagram.paths.push({
-      id, d, label, directed: true, bidirectional, highlighted: false,
-      caption: { text, x: 1600, y },
-    })
+    for (const [id, from, y, title, label, bidirectional, via = []] of outputs) {
+      const start = this.anchor(diagram, from)
+      diagram.paths.push({ id, d: this.route(start, [2270, y], via), label, caption: { text: title, x: 1840, y: y - 22 }, directed: true, bidirectional, highlighted: false })
+    }
     diagram.paths.push({
-      id: 'external-ac-power', d: 'M1950 1240H1535V1120H540V1240H510',
-      label: 'External AC power source to the PSU input / AC-to-DC conversion happens inside the PSU, before the internal DC and standby rails',
-      directed: true, dashed: true, stroke: '#b58a45', highlighted: false,
-      caption: { text: 'AC power', x: 1600, y: 1218 },
+      id: 'external-ac-power', d: this.route([2270, 1180], this.anchor(diagram, ['psu', 'right']), [[410, 1180], [410, 1300]]),
+      label: 'AC power input to the independent PSU / AC is converted to DC before reaching motherboard, GPU, or drives',
+      caption: { text: 'AC power', x: 1840, y: 1158 }, directed: true, dashed: true, stroke: '#b58a45', highlighted: false,
     })
+  }
+
+  private static anchor(diagram: HardwareDiagram, anchor: ServerAnchor): ServerPoint {
+    const [id, side, fraction = 0.5] = anchor
+    const region = diagram.regions.find((candidate) => candidate.id === id)
+    if (!region || fraction < 0 || fraction > 1) throw new RangeError(`Invalid server connection anchor: ${id}`)
+    if (side === 'left' || side === 'right') return [region.x + (side === 'right' ? region.width : 0), region.y + region.height * fraction]
+    return [region.x + region.width * fraction, region.y + (side === 'bottom' ? region.height : 0)]
+  }
+
+  private static route(from: ServerPoint, to: ServerPoint, via: readonly ServerPoint[] = []): string {
+    let [x, y] = from
+    let d = `M${x} ${y}`
+    for (const point of [...via, to]) {
+      if (x !== point[0]) d += `H${point[0]}`
+      if (y !== point[1]) d += `V${point[1]}`
+      x = point[0]
+      y = point[1]
+    }
+    return d
+  }
+
+  private static link(diagram: HardwareDiagram, id: string, from: ServerAnchor, to: ServerAnchor, label: string, via: readonly ServerPoint[] = [], style: ServerLinkStyle = {}): void {
+    diagram.paths.push({ id, d: this.route(this.anchor(diagram, from), this.anchor(diagram, to), via), label, directed: true, bidirectional: true, highlighted: false, ...style })
   }
 }
