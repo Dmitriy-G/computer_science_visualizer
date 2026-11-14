@@ -1,4 +1,4 @@
-export type OverviewComponentKind = 'CPU' | 'RAM' | 'Disk' | 'Bus'
+export type OverviewComponentKind = 'CPU' | 'RAM' | 'VRAM' | 'Disk' | 'Bus' | 'GPU' | 'Network Adapter'
 
 export type OverviewArchitectureKind = 'x86' | 'ARM'
 

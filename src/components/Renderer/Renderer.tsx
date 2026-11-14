@@ -366,7 +366,9 @@ export default class Renderer extends Component<
     const hdd = scene.regions?.some((region) => region.id === 'hdd-enclosure') ?? false
     const ssd = scene.regions?.some((region) => region.id === 'ssd-pcb') ?? false
     const ram = scene.regions?.some((region) => region.id === 'ram-pcb') ?? false
-    const schematic = cpu || hdd || ssd || ram
+    const gpu = scene.regions?.some((region) => region.id === 'gpu-board') ?? false
+    const networkAdapter = scene.regions?.some((region) => region.id === 'nic-board') ?? false
+    const schematic = cpu || hdd || ssd || ram || gpu || networkAdapter
     for (const region of scene.regions ?? []) elements.push(this.renderRegion(region))
     for (const slot of scene.slots ?? []) elements.push(this.renderSlot(slot))
     for (const node of scene.nodes) nodeMap.set(node.id, node)
@@ -382,7 +384,7 @@ export default class Renderer extends Component<
       const lines: string[] = []
       const label = region.shortLabel ?? region.label
       const fontSize = region.level === 'system' ? 32 : 26
-      if (scene.kind === 'system-overview' || scene.kind === 'cpu-hardware' || hdd || ssd || ram) {
+      if (scene.kind === 'system-overview' || scene.kind === 'cpu-hardware' || schematic) {
         const limit = Math.max(schematic ? 8 : 12, Math.floor((region.width - 32) / (schematic ? fontSize * 0.62 : 9)))
         let line = ''
         for (const word of label.split(' ')) {
@@ -478,13 +480,14 @@ export default class Renderer extends Component<
   }
 
   private describeHardwareFlow(scene: Scene, nodes: ReadonlyMap<string, SceneNode>): string {
-    if (!scene.regions) return ''
     const descriptions: string[] = []
-    for (const region of scene.regions) descriptions.push(region.label)
+    if (scene.activity) descriptions.push(scene.activity)
+    for (const layer of scene.layers ?? []) if (layer.scene.activity) descriptions.push(layer.scene.activity)
+    for (const region of scene.regions ?? []) descriptions.push(region.label)
     for (const edge of scene.edges) {
       if (edge.highlighted) descriptions.push(`${edge.message ?? edge.label}: ${nodes.get(edge.from)?.label} to ${nodes.get(edge.to)?.label}`)
     }
-    return ` Hardware regions and current transactions: ${descriptions.join('. ')}.`
+    return descriptions.length ? ` Hardware regions and current transactions: ${descriptions.join('. ')}.` : ''
   }
 
   public render() {
@@ -492,23 +495,16 @@ export default class Renderer extends Component<
     const packageScene = scene?.countLabel === 'CPU functional components'
       ? scene.layers?.find((layer) => layer.id === 'cpu-components')?.scene ?? scene : null
     const coreScene = packageScene?.layers?.find((layer) => layer.id === 'cpu-core')?.scene
-    const flowScene = coreScene ?? scene
-    let transfer: SceneEdge | undefined
-    let local: SceneNode | undefined
-    if (flowScene?.kind === 'hardware-system' || flowScene?.kind === 'cpu-hardware') {
-      for (const edge of flowScene.edges) if (edge.highlighted) transfer = edge
-      if (!transfer) {
-        for (const node of flowScene.nodes) if (node.id === flowScene.focusId) local = node
-      }
-    }
+    const componentMap = scene?.countLabel === 'GPU component groups' || scene?.countLabel === 'network adapter component groups'
+      ? scene.layers?.find((layer) => layer.id === 'gpu-components' || layer.id === 'network-adapter-components') : undefined
     return (
       <section className={`renderer${scene?.kind === 'system-overview' ? ' renderer--overview' : ''}`} aria-label="Visualization workspace">
         <div className="renderer-content" ref={this.content}>
           {this.props.children}
           <div className="renderer-stage">
             {scene && (
-              <div className={`diagram-tools${coreScene ? ' diagram-tools--cpu' : ''}`} ref={this.tools}>
-                {(scene.kind !== 'system-overview' || coreScene) && <div className="scene-legend" role="group" aria-label="Node states">
+              <div className={`diagram-tools${coreScene ? ' diagram-tools--cpu' : componentMap ? ' diagram-tools--component' : ''}`} ref={this.tools}>
+                {(scene.kind !== 'system-overview' || coreScene || componentMap) && <div className="scene-legend" role="group" aria-label="Node states">
                   <span>
                     <i className="legend-dot current" />
                     Current
@@ -549,17 +545,6 @@ export default class Renderer extends Component<
                         <path d="M14 4h6v6M20 4l-7 7M10 20H4v-6M4 20l7-7" />
                       </svg>
                     </button>
-                  </div>
-                )}
-                {(scene.kind === 'hardware-system' || scene.kind === 'cpu-hardware' || coreScene) && (
-                  <div className="hardware-transfer" role="status" aria-live="polite" aria-atomic="true">
-                    {transfer ? <>
-                      <svg width="30" height="16" viewBox="0 0 30 16" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true" focusable="false">
-                        <path d="M1 8h26" strokeDasharray="4 3" />
-                        <path d="m22 3 6 5-6 5" />
-                      </svg>
-                      <span>{transfer.message ?? transfer.label}</span>
-                    </> : local ? <span>Local update: {local.label} = {local.displayValue ?? local.value}{local.status ? ` (${local.status})` : ''}</span> : <span>{coreScene ? 'No active transfer' : 'Initial state · no transfer'}</span>}
                   </div>
                 )}
               </div>

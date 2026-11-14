@@ -5,6 +5,8 @@ import { CpuAlgorithmCatalog } from '../src/components/RealSystemsAlgorithms/Har
 import { RamAlgorithmCatalog } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Ram/RamAlgorithmCatalog.ts'
 import { HddAlgorithmCatalog } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Hdd/HddAlgorithmCatalog.ts'
 import { SsdAlgorithmCatalog } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Ssd/SsdAlgorithmCatalog.ts'
+import { GpuAlgorithmCatalog } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Gpu/GpuAlgorithmCatalog.ts'
+import { NetworkAdapterAlgorithmCatalog } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/NetworkAdapter/NetworkAdapterAlgorithmCatalog.ts'
 
 test('scoped hardware catalogs own disjoint lessons and shared routing delegates to each owner', () => {
   const owners = [
@@ -12,6 +14,8 @@ test('scoped hardware catalogs own disjoint lessons and shared routing delegates
     ['hardware-ram', RamAlgorithmCatalog, ['ram-write-bit', 'ram-read-bit']],
     ['hardware-hdd', HddAlgorithmCatalog, ['hdd-sector']],
     ['hardware-ssd', SsdAlgorithmCatalog, ['nand-cell', 'ssd-ftl', 'ssd-garbage-collection', 'ssd-wear-leveling']],
+    ['hardware-gpu', GpuAlgorithmCatalog, ['gpu-frame-rendering', 'gpu-hashcat-iteration']],
+    ['hardware-network-adapter', NetworkAdapterAlgorithmCatalog, ['nic-server-to-network', 'nic-network-to-server']],
   ]
   const seen = new Set()
   for (const [group, owner, expected] of owners) {

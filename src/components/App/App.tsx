@@ -287,6 +287,8 @@ import type ComponentWorkspace from '../RealSystemsAlgorithms/Hardware/Fundament
 import type { ComponentWorkspaceProps } from '../RealSystemsAlgorithms/Hardware/Fundamental/ComponentWorkspace.tsx'
 import CpuWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Cpu/CpuWorkspace.tsx'
 import RamWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Ram/RamWorkspace.tsx'
+import GpuWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Gpu/GpuWorkspace.tsx'
+import NetworkAdapterWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/NetworkAdapter/NetworkAdapterWorkspace.tsx'
 import SsdWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Ssd/SsdWorkspace.tsx'
 import HddWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Hdd/HddWorkspace.tsx'
 import { HardwareOverviewCatalog } from '../RealSystemsAlgorithms/Hardware/Fundamental/HardwareOverviewCatalog.ts'
@@ -492,7 +494,12 @@ export default class App extends Component<Record<string, never>, AppState> {
     const menu = this.state.menu.selectAdvancedAlgorithmGroup(group)
     const hardwareOverview = menu.hardwareOverviewGroup
     if (group === 'hardware-fundamental' || group === 'hardware-complex' || AdvancedAlgorithmCatalog.isHardwareFundamentalGroup(group)) {
-      const level = group === 'hardware-cpu' ? 'cpu' : group === 'hardware-hdd' ? 'hdd' : group === 'hardware-ssd' ? 'ssd' : group === 'hardware-ram' ? 'ram' : 'hardware'
+      const levels = {
+        'hardware-fundamental': 'hardware', 'hardware-complex': 'hardware',
+        'hardware-cpu': 'cpu', 'hardware-hdd': 'hdd', 'hardware-ssd': 'ssd',
+        'hardware-ram': 'ram', 'hardware-gpu': 'gpu', 'hardware-network-adapter': 'network-adapter',
+      } as const
+      const level = levels[group]
       this.showSystemCategory(menu, SystemOverviewLayout.create(level, this.currentDiagram()), hardwareOverview !== null)
       return
     }
@@ -550,7 +557,11 @@ export default class App extends Component<Record<string, never>, AppState> {
   private selectComponentAlgorithm = (algorithm: HardwareOverviewKind): void => {
     if (!HardwareOverviewCatalog.choices.some((choice) => choice.kind === algorithm)) return
     const group = HardwareOverviewCatalog.groupFor(algorithm)
-    const preview = group === 'hardware-cpu' ? 'cpu' : group === 'hardware-hdd' ? 'hdd' : group === 'hardware-ssd' ? 'ssd' : 'ram'
+    const previews = {
+      'hardware-cpu': 'cpu', 'hardware-hdd': 'hdd', 'hardware-ssd': 'ssd',
+      'hardware-ram': 'ram', 'hardware-gpu': 'gpu', 'hardware-network-adapter': 'network-adapter',
+    } as const
+    const preview = previews[group]
     this.setState({
       hardwareOverview: group,
       hardwareAlgorithm: null, hardwareActionActive: false,
@@ -587,6 +598,8 @@ export default class App extends Component<Record<string, never>, AppState> {
     switch (this.state.hardwareOverview) {
       case 'hardware-cpu': return <CpuWorkspace key="component-cpu" ref={this.setComponentWorkspace} {...props} />
       case 'hardware-ram': return <RamWorkspace key="component-ram" ref={this.setComponentWorkspace} {...props} />
+      case 'hardware-gpu': return <GpuWorkspace key="component-gpu" ref={this.setComponentWorkspace} {...props} />
+      case 'hardware-network-adapter': return <NetworkAdapterWorkspace key="component-network-adapter" ref={this.setComponentWorkspace} {...props} />
       case 'hardware-ssd': return <SsdWorkspace key={key} ref={this.setComponentWorkspace} {...props} />
       case 'hardware-hdd': return <HddWorkspace key={key} ref={this.setComponentWorkspace} {...props} />
       default: return null

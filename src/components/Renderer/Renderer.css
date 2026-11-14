@@ -55,28 +55,10 @@
   margin-left: auto;
   gap: 6px;
 }
-.diagram-tools--cpu {
+.diagram-tools--cpu,
+.diagram-tools--component {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-}
-.diagram-tools--cpu .hardware-transfer {
-  grid-column: 1 / -1;
-  height: 40px;
-  overflow: auto;
-}
-.hardware-transfer {
-  display: flex;
-  flex-basis: 100%;
-  align-items: flex-start;
-  gap: 8px;
-  min-height: 20px;
-  color: #2563bd;
-  font: 12px/20px var(--mono);
-  overflow-wrap: anywhere;
-}
-.hardware-transfer svg {
-  flex-shrink: 0;
-  margin-top: 2px;
 }
 .diagram-size-controls button {
   display: inline-grid;

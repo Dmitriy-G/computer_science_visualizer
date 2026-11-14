@@ -1,6 +1,6 @@
 import type { OverviewComponentKind, OverviewDeviceKind } from '../../visualization/OverviewComponent.ts'
 
-export type HardwareFundamentalGroupKind = 'hardware-cpu' | 'hardware-hdd' | 'hardware-ssd' | 'hardware-ram'
+export type HardwareFundamentalGroupKind = 'hardware-cpu' | 'hardware-hdd' | 'hardware-ssd' | 'hardware-ram' | 'hardware-gpu' | 'hardware-network-adapter'
 export type HardwareOverviewGroupKind = HardwareFundamentalGroupKind | 'hardware-complex'
 
 export type AdvancedAlgorithmGroupKind =
@@ -28,13 +28,15 @@ export interface AdvancedAlgorithmGroup {
 
 export class AdvancedAlgorithmCatalog {
   public static readonly groups: readonly AdvancedAlgorithmGroup[] = [
-    { kind: 'hardware-fundamental', parent: null, name: 'Hardware Fundamental', description: 'Explore CPU, HDD, SSD, and RAM components and their mechanisms.' },
+    { kind: 'hardware-fundamental', parent: null, name: 'Hardware Fundamental', description: 'Explore CPU, disks, RAM, GPU, and network adapter components.' },
     { kind: 'hardware-complex', parent: null, name: 'Complex', description: 'Combine hardware components into systems, such as caching between CPU and memory.' },
     { kind: 'network', parent: null, name: 'Network', description: 'Explore individual OSI layers and mechanisms that combine layers into working networks.' },
     { kind: 'hardware-cpu', parent: 'hardware-fundamental', name: 'CPU', description: 'Follow a non-atomic increment and an atomic word load through a CPU core.', component: 'CPU' },
     { kind: 'hardware-hdd', parent: 'hardware-fundamental', name: 'HDD', description: 'Explore magnetic storage, sector access, and read/write mechanisms.', component: 'Disk', device: 'HDD' },
     { kind: 'hardware-ssd', parent: 'hardware-fundamental', name: 'SSD', description: 'Explore NAND storage, flash translation, garbage collection, and wear leveling.', component: 'Disk', device: 'SSD' },
     { kind: 'hardware-ram', parent: 'hardware-fundamental', name: 'RAM', description: 'Follow writing and reading one selected bit through a DRAM module.', component: 'RAM' },
+    { kind: 'hardware-gpu', parent: 'hardware-fundamental', name: 'GPU', description: 'Follow one rendered frame and one Hashcat candidate through the GPU.', component: 'GPU' },
+    { kind: 'hardware-network-adapter', parent: 'hardware-fundamental', name: 'Network Adapter', description: 'Follow minimal Ethernet transfers from server to network and network to server.', component: 'Network Adapter' },
     { kind: 'network-fundamental', parent: 'network', name: 'Fundamental', description: 'Overviews focused on one OSI layer and the tasks it performs.' },
     { kind: 'network-complex', parent: 'network', name: 'Complex', description: 'Combine network layers into working systems, such as secure web communication.' },
     { kind: 'physical', parent: 'network-fundamental', name: 'Physical', description: 'Layer 1: transmit bits as physical signals.' },
@@ -62,13 +64,13 @@ export class AdvancedAlgorithmCatalog {
   }
 
   public static isHardwareFundamentalGroup(kind: AdvancedAlgorithmGroupKind | null): kind is HardwareFundamentalGroupKind {
-    return kind === 'hardware-cpu' || kind === 'hardware-hdd' || kind === 'hardware-ssd' || kind === 'hardware-ram'
+    return kind === 'hardware-cpu' || kind === 'hardware-hdd' || kind === 'hardware-ssd' || kind === 'hardware-ram' || kind === 'hardware-gpu' || kind === 'hardware-network-adapter'
   }
 
   public static fundamentalGroupFor(components: readonly OverviewComponentKind[], devices: readonly OverviewDeviceKind[] = []): HardwareFundamentalGroupKind {
     for (const group of this.getGroups('hardware-fundamental')) {
       if (this.isHardwareFundamentalGroup(group.kind) && group.component && components.includes(group.component) && (!group.device || devices.includes(group.device))) return group.kind
     }
-    throw new RangeError('Fundamental overviews require CPU or RAM coverage, or Disk coverage with an HDD or SSD device tag')
+    throw new RangeError('Fundamental overviews require a supported hardware component and, for Disk, an HDD or SSD device tag')
   }
 }

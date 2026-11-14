@@ -2,6 +2,7 @@ import type { HardwareDiagram } from '../../../../../visualization/HardwareDiagr
 import { HardwareSnapshot } from '../HardwareSnapshot.ts'
 import { RamLayout } from './RamLayout.ts'
 import type { RamBitModel } from './RamBitModel.ts'
+import { DramCellVisual } from '../DramCellVisual.ts'
 
 export interface RamBitActivity {
   readonly path: string | null
@@ -26,8 +27,8 @@ export class RamBitLayout {
     this.state(diagram, 'column', model.columnSelected ? `column ${model.column}: ${model.columnData ?? 'selected'}` : 'not selected', 2200, 1190, 490, 34)
     this.state(diagram, 'sense', model.buffer ? `[${model.buffer.join(' ')}]` : 'equalized', 2200, 985, 490, 38)
     this.state(diagram, 'transistor', model.wordline ? 'ON' : 'OFF', 2070, 692, 180, 24)
-    this.state(diagram, 'capacitor', this.charge(model), 2330, 692, 180, 24)
-    this.state(diagram, 'bitline', this.bitline(model), 2200, 835, 300, 40)
+    this.state(diagram, 'capacitor', DramCellVisual.chargeLabel(model.capacitorCharge), 2330, 692, 180, 24)
+    this.state(diagram, 'bitline', DramCellVisual.bitlineLabel(model.bitlineLevel), 2200, 835, 300, 40)
     this.addCellState(diagram, model)
     for (let index = 0; index < diagram.paths.length; index += 1) {
       const path = diagram.paths[index]
@@ -42,10 +43,7 @@ export class RamBitLayout {
     diagram.fixture('ram-detail-row-0', '', `Row 0: [${model.rows[0].join(' ')}]`, 2200, 475, '', 450, 28)
       .fixture('ram-detail-row-1', '', `Row 1: [${model.rows[1].join(' ')}]`, 2200, 760, '', 450, 24)
       .fixture('ram-detail-wordline', 'Wordline', model.wordline ? 'HIGH' : 'LOW', 1705, 545, '', 200, 40)
-    diagram.paths.push(
-      { id: 'ram-detail-charge-outline', d: 'M2260 625h130v32h-130Z', label: 'Symbolic selected-cell charge indicator', highlighted: false, fill: '#f1f3f6', stroke: '#bfc8d2', strokeWidth: 2 },
-      { id: 'ram-detail-charge-level', d: `M2260 657h130v-${32 * model.capacitorCharge}h-130Z`, label: `Selected capacitor charge / ${this.charge(model)}; not a voltage-accurate analog simulation`, highlighted: false, fill: '#b5d8eb', stroke: '#7eabc6', strokeWidth: 1 },
-    )
+    DramCellVisual.addChargeIndicator(diagram, 'ram-detail-charge', model.capacitorCharge, 2260, 625)
   }
 
   private static state(diagram: HardwareDiagram, id: string, value: string, x: number, y: number, width: number, height = 50): void {
@@ -68,14 +66,6 @@ export class RamBitLayout {
       case 'ram-sense-column': id = activity.reverse ? 'sense' : 'column'; break
     }
     return id === null ? null : `ram-state-${id}`
-  }
-
-  private static bitline(model: RamBitModel): string {
-    return model.bitlineLevel === 0.5 ? 'VDD/2' : model.bitlineLevel === 0 ? 'LOW' : model.bitlineLevel === 1 ? 'HIGH' : model.bitlineLevel > 0.5 ? 'VDD/2 + delta' : 'VDD/2 - delta'
-  }
-
-  private static charge(model: RamBitModel): string {
-    return model.capacitorCharge === 0 ? '0 / low' : model.capacitorCharge === 1 ? '1 / high' : 'shared charge'
   }
 
   private static reverse(id: string): string {

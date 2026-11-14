@@ -271,7 +271,7 @@ test('advanced hardware categories have reversible paths and no structure select
   assert.equal(advanced.hardwareOverviewGroup, null)
   const fundamental = advanced.selectAdvancedAlgorithmGroup('hardware-fundamental')
   assert.equal(fundamental.hardwareOverviewGroup, null)
-  assert.deepEqual(fundamental.getAdvancedAlgorithmGroups().map((group) => group.name), ['CPU', 'HDD', 'SSD', 'RAM'])
+  assert.deepEqual(fundamental.getAdvancedAlgorithmGroups().map((group) => group.name), ['CPU', 'HDD', 'SSD', 'RAM', 'GPU', 'Network Adapter'])
   assert.deepEqual(fundamental.getPath(), ['System Components Overview', 'Hardware Fundamental'])
   assert.equal(fundamental.backLabel, 'System Components Overview')
   assert.deepEqual(fundamental.back(), advanced)
@@ -281,7 +281,7 @@ test('advanced hardware categories have reversible paths and no structure select
   assert.throws(() => fundamental.selectStructure('array'), /current group/)
   assert.deepEqual(fundamental.getComponentAlgorithms(), [])
   const seen = new Set()
-  const counts = { CPU: 2, HDD: 1, SSD: 4, RAM: 2 }
+  const counts = { CPU: 2, HDD: 1, SSD: 4, RAM: 2, GPU: 2, 'Network Adapter': 2 }
   for (const group of fundamental.getAdvancedAlgorithmGroups()) {
     const component = fundamental.selectAdvancedAlgorithmGroup(group.kind)
     assert.equal(component.hardwareOverviewGroup, group.kind)

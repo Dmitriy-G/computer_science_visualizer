@@ -15,10 +15,10 @@ in MainMenu/MenuStructureCatalog.ts. Data Structures Algorithms contains Sorting
 (Array with forty-eight sorting algorithms) and Graphs Traversal; graph algorithm
 examples live in the latter.
 System Components Overview opens Hardware Fundamental, Complex, and Network in
-that order. Hardware Fundamental directly contains CPU, HDD, SSD, and RAM in
-that order. Choosing one opens a workspace whose overview cards are filtered by
+that order. Hardware Fundamental directly contains CPU, HDD, SSD, RAM, GPU, and
+Network Adapter in that order. They open workspaces whose overview cards are filtered by
 component and storage device tags, with separate info buttons. CPU contains two
-lessons, HDD one, SSD four, and RAM two. NAND belongs to SSD alongside FTL,
+lessons, HDD one, SSD four, RAM two, GPU two, and Network Adapter two. NAND belongs to SSD alongside FTL,
 garbage collection, and wear leveling. Complex opens its flat workspace directly
 from the overview root; Network retains Fundamental and Complex subcategories.
 System Components Overview displays a client, abstract network, and server.
@@ -34,6 +34,73 @@ The socket is drawn beside the package for clarity; physically it sits underneat
 Core count, cache organization, packaging, and interfaces vary between processors;
 the map is logical rather than a manufacturer floorplan. Cache and controller
 context follows [Intel's processor datasheet](https://cdrdv2-public.intel.com/634648/634648-004.pdf).
+GPU and Network Adapter open their common diagrams with two overview cards each.
+GpuLayout shows a discrete-card example with host connectivity, scheduling,
+compute/shader cores, texture units, rasterization, render output, cache, memory
+controllers, VRAM, display engine and ports, optional ray tracing and AI units,
+and power/cooling support. NetworkAdapterLayout shows a PCIe Ethernet example
+with controller management, firmware/configuration memory, host interface, DMA,
+TX/RX buffers, MAC, PHY, connection hardware, and optional packet offloads.
+Both use HardwareDiagram, the existing opaque hardware palette and schematic
+titles, nested camera navigation, and Fit/Actual size controls. Unit placement
+is logical; accessible descriptions identify integrated-GPU and USB/Wi-Fi variants.
+GpuVramLayout expands the VRAM area as a representative GDDR chip, DRAM die,
+bank, cell array, and enlarged 1T1C cell. It shows separate access-transistor and
+storage-capacitor blocks, wordline/bitline connections, row and column decoders,
+sense amplifiers / row buffer, command/address logic, refresh, and data I/O /
+prefetch buffers. The storage cell is DRAM; row-buffer latches are separate.
+Scoped quantity labels use a 16 GiB GDDR6 example: eight 16-Gbit chips per VRAM,
+one modeled monolithic die per chip, 32 banks per die (two channels of sixteen),
+approximately 537M data cells per bank, and one access transistor and capacitor
+per cell. GpuVramExample supplies shared quantities for labels and info dialogs.
+Micron's 16-Gbit GDDR6 addressing table supplies the channel/bank organization;
+the board capacity and single-die packaging are explicit modeling choices.
+Spare cells and peripheral logic are excluded; physical subarray and decoder
+counts remain unspecified. Memory-controller commands
+and payload paths enter separate VRAM functions; display output stays separate.
+The GPU canvas is widened for readable details, and its reveal threshold keeps
+the complete map visible. Static preview and both lessons share these bounds.
+The references are [Micron's 16-Gbit GDDR6 datasheet, Table 3](https://www.mouser.com/datasheet/2/671/Micron_08232024_gddr6_sgram_16gb_brief_1578719_348-3554756.pdf),
+[Micron GDDR6](https://www.micron.com/products/memory/graphics-memory/gddr6)
+and [Samsung's DRAM cell explanation](https://semiconductor.samsung.com/dram/).
+GPU offers Render one frame and Hashcat: one candidate iteration. The first
+transforms three vertices, rasterizes one triangle into a 2 × 2 frame, shades its
+covered pixel, stores the result in VRAM, and presents it through the Display
+Engine. The display-output route is separate from the memory-controller/VRAM
+route. The second computes and compares the complete SHA-256 digest of fixed
+candidate abc, then reports its match to the host; it does not execute Hashcat.
+Both GPU cards and search results show GPU and VRAM tags. Their memory transfers
+use GpuVramModel and GpuVramTrace to animate ACTIVATE, row selection, wordline
+opening, sensing and restoration, column read/write, GDDR I/O, and PRECHARGE.
+One enlarged capacitor follows bit 0 of the first payload byte; wider buffers
+transfer as grouped data. Named teaching buffers select representative rows,
+not a vendor GPU address map. Access restoration is distinct from scheduled
+refresh, which remains idle. Frame rendering reads actual geometry and texture
+bytes from the memory model, writes RGBA frame bytes, and reads them for scanout.
+Hashcat uploads candidate/target bytes, reads them for hashing/comparison, writes
+the match record, and reads its flag for host reporting. Writes commit before
+row closure; reads preserve bytes and other buffers remain unchanged. These
+lessons retain the 96-event bound and independent fixed-geometry scenes.
+RAM and GPU VRAM reuse DramCellVisual for the same blue capacitor charge bar,
+0 / low, shared charge, and 1 / high labels, and bitline voltage labels. GPU
+activation shows symbolic charge sharing before sensing and restoration; writes
+change capacitor fill only after bitline drive and storage. Transistor pills
+show ON/OFF. Approximate VRAM count suffixes appear in the static preview and
+are removed in playback to leave space for cell state, matching RAM. Reset
+restores the static labels. GpuVramTrace decorates independent snapshot diagrams
+through ComponentFlowTrace without adding events or changing canvas geometry.
+Network Adapter offers Server to network and Network to server. Each follows
+one payload byte in a minimum 64-byte Ethernet frame, with real CRC-32 FCS,
+separate TX/RX paths, DMA, and completion after data delivery. Invalid FCS or an
+unaccepted destination prevents receive DMA. Optional packet offloads stay idle.
+These four lessons retain the category geometry, camera, renderer, and scrolling;
+Reset restores the static map. ComponentFlowTrace shares bounded snapshots,
+state placement, one highlighted transfer per event, and directional routing.
+ComponentFlowWorkspace replaces only the selected detail layer. Narration stays
+in info dialogs and accessible playback/scene descriptions, outside the visible
+renderer. Component names, values, and concise wiring labels remain visible.
+Overview references include the Vulkan specification, Linux DRM/KMS and network
+driver documentation, and Hashcat's SHA2-256 kernel source.
 Focused component previews exclude the other components' detailed layers, preventing
 neighboring RAM or disk diagrams from appearing in the surrounding viewport.
 The static CPU preview uses opaque light orange (#faf6ec) for the socket's inner
@@ -152,7 +219,7 @@ SPD devices follow Renesas's [DDR4 SPD EEPROM](https://www.renesas.com/en/produc
 and [DDR5 SPD hub](https://www.renesas.com/en/products/spd5118) descriptions.
 Network starts with a blank renderer. Selecting a lesson uses its mechanism's playback;
 HDD and SSD lessons retain their shared component diagrams. Component workspace
-Back and header menu return to the four categories
+Back and header menu return to the six categories
 in Hardware Fundamental and restore the hardware preview, ending the current lesson.
 Complex returns directly to System Components Overview and its system preview.
 Search selections open the matching component workspace and lesson.
@@ -169,15 +236,15 @@ CpuOperationModel owns the operation state, CpuOperationTrace records one transf
 or local update per step, and CpuOperationLayout adds state inside the existing
 blocks. Fixed bounds, independent snapshots, hidden approximate count suffixes,
 and the retained camera/renderer prevent shifts when playback starts or resets.
-A fixed-height caption area shows the current transfer below the legend in both
-static and animated CPU views. The old four cards are removed from menu/search;
+Current-transfer explanations remain in accessible playback descriptions and info
+dialogs, without a visible renderer caption. The old four cards are removed from menu/search;
 their mechanism primitives remain available to legacy unit tests.
 Alongside the two CPU operation overviews, Fundamental implements Write one bit,
 Read one bit, conventional HDD sector access, SLC NAND, page-mapped
 SSD FTL, SSD garbage collection, and SSD wear-leveling lessons from coverage.md.
 Each owns its model, layout, animation, and sourced overview in a named folder
-under Hardware/Fundamental. CPU, RAM, HDD, and SSD own separate catalogs and
-workspaces in Cpu, Ram, Hdd, and Ssd. HardwareOverviewCatalog delegates to these
+under Hardware/Fundamental. CPU, RAM, HDD, SSD, GPU, and Network Adapter own separate catalogs and
+workspaces in Cpu, Ram, Hdd, Ssd, Gpu, and NetworkAdapter. HardwareOverviewCatalog delegates to these
 catalogs for menu/search routing. ComponentWorkspace supplies shared workspace UI;
 HardwareSnapshot, HardwareTrace, and HardwareOverviewLesson supply neutral snapshot
 and playback contracts. ComponentLesson uses hardware-component scenes, while
@@ -217,9 +284,9 @@ interfaces and component flows, with routed transfers between the large blocks. 
 CPU-to-cache requests, cache-to-PoU data transfer, completion responses, and CPU
 continuation. Complex playback expands logical events into individual interface
 transfers or local cell updates, displaying one interaction per step. Receiver
-values change on arrival; waits have explicit statuses. A short caption below
-the legend identifies the active arrow's data, request, response, or control
-message and its contents, preserved across interface hops. Scenario resets use
+values change on arrival; waits have explicit statuses. Accessible descriptions
+identify the active arrow's data, request, response, or control message and its
+contents, preserved across interface hops. No renderer narration is shown. Scenario resets use
 initial-state frames, and narration-only summaries reuse an existing frame.
 These detailed lessons remain bounded to 256 interaction frames with fixed scene
 bounds; the stages do not imply processor cycles or atomic-operation internals.

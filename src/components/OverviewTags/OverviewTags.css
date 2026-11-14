@@ -25,7 +25,8 @@
   background: #edf2fc;
   color: #3a5689;
 }
-.overview-component-tag[data-component='RAM'] {
+.overview-component-tag[data-component='RAM'],
+.overview-component-tag[data-component='VRAM'] {
   border-color: #bfdccc;
   background: #eaf5ee;
   color: #315e45;
@@ -39,6 +40,16 @@
   border-color: #d9c8e9;
   background: #f4edfa;
   color: #694484;
+}
+.overview-component-tag[data-component='GPU'] {
+  border-color: #d8bd85;
+  background: #faf6ec;
+  color: #765025;
+}
+.overview-component-tag[data-component='Network Adapter'] {
+  border-color: #b6d8df;
+  background: #eaf5f8;
+  color: #2e6170;
 }
 .overview-architecture-tag {
   border-color: #cbd5e1;

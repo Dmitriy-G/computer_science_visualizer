@@ -20,9 +20,40 @@
    **Data Structures Algorithms**, and **Advanced Data Structures**, in that order.
    These category lists are excluded from alphabetical menu ordering. System Components Overview
    opens Hardware Fundamental, Complex, and Network in that fixed order.
-   Hardware Fundamental opens CPU, HDD, SSD, and RAM directly in that order.
+   Hardware Fundamental opens CPU, HDD, SSD, RAM, GPU, and Network Adapter directly in that order.
    Network retains Fundamental and Complex subcategories.
-   Choosing a component closes the menu and opens its workspace with overview
+   GPU and Network Adapter close the menu and zoom directly into their maps,
+   with two overview cards each and no automatic playback until one is selected.
+   GPU offers Render one frame and Hashcat: one candidate iteration; Network
+   Adapter offers Server to network and Network to server. GPU shows a logical discrete-card map;
+   Network Adapter shows a logical PCIe Ethernet map with distinct TX/RX paths.
+   Label optional units explicitly and retain other variants in accessible descriptions.
+   Both reuse the existing schematic styles, Fit/Actual size controls, reduced-motion
+   behavior, and focused-layer filtering. Their lessons replace only the matching
+   detail layer, preserve geometry/camera/scrolling, and show one directed transfer
+   or local update per step. Keep explanatory narration in info dialogs and
+   accessible descriptions, without renderer captions. Reset restores the static map.
+   GPU VRAM expands a representative GDDR chip/die/bank with row/column decoders,
+   row-buffer sense amplifiers, refresh, I/O, and a magnified 1T1C cell showing its
+   access transistor and storage capacitor. Keep this shared geometry in both lessons.
+   Use scoped VRAM counts from the 16 GiB GDDR6 example: eight chips per VRAM,
+   one modeled die per chip, 32 banks per die, approximately 537M cells per bank,
+   and one transistor/capacitor per cell. Explain the example in info dialogs and
+   accessible labels; retain component labels without renderer narration.
+   Both GPU cards show GPU and VRAM tags. Animate their internal memory paths
+   through activation, sensing/restoration, column access, I/O, and precharge;
+   a write visibly drives the capacitor bit before its data is read back.
+   Use stored buffer bytes for shader inputs, SHA-256/comparison inputs, and
+   display scanout. Keep each lesson within 96 events and the same scene bounds.
+   Match RAM's 1T1C animation in VRAM: the transistor shows ON/OFF and the blue
+   capacitor fill shows low, shared charge during activation, and high charge
+   after restoration or writes. Reuse DramCellVisual and the same charge/bitline
+   labels; omit approximate count suffixes during playback and restore them on Reset.
+   Display signals travel from Display Engine to HDMI / DisplayPort, separately
+   from memory controllers and VRAM. The Hashcat example evaluates one complete
+   fixed SHA-256 candidate. NIC examples retain their separate TX/RX paths and
+   deliver data before reporting completion. The header menu returns to Hardware Fundamental.
+   Choosing another component closes the menu and opens its workspace with overview
    cards filtered by component and device tags. CPU contains two operation overviews:
    a non-atomic increment and an atomic word load. The old
    prediction/renaming overviews are removed from menu/search. HDD contains sector access;
@@ -204,7 +235,7 @@ Fit the full diagram to the available width and the remaining visible height
 below its controls, preserving its aspect ratio and top alignment. Measure the
 actual viewport position and bottom padding rather than imposing a fixed
 percentage-of-screen cap. Recalculate when the header, action panel, legend,
-arrow caption, pseudocode trigger, or visual viewport changes size. Keep a usable
+pseudocode trigger, or visual viewport changes size. Keep a usable
 minimum diagram height on short screens, allowing page scrolling when necessary.
 Offer Fit diagram and
 Actual size as view controls outside the SVG. Actual size allows horizontal and
@@ -337,8 +368,8 @@ Use an icon-only Reset button with an accessible label.
 Show only the progress bar in the timeline across data structures, algorithms,
 and overviews. Do not render a step description, label, hint, or tooltip above
 the bar. Retain an accessible name and the current step's description in the
-progress indicator's accessible value text. Hardware arrow captions remain
-below the renderer legend. Hide the pseudocode trigger before an
+progress indicator's accessible value text. Keep hardware narration in accessible
+descriptions and info dialogs; do not render it below the legend. Hide the pseudocode trigger before an
 action is selected. Align diagrams to the top of their viewport instead of
 vertically centering them in unused canvas space.
 Omit the step heading, action introduction, phase progress bar, step counter,
@@ -496,8 +527,8 @@ Reuse CpuLayout's package, representative core, palette, and component positions
 Put instruction/operand/result state inside those blocks, hide approximate core
 count suffixes only during playback, and replace only the existing CPU scene layer.
 Retain the mounted renderer, camera, Fit/Actual size, scrolling, and fixed bounds
-across lesson sessions and Reset. Reserve a fixed-height arrow-caption area below
-the legend in static and animated CPU views. Use existing automatic playback and
+across lesson sessions and Reset. Keep explanatory narration outside the visible
+renderer in static and animated CPU views. Use existing automatic playback and
 the header Reset/progress controls without additional timers or player controls.
 
 Model the increment as distinct LOAD, ADD, and STORE instructions. Capture i = 7,

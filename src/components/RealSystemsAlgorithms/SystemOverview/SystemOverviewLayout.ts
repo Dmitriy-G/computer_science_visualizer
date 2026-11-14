@@ -3,8 +3,11 @@ import { CpuLayout } from '../Hardware/Fundamental/Cpu/CpuLayout.ts'
 import { HddLayout } from '../Hardware/Fundamental/Hdd/HddLayout.ts'
 import { SsdLayout } from '../Hardware/Fundamental/Ssd/SsdLayout.ts'
 import { RamLayout } from '../Hardware/Fundamental/Ram/RamLayout.ts'
+import { GpuLayout } from '../Hardware/Fundamental/Gpu/GpuLayout.ts'
+import { NetworkAdapterLayout } from '../Hardware/Fundamental/NetworkAdapter/NetworkAdapterLayout.ts'
 
-type SystemOverviewLevel = 'system' | 'hardware' | 'cpu' | 'hdd' | 'ssd' | 'ram'
+type SystemOverviewComponent = 'cpu' | 'hdd' | 'ssd' | 'ram' | 'gpu' | 'network-adapter'
+type SystemOverviewLevel = 'system' | 'hardware' | SystemOverviewComponent
 
 export class SystemOverviewLayout {
   private static readonly server = { x: 1060, y: 100, scale: 1080 / 1560 }
@@ -12,10 +15,20 @@ export class SystemOverviewLayout {
   private static readonly hdd = { x: 75, y: 1075, width: 420, height: 220 }
   private static readonly ssd = { x: 560, y: 1075, width: 420, height: 220 }
   private static readonly ram = { x: 825, y: 125, width: 640, height: 240 }
+  private static readonly gpu = { x: 825, y: 465, width: 640, height: 260 }
+  private static readonly networkAdapter = { x: 1045, y: 1075, width: 420, height: 220 }
+  private static readonly layouts = {
+    cpu: CpuLayout, hdd: HddLayout, ssd: SsdLayout, ram: RamLayout,
+    gpu: GpuLayout, 'network-adapter': NetworkAdapterLayout,
+  }
 
-  private static componentPlacement(level: 'cpu' | 'hdd' | 'ssd' | 'ram'): { x: number, y: number, scale: number } {
-    const device = level === 'cpu' ? { x: this.cpu.x, y: this.cpu.y, width: this.cpu.size, height: this.cpu.size } : level === 'hdd' ? this.hdd : level === 'ssd' ? this.ssd : this.ram
-    const layout = level === 'cpu' ? CpuLayout : level === 'hdd' ? HddLayout : level === 'ssd' ? SsdLayout : RamLayout
+  private static componentPlacement(level: SystemOverviewComponent): { x: number, y: number, scale: number } {
+    const devices = {
+      cpu: { x: this.cpu.x, y: this.cpu.y, width: this.cpu.size, height: this.cpu.size },
+      hdd: this.hdd, ssd: this.ssd, ram: this.ram, gpu: this.gpu, 'network-adapter': this.networkAdapter,
+    }
+    const device = devices[level]
+    const layout = this.layouts[level]
     const scale = Math.min(device.width / layout.width, device.height / layout.height)
     return {
       x: this.server.x + (device.x + (device.width - layout.width * scale) / 2) * this.server.scale,
@@ -29,7 +42,7 @@ export class SystemOverviewLayout {
     const server = this.server
     if (level === 'hardware') return { x: server.x - 30, y: server.y - 30, width: 1140, height: 1060 }
     const device = this.componentPlacement(level)
-    const layout = level === 'cpu' ? CpuLayout : level === 'hdd' ? HddLayout : level === 'ssd' ? SsdLayout : RamLayout
+    const layout = this.layouts[level]
     return { x: device.x - 20 * device.scale, y: device.y - 20 * device.scale, width: (layout.width + 40) * device.scale, height: (layout.height + 40) * device.scale }
   }
 
@@ -50,7 +63,7 @@ export class SystemOverviewLayout {
       else if (previous?.kind === 'hardware-component' && previous.regions?.some((region) => region.id === 'ssd-pcb')) from = this.bounds('ssd')
       else if (previous?.kind === 'hardware-component' && previous.regions?.some((region) => region.id === 'ram-pcb')) from = this.bounds('ram')
       else if (previous) from = to
-      else from = level === 'cpu' || level === 'hdd' || level === 'ssd' || level === 'ram' ? this.bounds('hardware') : this.bounds('system')
+      else from = level !== 'system' && level !== 'hardware' ? this.bounds('hardware') : this.bounds('system')
     }
     const hardware = this.hardware()
     const cpuScene = CpuLayout.create()
@@ -59,7 +72,10 @@ export class SystemOverviewLayout {
     const hddScene = HddLayout.create()
     const ssdScene = SsdLayout.create()
     const ramScene = RamLayout.create()
-    const componentScene = level === 'cpu' ? cpuScene : level === 'hdd' ? hddScene : level === 'ssd' ? ssdScene : level === 'ram' ? ramScene : null
+    const gpuScene = GpuLayout.create()
+    const networkAdapterScene = NetworkAdapterLayout.create()
+    const scenes = { cpu: cpuScene, hdd: hddScene, ssd: ssdScene, ram: ramScene, gpu: gpuScene, 'network-adapter': networkAdapterScene }
+    const componentScene = level === 'system' || level === 'hardware' ? null : scenes[level]
     const layers: SceneLayer[] = [
       {
         id: 'server-boundary', x: 0, y: 0, scale: 1,
@@ -101,6 +117,14 @@ export class SystemOverviewLayout {
         id: 'ram-components', scene: ramScene, ...this.componentPlacement('ram'),
         reveal: { startWidth: 600, endWidth: 320 },
       },
+      {
+        id: 'gpu-components', scene: gpuScene, ...this.componentPlacement('gpu'),
+        reveal: { startWidth: 650, endWidth: 450 },
+      },
+      {
+        id: 'network-adapter-components', scene: networkAdapterScene, ...this.componentPlacement('network-adapter'),
+        reveal: { startWidth: 600, endWidth: 320 },
+      },
     ]
     const focusedLayers: SceneLayer[] = []
     const focused = componentScene ? `${level}-components` : null
@@ -139,11 +163,11 @@ export class SystemOverviewLayout {
   private static hardware(): Scene {
     const components: readonly [string, string, string, number, number, number, number][] = [
       ['ram', 'RAM', 'Main memory', this.ram.x + this.ram.width / 2, this.ram.y + this.ram.height / 2, this.ram.width, this.ram.height],
-      ['gpu', 'GPU', 'Graphics / parallel compute', 1145, 595, 640, 260],
+      ['gpu', 'GPU', 'Graphics / parallel compute', this.gpu.x + this.gpu.width / 2, this.gpu.y + this.gpu.height / 2, this.gpu.width, this.gpu.height],
       ['bus', 'Bus / interconnect', 'Connects processor, memory and devices', 770, 905, 1390, 100],
       ['hdd', 'HDD', 'Magnetic storage', this.hdd.x + this.hdd.width / 2, this.hdd.y + this.hdd.height / 2, this.hdd.width, this.hdd.height],
       ['ssd', 'SSD', 'Flash storage', this.ssd.x + this.ssd.width / 2, this.ssd.y + this.ssd.height / 2, this.ssd.width, this.ssd.height],
-      ['network-adapter', 'Network adapter', 'Network connection', 1255, 1185, 420, 220],
+      ['network-adapter', 'Network Adapter', 'Network connection', this.networkAdapter.x + this.networkAdapter.width / 2, this.networkAdapter.y + this.networkAdapter.height / 2, this.networkAdapter.width, this.networkAdapter.height],
     ]
     const nodes: SceneNode[] = []
     for (const [id, name, description, x, y, width, height] of components) nodes.push(this.label(id, name, description, x, y, width, height))

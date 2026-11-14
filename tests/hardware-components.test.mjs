@@ -19,8 +19,8 @@ import { MenuSearchIndex } from '../src/components/MainMenu/Search/MenuSearchInd
 
 const choices = HardwareOverviewCatalog.choices.filter((choice) => !choice.components.includes('CPU'))
 
-test('seven component lessons retain independent deterministic scenes and fundamental search destinations', () => {
-  assert.equal(choices.length, 7)
+test('eleven component lessons retain independent deterministic scenes and fundamental search destinations', () => {
+  assert.equal(choices.length, 11)
   const index = new MenuSearchIndex(() => null)
   for (const choice of choices) {
     const source = new HardwareSnapshot()

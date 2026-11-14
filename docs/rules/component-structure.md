@@ -198,7 +198,8 @@ Keep contracts and infrastructure used across structures in `src/visualization/`
 such as `Scene.ts`, `AnimationController.ts`, and `StructureCatalog.ts`.
 Do not generate unused scene hints, timeline hints, action-context strings, or
 phase-name lists. Keep explanations consumed by dialogs, input validation,
-hardware arrow captions, and accessible playback text.
+and accessible playback text. Do not show explanatory narration in the renderer;
+retain component names, data values, and concise wiring labels.
 Structure-specific layouts belong beside their canonical model in the matching
 FundamentalDataStructures or AdvancedDataStructures subject folder.
 Algorithm-specific layouts stay beside their algorithm helpers under
@@ -263,8 +264,52 @@ Keep the System Components Overview category hierarchy in
 `MainMenu/AdvancedAlgorithmCatalog.ts`, separate from structure membership and
 data-structure algorithm scopes. The overview root contains Hardware Fundamental,
 Complex, and Network in that fixed order. Hardware Fundamental opens CPU, HDD,
-SSD, and RAM directly in that fixed order. Network retains Fundamental and Complex,
-in that order. Each hardware component subcategory closes MainMenu and opens its
+SSD, RAM, GPU, and Network Adapter directly in that fixed order. Network retains Fundamental and Complex,
+in that order. GPU and Network Adapter close MainMenu and show their common maps
+with two overview cards each. Keep their class-based layouts in
+Hardware/Fundamental/Gpu/GpuLayout.ts and
+Hardware/Fundamental/NetworkAdapter/NetworkAdapterLayout.ts, reusing HardwareDiagram,
+Renderer schematic titles/palettes, and SystemOverviewLayout's focused layers and camera.
+Gpu and NetworkAdapter own their catalogs, workspaces, and action folders:
+FrameRendering / HashcatIteration and ServerToNetwork / NetworkToServer.
+Each action owns its model, component/CSS, animation, and sourced overview.
+ComponentFlowTrace shares bounded snapshots and single-transfer routing;
+ComponentFlowWorkspace replaces only the matching detail layer. Preserve bounds,
+camera and scrolling across playback and Reset. Keep narration in info dialogs
+and accessible descriptions, without a visible renderer caption.
+GpuVramLayout expands GDDR VRAM into a representative chip/die/bank, decoders,
+cell array, sense amplifiers / row buffer, refresh, command logic, and data I/O.
+Show an enlarged 1T1C cell with separate transistor and capacitor blocks and
+wordline/bitline/storage connections. Distinguish the DRAM cell from row-buffer
+latches and retain the same geometry in both GPU lessons. VRAM quantity labels
+follow GpuVramExample: 16 GiB GDDR6, eight 16-Gbit chips per VRAM, one modeled
+die per chip, 32 banks per die across two channels, approximately 537M data cells
+per bank, and one transistor/capacitor per cell. Use "per" and the closest counted
+containing type, with the example basis and higher totals in accessible labels
+and info dialogs. Do not invent physical subarray, decoder, or peripheral counts.
+Keep display wiring separate when widening the map for VRAM detail.
+Tag both GPU lessons with GPU and VRAM, keeping them in the GPU category.
+GpuVramModel owns independent buffer bytes and guarded row/sense/write/precharge
+state. GpuVramTrace records actual internal paths for every illustrated memory
+read/write: command/address, row decoder, wordline, transistor, bitline, capacitor,
+row buffer, column selection, and GDDR I/O. Track one representative bit of a
+grouped transfer; do not imply the entire buffer fits in one physical cell.
+Shader, hash, comparison, and scanout inputs must use bytes returned by the memory
+model. Preserve 96 bounded events, immutable snapshots, and geometry; keep
+scheduled refresh distinct from restoration during ordinary access.
+Reuse DramCellVisual for RAM and VRAM capacitor fill and charge/bitline labels.
+VRAM playback uses the RAM 1T1C presentation: ON/OFF transistor pill, blue
+capacitor indicator, shared-charge state during activation, and full/low charge
+after restoration or writes. Strip approximate VRAM quantity suffixes during
+playback; retain them in the static preview. ComponentFlowTrace's diagram hook
+lets GpuVramTrace add this state to cloned snapshots without extra events.
+Only Display Engine drives HDMI / DisplayPort; keep that route separate from
+memory-controller traffic to VRAM. Hashcat illustrates one complete candidate
+evaluation, with real SHA-256 and no graphics/AI/ray-tracing work. Ethernet lessons
+use one payload byte in a minimum frame, real FCS validation, preposted DMA
+buffers, distinct TX/RX payload paths, and completion after delivery. Use GPU
+and Network Adapter component tags and include all four lessons in search.
+Hardware component subcategories close MainMenu and open their
 own workspace and scoped catalog under Cpu, Ram, Hdd, or Ssd. CpuAlgorithmCatalog
 and CpuWorkspace contain CPU lessons only; the other categories own equivalent
 catalogs and workspaces. HardwareOverviewCatalog delegates shared menu/search
@@ -401,7 +446,7 @@ dataflow to the relevant units. The temporary CPU core test entry is removed;
 its shared core concept belongs to the existing lessons.
 HardwareTrace in CPU mode uses shared HardwareInteractions to publish exactly one explained arrow
 or one local state update per animation step, with receiver updates on arrival.
-Keep captions below the legend for cpu-hardware and hardware-system scenes.
+Keep explanatory narration outside the renderer, using dialogs and accessible playback descriptions.
 Highlight actual instruction, operand, result, retirement, and prediction flows. Cache accesses,
 hit/miss timing, and precise physical wiring are outside these bounded models.
 HardwareSnapshot, HardwareSceneLayout, HardwareTrace, and HardwareOverviewLesson share only visual-state snapshots,

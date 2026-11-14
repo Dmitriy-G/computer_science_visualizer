@@ -84,6 +84,7 @@ export interface Scene {
   readonly focusId: string | null
   readonly count: number
   readonly countLabel?: string
+  readonly activity?: string
   readonly slots?: readonly SceneSlot[]
   readonly regions?: readonly SceneRegion[]
   readonly paths?: readonly ScenePath[]
