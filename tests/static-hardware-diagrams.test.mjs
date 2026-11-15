@@ -6,6 +6,7 @@ import { SystemOverviewLayout } from '../src/components/RealSystemsAlgorithms/Sy
 import { BusLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Bus/BusLayout.ts'
 import { CpuLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Cpu/CpuLayout.ts'
 import { RamLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Ram/RamLayout.ts'
+import { SsdLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Ssd/SsdLayout.ts'
 import { HardwareDiagram } from '../src/visualization/HardwareDiagram.ts'
 import { HardwareDiagramFrame } from '../src/visualization/HardwareDiagramFrame.ts'
 
@@ -28,6 +29,7 @@ test('hardware margins move paths, captions, and state together without changing
 for (const [layout, prefix, keys] of [
   [CpuLayout, 'cpu', ['memory', 'pcie', 'chipset', 'clock', 'reset', 'power']],
   [RamLayout, 'ram', ['host', 'dma', 'sideband', 'power']],
+  [SsdLayout, 'ssd', ['host', 'power']],
   [GpuLayout, 'gpu', ['host', 'display', 'power']],
   [NetworkAdapterLayout, 'nic', ['host', 'network', 'power']],
 ]) {

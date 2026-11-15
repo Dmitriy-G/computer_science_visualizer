@@ -10,17 +10,22 @@ import { HddLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fund
 import { HddEcc } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/HddSector/HddEcc.ts'
 import { HddRecordingCode } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/HddSector/HddRecordingCode.ts'
 import { NandCellModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/NandCell/NandCellModel.ts'
+import { NandCellAnimation } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/NandCell/NandCellAnimation.ts'
+import { SsdFtlAnimation } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/SsdFtl/SsdFtlAnimation.ts'
+import { SsdGarbageCollectionAnimation } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/SsdGarbageCollection/SsdGarbageCollectionAnimation.ts'
+import { SsdWearLevelingAnimation } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/SsdWearLeveling/SsdWearLevelingAnimation.ts'
 import { SsdFtlModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/SsdFtl/SsdFtlModel.ts'
 import { SsdGarbageCollectionModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/SsdGarbageCollection/SsdGarbageCollectionModel.ts'
 import { SsdWearLevelingModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/SsdWearLeveling/SsdWearLevelingModel.ts'
 import { SsdLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Ssd/SsdLayout.ts'
+import { SsdNandExample } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Ssd/SsdNandExample.ts'
 import { SystemOverviewLayout } from '../src/components/RealSystemsAlgorithms/SystemOverview/SystemOverviewLayout.ts'
 import { MenuSearchIndex } from '../src/components/MainMenu/Search/MenuSearchIndex.ts'
 
 const choices = HardwareOverviewCatalog.choices.filter((choice) => !choice.components.includes('CPU'))
 
-test('eleven component lessons retain independent deterministic scenes and fundamental search destinations', () => {
-  assert.equal(choices.length, 11)
+test('nine component lessons retain independent deterministic scenes and fundamental search destinations', () => {
+  assert.equal(choices.length, 9)
   const index = new MenuSearchIndex(() => null)
   for (const choice of choices) {
     const source = new HardwareSnapshot()
@@ -62,10 +67,22 @@ test('eleven component lessons retain independent deterministic scenes and funda
   }
 })
 
-test('all four SSD overviews retain the category schematic and return to its camera bounds', () => {
+test('legacy SSD animations retain the static category schematic and return to its camera bounds', () => {
   const common = SsdLayout.create()
-  for (const kind of ['nand-cell', 'ssd-ftl', 'ssd-garbage-collection', 'ssd-wear-leveling']) {
-    const plan = HardwareOverviewCatalog.definition(kind).create(new HardwareSnapshot(), 0)
+  assert.equal(common.regions.filter((region) => region.id.startsWith('ssd-package-')).length, 1)
+  assert.equal(common.regions.filter((region) => region.id.startsWith('ssd-die-')).length, 1)
+  assert.equal(common.regions.filter((region) => region.id.startsWith('ssd-plane-')).length, 1)
+  for (const region of common.regions) {
+    if (!region.parentId) continue
+    const parent = common.regions.find((candidate) => candidate.id === region.parentId)
+    assert.ok(parent, region.id)
+    assert.ok(region.x >= parent.x && region.y >= parent.y, region.id)
+    assert.ok(region.x + region.width <= parent.x + parent.width, region.id)
+    assert.ok(region.y + region.height <= parent.y + parent.height, region.id)
+  }
+  for (const animation of [new NandCellAnimation(), new SsdFtlAnimation(), new SsdGarbageCollectionAnimation(), new SsdWearLevelingAnimation()]) {
+    const kind = animation.constructor.name
+    const plan = animation.create(new HardwareSnapshot(), 0)
     for (const step of plan.steps) {
       assert.equal(step.scene.width, common.width)
       assert.ok(step.scene.height > common.height)
@@ -76,14 +93,20 @@ test('all four SSD overviews retain the category schematic and return to its cam
       assert.equal(paths.size, step.scene.paths.length)
       for (const path of common.paths) assert.ok(paths.has(path.id), `${kind}: missing ${path.id}`)
       assert.ok(step.scene.nodes.some((node) => node.id === 'ssd-state-controller'))
-      assert.equal(step.scene.paths.find((path) => path.id === 'ssd-channel-1').highlighted, false)
-      assert.equal(step.scene.paths.find((path) => path.id === 'ssd-channel-0-package-1').highlighted, false)
+      assert.equal(step.scene.paths.some((path) => path.id === 'ssd-channel-1' || path.id === 'ssd-channel-0-package-1'), false)
     }
     assert.ok(plan.steps.some((step) => step.scene.paths.some((path) => path.highlighted)))
     const restored = SystemOverviewLayout.create('ssd', plan.steps.at(-1).scene)
     assert.deepEqual(restored.camera.from, restored.camera.to)
   }
   assert.deepEqual(SsdLayout.create(), common)
+})
+
+test('SSD NAND capacities match the sourced SLC geometry', () => {
+  assert.equal(SsdNandExample.dataBytesPerDie, 256 * 2 ** 20)
+  assert.equal(SsdNandExample.rawCapacityGiB, 1)
+  assert.equal(SsdNandExample.dataCellsPerBlock, 2 ** 20)
+  assert.equal(SsdNandExample.dataBytesPerPage + SsdNandExample.spareBytesPerPage, 2176)
 })
 
 test('shared SSD data paths distinguish program, read, and metadata-only mapping publication', () => {
@@ -108,6 +131,11 @@ test('shared SSD data paths distinguish program, read, and metadata-only mapping
   }
   assert.equal(read.paths.find((path) => path.id === 'ssd-encode-nand').highlighted, false)
   assert.notEqual(read.paths.find((path) => path.id === 'ssd-channel-0').d, programmed.paths.find((path) => path.id === 'ssd-channel-0').d)
+  for (const id of ['ssd-nand-die-io', 'ssd-nand-buffer-io', 'ssd-nand-bitline']) {
+    assert.ok(read.paths.find((path) => path.id === id).highlighted)
+    assert.ok(programmed.paths.find((path) => path.id === id).highlighted)
+    assert.notEqual(read.paths.find((path) => path.id === id).d, programmed.paths.find((path) => path.id === id).d)
+  }
   assert.equal(read.fixtures.find((cell) => cell.id === 'ssd-state-dma').value, 'A2')
   assert.equal(programmed.paths.find((path) => path.id === 'ssd-nand-decode').highlighted, false)
 })
@@ -130,13 +158,13 @@ test('SSD relocation uses both ECC paths without host traffic and erase bypasses
   const erased = model.snapshot().diagram
   assert.ok(erased.paths.find((path) => path.id === 'ssd-ftl-nand').highlighted)
   assert.ok(erased.paths.find((path) => path.id === 'ssd-channel-0-package-0').highlighted)
-  for (const id of ['ssd-buffer-encode', 'ssd-encode-nand', 'ssd-nand-decode', 'ssd-decode-buffer']) {
+  for (const id of ['ssd-buffer-encode', 'ssd-encode-nand', 'ssd-nand-decode', 'ssd-decode-buffer', 'ssd-nand-buffer-io', 'ssd-nand-bitline', 'ssd-nand-wordline']) {
     assert.equal(erased.paths.find((path) => path.id === id).highlighted, false)
   }
 })
 
-test('NAND overview identifies ECC encoding before programs and physical access without FTL lookup', () => {
-  const plan = HardwareOverviewCatalog.definition('nand-cell').create(new HardwareSnapshot(), 0)
+test('legacy NAND animation identifies ECC encoding before programs and physical access without FTL lookup', () => {
+  const plan = new NandCellAnimation().create(new HardwareSnapshot(), 0)
   let programs = 0
   for (let index = 0; index < plan.steps.length; index += 1) {
     const scene = plan.steps[index].scene

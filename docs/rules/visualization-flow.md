@@ -56,7 +56,7 @@
    detail layer, preserve geometry/camera/scrolling, and show one directed transfer
    or local update per step. Keep explanatory narration in info dialogs and
    accessible descriptions, without renderer captions. Reset restores the static map.
-   CPU, RAM, GPU, and Network Adapter also show concise external port labels on
+   CPU, RAM, SSD, GPU, and Network Adapter also show concise external port labels on
    lines extending into side margins: CPU memory/I/O, RAM CPU/SoC and SPD context,
    GPU PCIe and HDMI/DisplayPort, NIC PCIe and Ethernet, and each component's DC
    supply. Preserve internal path/state alignment and the same framed scene during
@@ -73,7 +73,10 @@
    the CPU; DDR channels connect its integrated memory controller to RAM. CPU
    software configures DMA engines and those engines transfer payloads; retain
    shared PCIe control traffic and platform-specific signal limits in accessible labels.
-   HDD/SSD interfaces remain as implemented; Motherboard expands the bus map.
+   SSD shows a motherboard PCIe (NVMe protocol) or SATA host link and dashed motherboard/PSU
+   DC input, with one host attachment per example; RAM transfers pass through
+   platform I/O and memory controllers. HDD interfaces remain as implemented;
+   Motherboard expands the bus map.
    GPU VRAM expands a representative GDDR chip/die/bank with row/column decoders,
    row-buffer sense amplifiers, refresh, I/O, and a magnified 1T1C cell showing its
    access transistor and storage capacitor. Keep this shared geometry in both lessons.
@@ -98,7 +101,7 @@
    cards filtered by component and device tags. CPU contains two operation overviews:
    a non-atomic increment and an atomic word load. The old
    prediction/renaming overviews are removed from menu/search. HDD contains sector access;
-   SSD contains NAND, FTL, garbage collection, and wear leveling; RAM contains
+   SSD offers Write one page (2 KiB) and Read one page (2 KiB); RAM contains
    two DRAM bit-access overviews. No static test entry is offered. Root Complex opens
    its flat workspace directly.
    Keep separate information buttons and start no lesson playback until an overview
@@ -131,18 +134,46 @@
    NAND channels/packages, optional DRAM, power management, and optional PLP.
    Inside the SSD controller, show CPU cores, SRAM, FTL, DMA/data buffers,
    separate ECC encode and decode/correction stages, and NAND channel controllers.
-   Show LBA-to-physical NAND mapping and a channel shared by multiple packages;
-   channel and package counts are illustrative. Distinguish page reads/programs
+   Show LBA-to-physical NAND mapping and one representative shared channel/package
+   hierarchy with scoped "(~n per parent)" quantities, matching RAM/VRAM; omit
+   repeated peers. Use SsdNandExample's sourced S34ML02G2 x8 SLC geometry and
+   explicitly modeled topology. Expand series strings, charge-storage cells,
+   wordlines/bitlines, row/column logic, voltage generation, and volatile page
+   buffers. Pages cross strings in the same array: a dashed projection joins the
+   selected wordline to a neutral view of the same page cells across strings;
+   do not show independent page storage. Identify the expanded planar
+   floating-gate SLC example and common modern 3D charge-trap TLC/QLC alternatives.
+   SRAM holds runtime firmware and temporary metadata; persistent firmware must
+   reside in nonvolatile ROM/flash, shown separately as a logical backing source.
+   Keep count assumptions and multilevel-page details in accessible
+   descriptions. Enlarge one SLC 1T memory transistor with control gate,
+   insulation, persistent floating-gate charge, tunnel oxide, and source-drain
+   channel. Show the charge-to-bit and read-current mappings inside the cell;
+   use concise program/erase charge-transfer labels. Keep electrostatic coupling
+   distinct from ordinary conductive wires. Distinguish page reads/programs
    from whole-block erases. Direct write payloads through ECC encoding before
    programming and readback through ECC decoding/correction before host delivery.
    Route address/command/status control separately, with block erase bypassing
    payload ECC. Distinguish optional parts in text and dashed power rails from
    data paths.
-   All four SSD overviews reuse that common schematic with stable component
+   Remove NAND, FTL, garbage collection, and wear leveling from SSD overview
+   cards, search, public kinds, and dispatch. Add only ssd-write-page and
+   ssd-read-page, with Disk/SSD tags, separate info buttons, and search routing.
+   Use actual 2048-byte pages and follow one selected SLC bit; explain that this
+   full-page NAND access differs from a host logical-block minimum. Start writes
+   in erased space, verify before runtime mapping publication, and return read
+   data only after the conceptual ECC stage. Preserve the neighboring page and
+   never erase a block in these two lessons. Replace only ssd-components using
+   ComponentFlowWorkspace, retaining geometry, camera, and scrolling. Hide counts
+   during playback, replace static state comparisons in place, highlight one
+   transfer per frame, and restore the static map on Reset. Keep snapshots
+   independent and within 96 events. End source-line wiring at a named terminal.
+   The four legacy animations reuse that common
+   schematic with stable component
    positions, state cells, and highlighted data/control paths. Append the NAND
    cell, FTL/page-state, garbage-collection, and wear-counter detail panels below
-   it. Their symbolic blocks share CH0 / target 0 / die 0 / plane 0; leave other
-   packages idle. Distinguish logical state-association arrows from hardware
+   it. Their reduced symbolic blocks share CH0 / target 0 / die 0 / plane 0;
+   counted peer packages remain omitted. Distinguish logical state-association arrows from hardware
    payload paths. Relocation uses read and write paths without host traffic;
    mapping publication does not issue a NAND write. NAND cell primitives use
    physical commands without FTL translation and identify ECC stages without
@@ -184,8 +215,8 @@
    Returning from CPU to Hardware Fundamental zooms out to hardware; returning to System
    Components Overview zooms out to client/network/server. CPU category selection
    returns to its core map; HDD category selection and lesson Reset return to its
-   common component map. SSD category selection and lesson Reset restore its
-   common SSD map. RAM category selection and lesson Reset restore the common
+   common component map. SSD category selection and Reset restore its static map.
+   RAM category selection and lesson Reset restore the common
    RAM map. Changing groups opens
    the corresponding category preview without starting lesson playback.
    Search results include the component subcategory and open the corresponding
@@ -518,9 +549,11 @@ identify structures with previews but no animated actions clearly.
 
 ## Fundamental memory and storage scope
 
-Hardware > Fundamental includes RAM Write one bit and Read one bit, HDD sector
-access, NAND cell/page/block operations, SSD FTL, garbage collection, and wear
-leveling. Use the separate CPU, RAM, HDD, and SSD catalogs/workspaces and their
+Hardware > Fundamental includes RAM Write one bit and Read one bit and HDD sector
+access. SSD offers independent full-page Write and Read overviews using its common
+diagram; the former combined NAND cell/page/block,
+FTL, garbage-collection, and wear-leveling code remains for legacy regression
+coverage only. Use the separate CPU, RAM, HDD, and SSD catalogs/workspaces and their
 component/device tags. Keep OS disk scheduling outside these overviews.
 
 Each lesson owns a mechanism model, layout, class component, stylesheet, animation,

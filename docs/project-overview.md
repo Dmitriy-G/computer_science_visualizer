@@ -18,8 +18,11 @@ System Components Overview opens Hardware Fundamental, Complex, and Network in
 that order. Hardware Fundamental directly contains CPU, HDD, SSD, RAM, GPU,
 Network Adapter, and Motherboard in that order. They open workspaces whose overview cards are filtered by
 component and storage device tags, with separate info buttons. CPU contains two
-lessons, HDD one, SSD four, RAM two, GPU two, Network Adapter two, and Motherboard none. NAND belongs to SSD alongside FTL,
-garbage collection, and wear leveling. Complex opens its flat workspace directly
+lessons, HDD one, SSD two, RAM two, GPU two, Network Adapter two, and Motherboard none.
+SSD opens its component map with Write one page (2 KiB) and Read one page (2 KiB).
+The former combined NAND, FTL, garbage collection, and wear leveling lessons
+are excluded from overview cards, search, public kinds, and dispatch. Their
+existing primitives remain for legacy regression coverage. Complex opens its flat workspace directly
 from the overview root; Network retains Fundamental and Complex subcategories.
 Motherboard opens its static diagram with an empty overview list. The former
 Network byte to SSD lesson is excluded from menu, search, public overview kinds,
@@ -89,7 +92,7 @@ is output-only, and the dashed amber AC input points toward the PSU. Keep the
 The hardware camera fits the external labels and fully reveals the map; system
 camera bounds also include the extra margin. Only concise port labels appear on
 the cables, with explanations retained in tooltips/accessibility descriptions.
-CPU, RAM, GPU, and Network Adapter maps use the same labeled external-line style.
+CPU, RAM, SSD, GPU, and Network Adapter maps use the same labeled external-line style.
 HardwareDiagramFrame adds side margins while preserving internal coordinates via
 ScenePath.translateX and matching region/state offsets. CPU exposes DDR channels,
 separate PCIe lanes and chipset uplink, reference-clock/reset inputs, and motherboard
@@ -111,7 +114,10 @@ the DIMM socket remains DDR and has no PCIe connector. DMA shares PCIe with cont
 traffic, while software prepares buffers and address mappings. This distinction
 follows the [Linux DMA mapping guide](https://docs.kernel.org/core-api/dma-api-howto.html).
 RAM/VRAM state pills and charge indicators follow the same offsets during playback.
-Bus, HDD, and SSD component diagrams retain their existing external interfaces.
+SSD adds a motherboard host line labeled PCIe (NVMe protocol) or SATA (alternative
+attachments) and dashed amber motherboard/PSU DC input. Host RAM transfers use
+the platform I/O/memory system; there is no direct DIMM or GPU connection.
+Bus and HDD component diagrams retain their existing external interfaces.
 The example follows the motherboard organization in
 [Supermicro's X12DPG-U6 manual](https://www.supermicro.com/manuals/motherboard/X12/MNL-2365.pdf)
 and the chassis/management-port arrangement in
@@ -233,27 +239,77 @@ PCB schematic: host connector/interface, controller, NAND channels and packages,
 optional DRAM, power management, and optional PLP capacitors. Controller regions
 identify internal CPU cores and SRAM, FTL, DMA/data buffers, ECC encoding and
 decoding/correction, NAND channel controllers, garbage collection, and wear
-leveling. The FTL translates LBAs into physical NAND locations including channel,
+leveling. SRAM holds volatile runtime firmware, working state, and temporary
+metadata. Persistent firmware belongs in nonvolatile ROM/flash; a separate logical
+backing source shows loading into SRAM without implying another NAND package.
+The FTL translates LBAs into physical NAND locations including channel,
 target, die, plane, block, and page; host sectors may also need an offset within
 a page. Command/status paths reach NAND controllers separately from payloads.
 Writes pass through ECC encoding before page programming; reads pass through
 ECC decoding/correction before host delivery. These are logical stages, not a
 bitwise ECC simulation. Block erase does not traverse the ECC payload path.
-NAND packages show separate die, plane, erase-block, and read/program-page regions.
-Channel 0 branches to two packages, while channel 1 serves another; shared-channel
-bus transfers are serialized, although internal die operations can overlap.
-The two channels, three packages, and one depicted die/plane/block/page per
-package are illustrative. Power rails are dashed and optional parts are labeled
-in text. SSD lesson Reset restores this category preview.
-All four SSD lessons reuse this same schematic and component positions through
+NAND shows one representative channel, package, die, plane, block, string, cell,
+and page, with scoped approximate counts using "per" and the closest counted
+parent, matching RAM/VRAM. SsdNandExample uses S34ML02G2 x8 SLC geometry:
+two planes per die, 1,024 blocks per plane, 64 pages per block, and 2 KiB data
+plus 128 spare bytes per page. Two channels, two packages per channel, and one
+die per package are explicit modeling choices (1 GiB raw data capacity), not a
+typical modern SSD configuration. Shared-channel transfers are serialized;
+internal die operations can overlap. SsdNandLayout expands command/status logic,
+voltage generation, row decoding, column/data I/O, sense amplifiers/page buffers,
+wordlines, bitlines, and an enlarged cell with control and insulated floating gates.
+Pages and strings are crossing views of the same array. A dashed projection
+joins the enlarged cell's selected wordline to a neutral page view labeled
+"Cells on same wordline / Across ~16K strings". It identifies the same cells;
+it is not a payload path to independent storage. Visible titles distinguish
+page read/program from block erase. TLC/QLC can encode multiple logical pages
+in cells sharing a wordline. The planar SLC example
+has approximately 16K data strings per block and 64 data cells per string;
+spare strings and select/peripheral transistors are excluded. Persistent flash
+charge is distinct from volatile page-buffer latches and DRAM capacitors.
+SsdNandCellLayout expands one SLC 1T memory cell into a wordline-driven control
+gate, gate insulator, floating-gate bit storage, tunnel oxide, and source-drain
+channel. Visible charge and read-current state mappings distinguish erased 1
+from programmed 0; concise wiring labels identify program/erase charge transfer.
+Electrostatic coupling is distinct from conductive current and electron tunneling.
+The map uses 4310 by 2100 bounds including a 650-unit external margin, with
+HardwareDiagramFrame shifting regions, wires, captions, and state together.
+Cell operation follows [KIOXIA's NAND explanation](https://www.kioxia.com/en-jp/rd/technology/nand-flash.html).
+The NAND heading explicitly identifies the expanded planar floating-gate SLC
+example and common modern 3D charge-trap TLC/QLC alternatives. SLC describes
+bits per cell, independently of the charge-storage construction. Context follows
+the [NAND array paper](https://www.mdpi.com/2073-431X/6/2/16) and
+[Kingston Flash Memory Guide](https://media.kingston.com/pdfs/MKF-283.3-Flash-Memory-Guide_EN.pdf).
+The host line distinguishes the PCIe interconnect from the NVMe storage protocol,
+following the [NVMe over PCIe transport specification](https://nvmexpress.org/specification/nvme-over-pcie-transport-specification/).
+Counts follow the [SkyHigh SLC datasheet](https://www.skyhighmemory.com/download/ONFI_S34ML01G2_02_04_Page_2KB_002_00499.pdf).
+Power rails are dashed and optional parts are labeled in text.
+SSD offers two independent page overviews through SsdPageModel, SsdPageTrace,
+SsdPageAnimation, and action folders WriteOnePage / ReadOnePage. Each transfers
+one actual 2 KiB byte array, tracking the first byte's low bit in the enlarged
+cell. One full data page is the normal NAND access unit shown, not a universal
+host minimum; the request groups four aligned 512-byte logical sectors and
+conceptual spare/ECC bytes. Writes require erased space, load program latches,
+program charge, verify, and publish runtime mapping only after success. Reads
+sense stored bytes, traverse a conceptual ECC stage, and return the same data
+without changing either modeled page. No block erase occurs. ECC redundancy,
+analog timing, and crash-safe mapping durability are not simulated.
+SsdWorkspace reuses ComponentFlowWorkspace to replace only ssd-components,
+preserving the camera, bounds, renderer, and scrolling. Playback hides approximate
+count suffixes and replaces static cell-state comparisons with current charge
+and conduction values inside the same geometry; Reset restores the static map.
+Every frame highlights at most one transfer and snapshots remain independent.
+The source-return wire ends on the named source-line terminal, not in empty space.
+The four legacy SSD animations reuse this same schematic and component positions through
 SsdLessonLayout. Component state cells and highlighted paths identify firmware,
 mapping metadata, DMA buffers, ECC stages, and active channel traffic. NAND cell
 access uses physical commands without an FTL lookup. Mapping publication and
 allocation change controller metadata without implying a NAND program or erase.
 Lower detail panels preserve the cell/threshold demonstration, logical mappings,
 page states, block erase counters, write amplification, and wear comparison.
-Their three conceptual blocks belong to CH0 / target 0 / die 0 / plane 0; other
-packages remain idle. Logical association arrows in these panels are distinct
+Their three conceptual blocks belong to CH0 / target 0 / die 0 / plane 0;
+counted peer packages are omitted. The lower panels use reduced symbolic arrays,
+separate from the realistic static count example. Logical association arrows in these panels are distinct
 from the common schematic's payload paths. Relocations use both read and write
 paths without host traffic. The NAND lesson identifies ECC encoding before each
 program and decoding/checking after sensing, without computing an ECC code.
@@ -337,8 +393,9 @@ Current-transfer explanations remain in accessible playback descriptions and inf
 dialogs, without a visible renderer caption. The old four cards are removed from menu/search;
 their mechanism primitives remain available to legacy unit tests.
 Alongside the two CPU operation overviews, Fundamental implements Write one bit,
-Read one bit, conventional HDD sector access, SLC NAND, page-mapped
-SSD FTL, SSD garbage collection, and SSD wear-leveling lessons from coverage.md.
+Read one bit and conventional HDD sector access. SLC NAND, page-mapped
+SSD FTL, garbage collection, and wear-leveling primitives remain as legacy code
+without selectable overviews.
 Each owns its model, layout, animation, and sourced overview in a named folder
 under Hardware/Fundamental. CPU, RAM, HDD, SSD, GPU, and Network Adapter own separate catalogs and
 workspaces in Cpu, Ram, Hdd, Ssd, Gpu, and NetworkAdapter. HardwareOverviewCatalog delegates to these

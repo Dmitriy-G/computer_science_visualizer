@@ -8,13 +8,14 @@ import { SsdAlgorithmCatalog } from '../src/components/RealSystemsAlgorithms/Har
 import { GpuAlgorithmCatalog } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Gpu/GpuAlgorithmCatalog.ts'
 import { NetworkAdapterAlgorithmCatalog } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/NetworkAdapter/NetworkAdapterAlgorithmCatalog.ts'
 import { BusAlgorithmCatalog } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Bus/BusAlgorithmCatalog.ts'
+import { MenuSearchIndex } from '../src/components/MainMenu/Search/MenuSearchIndex.ts'
 
 test('scoped hardware catalogs own disjoint lessons and shared routing delegates to each owner', () => {
   const owners = [
     ['hardware-cpu', CpuAlgorithmCatalog, ['cpu-non-atomic-increment', 'cpu-atomic-load']],
     ['hardware-ram', RamAlgorithmCatalog, ['ram-write-bit', 'ram-read-bit']],
     ['hardware-hdd', HddAlgorithmCatalog, ['hdd-sector']],
-    ['hardware-ssd', SsdAlgorithmCatalog, ['nand-cell', 'ssd-ftl', 'ssd-garbage-collection', 'ssd-wear-leveling']],
+    ['hardware-ssd', SsdAlgorithmCatalog, ['ssd-write-page', 'ssd-read-page']],
     ['hardware-gpu', GpuAlgorithmCatalog, ['gpu-frame-rendering', 'gpu-hashcat-iteration']],
     ['hardware-network-adapter', NetworkAdapterAlgorithmCatalog, ['nic-server-to-network', 'nic-network-to-server']],
     ['hardware-bus', BusAlgorithmCatalog, []],
@@ -39,4 +40,19 @@ test('motherboard exposes no overviews and rejects its removed lesson', () => {
   assert.deepEqual(HardwareOverviewCatalog.forGroup('hardware-bus'), [])
   assert.ok(!HardwareOverviewCatalog.choices.some((choice) => choice.kind === 'bus-network-byte-to-ssd'))
   assert.throws(() => HardwareOverviewCatalog.definition('bus-network-byte-to-ssd'), /Unknown hardware component overview/)
+})
+
+test('SSD offers page write/read and rejects its removed legacy lessons', () => {
+  assert.deepEqual(HardwareOverviewCatalog.forGroup('hardware-ssd').map((choice) => choice.kind), ['ssd-write-page', 'ssd-read-page'])
+  const index = new MenuSearchIndex(() => null)
+  for (const choice of SsdAlgorithmCatalog.choices) {
+    assert.ok(index.find('algorithms', choice.name).some((result) => result.componentAlgorithm === choice.kind && result.context === 'System Components Overview / Hardware Fundamental / SSD'))
+  }
+  for (const kind of ['nand-cell', 'ssd-ftl', 'ssd-garbage-collection', 'ssd-wear-leveling']) {
+    assert.ok(!HardwareOverviewCatalog.choices.some((choice) => choice.kind === kind))
+    assert.throws(() => HardwareOverviewCatalog.definition(kind), /Unknown hardware component overview/)
+    assert.throws(() => HardwareOverviewCatalog.describeOverview(kind), /Unknown hardware component overview/)
+    assert.throws(() => HardwareOverviewCatalog.describe(kind), /Unknown hardware component overview/)
+    assert.throws(() => HardwareOverviewCatalog.groupFor(kind), /Unknown hardware component overview/)
+  }
 })

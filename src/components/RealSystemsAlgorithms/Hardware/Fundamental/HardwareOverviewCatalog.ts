@@ -41,10 +41,8 @@ export class HardwareOverviewCatalog {
         return RamAlgorithmCatalog.definition(kind)
       case 'hdd-sector':
         return HddAlgorithmCatalog.definition(kind)
-      case 'nand-cell':
-      case 'ssd-ftl':
-      case 'ssd-garbage-collection':
-      case 'ssd-wear-leveling':
+      case 'ssd-write-page':
+      case 'ssd-read-page':
         return SsdAlgorithmCatalog.definition(kind)
     }
     throw new RangeError('Unknown hardware component overview')
@@ -66,10 +64,8 @@ export class HardwareOverviewCatalog {
         return RamAlgorithmCatalog.describeOverview(kind)
       case 'hdd-sector':
         return HddAlgorithmCatalog.describeOverview(kind)
-      case 'nand-cell':
-      case 'ssd-ftl':
-      case 'ssd-garbage-collection':
-      case 'ssd-wear-leveling':
+      case 'ssd-write-page':
+      case 'ssd-read-page':
         return SsdAlgorithmCatalog.describeOverview(kind)
     }
     throw new RangeError('Unknown hardware component overview')
@@ -91,10 +87,8 @@ export class HardwareOverviewCatalog {
         return RamAlgorithmCatalog.describe(kind)
       case 'hdd-sector':
         return HddAlgorithmCatalog.describe(kind)
-      case 'nand-cell':
-      case 'ssd-ftl':
-      case 'ssd-garbage-collection':
-      case 'ssd-wear-leveling':
+      case 'ssd-write-page':
+      case 'ssd-read-page':
         return SsdAlgorithmCatalog.describe(kind)
     }
     throw new RangeError('Unknown hardware component overview')
@@ -128,10 +122,8 @@ export class HardwareOverviewCatalog {
         return 'hardware-ram'
       case 'hdd-sector':
         return 'hardware-hdd'
-      case 'nand-cell':
-      case 'ssd-ftl':
-      case 'ssd-garbage-collection':
-      case 'ssd-wear-leveling':
+      case 'ssd-write-page':
+      case 'ssd-read-page':
         return 'hardware-ssd'
     }
     throw new RangeError('Unknown hardware component overview')

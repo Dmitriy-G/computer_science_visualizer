@@ -44,7 +44,7 @@ export class SsdLessonLayout {
   }
 
   private static cell(diagram: HardwareDiagram, id: string, value: string, x: number, y: number, width: number, active: boolean): void {
-    diagram.fixture(`ssd-state-${id}`, '', value, x, y, '', width, 26)
+    diagram.fixture(`ssd-state-${id}`, '', value, x + SsdLayout.externalLeft, y, '', width, 26)
     const index = diagram.fixtures.length - 1
     diagram.fixtures[index] = { ...diagram.fixtures[index], tone: active ? 'active' : 'default' }
   }
@@ -77,6 +77,16 @@ export class SsdLessonLayout {
       ids.add('ssd-channel-0')
       ids.add('ssd-channel-0-shared-bus')
       ids.add('ssd-channel-0-package-0')
+      ids.add('ssd-nand-die-io')
+      ids.add('ssd-nand-io-control')
+      ids.add('ssd-nand-command')
+      ids.add('ssd-nand-sequencer')
+      ids.add('ssd-nand-bias')
+      if (activity !== 'erase') {
+        ids.add('ssd-nand-wordline')
+        ids.add('ssd-nand-bitline')
+        ids.add('ssd-nand-buffer-io')
+      }
     }
     if (state.feature !== 'nand' && (writing || activity === 'read' || activity === 'buffer')) ids.add('ssd-ftl-dma')
     for (let index = 0; index < diagram.paths.length; index += 1) {
@@ -87,9 +97,15 @@ export class SsdLessonLayout {
         if (path.id === 'ssd-data-interface') d = 'M340 305H260'
         if (path.id === 'ssd-interface-dma') d = 'M660 960H600V305H580'
         if (path.id === 'ssd-channel-0') d = 'M1740 890H1660'
-        if (path.id === 'ssd-channel-0-package-0') d = 'M1800 360H1740'
+        if (path.id === 'ssd-channel-0-package-0') d = 'M1820 360H1740'
+        if (path.id === 'ssd-nand-die-io') d = 'M1900 1540H1880V1700H1830V360H1820'
       } else if (path.id === 'ssd-channel-0-shared-bus') d = 'M1740 890V360'
-      const relocating = activity === 'relocate' && (path.id === 'ssd-channel-0' || path.id === 'ssd-channel-0-shared-bus' || path.id === 'ssd-channel-0-package-0')
+      if (writing) {
+        if (path.id === 'ssd-nand-buffer-io') d = 'M2180 1540H2200V1640H2600V1570H2640'
+        if (path.id === 'ssd-nand-bitline') d = 'M2740 1480V1460H2900V1250H2840'
+      }
+      const mediaData = path.id === 'ssd-channel-0' || path.id === 'ssd-channel-0-shared-bus' || path.id === 'ssd-channel-0-package-0' || path.id === 'ssd-nand-die-io' || path.id === 'ssd-nand-buffer-io' || path.id === 'ssd-nand-bitline'
+      const relocating = activity === 'relocate' && mediaData
       const control = path.id === 'ssd-cpu-sram' || path.id === 'ssd-sram-ftl' || path.id === 'ssd-ftl-gc' || path.id === 'ssd-ftl-wear' || path.id === 'ssd-ftl-nand'
       diagram.paths[index] = { ...path, d, highlighted: true, directed: true, bidirectional: relocating || control && path.bidirectional, label: `${path.label} / current ${activity}${state.failed ? ' attempt failed' : ''}` }
     }

@@ -221,9 +221,9 @@ processor, memory-system, and interconnect coverage. Disk is available for futur
 device lessons. Overviews do not show Real Systems, Educational, or Popular tags.
 
 Storage overview cards can also show HDD or SSD from optional `devices` metadata,
-alongside the Disk component tag. HDD sector access uses HDD; the SSD FTL, garbage
-collection, and wear-leveling lessons use SSD. Universal storage mechanisms such
-as the NAND cell lesson omit device tags. Propagate device metadata to workspace
+alongside the Disk component tag. HDD sector access uses HDD. The two SSD page
+write/read overviews use Disk and SSD; the former combined NAND/FTL/garbage-collection/wear-leveling cards remain removed.
+Propagate device metadata to workspace
 cards and search results through the shared OverviewTags component. Device tags
 are separate from CPU architecture tags.
 
@@ -305,14 +305,16 @@ ComponentFlowTrace shares bounded snapshots and single-transfer routing;
 ComponentFlowWorkspace replaces only the matching detail layer. Preserve bounds,
 camera and scrolling across playback and Reset. Keep narration in info dialogs
 and accessible descriptions, without a visible renderer caption.
-CPU, RAM, GPU, and Network Adapter show concise external-interface captions on
+CPU, RAM, SSD, GPU, and Network Adapter show concise external-interface captions on
 lines outside their component maps, matching the server overview. Add space using
 visualization/HardwareDiagramFrame and ScenePath.translateX; keep component regions,
 internal wires, nested CPU core, state pills, and DRAM charge indicators aligned.
 Use DDR/PCIe/chipset links for CPU, CPU/SoC and SPD context for RAM, PCIe/display
 for GPU, and PCIe/Ethernet for NIC. Show DC supply inputs with dashed amber lines;
 these components do not receive AC mains directly. Preserve map bounds and paths
-between static previews, lessons, and Reset. Keep HDD/SSD interfaces as implemented; Motherboard owns the expanded bus map.
+between static previews, lessons, and Reset. SSD uses a motherboard PCIe (NVMe protocol) or SATA
+host line and motherboard/PSU DC input; keep alternative attachments explicit.
+Keep HDD interfaces as implemented; Motherboard owns the expanded bus map.
 Label GPU/NIC PCIe connectors and external host lines PCIe / DMA. On CPU, separate
 PCIe lanes (device DMA traffic) from the chipset link (Intel DMI / equivalent),
 using two-line captions. DMA is a transfer mechanism over PCIe or another supported
@@ -371,8 +373,15 @@ only its playback child. Do not add a lower detail panel or resize/reposition
 components when starting or resetting a RAM lesson.
 Remove the previous latch, SRAM-cell, and
 DRAM-row cards from menu/search; keep reusable model primitives.
-HDD contains sector access; SSD contains NAND, FTL, garbage collection, and wear
-leveling. Both retain Disk component tags and use HDD or SSD device tags.
+HDD contains sector access with Disk and HDD tags. SSD offers Write one page
+(2 KiB) and Read one page (2 KiB), with action folders WriteOnePage / ReadOnePage
+inside Ssd. Share SsdPageModel / SsdPageTrace / SsdPageAnimation / SsdPageOverview.
+Use ComponentFlowWorkspace with ssd-components to preserve static geometry,
+camera, and scrolling; render cell state in place, without a lower detail panel.
+Hide approximate quantity suffixes during playback; Reset restores them.
+Remove NAND, FTL, garbage collection, and wear leveling from public overview
+kinds, dispatch, and search; keep existing mechanism code for legacy regression
+coverage. Keep Motherboard's overview catalog empty.
 Keep lesson source folders in their existing
 Fundamental locations; category membership comes from tags rather than copies.
 Root Complex opens its existing flat workspace directly. Do not render a
@@ -414,7 +423,25 @@ shared schematic style and connects the host connector/interface, controller,
 NAND channels/packages, optional DRAM, power management, and optional PLP.
 Label optional components explicitly. Keep DRAM as a controller branch rather
 than a mandatory part of the host-to-NAND path. Show controller functions and
-NAND hierarchy as logical context; channel/package counts are illustrative.
+NAND hierarchy as logical context. SsdNandLayout draws one representative of each
+repeated element with scoped "(~n per parent)" labels; do not duplicate packages
+or channel branches. SsdNandExample owns the sourced SLC quantities and explicit
+SSD topology assumptions. Expand the die's command/status, voltage, row/column,
+I/O and page-buffer circuitry, plus series strings and enlarged charge-storage
+cells. Pages and strings are crossing views of the same array: connect a neutral
+page view to the selected wordline with a dashed association, identifying the
+cells across counted strings. Do not imply a separate page storage structure.
+Visible titles distinguish page read/program from block erase. Volatile buffers
+are separate from persistent cells. Do not infer peripheral instance counts.
+SsdNandCellLayout owns the enlarged SLC 1T transistor: control gate, insulator,
+floating-gate bit storage, tunnel oxide, and source-drain channel. Show charge
+and conduction states within the cell and program/erase charge-transfer labels.
+Identify this as a planar floating-gate SLC example; modern 3D NAND often uses
+charge traps, while SSDs commonly use TLC/QLC. These are distinct construction
+and bits-per-cell choices. SRAM holds runtime firmware and temporary metadata;
+show persistent ROM/flash firmware backing separately as logical context.
+Reuse HardwareSceneLayout for static state values and HardwareDiagramFrame for
+external margins; keep shifted fixtures and paths aligned.
 Reuse it in HddSectorLayout: a circular platter, central spindle, fixed-length
 pivoting arm, and connected schematic components in the existing diagram style.
 Show the internal preamp/head driver and an underside PCB inset with separate
