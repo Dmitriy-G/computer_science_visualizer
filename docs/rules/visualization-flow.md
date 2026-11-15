@@ -75,7 +75,7 @@
    shared PCIe control traffic and platform-specific signal limits in accessible labels.
    SSD shows a motherboard PCIe (NVMe protocol) or SATA host link and dashed motherboard/PSU
    DC input, with one host attachment per example; RAM transfers pass through
-   platform I/O and memory controllers. HDD interfaces remain as implemented;
+   platform I/O and memory controllers. HDD adds SATA/SAS host tails and PSU DC;
    Motherboard expands the bus map.
    GPU VRAM expands a representative GDDR chip/die/bank with row/column decoders,
    row-buffer sense amplifiers, refresh, I/O, and a magnified 1T1C cell showing its
@@ -100,7 +100,10 @@
    Choosing another component closes the menu and opens its workspace with overview
    cards filtered by component and device tags. CPU contains two operation overviews:
    a non-atomic increment and an atomic word load. The old
-   prediction/renaming overviews are removed from menu/search. HDD contains sector access;
+   prediction/renaming overviews are removed from menu/search. HDD offers Write
+   one sector (512 B) and Read one sector (512 B); remove the old combined
+   hdd-sector from public kinds, dispatch, and search,
+   retaining existing mechanism code as legacy regression coverage.
    SSD offers Write one page (2 KiB) and Read one page (2 KiB); RAM contains
    two DRAM bit-access overviews. No static test entry is offered. Root Complex opens
    its flat workspace directly.
@@ -214,7 +217,7 @@
    to System Components Overview and its system preview.
    Returning from CPU to Hardware Fundamental zooms out to hardware; returning to System
    Components Overview zooms out to client/network/server. CPU category selection
-   returns to its core map; HDD category selection and lesson Reset return to its
+   returns to its core map; HDD category selection returns to its
    common component map. SSD category selection and Reset restore its static map.
    RAM category selection and lesson Reset restore the common
    RAM map. Changing groups opens
@@ -549,8 +552,8 @@ identify structures with previews but no animated actions clearly.
 
 ## Fundamental memory and storage scope
 
-Hardware > Fundamental includes RAM Write one bit and Read one bit and HDD sector
-access. SSD offers independent full-page Write and Read overviews using its common
+Hardware > Fundamental includes RAM Write one bit and Read one bit, HDD Write one
+sector and Read one sector, and SSD independent full-page Write and Read overviews using its common
 diagram; the former combined NAND cell/page/block,
 FTL, garbage-collection, and wear-leveling code remains for legacy regression
 coverage only. Use the separate CPU, RAM, HDD, and SSD catalogs/workspaces and their
@@ -579,15 +582,45 @@ controller. Receiver values change on arrival. Preserve neighboring data and
 restore the common category preview on Reset. Explicitly follow one bit of a
 wider DDR burst; do not imply a physical one-bit DDR bus transaction. Symbolic
 charge indicators and waits do not claim analog accuracy or measured timings.
-HDD category and sector-access playback share HddLayout's schematic components
+HDD category and legacy sector-access playback share HddLayout's schematic components
 and connections. Draw the platter and spindle as circles and use a fixed pivot
 and arm length for track changes. Rotate the target sector to the actual head
 position at alignment. Show PCB electronics as an underside inset with directed
 data/control paths; distinguish passive-filter airflow with a dashed path.
-Keep state and toy channel-code details below the common device geometry.
+New HDD write/read lessons keep state in the common map with fixed bounds and
+camera through ComponentFlowWorkspace; the legacy combined lesson alone keeps
+its toy channel-code details below the common device geometry. Use a 512n example
+with one complete 512-byte logical/physical sector, and explain 512e/4Kn variants.
+Process all payload bytes through existing HddEcc and HddRecordingCode primitives;
+identify these as teaching formats, not production HDD codes. Seek, settle, and
+align before recording or sensing. Preserve neighboring sectors, validate ECC
+before delivery, and block uncorrectable read data. Refresh moving arm/head/sector
+paths without resizing the diagram. Keep rotation advancing during seek, settling,
+alignment waits, and after the grouped media pass. Each independent snapshot
+highlights at most one transfer; retain the 96-event bound and normal Reset.
+The common HDD map includes a recording-media enlargement of the same surface
+and head. Show remanent magnetization in collections of grains, separate write
+pole and MR reader, and field-coupling paths anchored to their boundaries.
+Show a window of 16 consecutive encoded intervals as plus/minus magnetization,
+with an advancing interval highlight. Write each shown interval through the pole
+and field path; scan each through the MR reader without changing the pattern.
+Group the remaining sector intervals within the same aligned pass. Display live
+payload, ECC, writer/reader, and retention states in the enlargement. Keep static
+and playback geometry identical and snapshots independent. Do not label magnetic
+polarity as electric charge or a direct user bit. Keep one representative per repeated hierarchy level, with
+scoped approximate counts from the explicit modeled capacity. Explain zone
+variation, payload versus format overhead, and technology-dependent grain counts.
 Separate HDD and servo controllers, read and write processing, and head-current
 and motor drivers. Route user data through host interface, cache, ECC, and the
 recording/readback path; do not route the user-data cache through servo control.
+Connect HDD controller control directly to servo, cache, read processing, and
+write encoding. LBA / Physical Location Mapping is a side lookup that supports
+defect remapping. Distinguish spindle rotation from VCM positioning in separate
+driver functions within one group. Supply controller, DRAM, preamp, and both
+drivers through dashed amber DC paths. Draw explicitly directed Write = Cache →
+ECC → Write Encoder → Preamp → Head and Read = Head → Preamp → Read Processing →
+ECC → Cache, with concise Read/Write wire labels. Keep external SATA/SAS and
+PSU DC captions in a scene margin, with named component-boundary endpoints.
 Resolve the example LBA with a firmware table to head/surface, track, and sector.
 Keep platter rotation during seek and settling and show rotational latency before
 media transfer. The bounded HDD teaching pipeline uses Hamming (8,4) SECDED,

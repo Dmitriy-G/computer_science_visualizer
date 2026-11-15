@@ -10,7 +10,10 @@ export class HddSectorLayout {
   }
 
   public static create(model: HddSectorModel): HardwareSnapshot {
-    const diagram = HddLayout.diagram(model, 2180)
+    const detailOffset = HddLayout.height - 1000
+    const diagram = HddLayout.diagram(model, 2180 + detailOffset)
+    const baseRegions = diagram.regions.length
+    const basePositions = diagram.positions.length
     const phase = model.operation
     const location = `H${model.location.head} / T${model.targetTrack} / S${model.targetSector}`
     const status = model.eccStatus === 'corrected' ? `bit ${model.correctedBit} corrected` : model.eccStatus
@@ -39,9 +42,6 @@ export class HddSectorLayout {
         case 'read-channel':
           value = phase === 'sense' ? 'amplify' : phase === 'detect' ? 'detect' : phase === 'recording-decode' ? 'decode' : 'idle'
           break
-        case 'motor-driver':
-          value = phase === 'seek' ? 'seek + spin' : 'spin / hold'
-          break
         case 'actuator':
           value = model.settled ? `hold T${model.track}` : `track ${model.track}`
           break
@@ -59,7 +59,7 @@ export class HddSectorLayout {
     }
     diagram.region('access-state', 'Media access / symbolic state', 'device', 20, 1040, 1960, 330)
       .fixture('request', 'Host logical sector', `LBA ${model.logicalAddress}`, 260, 1140, undefined, 420)
-      .fixture('translation', 'Firmware-selected head / track / sector', location, 750, 1140, undefined, 420)
+      .fixture('translation', 'Mapped head / track / sector', location, 750, 1140, undefined, 420)
       .fixture('servo', 'Servo / settling state', model.settled ? 'settled / tracking' : phase === 'seek' ? 'seeking / not settled' : 'idle', 1240, 1140, undefined, 420)
       .fixture('sector-position', 'Rotational latency / target sector', model.aligned() ? 'under head' : 'waiting for sector', 1730, 1140, undefined, 420)
       .fixture('spindle-state', 'Rotation phase / 8 samples', `${model.rotation} / 8`, 260, 1290, undefined, 420)
@@ -67,7 +67,7 @@ export class HddSectorLayout {
       .fixture('ecc-status', 'ECC result / one-based error location', status, 1240, 1290, undefined, 420)
       .fixture('host-result', 'Returned sector', model.transferred.length ? model.transferred.join('') : 'not returned', 1730, 1290, undefined, 420)
       .connect('translate', 'controller', 'firmware-map', 'firmware LBA lookup', phase === 'idle')
-      .connect('seek', 'firmware-map', 'servo-controller', 'track target', phase === 'seek')
+      .connect('seek', 'controller', 'servo-controller', 'direct track target', phase === 'seek')
       .connect('feedback', 'read-channel', 'servo-controller', 'embedded servo feedback', phase === 'settled', 80)
     diagram.region('channel', 'Teaching pipeline / Hamming (8,4) SECDED + Manchester / NRZI', 'device', 20, 1420, 1960, 480)
       .fixture('source-data', 'Host payload / 4 bits', model.data.join(''), 260, 1510, undefined, 420)
@@ -96,6 +96,14 @@ export class HddSectorLayout {
     for (let index = 0; index < 16; index += 1) {
       const polarity = model.magneticRegions[index]
       diagram.fixture(`magnetic-${index}`, `interval ${index}`, polarity === undefined ? '?' : polarity > 0 ? '+' : '-', 90 + index * 120, 2070, undefined, 90)
+    }
+    for (let index = baseRegions; index < diagram.regions.length; index += 1) {
+      const region = diagram.regions[index]
+      diagram.regions[index] = { ...region, y: region.y + detailOffset }
+    }
+    for (let index = basePositions; index < diagram.positions.length; index += 1) {
+      const position = diagram.positions[index]
+      diagram.positions[index] = { ...position, y: position.y + detailOffset }
     }
     const focus = phase === 'read-error' ? 'received-codeword' : phase === 'ecc-decode' ? 'decoded' : 'head'
     return new HardwareSnapshot([], focus, 0, diagram)

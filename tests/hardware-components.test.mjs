@@ -6,6 +6,7 @@ import { LatchModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fun
 import { SramCellModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/SramCell/SramCellModel.ts'
 import { DramRowModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/DramRow/DramRowModel.ts'
 import { HddSectorModel } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/HddSector/HddSectorModel.ts'
+import { HddSectorAnimation } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/HddSector/HddSectorAnimation.ts'
 import { HddLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Hdd/HddLayout.ts'
 import { HddEcc } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/HddSector/HddEcc.ts'
 import { HddRecordingCode } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/HddSector/HddRecordingCode.ts'
@@ -24,8 +25,8 @@ import { MenuSearchIndex } from '../src/components/MainMenu/Search/MenuSearchInd
 
 const choices = HardwareOverviewCatalog.choices.filter((choice) => !choice.components.includes('CPU'))
 
-test('nine component lessons retain independent deterministic scenes and fundamental search destinations', () => {
-  assert.equal(choices.length, 9)
+test('ten component lessons retain independent deterministic scenes and fundamental search destinations', () => {
+  assert.equal(choices.length, 10)
   const index = new MenuSearchIndex(() => null)
   for (const choice of choices) {
     const source = new HardwareSnapshot()
@@ -251,7 +252,7 @@ test('RAM read delivery and HDD completion show explicit data transfers', () => 
   const delivery = dram.steps.find((step) => step.title === 'Receive the read bit')
   assert.ok(delivery.scene.paths.some((path) => path.id === 'ram-controller-data' && path.highlighted))
   assert.equal(delivery.scene.nodes.find((node) => node.id === 'ram-state-controller').displayValue, '1')
-  const hdd = HardwareOverviewCatalog.definition('hdd-sector').create(new HardwareSnapshot(), 0)
+  const hdd = new HddSectorAnimation().create(new HardwareSnapshot(), 0)
   assert.ok(hdd.steps.at(-1).scene.edges.some((edge) => edge.id === 'transfer' && edge.highlighted))
 })
 
@@ -301,14 +302,14 @@ test('HDD sector playback shares the category schematic and its connected compon
   const common = HddLayout.diagram()
   const lesson = new HddSectorModel().snapshot().diagram
   assert.deepEqual(lesson.regions.slice(0, common.regions.length), common.regions)
-  for (const id of ['head-preamp', 'write-preamp', 'preamp-read', 'cache-ecc', 'host-cache', 'controller-map', 'map-servo', 'servo-driver', 'servo-feedback', 'driver-actuator', 'driver-spindle', 'power-driver']) {
+  for (const id of ['head-preamp', 'preamp-head', 'write-preamp', 'preamp-read', 'cache-ecc', 'ecc-cache', 'host-cache', 'cache-host', 'controller-map', 'controller-servo', 'servo-driver', 'servo-feedback', 'driver-actuator', 'driver-spindle', 'power-vcm', 'power-spindle']) {
     assert.equal(common.paths.find((path) => path.id === id).directed, true)
     assert.ok(lesson.paths.some((path) => path.id === id))
   }
   const copy = common.clone()
   const original = common.paths.find((path) => path.id === 'platter')
   copy.paths.find((path) => path.id === 'platter').caption.text = 'changed caption'
-  assert.equal(original.caption.text, 'Platter')
+  assert.match(original.caption.text, /^Platters .*per HDD/)
 })
 
 test('HDD teaching ECC corrects every single-bit error and detects every double-bit error for all payloads', () => {
@@ -372,7 +373,7 @@ test('HDD firmware mapping is internal and failed ECC prevents buffering or retu
 })
 
 test('HDD lesson separates controller/servo and read/write processing and corrects its injected error before return', () => {
-  const plan = HardwareOverviewCatalog.definition('hdd-sector').create(new HardwareSnapshot(), 0)
+  const plan = new HddSectorAnimation().create(new HardwareSnapshot(), 0)
   const units = new Map(plan.steps[0].scene.regions.map((region) => [region.id, region]))
   for (const id of ['controller', 'firmware-map', 'servo-controller', 'cache', 'ecc', 'read-channel', 'write-channel']) assert.ok(units.has(`hdd-${id}`))
   const index = (title) => plan.steps.findIndex((step) => step.title === title)

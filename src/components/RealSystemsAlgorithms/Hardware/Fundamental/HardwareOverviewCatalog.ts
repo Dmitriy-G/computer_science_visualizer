@@ -39,11 +39,12 @@ export class HardwareOverviewCatalog {
       case 'ram-write-bit':
       case 'ram-read-bit':
         return RamAlgorithmCatalog.definition(kind)
-      case 'hdd-sector':
-        return HddAlgorithmCatalog.definition(kind)
       case 'ssd-write-page':
       case 'ssd-read-page':
         return SsdAlgorithmCatalog.definition(kind)
+      case 'hdd-write-sector':
+      case 'hdd-read-sector':
+        return HddAlgorithmCatalog.definition(kind)
     }
     throw new RangeError('Unknown hardware component overview')
   }
@@ -62,11 +63,12 @@ export class HardwareOverviewCatalog {
       case 'ram-write-bit':
       case 'ram-read-bit':
         return RamAlgorithmCatalog.describeOverview(kind)
-      case 'hdd-sector':
-        return HddAlgorithmCatalog.describeOverview(kind)
       case 'ssd-write-page':
       case 'ssd-read-page':
         return SsdAlgorithmCatalog.describeOverview(kind)
+      case 'hdd-write-sector':
+      case 'hdd-read-sector':
+        return HddAlgorithmCatalog.describeOverview(kind)
     }
     throw new RangeError('Unknown hardware component overview')
   }
@@ -85,11 +87,12 @@ export class HardwareOverviewCatalog {
       case 'ram-write-bit':
       case 'ram-read-bit':
         return RamAlgorithmCatalog.describe(kind)
-      case 'hdd-sector':
-        return HddAlgorithmCatalog.describe(kind)
       case 'ssd-write-page':
       case 'ssd-read-page':
         return SsdAlgorithmCatalog.describe(kind)
+      case 'hdd-write-sector':
+      case 'hdd-read-sector':
+        return HddAlgorithmCatalog.describe(kind)
     }
     throw new RangeError('Unknown hardware component overview')
   }
@@ -120,11 +123,12 @@ export class HardwareOverviewCatalog {
       case 'ram-write-bit':
       case 'ram-read-bit':
         return 'hardware-ram'
-      case 'hdd-sector':
-        return 'hardware-hdd'
       case 'ssd-write-page':
       case 'ssd-read-page':
         return 'hardware-ssd'
+      case 'hdd-write-sector':
+      case 'hdd-read-sector':
+        return 'hardware-hdd'
     }
     throw new RangeError('Unknown hardware component overview')
   }

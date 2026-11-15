@@ -14,7 +14,7 @@ test('scoped hardware catalogs own disjoint lessons and shared routing delegates
   const owners = [
     ['hardware-cpu', CpuAlgorithmCatalog, ['cpu-non-atomic-increment', 'cpu-atomic-load']],
     ['hardware-ram', RamAlgorithmCatalog, ['ram-write-bit', 'ram-read-bit']],
-    ['hardware-hdd', HddAlgorithmCatalog, ['hdd-sector']],
+    ['hardware-hdd', HddAlgorithmCatalog, ['hdd-write-sector', 'hdd-read-sector']],
     ['hardware-ssd', SsdAlgorithmCatalog, ['ssd-write-page', 'ssd-read-page']],
     ['hardware-gpu', GpuAlgorithmCatalog, ['gpu-frame-rendering', 'gpu-hashcat-iteration']],
     ['hardware-network-adapter', NetworkAdapterAlgorithmCatalog, ['nic-server-to-network', 'nic-network-to-server']],
@@ -40,6 +40,20 @@ test('motherboard exposes no overviews and rejects its removed lesson', () => {
   assert.deepEqual(HardwareOverviewCatalog.forGroup('hardware-bus'), [])
   assert.ok(!HardwareOverviewCatalog.choices.some((choice) => choice.kind === 'bus-network-byte-to-ssd'))
   assert.throws(() => HardwareOverviewCatalog.definition('bus-network-byte-to-ssd'), /Unknown hardware component overview/)
+})
+
+test('HDD offers separate write/read lessons and rejects its removed combined sector lesson', () => {
+  assert.deepEqual(HardwareOverviewCatalog.forGroup('hardware-hdd').map((choice) => choice.kind), ['hdd-write-sector', 'hdd-read-sector'])
+  assert.ok(!HardwareOverviewCatalog.choices.some((choice) => choice.kind === 'hdd-sector'))
+  for (const method of ['definition', 'describeOverview', 'describe', 'groupFor']) {
+    assert.throws(() => HardwareOverviewCatalog[method]('hdd-sector'), /Unknown hardware component overview/)
+  }
+  const index = new MenuSearchIndex(() => null)
+  for (const choice of HddAlgorithmCatalog.choices) {
+    const results = index.find('algorithms', choice.name)
+    assert.ok(results.some((result) => result.componentAlgorithm === choice.kind && result.context === 'System Components Overview / Hardware Fundamental / HDD'))
+    assert.ok(!results.some((result) => result.componentAlgorithm === 'hdd-sector'))
+  }
 })
 
 test('SSD offers page write/read and rejects its removed legacy lessons', () => {

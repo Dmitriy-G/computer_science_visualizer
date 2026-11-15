@@ -7,6 +7,7 @@ import { BusLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fund
 import { CpuLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Cpu/CpuLayout.ts'
 import { RamLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Ram/RamLayout.ts'
 import { SsdLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Ssd/SsdLayout.ts'
+import { HddLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Hdd/HddLayout.ts'
 import { HardwareDiagram } from '../src/visualization/HardwareDiagram.ts'
 import { HardwareDiagramFrame } from '../src/visualization/HardwareDiagramFrame.ts'
 
@@ -30,6 +31,7 @@ for (const [layout, prefix, keys] of [
   [CpuLayout, 'cpu', ['memory', 'pcie', 'chipset', 'clock', 'reset', 'power']],
   [RamLayout, 'ram', ['host', 'dma', 'sideband', 'power']],
   [SsdLayout, 'ssd', ['host', 'power']],
+  [HddLayout, 'hdd', ['host', 'power']],
   [GpuLayout, 'gpu', ['host', 'display', 'power']],
   [NetworkAdapterLayout, 'nic', ['host', 'network', 'power']],
 ]) {
@@ -70,6 +72,71 @@ for (const [layout, prefix, keys] of [
     }
   })
 }
+
+test('HDD data, control, and DC routes terminate at their respective components', () => {
+  const diagram = HddLayout.diagram()
+  const regions = new Map(diagram.regions.map((region) => [region.id, region]))
+  const paths = new Map(diagram.paths.map((path) => [path.id, path]))
+  const ends = (path) => {
+    const tokens = path.d.match(/[MLHV]|-?\d+(?:\.\d+)?/g)
+    const points = []
+    let x = 0
+    let y = 0
+    for (let index = 0; index < tokens.length;) {
+      const command = tokens[index++]
+      if (command === 'M' || command === 'L') {
+        x = Number(tokens[index++])
+        y = Number(tokens[index++])
+      } else if (command === 'H') x = Number(tokens[index++])
+      else if (command === 'V') y = Number(tokens[index++])
+      else assert.fail('Unsupported HDD signal route')
+      points.push({ x: x + (path.translateX ?? 0), y })
+    }
+    return [points[0], points.at(-1)]
+  }
+  const touches = (point, id) => {
+    const region = regions.get(`hdd-${id}`)
+    const near = (a, b) => Math.abs(a - b) < 1e-8
+    return ((near(point.x, region.x) || near(point.x, region.x + region.width)) && point.y >= region.y && point.y <= region.y + region.height)
+      || ((near(point.y, region.y) || near(point.y, region.y + region.height)) && point.x >= region.x && point.x <= region.x + region.width)
+  }
+  for (const [id, from, to] of [
+    ['hdd-storage-write-field', 'write-pole', 'magnetic-grains'],
+    ['hdd-storage-read-field', 'magnetic-grains', 'read-sensor'],
+    ['cache-ecc', 'cache', 'ecc'], ['ecc-write', 'ecc', 'write-channel'],
+    ['write-preamp', 'write-channel', 'preamp'], ['preamp-read', 'preamp', 'read-channel'],
+    ['read-ecc', 'read-channel', 'ecc'], ['ecc-cache', 'ecc', 'cache'],
+    ['cache-host', 'cache', 'data-connector'], ['host-cache', 'data-connector', 'cache'],
+    ['controller-servo', 'controller', 'servo-controller'], ['buffer-control', 'controller', 'cache'],
+    ['controller-write', 'controller', 'write-channel'], ['controller-read', 'controller', 'read-channel'],
+    ['controller-spindle', 'controller', 'spindle-driver'], ['servo-driver', 'servo-controller', 'vcm-driver'],
+    ['driver-actuator', 'vcm-driver', 'actuator'],
+  ]) {
+    const path = paths.get(id)
+    const [start, end] = ends(path)
+    assert.ok(touches(start, from), `${id} starts at ${from}`)
+    assert.ok(touches(end, to), `${id} ends at ${to}`)
+    assert.equal(path.directed, true)
+    assert.equal(path.bidirectional, false)
+  }
+  assert.ok(!paths.has('map-servo'), 'mapping remains a lookup rather than a mandatory servo control hop')
+  for (const [id, destination] of [['power-controller', 'controller'], ['power-cache', 'cache'], ['power-preamp', 'preamp'], ['power-vcm', 'vcm-driver'], ['power-spindle', 'spindle-driver']]) {
+    const path = paths.get(id)
+    const [start, end] = ends(path)
+    assert.ok(touches(start, 'power-connector'))
+    assert.ok(touches(end, destination), id)
+    assert.equal(path.dashed, true)
+    assert.equal(path.stroke, paths.get('hdd-external-power').stroke)
+  }
+  const head = HddLayout.headPosition(1)
+  const displayedHead = { x: head.x + HddLayout.externalLeft, y: head.y }
+  const [writeStart, writeEnd] = ends(paths.get('preamp-head'))
+  const [readStart, readEnd] = ends(paths.get('head-preamp'))
+  assert.ok(touches(writeStart, 'preamp'))
+  assert.ok(touches(readEnd, 'preamp'))
+  assert.deepEqual(writeEnd, displayedHead)
+  assert.deepEqual(readStart, displayedHead)
+})
 
 test('motherboard shows physical PCB routing without protocol controller blocks', () => {
   const scene = BusLayout.create()

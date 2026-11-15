@@ -18,7 +18,11 @@ System Components Overview opens Hardware Fundamental, Complex, and Network in
 that order. Hardware Fundamental directly contains CPU, HDD, SSD, RAM, GPU,
 Network Adapter, and Motherboard in that order. They open workspaces whose overview cards are filtered by
 component and storage device tags, with separate info buttons. CPU contains two
-lessons, HDD one, SSD two, RAM two, GPU two, Network Adapter two, and Motherboard none.
+lessons, HDD two, SSD two, RAM two, GPU two, Network Adapter two, and Motherboard none.
+HDD opens its common map with Write one sector (512 B) and Read one sector (512 B).
+Its former combined sector-access
+lesson is excluded from menu/search, public kinds, and dispatch. Existing
+mechanism and animation code remains for legacy regression coverage.
 SSD opens its component map with Write one page (2 KiB) and Read one page (2 KiB).
 The former combined NAND, FTL, garbage collection, and wear leveling lessons
 are excluded from overview cards, search, public kinds, and dispatch. Their
@@ -117,7 +121,11 @@ RAM/VRAM state pills and charge indicators follow the same offsets during playba
 SSD adds a motherboard host line labeled PCIe (NVMe protocol) or SATA (alternative
 attachments) and dashed amber motherboard/PSU DC input. Host RAM transfers use
 the platform I/O/memory system; there is no direct DIMM or GPU connection.
-Bus and HDD component diagrams retain their existing external interfaces.
+HDD adds SATA/SAS host tails (motherboard or compatible HBA, according to drive
+type) and PSU DC input in a right margin. Its framed map is 4050 by 1400,
+with a 1400-unit recording-media enlargement margin on the left and a 650-unit
+external-connection margin on the right. Internal mechanical coordinates remain
+unchanged; the frame shifts their display positions. Bus retains its existing interfaces.
 The example follows the motherboard organization in
 [Supermicro's X12DPG-U6 manual](https://www.supermicro.com/manuals/motherboard/X12/MNL-2365.pdf)
 and the chassis/management-port arrangement in
@@ -213,15 +221,67 @@ blocks. Group boundaries and existing CPU lesson palettes retain their colors.
 HDD zooms into its storage block to reveal a common component map, grouping
 platters, the spindle motor, heads, actuator arms, the voice-coil actuator, and
 filters inside the enclosure, alongside the controller board, cache, and connectors.
-HddLayout owns that reusable schematic and the sector-access lesson's geometry.
+HddLayout owns that reusable schematic and the legacy sector-access geometry.
+HddStorageLayout adds an enlargement of the same recording surface and head,
+with one representative surface, track, sector, and magnetic bit area rather than
+duplicated instances. HddMediaExample owns a deliberately modeled 1 TiB 512n
+geometry: 1 platter, 2 surfaces per platter, 262,144 tracks per surface, 4,096
+sectors per track, and 512 payload bytes per sector (2,147,483,648 sectors total).
+Scoped approximate titles show the closest parent; tooltips give exact model
+arithmetic. Uniform sectors per track are a teaching choice: real zone bit
+recording varies that count. Payload capacity excludes format, ECC, servo, and
+spare-sector overhead. Separate payload and overhead blocks avoid equating user
+bits with physical magnetic bit areas.
+The enlargement distinguishes a write pole, MR read sensor, and nonvolatile
+magnetic film. A recorded area contains many magnetic grains; remanent
+magnetization retains information without power. Grain counts are technology
+dependent and are not invented. Dashed field paths touch the pole/grain/sensor
+boundaries and differ from conductive data paths. A plus/minus strip shows the
+first 16 consecutive encoded intervals, with plus/up and minus/down magnetization
+rather than electric charge or direct user bits. Static preview uses the leading
+codeword of the old 0x11 sector. Playback highlights the current interval, changes
+the real modeled magnetization in order during write, and scans the existing
+pattern without rewriting during read. The remaining 16,368 teaching intervals
+are grouped. Substeps stay within one aligned sector pass, not whole platter
+revolutions. Payload, ECC, write-field, reader, and retention states update inside
+the same enlargement, with independent snapshots and no canvas resize. Media physics and format overhead follow
+[Western Digital's recording-technologies brief](https://documents.westerndigital.com/content/dam/doc-library/en_us/assets/public/western-digital/collateral/tech-brief/tech-brief-recording-technologies.pdf).
 It uses a circular platter and central spindle, a fixed-length pivoting arm,
 and connected functional blocks for the internal preamp/head driver, distinct
 read processing and write encoding, ECC, user-data cache, HDD controller,
-firmware address map, servo controller, motor driver, and host/power interfaces.
-User data follows host interface / cache / ECC / read-write processing; servo
-positioning uses a separate control and feedback path. The PCB appears beside
+LBA / Physical Location Mapping, servo controller, motor drivers, and host/power interfaces.
+The controller connects directly to servo, cache, read processing, and write
+encoding. Mapping is a side lookup for logical-to-physical translation and defect
+remapping, not a mandatory intermediate controller stage. Motor drivers contain
+separate Spindle Motor Driver and VCM Driver functions, connected respectively
+to platter rotation and head positioning. Dashed amber DC distribution powers
+the controller, DRAM cache, preamp, and both motor drivers. User data follows
+separate directed routes: Write = Cache → ECC → Write Encoder → Preamp → Head;
+Read = Head → Preamp → Read Processing → ECC → Cache. Purple Write and green
+Read wiring also have text labels. Servo positioning uses a separate control
+and feedback path. Block roles follow the
+[Seagate HDD manual](https://www.seagate.com/www-content/support-content/samsung/internal-products/spinpoint-m-series/en-us/docs/100772113c.pdf);
+spare-sector remapping follows [Seagate's bad-sector guidance](https://www.seagate.com/support/kb/what-do-i-do-if-my-drive-reports-bad-sectors-196351en/).
+The PCB appears beside
 the mechanism as an underside inset. Directed paths show data and control;
-the passive filter has a separate dashed airflow path. Sector-access playback
+the passive filter has a separate dashed airflow path.
+HddAccessModel, HddAccessTrace, and HddAccessAnimation provide separate full-sector
+write/read lessons through WriteOneSector / ReadOneSector action folders. They
+use a 512n example: one 512-byte host logical sector is also one physical sector.
+512e and 4Kn differences are explained in the sourced info dialogs. Every byte
+passes through the existing teaching Hamming (8,4), Manchester, and NRZI pipeline;
+these codes do not represent a production HDD format. Writes require encoding,
+seek, settling, and rotational alignment before recording; reads recover the
+sector from magnetic transitions, validate ECC, and only then deliver data.
+Neighbors are preserved and uncorrectable codewords block host delivery.
+Spindle rotation advances during seek/settle, alignment wait, and after the
+grouped sector pass. HddAccessTrace refreshes moving head/arm/sector geometry in
+independent snapshots while keeping component bounds and canvas unchanged.
+HddWorkspace replaces only hdd-components through ComponentFlowWorkspace,
+preserving camera, renderer, and scrolling; Reset restores the static map.
+Data/status remains inside the common diagram, without a lower detail panel;
+each frame highlights at most one transfer and lessons remain within 96 events.
+Legacy sector-access playback
 adds state and channel-code cells below the same diagram, with sector rotation
 aligned to the head's actual illustrated position. Firmware resolves LBA 7 to
 head 0 / track 1 / sector 3 through an explicit teaching map. Platter rotation
@@ -393,7 +453,7 @@ Current-transfer explanations remain in accessible playback descriptions and inf
 dialogs, without a visible renderer caption. The old four cards are removed from menu/search;
 their mechanism primitives remain available to legacy unit tests.
 Alongside the two CPU operation overviews, Fundamental implements Write one bit,
-Read one bit and conventional HDD sector access. SLC NAND, page-mapped
+Read one bit and SSD full-page write/read. Conventional HDD sector access, SLC NAND, page-mapped
 SSD FTL, garbage collection, and wear-leveling primitives remain as legacy code
 without selectable overviews.
 Each owns its model, layout, animation, and sourced overview in a named folder

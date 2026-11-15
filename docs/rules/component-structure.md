@@ -221,7 +221,7 @@ processor, memory-system, and interconnect coverage. Disk is available for futur
 device lessons. Overviews do not show Real Systems, Educational, or Popular tags.
 
 Storage overview cards can also show HDD or SSD from optional `devices` metadata,
-alongside the Disk component tag. HDD sector access uses HDD. The two SSD page
+alongside the Disk component tag. HDD sector write/read uses Disk and HDD. The two SSD page
 write/read overviews use Disk and SSD; the former combined NAND/FTL/garbage-collection/wear-leveling cards remain removed.
 Propagate device metadata to workspace
 cards and search results through the shared OverviewTags component. Device tags
@@ -314,7 +314,9 @@ for GPU, and PCIe/Ethernet for NIC. Show DC supply inputs with dashed amber line
 these components do not receive AC mains directly. Preserve map bounds and paths
 between static previews, lessons, and Reset. SSD uses a motherboard PCIe (NVMe protocol) or SATA
 host line and motherboard/PSU DC input; keep alternative attachments explicit.
-Keep HDD interfaces as implemented; Motherboard owns the expanded bus map.
+HDD adds labeled SATA/SAS host tails and PSU DC input in a right scene margin;
+use HardwareDiagramFrame and retain the internal mechanism coordinates.
+Motherboard owns the expanded bus map.
 Label GPU/NIC PCIe connectors and external host lines PCIe / DMA. On CPU, separate
 PCIe lanes (device DMA traffic) from the chipset link (Intel DMI / equivalent),
 using two-line captions. DMA is a transfer mechanism over PCIe or another supported
@@ -373,7 +375,19 @@ only its playback child. Do not add a lower detail panel or resize/reposition
 components when starting or resetting a RAM lesson.
 Remove the previous latch, SRAM-cell, and
 DRAM-row cards from menu/search; keep reusable model primitives.
-HDD contains sector access with Disk and HDD tags. SSD offers Write one page
+HDD offers hdd-write-sector and hdd-read-sector through action folders
+WriteOneSector / ReadOneSector and shared HddAccessModel / HddAccessTrace /
+HddAccessAnimation / HddAccessOverview. Each transfers one complete 512-byte sector
+in an explicit 512n example. Reuse the existing teaching ECC/recording primitives
+for every payload byte; retain normal Read/Write data-path separation, direct
+controller connections, and distinct spindle/VCM control. Guard recording and
+sensing on seek, settling, and rotational alignment. Check read ECC before host
+delivery and preserve neighboring data. Use ComponentFlowWorkspace with
+hdd-components to retain bounds, camera, and scrolling. Refresh moving mechanism
+paths and show data/status inside the current map; add no lower detail panel.
+Remove the old combined hdd-sector from public kinds, dispatch, and search;
+retain its existing code as legacy regression coverage.
+SSD offers Write one page
 (2 KiB) and Read one page (2 KiB), with action folders WriteOnePage / ReadOnePage
 inside Ssd. Share SsdPageModel / SsdPageTrace / SsdPageAnimation / SsdPageOverview.
 Use ComponentFlowWorkspace with ssd-components to preserve static geometry,
@@ -417,8 +431,22 @@ illustration, package silhouettes/leads, gold contact fingers, physical socket
 details, pin-group panel, and enlargement leaders. Fit scene bounds to the
 remaining schematic without reserving space for removed illustrations.
 Do not claim exact die-floorplan positions or add hierarchy/access-sequence panels.
-Keep the HDD geometry in Hardware/Fundamental/Hdd/HddLayout.ts
-and SSD geometry in Hardware/Fundamental/Ssd/SsdLayout.ts. The SSD map uses the
+Keep the HDD geometry in Hardware/Fundamental/Hdd/HddLayout.ts,
+with HddStorageLayout for the shared recording-media enlargement and
+HddMediaExample for its explicit modeled capacity/count arithmetic. Enlarge the
+same head/surface, show one representative per repeated type, and scope quantity
+labels to the closest parent. Distinguish magnetic-film grain storage from the
+write pole and MR reader. Separate payload bits from ECC/format overhead; label
+uniform geometry as a teaching choice and explain real zone-dependent counts.
+Do not infer a numerical grain count from payload capacity. Keep the enlargement
+and its geometry shared by static preview and both access lessons.
+Use the grain area's free space for a plus/minus strip of actual consecutive
+encoded magnetization intervals. Highlight the current interval, progressively
+record it through the write-field path, and scan it through the read-field path
+without rewriting. Keep payload/ECC and writer/reader states in the enlargement.
+Group the remaining sector intervals and identify this as a teaching-format
+window, not direct user bits or electric charge. Use the existing playback engine.
+Keep SSD geometry in Hardware/Fundamental/Ssd/SsdLayout.ts. The SSD map uses the
 shared schematic style and connects the host connector/interface, controller,
 NAND channels/packages, optional DRAM, power management, and optional PLP.
 Label optional components explicitly. Keep DRAM as a controller branch rather
@@ -445,11 +473,16 @@ external margins; keep shifted fixtures and paths aligned.
 Reuse it in HddSectorLayout: a circular platter, central spindle, fixed-length
 pivoting arm, and connected schematic components in the existing diagram style.
 Show the internal preamp/head driver and an underside PCB inset with separate
-read processing, write encoding, ECC, user-data cache, HDD controller, firmware
-map, servo controller, motor driver, and host/power interfaces. Keep the cache
+read processing, write encoding, ECC, user-data cache, HDD controller,
+LBA / Physical Location Mapping, servo controller, motor drivers, and host/power interfaces. Keep the cache
 in the user-data path and servo positioning on a separate control/feedback path.
 These logical functions can share silicon. The head-current driver is distinct
-from the spindle/VCM motor driver. Use arrows for signal/data
+from the separate Spindle Motor Driver and VCM Driver functions within the
+motor-driver group. Connect controller control directly to servo, cache, read
+processing, and write encoding; use mapping as a side lookup with defect remapping.
+Draw separate one-way Write (Cache → ECC → Write Encoder → Preamp → Head) and
+Read (Head → Preamp → Read Processing → ECC → Cache) routes. Use dashed amber
+DC feeds to controller, DRAM, preamp, and both drivers. Use arrows for signal/data
 and motor control, and a distinct dashed airflow path to the passive filter.
 Electronic blocks are logical functions, not separate-chip or exact-wiring claims.
 Scene camera bounds and detail layers let Renderer animate one continuous zoom and progressively
@@ -491,7 +524,7 @@ HDD zooms into the existing storage block to reveal its enclosure, mechanical
 components, controller board, cache, and connectors. SSD zooms into its connected
 component map. RAM zooms into its server memory block and restores its common
 map after lesson Reset. Network begins with a blank renderer.
-HDD lesson playback reuses the common schematic;
+Legacy HDD lesson playback reuses the common schematic;
 other lesson scenes and playback stay unchanged.
 The Renderer supports action children without a scene and accepts
 an optional empty-state message. Selecting an animated overview starts playback; its info
