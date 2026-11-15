@@ -253,20 +253,24 @@ What it is, Problem it solves, Step-by-step flow, and Real technologies. Omit th
 Real products section from component overviews. Author each flow in no more than ten steps, combining related events
 when needed rather than dropping later steps. Keep each lesson's class-based
 overview description beside its animation in a matching `*Overview.ts` file.
-The CPU and Complex catalogs expose these through `describeOverview`; do not
+The component catalogs expose these through `describeOverview`; do not
 construct an animation to obtain popup text. Omit complexity tables and
-explanations, Teaching model, and Terms used in this action. Both hardware
-workspaces target `system-components-overview`.
+explanations, Teaching model, and Terms used in this action. Hardware overview
+dialogs target `system-components-overview`.
 Keep AlgorithmInfo for data-structure actions and algorithms. Reuse global dialog
 viewport sizing, scrolling, and sticky close-control rules for the overview popup.
 
 Keep the System Components Overview category hierarchy in
 `MainMenu/AdvancedAlgorithmCatalog.ts`, separate from structure membership and
-data-structure algorithm scopes. The overview root contains Hardware Fundamental,
-Complex, and Network in that fixed order. Hardware Fundamental opens CPU, HDD,
-SSD, RAM, GPU, Network Adapter, and Motherboard directly in that fixed order. Network retains Fundamental and Complex,
-in that order. GPU and Network Adapter close MainMenu and show their common maps
-with two overview cards each. Keep their class-based layouts in
+data-structure algorithm scopes. The overview root contains Hardware Fundamental
+and Network in that fixed order and shows an empty renderer. Hardware Fundamental
+closes MainMenu and opens its server map with one flat list of all twelve
+HardwareOverviewCatalog choices. Do not show CPU/HDD/SSD/RAM/GPU/NIC/Motherboard
+subcategory cards. HardwareFundamentalWorkspace retains one Renderer and sidebar
+while diagram clicks change component maps. Selecting an overview moves to its
+component map and starts playback. Hardware Complex is absent from navigation,
+search, and App dispatch; retain its source only as legacy implementation.
+Network retains Fundamental and Complex. Keep component class-based layouts in
 Hardware/Fundamental/Gpu/GpuLayout.ts and
 Hardware/Fundamental/NetworkAdapter/NetworkAdapterLayout.ts, reusing HardwareDiagram,
 Renderer schematic titles/palettes, and SystemOverviewLayout's focused layers and camera.
@@ -292,12 +296,12 @@ separate support traces to CPU control contacts, PCH, and GPU/M.2/NIC connectors
 Keep VRMs, PSU DC input, and copper power distribution to the CPU, DIMM, chipset,
 expansion slots, M.2, clock, and reset circuitry. Keep AC at the PSU.
 Each data, support, and power arrow terminates at named physical boundaries.
-BusAlgorithmCatalog exposes an empty choices list; BusWorkspace displays the
-static motherboard diagram and empty overview navigation. The removed Network
+BusAlgorithmCatalog exposes an empty choices list; the shared workspace displays
+the static motherboard diagram with the full root overview list. The removed Network
 byte to SSD action is absent from HardwareOverviewKind and public dispatch,
 and cannot appear in search. Its existing model/trace code remains as legacy
-regression coverage, without a selectable action. Focus the workspace heading
-when no first overview button exists. Back returns to Hardware Fundamental.
+regression coverage, without a selectable action. Back returns to System Components
+Overview and clears the renderer.
 Gpu and NetworkAdapter own their catalogs, workspaces, and action folders:
 FrameRendering / HashcatIteration and ServerToNetwork / NetworkToServer.
 Each action owns its model, component/CSS, animation, and sourced overview.
@@ -361,11 +365,12 @@ evaluation, with real SHA-256 and no graphics/AI/ray-tracing work. Ethernet less
 use one payload byte in a minimum frame, real FCS validation, preposted DMA
 buffers, distinct TX/RX payload paths, and completion after delivery. Use GPU
 and Network Adapter component tags and include all four lessons in search.
-Hardware component subcategories close MainMenu and open their
-own workspace and scoped catalog under Cpu, Ram, Hdd, or Ssd. CpuAlgorithmCatalog
-and CpuWorkspace contain CPU lessons only; the other categories own equivalent
-catalogs and workspaces. HardwareOverviewCatalog delegates shared menu/search
-routing, while ComponentWorkspace shares workspace UI. Keep generic snapshots
+Component-specific catalogs retain their own lessons and geometry, while
+HardwareOverviewCatalog supplies one flat menu/search list. The shared
+HardwareFundamentalWorkspace dispatches those definitions through ActionPlayback
+and replaces only the selected detail layer. ComponentWorkspace shares the
+sidebar and session lifecycle, preserving the mounted Renderer and camera.
+Switching diagrams or overviews disposes the previous playback. Keep generic snapshots
 and tracing in HardwareSnapshot, HardwareTrace, and HardwareOverviewLesson.
 RAM offers only Write one bit and Read one bit, using its common diagram with
 in-place cell state. Keep approximate quantity suffixes only in static RAM titles.
@@ -398,12 +403,10 @@ kinds, dispatch, and search; keep existing mechanism code for legacy regression
 coverage. Keep Motherboard's overview catalog empty.
 Keep lesson source folders in their existing
 Fundamental locations; category membership comes from tags rather than copies.
-Root Complex opens its existing flat workspace directly. Do not render a
-second lesson list inside the menu. Each workspace can open with no lesson selected,
-showing all overview cards and their separate info buttons. SystemOverviewLayout
-under RealSystemsAlgorithms/SystemOverview supplies nested category previews:
-client/network/server, server hardware, the CPU package, and common HDD/SSD
-component maps, and a common RAM map. Keep RAM geometry in
+Do not render a second lesson list inside MainMenu. The hardware workspace can
+open with no lesson selected, showing all overview cards and separate info buttons.
+SystemOverviewLayout supplies the server map, CPU package, and common component
+maps. The System Components Overview entry itself stays empty. Keep RAM geometry in
 Hardware/Fundamental/Ram/RamLayout.ts. Keep the logical component diagram with
 one representative chip, an explicit DRAM die, bank group, bank, decoders, row
 buffer, control, refresh, and I/O. Replace index-0 titles with realistic quantity
@@ -487,9 +490,9 @@ and motor control, and a distinct dashed airflow path to the passive filter.
 Electronic blocks are logical functions, not separate-chip or exact-wiring claims.
 Scene camera bounds and detail layers let Renderer animate one continuous zoom and progressively
 reveal nested internals. Respect reduced motion and cancel animation frames on
-unmount or replacement. Hardware Fundamental and Complex share the server
-hardware preview. Returning from CPU to Hardware Fundamental zooms out to hardware;
-returning to System Components Overview zooms out to client/network/server.
+unmount or replacement. Hardware Fundamental opens the server hardware preview.
+Diagram clicks move between component maps while retaining the flat sidebar.
+Returning to System Components Overview clears the renderer and ends playback.
 SystemOverview/ServerHardwareLayout owns the server hierarchy and placement slots
 shared by SystemOverviewLayout's component zooms. Show CPU, RAM, GPU, host NIC,
 optional RAID/HBA, PSU, HDD, SATA SSD, and NVMe SSD as independent chassis children
@@ -534,17 +537,16 @@ Legacy HDD lesson playback reuses the common schematic;
 other lesson scenes and playback stay unchanged.
 The Renderer supports action children without a scene and accepts
 an optional empty-state message. Selecting an animated overview starts playback; its info
-button only opens information. Component workspace Back and header menu reopen
-Hardware Fundamental with CPU, HDD, SSD, and RAM; Complex returns directly to
-System Components Overview and its system preview.
+button only opens information. Workspace Back and the header menu reopen
+System Components Overview with an empty renderer.
 Returning to a parent category ends lesson playback and restores that category's
 preview. CPU category selection returns to its core preview; HDD returns to its
 common component map, including after lesson Reset; SSD does the same. Changing groups opens
-their preview without starting a lesson. Search routes each fundamental lesson to the
-component group selected by its tag, including the full component path in results.
+their preview without starting a lesson. Search routes each fundamental lesson to
+its component diagram using the flat Hardware Fundamental path in results.
 Network/Fundamental contains Physical, Data Link, Network, Transport, Session,
-Presentation, and Application in OSI layer order. Complex categories describe
-cross-component hardware systems or systems spanning network layers. Unimplemented
+Presentation, and Application in OSI layer order. Network Complex describes
+systems spanning network layers. Hardware Complex is removed. Unimplemented
 leaves show an empty-state message. Reuse MainMenu and MenuNavigation for parent
 navigation rather than adding empty implementation directories.
 
@@ -553,9 +555,9 @@ policies. The former mq-deadline, BFQ, and Kyber lessons and destinations were r
 
 Keep CPU hardware lessons under `RealSystemsAlgorithms/Hardware/Fundamental/`,
 with Cpu/NonAtomicIncrement and Cpu/AtomicLoad as the two catalogued action folders.
-Search selections open Hardware Fundamental / CPU and start the selected CPU lesson.
-Menu reopening and workspace Back lead to Hardware Fundamental; its Back leads
-to System Components Overview. HDD, SSD, and RAM follow the same navigation pattern.
+Search selections open Hardware Fundamental, move to the CPU diagram, and start
+the selected CPU lesson. Menu reopening and workspace Back lead to System Components
+Overview with an empty renderer. All hardware diagrams share the same overview list.
 Each owns its mechanism model, component, CSS, animation, layout, and sourced
 information. CpuCoreLayout supplies one enclosing square CPU-core boundary and
 the same twenty-three internal component regions reused by the static preview and CPU operation lessons. Group

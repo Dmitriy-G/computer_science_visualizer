@@ -63,7 +63,7 @@ test('ten component lessons retain independent deterministic scenes and fundamen
     assert.equal(results.length, 1)
     assert.deepEqual(results[0].components, choice.components)
     const category = choice.devices?.[0] ?? choice.components[0]
-    assert.equal(results[0].context, `System Components Overview / Hardware Fundamental / ${category}`)
+    assert.equal(results[0].context, 'System Components Overview / Hardware Fundamental')
     assert.equal(results[0].symbol, category)
   }
 })

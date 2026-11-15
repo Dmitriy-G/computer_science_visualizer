@@ -26,7 +26,7 @@ test('RAM exposes exactly write/read bit overviews and removes the old search de
     assert.equal(HardwareOverviewCatalog.groupFor(choice.kind), 'hardware-ram')
     const results = index.find('algorithms', choice.name).filter((result) => result.componentAlgorithm === choice.kind)
     assert.equal(results.length, 1)
-    assert.equal(results[0].context, 'System Components Overview / Hardware Fundamental / RAM')
+    assert.equal(results[0].context, 'System Components Overview / Hardware Fundamental')
     const info = HardwareOverviewCatalog.describeOverview(choice.kind)
     assert.ok(info.steps.length <= 10)
     assert.match(info.implementationNote, /wider bursts/)

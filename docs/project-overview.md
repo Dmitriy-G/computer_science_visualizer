@@ -14,11 +14,14 @@ Advanced Data Structures menu hierarchy. Their subjects and assignments are defi
 in MainMenu/MenuStructureCatalog.ts. Data Structures Algorithms contains Sorting
 (Array with forty-eight sorting algorithms) and Graphs Traversal; graph algorithm
 examples live in the latter.
-System Components Overview opens Hardware Fundamental, Complex, and Network in
-that order. Hardware Fundamental directly contains CPU, HDD, SSD, RAM, GPU,
-Network Adapter, and Motherboard in that order. They open workspaces whose overview cards are filtered by
-component and storage device tags, with separate info buttons. CPU contains two
-lessons, HDD two, SSD two, RAM two, GPU two, Network Adapter two, and Motherboard none.
+System Components Overview opens Hardware Fundamental and Network, in that order,
+with an empty renderer. Hardware Fundamental opens the server hardware map and
+one flat list of all twelve component overviews, with separate info buttons.
+There are no component subcategories in the sidebar. CPU, HDD, SSD, RAM, GPU,
+and Network Adapter each supply two lessons; Motherboard has no lesson.
+Diagram elements navigate between component maps without filtering the list.
+Selecting an overview moves the camera to its component diagram and starts its
+lesson. HardwareFundamentalWorkspace retains one Renderer across these changes.
 HDD opens its common map with Write one sector (512 B) and Read one sector (512 B).
 Its former combined sector-access
 lesson is excluded from menu/search, public kinds, and dispatch. Existing
@@ -26,12 +29,14 @@ mechanism and animation code remains for legacy regression coverage.
 SSD opens its component map with Write one page (2 KiB) and Read one page (2 KiB).
 The former combined NAND, FTL, garbage collection, and wear leveling lessons
 are excluded from overview cards, search, public kinds, and dispatch. Their
-existing primitives remain for legacy regression coverage. Complex opens its flat workspace directly
-from the overview root; Network retains Fundamental and Complex subcategories.
-Motherboard opens its static diagram with an empty overview list. The former
+existing primitives remain for legacy regression coverage. Hardware Complex and
+all its lessons are removed from navigation, search, and application dispatch;
+its implementation remains for legacy regression coverage. Network retains
+Fundamental and Complex subcategories. Motherboard opens its static diagram
+while keeping the same flat overview list. The former
 Network byte to SSD lesson is excluded from menu, search, public overview kinds,
 and playback dispatch. Its model/trace primitives remain for legacy regression
-coverage; the motherboard workspace has no selectable lesson.
+coverage; selecting an overview from Motherboard opens that overview's component map.
 BusLayout in Hardware/Fundamental/Bus owns the detailed Motherboard map.
 Use a compact 2840 by 1680 landscape scene, with a 2240 by 1600 motherboard.
 Keep socket and connector rows close together, use short routing corridors,
@@ -62,7 +67,7 @@ The Motherboard preview zooms from the shared server motherboard footprint
 and uses the existing bus-components layer, shared renderer, opaque palettes,
 schematic titles, Fit/Actual size, reduced-motion support, and focused layers.
 The header menu returns to Hardware Fundamental.
-System Components Overview displays a client, abstract network, and server.
+System Components Overview starts with an empty renderer.
 Hardware Fundamental moves the SVG camera into that server. ServerHardwareLayout
 owns the shared chassis map and the component slots used for subsequent zooms.
 The chassis shows CPU, RAM, discrete GPU, host Network Adapter, optional RAID/HBA,
@@ -151,7 +156,8 @@ The socket is drawn beside the package for clarity; physically it sits underneat
 Core count, cache organization, packaging, and interfaces vary between processors;
 the map is logical rather than a manufacturer floorplan. Cache and controller
 context follows [Intel's processor datasheet](https://cdrdv2-public.intel.com/634648/634648-004.pdf).
-GPU and Network Adapter open their common diagrams with two overview cards each.
+GPU and Network Adapter each contribute two cards to the shared overview list;
+their diagram elements open the corresponding common maps.
 GpuLayout shows a discrete-card example with host connectivity, scheduling,
 compute/shader cores, texture units, rasterization, render output, cache, memory
 controllers, VRAM, display engine and ports, optional ray tracing and AI units,
@@ -391,10 +397,10 @@ connections; zooming out restores its context.
 Category previews open in Fit mode and reset scrolling, including after Actual size.
 Their layout always reserves the left menu's width, scaling elements to fit beside
 it and keeping the diagram in place when the menu opens or closes.
-Algorithms browsing preserves the current diagram. Hardware Fundamental and
-Complex share the server hardware preview. Returning from CPU to Hardware Fundamental
-zooms out to that hardware view; returning to System Components Overview zooms
-out to the client/network/server view. HDD returns to the same hardware preview.
+Algorithms browsing preserves the current diagram. Hardware Fundamental opens
+the server hardware preview. Component navigation uses diagram clicks; the
+overview list stays at Hardware Fundamental. Returning to System Components
+Overview ends the lesson and clears the renderer.
 RAM zooms into its server memory block to reveal RamLayout's logical component
 schematic. A concrete 8 GiB, single-rank, non-ECC DDR4 x8 example provides the
 quantity labels: approximately eight chips per module, one monolithic die per
@@ -437,11 +443,10 @@ Bank-local iensing and row refresh follow the [RAIDR DRAM background](https://us
 SPD devices follow Renesas's [DDR4 SPD EEPROM](https://www.renesas.com/en/products/tse2004gb2b0)
 and [DDR5 SPD hub](https://www.renesas.com/en/products/spd5118) descriptions.
 Network starts with a blank renderer. Selecting a lesson uses its mechanism's playback;
-HDD and SSD lessons retain their shared component diagrams. Component workspace
-Back and header menu return to the seven categories
-in Hardware Fundamental and restore the hardware preview, ending the current lesson.
-Complex returns directly to System Components Overview and its system preview.
-Search selections open the matching component workspace and lesson.
+HDD and SSD lessons retain their shared component diagrams. Workspace Back and
+the header menu return to System Components Overview with an empty renderer,
+ending the current lesson. Search selections open Hardware Fundamental and move
+to the matching component diagram and lesson without adding a sidebar subcategory.
 CPU offers Non-atomic operation: i = i + 1 and Atomic operation: i = j. Both
 reuse CpuLayout's full package and expanded representative core, preserving its
 geometry and light-orange colors. The non-atomic trace uses separate LOAD, ADD,

@@ -10,8 +10,6 @@ import { StructureInformation } from '../../StructureInfo/StructureInformation.t
 import { HardwareOverviewCatalog } from '../../RealSystemsAlgorithms/Hardware/Fundamental/HardwareOverviewCatalog.ts'
 import { AdvancedAlgorithmCatalog } from '../AdvancedAlgorithmCatalog.ts'
 import type { HardwareOverviewKind } from '../../RealSystemsAlgorithms/Hardware/Fundamental/HardwareOverviewKind.ts'
-import { HardwareAlgorithmCatalog } from '../../RealSystemsAlgorithms/Hardware/Complex/HardwareAlgorithmCatalog.ts'
-import type { HardwareAlgorithmKind } from '../../RealSystemsAlgorithms/Hardware/Complex/HardwareModel.ts'
 
 export type SearchTarget = 'structures' | 'algorithms'
 export type DescribeSearchAlgorithm = (structure: StructureKind, action: ActionKind, scope: ActionScope) => AlgorithmInformation | null
@@ -41,19 +39,7 @@ export interface ComponentSearchResult {
   readonly devices?: readonly OverviewDeviceKind[]
 }
 
-export interface HardwareSearchResult {
-  readonly key: string
-  readonly hardwareAlgorithm: HardwareAlgorithmKind
-  readonly name: string
-  readonly description: string
-  readonly context: string
-  readonly symbol: string
-  readonly components: readonly OverviewComponentKind[]
-  readonly architectures: readonly OverviewArchitectureKind[]
-  readonly devices?: readonly OverviewDeviceKind[]
-}
-
-export type MenuSearchResult = StructureSearchResult | ComponentSearchResult | HardwareSearchResult
+export type MenuSearchResult = StructureSearchResult | ComponentSearchResult
 
 interface SearchDocument {
   readonly target: SearchTarget
@@ -65,20 +51,6 @@ export class MenuSearchIndex {
   private readonly documents: SearchDocument[] = []
 
   constructor(describe: DescribeSearchAlgorithm) {
-    for (const algorithm of HardwareAlgorithmCatalog.choices) {
-      const information = HardwareAlgorithmCatalog.describeOverview(algorithm.kind)
-      let text = `${algorithm.name} ${information.name}`
-      if (information.realWorldUsage) text += this.technologyNames(information.realWorldUsage.technologies) + this.technologyNames(information.realWorldUsage.products)
-      this.documents.push({
-        target: 'algorithms', text: this.normalize(text),
-        result: {
-          key: `hardware:${algorithm.kind}`, hardwareAlgorithm: algorithm.kind,
-          name: algorithm.name, description: algorithm.description,
-          context: 'System Components Overview / Complex', symbol: 'HW',
-          components: algorithm.components, architectures: algorithm.architectures,
-        },
-      })
-    }
     for (const algorithm of HardwareOverviewCatalog.choices) {
       const information = HardwareOverviewCatalog.describeOverview(algorithm.kind)
       const group = AdvancedAlgorithmCatalog.getGroup(HardwareOverviewCatalog.groupFor(algorithm.kind))
@@ -89,7 +61,7 @@ export class MenuSearchIndex {
         result: {
           key: `component:${algorithm.kind}`, componentAlgorithm: algorithm.kind,
           name: algorithm.name, description: algorithm.description,
-          context: `System Components Overview / Hardware Fundamental / ${group.name}`, symbol: group.device ?? group.component ?? 'CPU',
+          context: 'System Components Overview / Hardware Fundamental', symbol: group.device ?? group.component ?? 'CPU',
           components: algorithm.components, architectures: algorithm.architectures, devices: algorithm.devices,
         },
       })

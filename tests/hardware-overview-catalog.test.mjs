@@ -51,7 +51,7 @@ test('HDD offers separate write/read lessons and rejects its removed combined se
   const index = new MenuSearchIndex(() => null)
   for (const choice of HddAlgorithmCatalog.choices) {
     const results = index.find('algorithms', choice.name)
-    assert.ok(results.some((result) => result.componentAlgorithm === choice.kind && result.context === 'System Components Overview / Hardware Fundamental / HDD'))
+    assert.ok(results.some((result) => result.componentAlgorithm === choice.kind && result.context === 'System Components Overview / Hardware Fundamental'))
     assert.ok(!results.some((result) => result.componentAlgorithm === 'hdd-sector'))
   }
 })
@@ -60,7 +60,7 @@ test('SSD offers page write/read and rejects its removed legacy lessons', () => 
   assert.deepEqual(HardwareOverviewCatalog.forGroup('hardware-ssd').map((choice) => choice.kind), ['ssd-write-page', 'ssd-read-page'])
   const index = new MenuSearchIndex(() => null)
   for (const choice of SsdAlgorithmCatalog.choices) {
-    assert.ok(index.find('algorithms', choice.name).some((result) => result.componentAlgorithm === choice.kind && result.context === 'System Components Overview / Hardware Fundamental / SSD'))
+    assert.ok(index.find('algorithms', choice.name).some((result) => result.componentAlgorithm === choice.kind && result.context === 'System Components Overview / Hardware Fundamental'))
   }
   for (const kind of ['nand-cell', 'ssd-ftl', 'ssd-garbage-collection', 'ssd-wear-leveling']) {
     assert.ok(!HardwareOverviewCatalog.choices.some((choice) => choice.kind === kind))

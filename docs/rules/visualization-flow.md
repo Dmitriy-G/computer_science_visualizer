@@ -19,8 +19,13 @@
    fixed order. Algorithms contains **Fundamental Data Structures**,
    **Data Structures Algorithms**, and **Advanced Data Structures**, in that order.
    These category lists are excluded from alphabetical menu ordering. System Components Overview
-   opens Hardware Fundamental, Complex, and Network in that fixed order.
-   Hardware Fundamental opens CPU, HDD, SSD, RAM, GPU, Network Adapter, and Motherboard directly in that order.
+   opens Hardware Fundamental and Network in that fixed order, with an empty
+   renderer. Hardware Fundamental opens the server map and one flat list of all
+   twelve component overviews. Do not render component subcategory cards. Diagram
+   clicks navigate between maps without changing the list. An overview selection
+   moves to its component map and starts that lesson in the same mounted Renderer.
+   Hardware Complex and its lessons are removed from navigation, search, and App
+   dispatch; their source remains available only for legacy regression coverage.
    Network retains Fundamental and Complex subcategories.
    Motherboard retains hardware-bus routing and BusLayout, zooming from the server
    motherboard footprint. Keep six compact external component references plus
@@ -40,13 +45,13 @@
    Retain PSU DC input, VRMs, and physical power distribution to CPU, DIMM,
    PCH, slots, M.2, clock, and reset circuits. Keep all arrow endpoints anchored.
    Use the shared schematic styles, focused-layer filtering, and view controls.
-   Motherboard has an empty overview list and no lesson playback. Remove Network
+   Motherboard has no lesson of its own and keeps the full root overview list. Remove Network
    byte to SSD from menu/search and public action dispatch; keep its existing
    model/trace primitives only for legacy regression coverage. Focus the heading
    when no action button exists, retaining the static diagram and view controls.
-   The header menu returns to Hardware Fundamental and its hardware preview.
-   GPU and Network Adapter close the menu and zoom directly into their maps,
-   with two overview cards each and no automatic playback until one is selected.
+   The header menu returns to System Components Overview with an empty renderer.
+   GPU and Network Adapter diagram elements zoom directly into their maps while
+   keeping the shared list. Each supplies two cards; selecting a card starts its lesson.
    GPU offers Render one frame and Hashcat: one candidate iteration; Network
    Adapter offers Server to network and Network to server. GPU shows a logical discrete-card map;
    Network Adapter shows a logical PCIe Ethernet map with distinct TX/RX paths.
@@ -96,20 +101,18 @@
    Display signals travel from Display Engine to HDMI / DisplayPort, separately
    from memory controllers and VRAM. The Hashcat example evaluates one complete
    fixed SHA-256 candidate. NIC examples retain their separate TX/RX paths and
-   deliver data before reporting completion. The header menu returns to Hardware Fundamental.
-   Choosing another component closes the menu and opens its workspace with overview
-   cards filtered by component and device tags. CPU contains two operation overviews:
+   deliver data before reporting completion. The header menu returns to System
+   Components Overview with an empty renderer. Choosing a component through the
+   diagram changes its map while retaining all overview cards. CPU supplies two operation overviews:
    a non-atomic increment and an atomic word load. The old
    prediction/renaming overviews are removed from menu/search. HDD offers Write
    one sector (512 B) and Read one sector (512 B); remove the old combined
    hdd-sector from public kinds, dispatch, and search,
    retaining existing mechanism code as legacy regression coverage.
    SSD offers Write one page (2 KiB) and Read one page (2 KiB); RAM contains
-   two DRAM bit-access overviews. No static test entry is offered. Root Complex opens
-   its flat workspace directly.
+   two DRAM bit-access overviews. No static test entry is offered.
    Keep separate information buttons and start no lesson playback until an overview
-   is selected. Category navigation renders a client, abstract network, and server
-   at System Components Overview. Hardware Fundamental zooms into the server chassis,
+   is selected. System Components Overview stays empty. Hardware Fundamental opens the server chassis,
    showing CPU, RAM, GPU, host NIC, optional RAID/HBA, PSU, HDD, SATA SSD, and NVMe
    SSD as independent blocks outside the Motherboard boundary. The motherboard
    shows only physical sockets, slots, connectors, and the Management LAN port.
@@ -133,8 +136,8 @@
    placement slots for existing detail zooms. CPU zooms into the same CPU block
    to reveal the common core map. Use continuous SVG camera movement and reveal
    nested details as they grow, with reduced-motion support. Algorithms browsing
-   leaves the diagram unchanged. Hardware Fundamental and Complex share the
-   server hardware preview. HDD zooms into its storage block to reveal the common
+   leaves the diagram unchanged. Hardware Fundamental opens the server hardware
+   preview. HDD zooms into its storage block to reveal the common
    enclosure/mechanical assembly and controller-board component map. SSD zooms
    into its connected component schematic, showing host interface, controller,
    NAND channels/packages, optional DRAM, power management, and optional PLP.
@@ -210,28 +213,17 @@
    its mechanism's playback; HDD and SSD retain their common component maps.
    Network/Fundamental
    contains Physical, Data Link, Network, Transport, Session, Presentation, and
-   Application in OSI layer order. Complex covers systems combining components
-   or network layers. OS scheduler lessons have been removed. The Complex workspace lists twelve
-   cross-component lessons for ordering, barriers, atomic updates, coherence,
-   translation, and instruction synchronization, without CPU/memory subcategories.
-   Selecting a lesson starts its bounded trace in the shared renderer. Workspace
-   Back and the header menu reopen Hardware Fundamental for CPU, HDD, SSD, and RAM,
-   ending the lesson and restoring the hardware preview. Complex returns directly
-   to System Components Overview and its system preview.
-   Returning from CPU to Hardware Fundamental zooms out to hardware; returning to System
-   Components Overview zooms out to client/network/server. CPU category selection
-   returns to its core map; HDD category selection returns to its
-   common component map. SSD category selection and Reset restore its static map.
-   RAM category selection and lesson Reset restore the common
-   RAM map. Changing groups opens
-   the corresponding category preview without starting lesson playback.
-   Search results include the component subcategory and open the corresponding
-   workspace with the selected lesson.
-   Hardware overview cards in Fundamental and Complex workspace action lists and
+   Application in OSI layer order. Network Complex covers systems spanning network
+   layers. OS scheduler lessons and Hardware Complex are absent from public
+   navigation and search. Workspace Back and the header menu end playback and
+   return to System Components Overview with an empty renderer. Diagram clicks
+   open component maps without starting a lesson. Reset restores the current
+   component's static map. Search results use the Hardware Fundamental root path
+   and open the matching component map and lesson with the same flat sidebar.
+   Hardware overview cards in the Fundamental workspace action list and
    search show component tags (CPU, RAM, Disk, Bus) from their catalog metadata,
    instead of Real Systems, Educational, or Popular usage tags. Tag the existing
-   Fundamental CPU lessons with CPU and current Complex lessons with CPU, RAM,
-   and Bus. Reserve Disk for overviews that cover a disk.
+   Fundamental CPU lessons with CPU. Reserve Disk for overviews that cover a disk.
    Add x86 or ARM tags beside component tags for architecture-specific CPU
    instruction overviews. Architecture-independent mechanisms receive no
    architecture tag, regardless of the architecture of a cited example product.
@@ -559,8 +551,9 @@ Hardware > Fundamental includes RAM Write one bit and Read one bit, HDD Write on
 sector and Read one sector, and SSD independent full-page Write and Read overviews using its common
 diagram; the former combined NAND cell/page/block,
 FTL, garbage-collection, and wear-leveling code remains for legacy regression
-coverage only. Use the separate CPU, RAM, HDD, and SSD catalogs/workspaces and their
-component/device tags. Keep OS disk scheduling outside these overviews.
+coverage only. Use the separate component catalogs and their component/device
+tags within HardwareFundamentalWorkspace's shared flat overview list and Renderer.
+Keep OS disk scheduling outside these overviews.
 
 Each lesson owns a mechanism model, layout, class component, stylesheet, animation,
 and sourced overview. Reuse the existing workspace, automatic playback, reset,

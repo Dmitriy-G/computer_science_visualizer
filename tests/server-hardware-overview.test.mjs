@@ -143,6 +143,7 @@ test('native SATA, optional SATA/SAS, and NVMe cables stay visually separate', (
 
 test('component zooms follow independent devices and the motherboard footprint', () => {
   const overview = SystemOverviewLayout.create('hardware', null)
+  assert.deepEqual(overview.camera.from, overview.camera.to, 'opening hardware does not reveal the removed client/network/server start diagram')
   const hardware = overview.layers.find((layer) => layer.id === 'hardware')
   assert.deepEqual(hardware.scene, ServerHardwareLayout.create())
   assert.equal(overview.count, ServerHardwareLayout.componentCount)

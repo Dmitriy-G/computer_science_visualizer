@@ -5,7 +5,7 @@ import Renderer from '../../../Renderer/Renderer.tsx'
 import type { HardwareOverviewChoice } from './HardwareOverviewChoice.ts'
 import type { ActionViewProps } from '../../../ActionPlayback/ActionView.tsx'
 import { AdvancedAlgorithmCatalog } from '../../../MainMenu/AdvancedAlgorithmCatalog.ts'
-import type { HardwareFundamentalGroupKind } from '../../../MainMenu/AdvancedAlgorithmCatalog.ts'
+import type { HardwareWorkspaceGroupKind } from '../../../MainMenu/AdvancedAlgorithmCatalog.ts'
 import { HardwareSnapshot } from './HardwareSnapshot.ts'
 import type { HardwareOverviewKind } from './HardwareOverviewKind.ts'
 import OverviewTags from '../../../OverviewTags/OverviewTags.tsx'
@@ -26,13 +26,14 @@ export interface ComponentWorkspaceProps {
 }
 
 interface ComponentWorkspaceState {
+  readonly session: number
   readonly scene: Scene | null
   readonly active: boolean
   readonly running: boolean
 }
 
 export default abstract class ComponentWorkspace extends Component<ComponentWorkspaceProps, ComponentWorkspaceState> {
-  protected abstract readonly group: HardwareFundamentalGroupKind
+  protected abstract readonly group: HardwareWorkspaceGroupKind
   protected abstract readonly choices: readonly HardwareOverviewChoice[]
   protected abstract renderLesson(props: ComponentPlaybackProps): ReactNode
 
@@ -41,9 +42,16 @@ export default abstract class ComponentWorkspace extends Component<ComponentWork
   private readonly heading = createRef<HTMLHeadingElement>()
   private readonly firstAlgorithm = createRef<HTMLButtonElement>()
   public state: ComponentWorkspaceState = {
+    session: this.props.session,
     scene: null,
     active: this.props.algorithm !== null,
     running: this.props.algorithm !== null,
+  }
+
+  public static getDerivedStateFromProps(props: ComponentWorkspaceProps, state: ComponentWorkspaceState): Partial<ComponentWorkspaceState> | null {
+    if (props.session === state.session) return null
+    const active = props.algorithm !== null
+    return { session: props.session, scene: null, active, running: active }
   }
 
   public componentDidMount(): void {
@@ -53,10 +61,7 @@ export default abstract class ComponentWorkspace extends Component<ComponentWork
 
   public componentDidUpdate(previous: ComponentWorkspaceProps): void {
     if (previous.session === this.props.session) return
-    const active = this.props.algorithm !== null
-    this.setState({ active, running: active }, () => {
-      if (active) this.heading.current?.focus({ preventScroll: true })
-    })
+    if (this.props.algorithm !== null) this.heading.current?.focus({ preventScroll: true })
   }
 
   protected presentScene(scene: Scene | null): Scene | null { return scene }
@@ -81,7 +86,6 @@ export default abstract class ComponentWorkspace extends Component<ComponentWork
   private complete = (): void => { this.setState({ running: false }) }
 
   private select = (event: MouseEvent<HTMLButtonElement>): void => {
-    if (this.state.running) return
     for (const choice of this.choices) if (choice.kind === event.currentTarget.dataset.algorithm) this.props.onSelect(choice.kind)
   }
 
@@ -93,7 +97,7 @@ export default abstract class ComponentWorkspace extends Component<ComponentWork
     const rows: ReactNode[] = []
     for (const choice of this.choices) rows.push(
       <div className="canvas-action-row" key={choice.kind}>
-        <button type="button" className="canvas-action canvas-action--labeled" ref={rows.length === 0 ? this.firstAlgorithm : undefined} data-algorithm={choice.kind} onClick={this.select} disabled={this.state.running} aria-current={this.state.active && this.props.algorithm === choice.kind ? 'true' : undefined}>
+        <button type="button" className="canvas-action canvas-action--labeled" ref={rows.length === 0 ? this.firstAlgorithm : undefined} data-algorithm={choice.kind} onClick={this.select} aria-current={this.state.active && this.props.algorithm === choice.kind ? 'true' : undefined}>
           <OverviewTags components={choice.components} architectures={choice.architectures} devices={choice.devices} />
           <span className="canvas-action-heading"><strong title={choice.name}>{choice.name}</strong></span>
           <span className="canvas-action-description" title={choice.description}>{choice.description}</span>
@@ -116,14 +120,13 @@ export default abstract class ComponentWorkspace extends Component<ComponentWork
   }
 
   public render(): ReactNode {
-    const group = AdvancedAlgorithmCatalog.getGroup(this.group)
     const parent = AdvancedAlgorithmCatalog.getGroup('hardware-fundamental')
     return <>
       <Renderer ref={this.renderer} scene={this.presentScene(this.state.scene ?? this.props.previewScene)} onOpenMenu={this.props.onBack} onNavigate={this.props.onNavigate} emptyState={<></>}>
-        <aside className="action-menu" aria-label={`${group.name} hardware overviews`}>
-          <button type="button" className="text-button action-menu-back-button" onClick={this.props.onBack}>← {parent.name}</button>
-          <h2 ref={this.heading} tabIndex={-1}>{parent.name} / {group.name}</h2>
-          <nav aria-label={`${group.name} hardware mechanisms`}>{this.renderAlgorithms()}</nav>
+        <aside className="action-menu" aria-label="Hardware overviews">
+          <button type="button" className="text-button action-menu-back-button" onClick={this.props.onBack}>← System Components Overview</button>
+          <h2 ref={this.heading} tabIndex={-1}>{parent.name}</h2>
+          <nav aria-label="Hardware overviews">{this.renderAlgorithms()}</nav>
         </aside>
       </Renderer>
       {this.renderPlayback()}

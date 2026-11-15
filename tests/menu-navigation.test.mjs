@@ -260,18 +260,18 @@ test('Algorithms nests the three data-structure categories with reversible navig
   assert.deepEqual(fundamental.back(), algorithms)
 })
 
-test('advanced hardware categories have reversible paths and no structure selection', () => {
+test('hardware opens one flat overview list with diagram destinations and reversible paths', () => {
   const root = new MenuNavigation()
   const advanced = root.selectCategory('advanced-algorithms')
   assert.equal(advanced.title, 'System Components Overview')
-  assert.deepEqual(advanced.getAdvancedAlgorithmGroups().map((group) => group.name), ['Hardware Fundamental', 'Complex', 'Network'])
+  assert.deepEqual(advanced.getAdvancedAlgorithmGroups().map((group) => group.name), ['Hardware Fundamental', 'Network'])
   assert.deepEqual(advanced.getPath(), ['System Components Overview'])
   assert.deepEqual(advanced.back(), root)
   assert.equal(root.hardwareOverviewGroup, null)
   assert.equal(advanced.hardwareOverviewGroup, null)
   const fundamental = advanced.selectAdvancedAlgorithmGroup('hardware-fundamental')
-  assert.equal(fundamental.hardwareOverviewGroup, null)
-    assert.deepEqual(fundamental.getAdvancedAlgorithmGroups().map((group) => group.name), ['CPU', 'HDD', 'SSD', 'RAM', 'GPU', 'Network Adapter', 'Motherboard'])
+  assert.equal(fundamental.hardwareOverviewGroup, 'hardware-fundamental')
+  assert.deepEqual(fundamental.getAdvancedAlgorithmGroups(), [])
   assert.deepEqual(fundamental.getPath(), ['System Components Overview', 'Hardware Fundamental'])
   assert.equal(fundamental.backLabel, 'System Components Overview')
   assert.deepEqual(fundamental.back(), advanced)
@@ -279,27 +279,22 @@ test('advanced hardware categories have reversible paths and no structure select
   assert.deepEqual(fundamental.getStructures(), [])
   assert.deepEqual(fundamental.getGroups(), [])
   assert.throws(() => fundamental.selectStructure('array'), /current group/)
-  assert.deepEqual(fundamental.getComponentAlgorithms(), [])
+  assert.deepEqual(fundamental.getComponentAlgorithms(), HardwareOverviewCatalog.choices)
+  assert.equal(fundamental.getComponentAlgorithms().length, 12)
   const seen = new Set()
-  const counts = { CPU: 2, HDD: 1, SSD: 4, RAM: 2, GPU: 2, 'Network Adapter': 2, Motherboard: 0 }
-  for (const group of fundamental.getAdvancedAlgorithmGroups()) {
-    const component = fundamental.selectAdvancedAlgorithmGroup(group.kind)
-    assert.equal(component.hardwareOverviewGroup, group.kind)
+  for (const overview of fundamental.getComponentAlgorithms()) {
+    const group = HardwareOverviewCatalog.groupFor(overview.kind)
+    const component = fundamental.selectAdvancedAlgorithmGroup(group)
+    assert.equal(component.hardwareOverviewGroup, group)
     assert.deepEqual(component.getAdvancedAlgorithmGroups(), [])
-    assert.deepEqual(component.getPath(), ['System Components Overview', 'Hardware Fundamental', group.name])
-    assert.equal(component.backLabel, 'Hardware Fundamental')
-    assert.deepEqual(component.back(), fundamental)
-    assert.deepEqual(component.back().back(), advanced)
-    const overviews = component.getComponentAlgorithms()
-    assert.equal(overviews.length, counts[group.name])
-    assert.deepEqual(overviews, HardwareOverviewCatalog.forGroup(group.kind))
-    for (const overview of overviews) {
-      assert.ok(overview.components.includes(group.component))
-      if (group.device) assert.ok(overview.devices.includes(group.device))
-      assert.equal(HardwareOverviewCatalog.groupFor(overview.kind), group.kind)
-      assert.ok(!seen.has(overview.kind), `${overview.kind} appears in multiple component groups`)
-      seen.add(overview.kind)
-    }
+    assert.equal(component.title, 'Hardware Fundamental')
+    assert.deepEqual(component.getPath(), fundamental.getPath())
+    assert.equal(component.backLabel, 'System Components Overview')
+    assert.deepEqual(component.back(), advanced)
+    assert.deepEqual(component.getComponentAlgorithms(), HardwareOverviewCatalog.choices)
+    assert.ok(HardwareOverviewCatalog.forGroup(group).some((choice) => choice.kind === overview.kind))
+    assert.ok(!seen.has(overview.kind))
+    seen.add(overview.kind)
   }
   assert.equal(seen.size, HardwareOverviewCatalog.choices.length)
   assert.deepEqual(advanced.getComponentAlgorithms(), [])
@@ -307,11 +302,7 @@ test('advanced hardware categories have reversible paths and no structure select
   for (const kind of ['hardware', 'hardware-disk', 'disks', 'memory', 'cpu']) {
     assert.throws(() => fundamental.selectAdvancedAlgorithmGroup(kind), /Unknown advanced algorithm group/)
   }
-  const complex = advanced.selectAdvancedAlgorithmGroup('hardware-complex')
-  assert.equal(complex.hardwareOverviewGroup, 'hardware-complex')
-  assert.equal(complex.title, 'Complex')
-  assert.deepEqual(complex.getAdvancedAlgorithmGroups(), [])
-  assert.deepEqual(complex.back(), advanced)
+  assert.throws(() => advanced.selectAdvancedAlgorithmGroup('hardware-complex'), /Unknown advanced algorithm group/)
 })
 
 test('advanced network categories follow OSI layer order and preserve their parent', () => {
@@ -346,7 +337,7 @@ test('advanced algorithm navigation rejects skipped levels and unrelated branche
   const network = advanced.selectAdvancedAlgorithmGroup('network')
   assert.throws(() => root.selectAdvancedAlgorithmGroup('hardware-fundamental'), /System Components Overview/)
   assert.throws(() => root.selectCategory('algorithms').selectAdvancedAlgorithmGroup('network'), /System Components Overview/)
-  assert.throws(() => hardware.selectAdvancedAlgorithmGroup('hardware-complex'), /current category/)
+  assert.throws(() => hardware.selectAdvancedAlgorithmGroup('hardware-complex'), /Unknown advanced algorithm group/)
   assert.throws(() => advanced.selectAdvancedAlgorithmGroup('hardware-cpu'), /current category/)
   assert.throws(() => advanced.selectAdvancedAlgorithmGroup('hardware-hdd'), /current category/)
   assert.throws(() => advanced.selectAdvancedAlgorithmGroup('hardware-ssd'), /current category/)

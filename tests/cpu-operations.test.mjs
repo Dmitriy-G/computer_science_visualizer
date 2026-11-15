@@ -18,7 +18,7 @@ test('CPU exposes exactly the non-atomic increment and atomic load, without old 
   for (const choice of CpuAlgorithmCatalog.choices) {
     const found = index.find('algorithms', choice.name).filter((entry) => entry.componentAlgorithm === choice.kind)
     assert.equal(found.length, 1)
-    assert.equal(found[0].context, 'System Components Overview / Hardware Fundamental / CPU')
+    assert.equal(found[0].context, 'System Components Overview / Hardware Fundamental')
     const info = CpuAlgorithmCatalog.describeOverview(choice.kind)
     assert.ok(info.steps.length <= 10)
     assert.match(info.implementationNote, /aligned 32-bit/)

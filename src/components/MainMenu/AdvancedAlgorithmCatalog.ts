@@ -1,7 +1,8 @@
 import type { OverviewComponentKind, OverviewDeviceKind } from '../../visualization/OverviewComponent.ts'
 
 export type HardwareFundamentalGroupKind = 'hardware-cpu' | 'hardware-hdd' | 'hardware-ssd' | 'hardware-ram' | 'hardware-gpu' | 'hardware-network-adapter' | 'hardware-bus'
-export type HardwareOverviewGroupKind = HardwareFundamentalGroupKind | 'hardware-complex'
+export type HardwareWorkspaceGroupKind = 'hardware-fundamental' | HardwareFundamentalGroupKind
+export type HardwareOverviewGroupKind = HardwareWorkspaceGroupKind
 
 export type AdvancedAlgorithmGroupKind =
   | 'network'
@@ -29,7 +30,6 @@ export interface AdvancedAlgorithmGroup {
 export class AdvancedAlgorithmCatalog {
   public static readonly groups: readonly AdvancedAlgorithmGroup[] = [
     { kind: 'hardware-fundamental', parent: null, name: 'Hardware Fundamental', description: 'Explore processors, memory, storage, network adapters, and interconnects.' },
-    { kind: 'hardware-complex', parent: null, name: 'Complex', description: 'Combine hardware components into systems, such as caching between CPU and memory.' },
     { kind: 'network', parent: null, name: 'Network', description: 'Explore individual OSI layers and mechanisms that combine layers into working networks.' },
     { kind: 'hardware-cpu', parent: 'hardware-fundamental', name: 'CPU', description: 'Follow a non-atomic increment and an atomic word load through a CPU core.', component: 'CPU' },
     { kind: 'hardware-hdd', parent: 'hardware-fundamental', name: 'HDD', description: 'Explore magnetic storage, sector access, and read/write mechanisms.', component: 'Disk', device: 'HDD' },
@@ -66,6 +66,10 @@ export class AdvancedAlgorithmCatalog {
 
   public static isHardwareFundamentalGroup(kind: AdvancedAlgorithmGroupKind | null): kind is HardwareFundamentalGroupKind {
     return kind === 'hardware-cpu' || kind === 'hardware-hdd' || kind === 'hardware-ssd' || kind === 'hardware-ram' || kind === 'hardware-gpu' || kind === 'hardware-network-adapter' || kind === 'hardware-bus'
+  }
+
+  public static isHardwareWorkspaceGroup(kind: AdvancedAlgorithmGroupKind | null): kind is HardwareWorkspaceGroupKind {
+    return kind === 'hardware-fundamental' || this.isHardwareFundamentalGroup(kind)
   }
 
   public static fundamentalGroupFor(components: readonly OverviewComponentKind[], devices: readonly OverviewDeviceKind[] = []): HardwareFundamentalGroupKind {

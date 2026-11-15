@@ -8,7 +8,6 @@ import { AdvancedAlgorithmCatalog } from './AdvancedAlgorithmCatalog.ts'
 import type { AdvancedAlgorithmGroup, AdvancedAlgorithmGroupKind, HardwareOverviewGroupKind } from './AdvancedAlgorithmCatalog.ts'
 import { HardwareOverviewCatalog } from '../RealSystemsAlgorithms/Hardware/Fundamental/HardwareOverviewCatalog.ts'
 import type { HardwareOverviewChoice } from '../RealSystemsAlgorithms/Hardware/Fundamental/HardwareOverviewCatalog.ts'
-import { HardwareAlgorithmCatalog } from '../RealSystemsAlgorithms/Hardware/Complex/HardwareAlgorithmCatalog.ts'
 import type { HardwareAlgorithmChoice } from '../RealSystemsAlgorithms/Hardware/Complex/HardwareAlgorithmCatalog.ts'
 
 export type MenuScreen = 'categories' | 'algorithm-categories' | 'groups' | 'structures' | 'algorithms' | 'sorting' | 'algorithm-structures' | 'advanced-algorithms'
@@ -93,23 +92,23 @@ export class MenuNavigation {
   }
 
   public getAdvancedAlgorithmGroups(): readonly AdvancedAlgorithmGroup[] {
-    if (this.screen !== 'advanced-algorithms') return []
+    if (this.screen !== 'advanced-algorithms' || this.advancedAlgorithmGroup === 'hardware-fundamental') return []
     return AdvancedAlgorithmCatalog.getGroups(this.advancedAlgorithmGroup)
   }
 
   public get hardwareOverviewGroup(): HardwareOverviewGroupKind | null {
     if (this.screen !== 'advanced-algorithms') return null
     const group = this.advancedAlgorithmGroup
-    return group === 'hardware-complex' || AdvancedAlgorithmCatalog.isHardwareFundamentalGroup(group) ? group : null
+    return AdvancedAlgorithmCatalog.isHardwareWorkspaceGroup(group) ? group : null
   }
 
   public getHardwareAlgorithms(): readonly HardwareAlgorithmChoice[] {
-    return this.screen === 'advanced-algorithms' && this.advancedAlgorithmGroup === 'hardware-complex' ? HardwareAlgorithmCatalog.choices : []
+    return []
   }
 
   public getComponentAlgorithms(): readonly HardwareOverviewChoice[] {
-    return this.screen === 'advanced-algorithms' && AdvancedAlgorithmCatalog.isHardwareFundamentalGroup(this.advancedAlgorithmGroup)
-      ? HardwareOverviewCatalog.forGroup(this.advancedAlgorithmGroup) : []
+    return this.screen === 'advanced-algorithms' && AdvancedAlgorithmCatalog.isHardwareWorkspaceGroup(this.advancedAlgorithmGroup)
+      ? HardwareOverviewCatalog.choices : []
   }
 
   public selectAdvancedAlgorithmGroup(kind: AdvancedAlgorithmGroupKind): MenuNavigation {
@@ -173,6 +172,7 @@ export class MenuNavigation {
   }
 
   public back(): MenuNavigation {
+    if (this.screen === 'advanced-algorithms' && AdvancedAlgorithmCatalog.isHardwareWorkspaceGroup(this.advancedAlgorithmGroup)) return new MenuNavigation('advanced-algorithms')
     if (this.screen === 'advanced-algorithms' && this.advancedAlgorithmGroup !== null) {
       return new MenuNavigation('advanced-algorithms', null, 'fundamental', AdvancedAlgorithmCatalog.getGroup(this.advancedAlgorithmGroup).parent)
     }
@@ -187,6 +187,7 @@ export class MenuNavigation {
     if (this.screen === 'algorithm-categories') return MenuNavigation.algorithmsRootName
     if (this.screen === 'algorithms') return MenuNavigation.algorithmsCategoryName
     if (this.screen === 'advanced-algorithms') {
+      if (AdvancedAlgorithmCatalog.isHardwareWorkspaceGroup(this.advancedAlgorithmGroup)) return AdvancedAlgorithmCatalog.getGroup('hardware-fundamental').name
       return this.advancedAlgorithmGroup === null ? MenuNavigation.advancedAlgorithmsCategoryName : AdvancedAlgorithmCatalog.getGroup(this.advancedAlgorithmGroup).name
     }
     if (this.screen === 'algorithm-structures') return 'Graphs Traversal'
@@ -196,6 +197,7 @@ export class MenuNavigation {
   }
 
   public get backLabel(): string {
+    if (this.screen === 'advanced-algorithms' && AdvancedAlgorithmCatalog.isHardwareWorkspaceGroup(this.advancedAlgorithmGroup)) return MenuNavigation.advancedAlgorithmsCategoryName
     if (this.screen === 'advanced-algorithms' && this.advancedAlgorithmGroup !== null) {
       const parent = AdvancedAlgorithmCatalog.getGroup(this.advancedAlgorithmGroup).parent
       return parent === null ? MenuNavigation.advancedAlgorithmsCategoryName : AdvancedAlgorithmCatalog.getGroup(parent).name
@@ -210,6 +212,7 @@ export class MenuNavigation {
     if (this.screen === 'categories') return []
     if (this.screen === 'algorithm-categories') return [MenuNavigation.algorithmsRootName]
     if (this.screen === 'advanced-algorithms') {
+      if (AdvancedAlgorithmCatalog.isHardwareWorkspaceGroup(this.advancedAlgorithmGroup)) return [MenuNavigation.advancedAlgorithmsCategoryName, AdvancedAlgorithmCatalog.getGroup('hardware-fundamental').name]
       const path: string[] = []
       let group = this.advancedAlgorithmGroup
       while (group !== null) {

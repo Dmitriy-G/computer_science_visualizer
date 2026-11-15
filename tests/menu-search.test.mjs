@@ -86,7 +86,7 @@ test('CPU hardware search provides distinct fundamental algorithm destinations',
     assert.equal(results.length, 1)
     assert.deepEqual(results[0].components, ['CPU'])
     assert.deepEqual(results[0].architectures, ['x86'])
-    assert.equal(results[0].context, 'System Components Overview / Hardware Fundamental / CPU')
+    assert.equal(results[0].context, 'System Components Overview / Hardware Fundamental')
   }
   for (const removed of ['Register renaming', 'Out-of-order execution', 'History-based branch prediction', 'Return-address stack prediction', 'Intel Core', 'Arm Cortex-A53']) {
     assert.deepEqual(index.find('algorithms', removed).filter((result) => 'componentAlgorithm' in result), [])

@@ -451,24 +451,19 @@ test('code maintenance synchronizes caches but each executing core still needs i
   assert.equal(model.execute(1), 2)
 })
 
-test('Complex exposes twelve lessons directly, with reversible navigation and search destinations', () => {
+test('removed Complex lessons have no public navigation or search destinations', () => {
   const overview = new MenuNavigation().selectCategory('advanced-algorithms')
-  const complex = overview.selectAdvancedAlgorithmGroup('hardware-complex')
-  assert.deepEqual(complex.getAdvancedAlgorithmGroups(), [])
-  assert.equal(complex.getHardwareAlgorithms().length, 12)
-  assert.deepEqual(complex.getPath(), ['System Components Overview', 'Complex'])
-  assert.deepEqual(complex.back(), overview)
+  assert.deepEqual(overview.getAdvancedAlgorithmGroups().map((group) => group.name), ['Hardware Fundamental', 'Network'])
+  assert.throws(() => overview.selectAdvancedAlgorithmGroup('hardware-complex'), /Unknown advanced algorithm group/)
   assert.equal(overview.getHardwareAlgorithms().length, 0)
   const network = new MenuNavigation().selectCategory('advanced-algorithms').selectAdvancedAlgorithmGroup('network').selectAdvancedAlgorithmGroup('network-complex')
   assert.equal(network.getHardwareAlgorithms().length, 0)
   const index = new MenuSearchIndex(() => null)
   for (const choice of HardwareAlgorithmCatalog.choices) {
     const result = index.find('algorithms', choice.name).find((entry) => entry.hardwareAlgorithm === choice.kind)
-    assert.ok(result, choice.name)
-    assert.equal(result.context, 'System Components Overview / Complex')
-    assert.deepEqual(result.components, ['CPU', 'RAM', 'Bus'])
+    assert.equal(result, undefined, choice.name)
   }
-  assert.ok(index.find('algorithms', 'Neoverse N1').some((entry) => entry.hardwareAlgorithm === 'lse-atomics'))
+  assert.ok(!index.find('algorithms', 'Neoverse N1').some((entry) => 'hardwareAlgorithm' in entry))
   assert.equal(index.find('structures', 'MFENCE').length, 0)
   assert.equal(index.find('algorithms', 'bounded independent scene snapshots').length, 0)
 })

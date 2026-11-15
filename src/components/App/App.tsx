@@ -280,18 +280,9 @@ import { MenuNavigation } from '../MainMenu/MenuNavigation.ts'
 import type { MenuCategoryKind, AlgorithmGroupKind } from '../MainMenu/MenuNavigation.ts'
 import type { AdvancedAlgorithmGroupKind, HardwareOverviewGroupKind } from '../MainMenu/AdvancedAlgorithmCatalog.ts'
 import { AdvancedAlgorithmCatalog } from '../MainMenu/AdvancedAlgorithmCatalog.ts'
-import HardwareWorkspace from '../RealSystemsAlgorithms/Hardware/Complex/HardwareWorkspace.tsx'
-import { HardwareAlgorithmCatalog } from '../RealSystemsAlgorithms/Hardware/Complex/HardwareAlgorithmCatalog.ts'
-import type { HardwareAlgorithmKind } from '../RealSystemsAlgorithms/Hardware/Complex/HardwareModel.ts'
 import type ComponentWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/ComponentWorkspace.tsx'
 import type { ComponentWorkspaceProps } from '../RealSystemsAlgorithms/Hardware/Fundamental/ComponentWorkspace.tsx'
-import CpuWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Cpu/CpuWorkspace.tsx'
-import RamWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Ram/RamWorkspace.tsx'
-import GpuWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Gpu/GpuWorkspace.tsx'
-import NetworkAdapterWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/NetworkAdapter/NetworkAdapterWorkspace.tsx'
-import BusWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Bus/BusWorkspace.tsx'
-import SsdWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Ssd/SsdWorkspace.tsx'
-import HddWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/Hdd/HddWorkspace.tsx'
+import HardwareFundamentalWorkspace from '../RealSystemsAlgorithms/Hardware/Fundamental/HardwareFundamentalWorkspace.tsx'
 import { HardwareOverviewCatalog } from '../RealSystemsAlgorithms/Hardware/Fundamental/HardwareOverviewCatalog.ts'
 import type { HardwareOverviewKind } from '../RealSystemsAlgorithms/Hardware/Fundamental/HardwareOverviewKind.ts'
 import type { MenuSearchResult } from '../MainMenu/Search/MenuSearchIndex.ts'
@@ -337,9 +328,6 @@ import './App.css'
 interface AppState {
   readonly emptyRenderer: boolean
   readonly hardwareOverview: HardwareOverviewGroupKind | null
-  readonly hardwareAlgorithm: HardwareAlgorithmKind | null
-  readonly hardwareSession: number
-  readonly hardwareActionActive: boolean
   readonly componentAlgorithm: HardwareOverviewKind | null
   readonly componentSession: number
   readonly componentActionActive: boolean
@@ -384,7 +372,6 @@ export default class App extends Component<Record<string, never>, AppState> {
   private menuOpenedFromSearch = false
   private readonly actionMenu = createRef<ActionMenu>()
   private readonly renderer = createRef<Renderer>()
-  private readonly hardwareWorkspace = createRef<HardwareWorkspace>()
   private componentWorkspace: ComponentWorkspace | null = null
   private graph = Graph.createDefault()
   private graphModels = GraphCatalog.createModels(this.graph)
@@ -403,9 +390,6 @@ export default class App extends Component<Record<string, never>, AppState> {
       emptyRenderer: false,
       hardwareOverview: null,
       componentAlgorithm: null,
-      hardwareAlgorithm: null,
-      hardwareSession: 0,
-      hardwareActionActive: false,
       componentSession: 0,
       componentActionActive: false,
       treeInput: {},
@@ -440,9 +424,7 @@ export default class App extends Component<Record<string, never>, AppState> {
   private openMenu = (): void => {
     this.menuOpenedFromSearch = false
     if (this.state.hardwareOverview) {
-      const parent = AdvancedAlgorithmCatalog.getGroup(this.state.hardwareOverview).parent
-      const menu = new MenuNavigation('advanced-algorithms', null, 'fundamental', parent)
-      this.showSystemCategory(menu, SystemOverviewLayout.create(parent === null ? 'system' : 'hardware', this.currentDiagram()))
+      this.showSystemCategory(new MenuNavigation('advanced-algorithms'), null)
       return
     }
     this.setState({
@@ -475,15 +457,14 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private focusActions = (): void => {
-    if (this.state.hardwareOverview === 'hardware-complex') this.hardwareWorkspace.current?.focusFirstAction()
-    else if (AdvancedAlgorithmCatalog.isHardwareFundamentalGroup(this.state.hardwareOverview)) this.componentWorkspace?.focusFirstAction()
+    if (AdvancedAlgorithmCatalog.isHardwareWorkspaceGroup(this.state.hardwareOverview)) this.componentWorkspace?.focusFirstAction()
     else this.actionMenu.current?.focusFirstAction()
   }
 
   private selectCategory = (category: MenuCategoryKind): void => {
     const menu = this.state.menu.selectCategory(category)
     if (category === 'advanced-algorithms') {
-      this.showSystemCategory(menu, SystemOverviewLayout.create('system', this.currentDiagram()))
+      this.showSystemCategory(menu, null)
     } else this.setState({ menu })
   }
 
@@ -506,9 +487,9 @@ export default class App extends Component<Record<string, never>, AppState> {
   private openAdvancedAlgorithmGroup(group: AdvancedAlgorithmGroupKind, navigation: MenuNavigation): void {
     const menu = navigation.selectAdvancedAlgorithmGroup(group)
     const hardwareOverview = menu.hardwareOverviewGroup
-    if (group === 'hardware-fundamental' || group === 'hardware-complex' || AdvancedAlgorithmCatalog.isHardwareFundamentalGroup(group)) {
+    if (AdvancedAlgorithmCatalog.isHardwareWorkspaceGroup(group)) {
       const levels = {
-        'hardware-fundamental': 'hardware', 'hardware-complex': 'hardware',
+        'hardware-fundamental': 'hardware',
         'hardware-cpu': 'cpu', 'hardware-hdd': 'hdd', 'hardware-ssd': 'ssd',
         'hardware-ram': 'ram', 'hardware-gpu': 'gpu', 'hardware-network-adapter': 'network-adapter',
         'hardware-bus': 'bus',
@@ -525,8 +506,7 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private currentDiagram(): Scene | null {
-    if (this.state.hardwareOverview === 'hardware-complex') return this.hardwareWorkspace.current?.getScene() ?? this.state.scene
-    if (AdvancedAlgorithmCatalog.isHardwareFundamentalGroup(this.state.hardwareOverview)) return this.componentWorkspace?.getScene() ?? this.state.scene
+    if (AdvancedAlgorithmCatalog.isHardwareWorkspaceGroup(this.state.hardwareOverview)) return this.componentWorkspace?.getScene() ?? this.state.scene
     return this.renderer.current?.getScene() ?? this.state.scene
   }
 
@@ -534,38 +514,13 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.setState({
       emptyRenderer: true,
       hardwareOverview: menu.hardwareOverviewGroup,
-      hardwareAlgorithm: null, hardwareActionActive: false,
       componentAlgorithm: null, componentActionActive: false,
-      hardwareSession: this.state.hardwareSession + 1, componentSession: this.state.componentSession + 1,
+      componentSession: this.state.componentSession + 1,
       selected: null, scene, actionOpen: false, selectedAction: null, actionRunning: false,
       actionValue: undefined, actionUpperValue: undefined,
       inputRequest: null, overviewInformation: null, structureInformation: null,
       algorithmInformation: null, menuOpen: !closeMenu, searchOpen: false, menu,
     })
-  }
-
-  private selectHardwareAlgorithm = (algorithm: HardwareAlgorithmKind): void => {
-    if (!HardwareAlgorithmCatalog.choices.some((choice) => choice.kind === algorithm)) return
-    this.setState({
-      hardwareOverview: 'hardware-complex',
-      hardwareAlgorithm: algorithm, hardwareSession: this.state.hardwareSession + 1, hardwareActionActive: true,
-      componentAlgorithm: null, componentActionActive: false,
-      selected: null, scene: SystemOverviewLayout.still(SystemOverviewLayout.create('hardware', null)), actionOpen: false, selectedAction: null, actionRunning: false,
-      actionValue: undefined, actionUpperValue: undefined,
-      inputRequest: null, overviewInformation: null, structureInformation: null,
-      algorithmInformation: null, menuOpen: false, searchOpen: false,
-      menu: new MenuNavigation('advanced-algorithms', null, 'fundamental', 'hardware-complex'),
-    })
-  }
-
-  private showHardwareInformation = (algorithm: HardwareAlgorithmKind): void => {
-    this.setState({ overviewInformation: HardwareAlgorithmCatalog.describeOverview(algorithm) })
-  }
-
-  private resetHardware = (): void => { this.hardwareWorkspace.current?.reset() }
-
-  private hardwareReset = (): void => {
-    this.setState({ hardwareActionActive: false, overviewInformation: null })
   }
 
   private selectComponentAlgorithm = (algorithm: HardwareOverviewKind): void => {
@@ -579,9 +534,8 @@ export default class App extends Component<Record<string, never>, AppState> {
     const preview = previews[group]
     this.setState({
       hardwareOverview: group,
-      hardwareAlgorithm: null, hardwareActionActive: false,
       componentAlgorithm: algorithm, componentSession: this.state.componentSession + 1, componentActionActive: true,
-      selected: null, scene: SystemOverviewLayout.still(SystemOverviewLayout.create(preview, null)), actionOpen: false, selectedAction: null, actionRunning: false,
+      selected: null, scene: SystemOverviewLayout.create(preview, this.currentDiagram()), actionOpen: false, selectedAction: null, actionRunning: false,
       actionValue: undefined, actionUpperValue: undefined,
       inputRequest: null, overviewInformation: null, structureInformation: null,
       algorithmInformation: null, menuOpen: false, searchOpen: false,
@@ -610,17 +564,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       onInformation: this.showComponentInformation,
       onReset: this.componentReset,
     }
-    const key = `component-${this.state.componentSession}`
-    switch (this.state.hardwareOverview) {
-      case 'hardware-cpu': return <CpuWorkspace key="component-cpu" ref={this.setComponentWorkspace} {...props} />
-      case 'hardware-ram': return <RamWorkspace key="component-ram" ref={this.setComponentWorkspace} {...props} />
-      case 'hardware-gpu': return <GpuWorkspace key="component-gpu" ref={this.setComponentWorkspace} {...props} />
-      case 'hardware-network-adapter': return <NetworkAdapterWorkspace key="component-network-adapter" ref={this.setComponentWorkspace} {...props} />
-      case 'hardware-bus': return <BusWorkspace key="component-bus" ref={this.setComponentWorkspace} {...props} />
-      case 'hardware-ssd': return <SsdWorkspace key={key} ref={this.setComponentWorkspace} {...props} />
-      case 'hardware-hdd': return <HddWorkspace key={key} ref={this.setComponentWorkspace} {...props} />
-      default: return null
-    }
+    return <HardwareFundamentalWorkspace ref={this.setComponentWorkspace} {...props} />
   }
 
   private componentReset = (): void => {
@@ -634,7 +578,7 @@ export default class App extends Component<Record<string, never>, AppState> {
   private backInMenu = (): void => {
     const menu = this.state.menu.back()
     if (menu.screen === 'advanced-algorithms' && (menu.advancedAlgorithmGroup === null || menu.advancedAlgorithmGroup === 'hardware-fundamental')) {
-      this.showSystemCategory(menu, SystemOverviewLayout.create(menu.advancedAlgorithmGroup === null ? 'system' : 'hardware', this.currentDiagram()))
+      this.showSystemCategory(menu, menu.advancedAlgorithmGroup === null ? null : SystemOverviewLayout.create('hardware', this.currentDiagram()))
     } else this.setState({ menu })
   }
 
@@ -644,10 +588,6 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private selectSearchResult = (result: MenuSearchResult): void => {
-    if ('hardwareAlgorithm' in result) {
-      this.selectHardwareAlgorithm(result.hardwareAlgorithm)
-      return
-    }
     if ('componentAlgorithm' in result) {
       this.selectComponentAlgorithm(result.componentAlgorithm)
       return
@@ -688,8 +628,6 @@ export default class App extends Component<Record<string, never>, AppState> {
       hardwareOverview: null,
       componentAlgorithm: null,
       componentActionActive: false,
-      hardwareAlgorithm: null,
-      hardwareActionActive: false,
       selected: kind,
       selectedScope: menu.actionScope,
       scene: StructureCatalog.createPreview(
@@ -1557,11 +1495,11 @@ export default class App extends Component<Record<string, never>, AppState> {
           </div>
           {(selected || this.state.hardwareOverview) && (
             <div className="header-playback">
-              {(this.state.selectedAction !== null || this.state.componentActionActive || this.state.hardwareActionActive) && (
+              {(this.state.selectedAction !== null || this.state.componentActionActive) && (
                 <button
                   className="primary-button header-action-button"
-                  onClick={this.state.hardwareAlgorithm ? this.resetHardware : this.state.componentAlgorithm ? this.resetComponent : this.resetStructure}
-                  aria-label={this.state.hardwareAlgorithm || this.state.componentAlgorithm ? 'Reset hardware lesson' : 'Reset structure'}
+                  onClick={this.state.componentAlgorithm ? this.resetComponent : this.resetStructure}
+                  aria-label={this.state.componentAlgorithm ? 'Reset hardware lesson' : 'Reset structure'}
                 >
                   <svg
                     width="18"
@@ -1644,18 +1582,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         )}
 
         <main className="workspace">
-          {this.state.hardwareOverview === 'hardware-complex' ? (
-            <HardwareWorkspace
-              key={`hardware-${this.state.hardwareSession}`}
-              ref={this.hardwareWorkspace}
-              algorithm={this.state.hardwareAlgorithm}
-              previewScene={scene}
-              onBack={this.openMenu}
-              onSelect={this.selectHardwareAlgorithm}
-              onInformation={this.showHardwareInformation}
-              onReset={this.hardwareReset}
-            />
-          ) : AdvancedAlgorithmCatalog.isHardwareFundamentalGroup(this.state.hardwareOverview) ? (
+          {AdvancedAlgorithmCatalog.isHardwareWorkspaceGroup(this.state.hardwareOverview) ? (
             this.renderComponentWorkspace()
           ) : (
             <>

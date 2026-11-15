@@ -56,7 +56,7 @@ export class SystemOverviewLayout {
       else if (previous?.kind === 'hardware-component' && previous.regions?.some((region) => region.id === 'ssd-pcb')) from = this.bounds('ssd')
       else if (previous?.kind === 'hardware-component' && previous.regions?.some((region) => region.id === 'ram-pcb')) from = this.bounds('ram')
       else if (previous) from = to
-      else from = level !== 'system' && level !== 'hardware' ? this.bounds('hardware') : this.bounds('system')
+      else from = level === 'hardware' ? to : level === 'system' ? this.bounds('system') : this.bounds('hardware')
     }
     const hardware = ServerHardwareLayout.create()
     const hardwareWidth = this.bounds('hardware').width
