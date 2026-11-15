@@ -37,9 +37,10 @@ export class SsdLayout {
     this.connectControl(diagram)
     this.connectPower(diagram)
     const framed = HardwareDiagramFrame.create(diagram, this.externalLeft, 0)
+    HardwareDiagramFrame.addMotherboardNavigation(framed, 'ssd', 175, 660)
     framed.paths.push(
-      { id: 'ssd-external-host', d: 'M730 305H40', label: 'Motherboard host connection / alternative SSD attachments: PCIe (NVMe protocol) or SATA. PCIe is the interconnect; NVMe is the storage protocol, not a separate physical link. Commands, payloads, and completions share the selected interface. Host-memory transfers reach system RAM through the platform memory/I/O system; this is not a direct DIMM or GPU connection. Only one host attachment is used by a given drive in this map', highlighted: false, directed: true, bidirectional: true, caption: { text: 'PCIe (NVMe protocol) or SATA\nMotherboard host link', x: 60, y: 230 } },
-      { id: 'ssd-external-power', d: 'M40 565H730', label: 'DC supply and ground through the drive power contacts / motherboard supply for an M.2 example, or a PSU drive-power connector for a SATA example. Exact form factor and supply arrangement vary; AC mains does not enter the SSD', highlighted: false, directed: true, dashed: true, stroke: '#b58a45', caption: { text: 'Motherboard / PSU DC', x: 60, y: 535 } },
+      { id: 'ssd-external-host', d: 'M730 305H280', label: 'Motherboard host connection / alternative SSD attachments: PCIe (NVMe protocol) or SATA. PCIe is the interconnect; NVMe is the storage protocol, not a separate physical link. Commands, payloads, and completions share the selected interface. Host-memory transfers reach system RAM through the platform memory/I/O system; this is not a direct DIMM or GPU connection. Only one host attachment is used by a given drive in this map', highlighted: false, directed: true, bidirectional: true, caption: { text: 'PCIe (NVMe protocol)\nor SATA\nMotherboard host link', x: 300, y: 337 } },
+      { id: 'ssd-external-power', d: 'M280 565H730', label: 'DC supply and ground through the drive power contacts / motherboard supply for an M.2 example, or a PSU drive-power connector for a SATA example. Exact form factor and supply arrangement vary; AC mains does not enter the SSD', highlighted: false, directed: true, dashed: true, stroke: '#b58a45', caption: { text: 'Motherboard / PSU DC', x: 300, y: 597 } },
     )
     return framed
   }

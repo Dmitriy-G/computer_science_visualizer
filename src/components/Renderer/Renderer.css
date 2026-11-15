@@ -378,6 +378,25 @@
   stroke: #b5c9e3;
   stroke-width: 1.5;
 }
+
+.scene-region-navigation {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.scene-region-navigation:hover,
+.scene-region-navigation:focus-visible {
+  stroke: #2563eb;
+}
+
+.scene-region-navigation:focus-visible {
+  outline: none;
+}
+
 .scene-region-title {
   fill: #314e73;
   font: 600 14px var(--mono);

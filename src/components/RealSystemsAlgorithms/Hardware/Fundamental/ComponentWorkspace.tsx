@@ -19,6 +19,7 @@ export interface ComponentWorkspaceProps {
   readonly previewScene: Scene | null
   readonly algorithm: HardwareOverviewKind | null
   readonly onBack: () => void
+  readonly onNavigate?: (target: string) => void
   readonly onSelect: (algorithm: HardwareOverviewKind) => void
   readonly onInformation: (algorithm: HardwareOverviewKind) => void
   readonly onReset: () => void
@@ -118,7 +119,7 @@ export default abstract class ComponentWorkspace extends Component<ComponentWork
     const group = AdvancedAlgorithmCatalog.getGroup(this.group)
     const parent = AdvancedAlgorithmCatalog.getGroup('hardware-fundamental')
     return <>
-      <Renderer ref={this.renderer} scene={this.presentScene(this.state.scene ?? this.props.previewScene)} onOpenMenu={this.props.onBack} emptyState={<></>}>
+      <Renderer ref={this.renderer} scene={this.presentScene(this.state.scene ?? this.props.previewScene)} onOpenMenu={this.props.onBack} onNavigate={this.props.onNavigate} emptyState={<></>}>
         <aside className="action-menu" aria-label={`${group.name} hardware overviews`}>
           <button type="button" className="text-button action-menu-back-button" onClick={this.props.onBack}>← {parent.name}</button>
           <h2 ref={this.heading} tabIndex={-1}>{parent.name} / {group.name}</h2>

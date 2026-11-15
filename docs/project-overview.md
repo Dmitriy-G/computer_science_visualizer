@@ -68,24 +68,28 @@ owns the shared chassis map and the component slots used for subsequent zooms.
 The chassis shows CPU, RAM, discrete GPU, host Network Adapter, optional RAID/HBA,
 PSU, HDD, SATA SSD, and NVMe SSD as independent blocks outside the Motherboard.
 This is a system connection map rather than a literal installed floorplan.
-The Motherboard contains CPU/DIMM sockets, expansion slots, an NVMe connector,
-Chipset/PCH, BMC, SPI firmware flash, SATA/USB connectors, and a dedicated
-Management NIC / LAN block. It has no shared PCIe / I/O Interconnect hub.
-Separate labeled PCIe links run from CPU socket contacts to GPU, NIC, NVMe, and
-HBA connectors. DDR runs directly between CPU and DIMM sockets, with the memory
-controller inside the CPU. DMI / chipset uplink connects CPU socket to PCH.
+The main map's Motherboard shows only CPU/DIMM sockets, expansion slots,
+NVMe/SATA/USB connectors, a dedicated Management LAN port, and their connections.
+Omit Chipset/PCH, BMC, SPI firmware flash, and all links to those hidden components.
+Keep the separate Motherboard diagram's existing internal detail unchanged.
+The main map has no shared PCIe / I/O Interconnect hub.
+Keep external device attachments to the sockets, slots, and connectors. Omit
+internal DDR and PCIe socket-to-socket/slot paths from the main map. These traces
+and the DMI / chipset uplink remain in the detailed Motherboard view, whose
+external CPU, GPU, RAM, HDD, SSD, and Network Adapter references open their
+component diagrams with blue hover/focus borders. Its PSU reference stays static.
 The SATA SSD uses PCH SATA; the HDD illustrates storage behind the optional
 SATA/SAS RAID/HBA. Each drive has one controller path. NVMe bypasses SATA/HBA.
 Place the HDD below the optional HBA so its short SATA/SAS cable never crosses
-the NVMe or native SATA cables. Label all three storage routes explicitly and
-use distinct blue PCIe/NVMe, green native SATA, and purple HBA SATA/SAS lines.
+the NVMe or native SATA cables. Use distinct blue PCIe/NVMe, green native SATA,
+and purple HBA SATA/SAS lines. Omit visible captions on the two SSD cables;
+retain their protocol descriptions in tooltips and accessibility labels.
 Native SATA also supports SATA HDDs; a compatible SATA/SAS SSD may use the HBA
 instead. These are alternative device examples, not extra controller attachments.
-Host USB and SPI firmware flash connect to the PCH. BMC is the management
-processor; IPMI is an interface it implements. Its dedicated NIC/PHY connects
-to management Ethernet; shared-host-NIC management is a documented alternative.
-All data links, including PCH/BMC sideband, are solid. Dashed amber paths show
-PSU delivery to the motherboard, GPU, and drives, plus BMC standby power.
+Host USB and dedicated management Ethernet remain visible as port connections.
+Omit controller, firmware, sideband, and standby-power wiring from this main
+map. Data links are solid; dashed amber paths show PSU
+delivery to the motherboard, GPU, and drives.
 Named component-boundary anchors keep internal arrows attached. Short component names
 appear in the renderer, with topology details in tooltips/accessibility text.
 Five labeled cables extend beyond the chassis into a dedicated right margin:
@@ -122,10 +126,12 @@ SSD adds a motherboard host line labeled PCIe (NVMe protocol) or SATA (alternati
 attachments) and dashed amber motherboard/PSU DC input. Host RAM transfers use
 the platform I/O/memory system; there is no direct DIMM or GPU connection.
 HDD adds SATA/SAS host tails (motherboard or compatible HBA, according to drive
-type) and PSU DC input in a right margin. Its framed map is 4050 by 1400,
-with a 1400-unit recording-media enlargement margin on the left and a 650-unit
-external-connection margin on the right. Internal mechanical coordinates remain
-unchanged; the frame shifts their display positions. Bus retains its existing interfaces.
+type) and PSU DC input in a 650-unit left margin, with the shared clickable
+Back / Motherboard block. Its framed map is 4050 by 1400: Back, PCB, mechanical
+assembly, then the recording-media enlargement in the 1400-unit right margin.
+Keep all component names and internal group geometry unchanged. Translate whole
+groups, reroute their connecting paths, and apply the same offsets to playback
+state and moving mechanism paths. Bus retains its existing interfaces.
 The example follows the motherboard organization in
 [Supermicro's X12DPG-U6 manual](https://www.supermicro.com/manuals/motherboard/X12/MNL-2365.pdf)
 and the chassis/management-port arrangement in

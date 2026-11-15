@@ -494,23 +494,29 @@ SystemOverview/ServerHardwareLayout owns the server hierarchy and placement slot
 shared by SystemOverviewLayout's component zooms. Show CPU, RAM, GPU, host NIC,
 optional RAID/HBA, PSU, HDD, SATA SSD, and NVMe SSD as independent chassis children
 outside the Motherboard boundary. The map describes connections rather than an
-installed floorplan. Motherboard children are physical CPU/DIMM sockets, slots,
-NVMe/SATA/USB connectors, PCH, BMC, SPI firmware flash, and Management NIC / LAN.
-Use separate labeled PCIe links from CPU socket contacts to GPU/NIC/NVMe/HBA
-connectors, direct socket-to-DIMM DDR, and a CPU-to-PCH DMI / chipset uplink.
+installed floorplan. Main-map Motherboard children are only physical CPU/DIMM
+sockets, slots, NVMe/SATA/USB connectors, and the Management LAN port. Omit PCH,
+BMC, SPI firmware flash, and links to these internal components in the main map;
+keep BusLayout's separate Motherboard view unchanged.
+The main map retains only external attachments to its sockets, slots, and
+connectors. Keep internal PCIe, DDR, and DMI / chipset paths in the detailed
+Motherboard view. That view's external CPU, GPU, RAM, HDD, SSD, and Network Adapter
+references are clickable, using the shared blue hover/focus border and category
+navigation. Its PSU DC-output reference has no navigation target.
 Keep CPU memory and PCIe controllers inside the CPU. Do not draw a shared
 PCIe / I/O hub. The legacy bus placement key refers to the motherboard footprint
 only, preserving the detailed Motherboard workspace zoom.
 Show actual storage devices: NVMe uses PCIe, SATA SSD uses PCH SATA, and HDD
 illustrates the optional SATA/SAS HBA path. Give each device one controller path.
 Keep these three storage cables geometrically separate, with no intersections
-or shared segments. Place HDD beneath HBA; label PCIe/NVMe, native SATA, and
-HBA SATA/SAS cables and use distinct blue, green, and purple strokes respectively.
+or shared segments. Place HDD beneath HBA; use distinct blue PCIe/NVMe, green
+native SATA, and purple HBA SATA/SAS strokes. Omit visible text on the two SSD
+cables, retaining protocol names in their tooltips and accessibility labels.
 Native SATA can serve SATA HDDs, and the optional HBA can serve compatible
 SATA/SAS SSDs as alternatives; never attach the NVMe example to this HBA.
-Retain PCH USB/SPI links. BMC connects through its dedicated management NIC/PHY
-to Ethernet; shared-NIC management is an alternative. All data links, including
-management sideband, are solid; PSU and standby power are dashed amber.
+Retain USB and management LAN port connections in the main map. Omit PCH USB/SPI,
+BMC management sideband, and standby-power wiring from this main map.
+Visible data links are solid; PSU delivery is dashed amber.
 Anchor internal path endpoints to named component boundaries.
 Keep platform variants in tooltips/accessibility descriptions. Do not add empty
 categories for these new context blocks or duplicate the CPU summary in another layer.

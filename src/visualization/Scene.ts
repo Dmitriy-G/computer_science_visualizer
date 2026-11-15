@@ -51,6 +51,7 @@ export interface SceneRegion {
   readonly label: string
   readonly shortLabel?: string
   readonly titleFontSize?: number
+  readonly titleFirstLineFontSize?: number
   readonly role: 'cpu' | 'cache' | 'memory' | 'interconnect' | 'observer' | 'device'
   readonly color?: 'neutral' | 'green' | 'light-blue' | 'light-orange' | 'lavender'
   readonly x: number
@@ -59,6 +60,8 @@ export interface SceneRegion {
   readonly height: number
   readonly level?: 'system' | 'component'
   readonly parentId?: string
+  readonly navigationTarget?: string
+  readonly navigationLabel?: string
 }
 
 

@@ -492,7 +492,19 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private selectAdvancedAlgorithmGroup = (group: AdvancedAlgorithmGroupKind): void => {
-    const menu = this.state.menu.selectAdvancedAlgorithmGroup(group)
+    this.openAdvancedAlgorithmGroup(group, this.state.menu)
+  }
+
+  private navigateHardwareComponent = (target: string): void => {
+    for (const group of AdvancedAlgorithmCatalog.getGroups('hardware-fundamental')) {
+      if (group.kind !== target) continue
+      this.openAdvancedAlgorithmGroup(group.kind, new MenuNavigation('advanced-algorithms', null, 'fundamental', 'hardware-fundamental'))
+      return
+    }
+  }
+
+  private openAdvancedAlgorithmGroup(group: AdvancedAlgorithmGroupKind, navigation: MenuNavigation): void {
+    const menu = navigation.selectAdvancedAlgorithmGroup(group)
     const hardwareOverview = menu.hardwareOverviewGroup
     if (group === 'hardware-fundamental' || group === 'hardware-complex' || AdvancedAlgorithmCatalog.isHardwareFundamentalGroup(group)) {
       const levels = {
@@ -593,6 +605,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       algorithm: this.state.componentAlgorithm,
       previewScene: this.state.scene,
       onBack: this.openMenu,
+      onNavigate: this.navigateHardwareComponent,
       onSelect: this.selectComponentAlgorithm,
       onInformation: this.showComponentInformation,
       onReset: this.componentReset,
@@ -1651,6 +1664,7 @@ export default class App extends Component<Record<string, never>, AppState> {
                 scene={scene}
                 emptyState={this.state.emptyRenderer ? <></> : undefined}
                 onOpenMenu={this.openMenu}
+                onNavigate={this.navigateHardwareComponent}
                 showPseudocode={this.state.selectedScope === 'sorting' || this.state.selectedScope === 'graph-traversal'}
               >
                 {selected && (

@@ -201,6 +201,6 @@ test('HDD example capacity agrees with its complete surface/track/sector hierarc
   }
   const detail = regions.get('hdd-storage-detail')
   const enclosure = regions.get('hdd-enclosure')
-  assert.ok(detail.x + detail.width < enclosure.x, 'the enlargement and mechanical assembly do not overlap')
+  assert.ok(enclosure.x + enclosure.width < detail.x, 'the enlargement sits to the right of the mechanical assembly')
   assert.ok(detail.y + detail.height <= scene.height)
 })

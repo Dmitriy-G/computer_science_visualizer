@@ -1,5 +1,5 @@
 import { Component, createRef } from 'react'
-import type { CSSProperties, ReactNode } from 'react'
+import type { CSSProperties, KeyboardEvent, MouseEvent, ReactNode } from 'react'
 import type {
   Scene,
   SceneEdge,
@@ -14,6 +14,7 @@ import './Renderer.css'
 interface RendererProps {
   readonly scene: Scene | null
   readonly onOpenMenu: () => void
+  readonly onNavigate?: (target: string) => void
   readonly children?: ReactNode
   readonly emptyState?: ReactNode
   readonly showPseudocode?: boolean
@@ -359,7 +360,29 @@ export default class Renderer extends Component<
     )
   }
 
-  private renderElements(scene: Scene, cameraWidth: number): ReactNode {
+  private navigateRegion = (event: MouseEvent<SVGRectElement>): void => {
+    const target = event.currentTarget.dataset.navigationTarget
+    if (target) this.props.onNavigate?.(target)
+  }
+
+  private navigateRegionByKey = (event: KeyboardEvent<SVGRectElement>): void => {
+    if (event.key !== 'Enter' && event.key !== ' ') return
+    event.preventDefault()
+    const target = event.currentTarget.dataset.navigationTarget
+    if (target && !event.repeat) this.props.onNavigate?.(target)
+  }
+
+  private renderRegionNavigation(region: SceneRegion): ReactNode {
+    const label = region.navigationLabel ?? `Open ${region.shortLabel ?? region.label} details`
+    return <rect key={`region-navigation-${region.id}`} className="scene-region-navigation"
+      x={region.x} y={region.y} width={region.width} height={region.height} rx="16"
+      role="button" tabIndex={0} aria-label={label} data-navigation-target={region.navigationTarget}
+      onClick={this.navigateRegion} onKeyDown={this.navigateRegionByKey}>
+      <title>{label}</title>
+    </rect>
+  }
+
+  private renderElements(scene: Scene, cameraWidth: number, navigationVisible = true): ReactNode {
     const nodeMap = new Map<string, SceneNode>()
     const elements: ReactNode[] = []
     const cpu = scene.regions?.some((region) => region.id === 'core' || region.id === 'cpu-die') ?? false
@@ -390,17 +413,19 @@ export default class Renderer extends Component<
       const titleOffset = region.titleFontSize !== undefined ? fontSize + 4 : schematic ? region.level === 'system' ? 36 : 30 : 29
       if (scene.kind === 'system-overview' || scene.kind === 'cpu-hardware' || schematic) {
         const limit = Math.max(schematic ? 8 : 12, Math.floor((region.width - 32) / (schematic ? fontSize * 0.62 : 9)))
-        let line = ''
-        for (const word of label.split(' ')) {
-          if (line && line.length + word.length + 1 > limit) {
-            lines.push(line)
-            line = word
-          } else line += `${line ? ' ' : ''}${word}`
+        for (const paragraph of label.split('\n')) {
+          let line = ''
+          for (const word of paragraph.split(' ')) {
+            if (line && line.length + word.length + 1 > limit) {
+              lines.push(line)
+              line = word
+            } else line += `${line ? ' ' : ''}${word}`
+          }
+          if (line) lines.push(line)
         }
-        if (line) lines.push(line)
       } else lines.push(label)
       const titles: ReactNode[] = []
-      for (let index = 0; index < lines.length; index += 1) titles.push(<tspan key={index} x={region.x + 16} dy={index === 0 ? 0 : lineHeight}>{lines[index]}</tspan>)
+      for (let index = 0; index < lines.length; index += 1) titles.push(<tspan key={index} x={region.x + 16} dy={index === 0 ? 0 : lineHeight} fontSize={index === 0 ? region.titleFirstLineFontSize : undefined}>{lines[index]}</tspan>)
       elements.push(
         <text key={`region-title-${region.id}`} className={`scene-region-title${region.level === 'system' ? ' scene-region-title--system' : ''}${schematic ? ' scene-region-title--schematic' : ''}`} x={region.x + 16} y={region.y + titleOffset} style={{ fontSize: region.titleFontSize }}>
           {region.shortLabel && <title>{region.label}</title>}
@@ -414,10 +439,15 @@ export default class Renderer extends Component<
     for (const layer of scene.layers ?? []) {
       const opacity = this.detailOpacity(layer.reveal, cameraWidth) * (layer.conceal ? 1 - this.detailOpacity(layer.conceal, cameraWidth) : 1)
       elements.push(
-        <g key={`layer-${layer.id}`} transform={`translate(${layer.x} ${layer.y}) scale(${layer.scale})`} opacity={opacity} aria-hidden={opacity === 0 ? true : undefined}>
-          {this.renderElements(layer.scene, cameraWidth)}
+        <g key={`layer-${layer.id}`} transform={`translate(${layer.x} ${layer.y}) scale(${layer.scale})`} opacity={opacity} pointerEvents={opacity === 0 ? 'none' : undefined} aria-hidden={opacity === 0 ? true : undefined}>
+          {this.renderElements(layer.scene, cameraWidth, navigationVisible && opacity === 1)}
         </g>,
       )
+    }
+    if (this.props.onNavigate && navigationVisible) {
+      for (const region of scene.regions ?? []) {
+        if (region.navigationTarget) elements.push(this.renderRegionNavigation(region))
+      }
     }
     return elements
   }
@@ -436,7 +466,7 @@ export default class Renderer extends Component<
         viewBox={`${camera.x} ${camera.y} ${camera.width} ${camera.height}`}
         preserveAspectRatio={scene.camera ? 'xMidYMid meet' : 'xMidYMin meet'}
         style={this.state.actualSize ? { width: scene.width, height: scene.height } : { maxWidth: scene.width }}
-        role="img"
+        role={this.props.onNavigate && scene.kind === 'system-overview' ? 'group' : 'img'}
         aria-labelledby="scene-title scene-description"
       >
         <title id="scene-title">

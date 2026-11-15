@@ -14,9 +14,11 @@ export interface HddMechanismState {
 }
 
 export class HddLayout {
-  public static readonly externalLeft = 1400
-  public static readonly externalRight = 650
+  public static readonly externalLeft = 650
+  public static readonly externalRight = 1400
   private static readonly mapWidth = 2000
+  public static readonly mechanicalOffset = 960
+  private static readonly electronicsOffset = -1020
   public static readonly width = this.mapWidth + this.externalLeft + this.externalRight
   public static readonly height = 1400
   public static readonly componentCount = 31
@@ -155,12 +157,56 @@ export class HddLayout {
     }
     diagram.paths.push({ id: 'airflow', d: 'M370 755V935H790', label: 'Recirculating airflow carries particles to the passive filter; this is not an electrical connection', highlighted: false, directed: true, dashed: true, caption: { text: 'Airflow', x: 450, y: 920 } })
     diagram.fixture('head', '', '', head.x, head.y, undefined, 22, 14)
+    this.placeGroups(diagram)
     const framed = HardwareDiagramFrame.create(diagram, this.externalLeft, this.externalRight)
+    HardwareDiagramFrame.addMotherboardNavigation(framed, 'hdd', 20, 990)
     framed.paths.push(
-      { id: 'hdd-external-host', d: `M${1500 + this.externalLeft} 130H${1515 + this.externalLeft}V60H${2620 + this.externalLeft}`, label: 'External host attachment / SATA to a motherboard SATA port or compatible HBA, or SAS to a compatible SAS controller/HBA. These are drive/interface variants; one drive has one illustrated attachment. Carries commands, payloads, and completions', highlighted: false, directed: true, bidirectional: true, caption: { text: 'SATA / SAS\nMotherboard / HBA', x: 2040 + this.externalLeft, y: 105 } },
-      { id: 'hdd-external-power', d: `M${2620 + this.externalLeft} 915H${1940 + this.externalLeft}`, label: 'PSU DC supply through the drive power connector; internal regulation distributes power to controller, DRAM, preamp, spindle driver, and VCM driver. Supply voltages depend on form factor; AC mains does not enter the drive', highlighted: false, directed: true, dashed: true, stroke: '#b58a45', caption: { text: 'PSU DC power', x: 2040 + this.externalLeft, y: 885 } },
+      { id: 'hdd-external-host', d: `M${1080 + this.electronicsOffset + this.externalLeft} 160H280`, label: 'External host attachment / SATA to a motherboard SATA port or compatible HBA, or SAS to a compatible SAS controller/HBA. These are drive/interface variants; one drive has one illustrated attachment. Carries commands, payloads, and completions', highlighted: false, directed: true, bidirectional: true, caption: { text: 'SATA / SAS\nMotherboard / HBA', x: 300, y: 192 } },
+      { id: 'hdd-external-power', d: `M280 915H${1540 + this.electronicsOffset + this.externalLeft}`, label: 'PSU DC supply through the drive power connector; internal regulation distributes power to controller, DRAM, preamp, spindle driver, and VCM driver. Supply voltages depend on form factor; AC mains does not enter the drive', highlighted: false, directed: true, dashed: true, stroke: '#b58a45', caption: { text: 'PSU DC power', x: 300, y: 947 } },
     )
-    HddStorageLayout.add(framed)
+    const media = new HardwareDiagram(this.externalRight, height)
+    HddStorageLayout.add(media)
+    const mediaOffset = this.externalLeft + this.mapWidth
+    const mediaFrame = HardwareDiagramFrame.create(media, mediaOffset, 0)
+    for (const region of mediaFrame.regions) framed.regions.push(region)
+    for (const path of mediaFrame.paths) framed.paths.push(path.id === 'hdd-media-enlargement'
+      ? { ...path, d: `M${mediaOffset - 20} 470H${mediaOffset + 20}`, translateX: undefined }
+      : path)
     return framed
+  }
+
+  private static placeGroups(diagram: HardwareDiagram): void {
+    // Move each group intact; mechanism calculations and component names stay unchanged.
+    for (let index = 0; index < diagram.regions.length; index += 1) {
+      const region = diagram.regions[index]
+      const offset = region.x >= 1040 ? this.electronicsOffset : this.mechanicalOffset
+      diagram.regions[index] = { ...region, x: region.x + offset }
+    }
+    for (let index = 0; index < diagram.positions.length; index += 1) {
+      const position = diagram.positions[index]
+      const offset = position.x >= 1040 ? this.electronicsOffset : this.mechanicalOffset
+      diagram.positions[index] = { ...position, x: position.x + offset }
+    }
+    const mechanicalPaths = new Set(['platter', 'sector', 'spindle', 'arm', 'pivot', 'head-shape', 'preamp-head', 'head-preamp', 'actuator-pivot', 'airflow'])
+    const connections = new Map([
+      ['write-preamp', 'M160 840V1030H1590V805H1610'],
+      ['preamp-read', 'M1610 845H1570V1050H380V840'],
+      ['driver-actuator', 'M900 748H950V1010H1970V675H1960'],
+      ['driver-spindle', 'M900 812H930V1070H1000V470H1265'],
+      ['power-preamp', 'M520 935H500V1110H1550V825H1610'],
+    ])
+    for (let index = 0; index < diagram.paths.length; index += 1) {
+      const path = diagram.paths[index]
+      const connection = connections.get(path.id)
+      if (connection) {
+        diagram.paths[index] = { ...path, d: connection }
+        continue
+      }
+      const offset = mechanicalPaths.has(path.id) || path.id.startsWith('track-') ? this.mechanicalOffset : this.electronicsOffset
+      diagram.paths[index] = {
+        ...path, translateX: (path.translateX ?? 0) + offset,
+        caption: path.caption ? { ...path.caption, x: path.caption.x + offset } : undefined,
+      }
+    }
   }
 }

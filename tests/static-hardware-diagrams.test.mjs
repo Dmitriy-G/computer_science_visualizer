@@ -129,13 +129,37 @@ test('HDD data, control, and DC routes terminate at their respective components'
     assert.equal(path.stroke, paths.get('hdd-external-power').stroke)
   }
   const head = HddLayout.headPosition(1)
-  const displayedHead = { x: head.x + HddLayout.externalLeft, y: head.y }
+  const displayedHead = { x: head.x + HddLayout.mechanicalOffset + HddLayout.externalLeft, y: head.y }
   const [writeStart, writeEnd] = ends(paths.get('preamp-head'))
   const [readStart, readEnd] = ends(paths.get('head-preamp'))
   assert.ok(touches(writeStart, 'preamp'))
   assert.ok(touches(readEnd, 'preamp'))
   assert.deepEqual(writeEnd, displayedHead)
   assert.deepEqual(readStart, displayedHead)
+})
+
+test('HDD places Back, PCB, mechanical assembly, and media from left to right', () => {
+  const scene = HddLayout.create()
+  const regions = new Map(scene.regions.map((region) => [region.id, region]))
+  const back = regions.get('hdd-motherboard')
+  const pcb = regions.get('hdd-electronics')
+  const disk = regions.get('hdd-enclosure')
+  const media = regions.get('hdd-storage-detail')
+  assert.equal(back.navigationTarget, 'hardware-bus')
+  assert.equal(back.navigationLabel, 'Back to Motherboard')
+  assert.equal(pcb.label, 'PCB / logical functions, underside view')
+  assert.equal(disk.label, 'HDD / mechanical assembly')
+  const groups = [back, pcb, disk, media]
+  for (let index = 0; index < groups.length; index += 1) {
+    assert.ok(groups[index].x >= 0)
+    assert.ok(groups[index].x + groups[index].width <= scene.width)
+    if (index > 0) assert.ok(groups[index - 1].x + groups[index - 1].width < groups[index].x)
+  }
+  for (const id of ['hdd-external-host', 'hdd-external-power']) {
+    const path = scene.paths.find((candidate) => candidate.id === id)
+    assert.match(path.d, /^M\d+ \d+H\d+$/)
+    assert.equal(path.caption.x > back.x + back.width, true)
+  }
 })
 
 test('motherboard shows physical PCB routing without protocol controller blocks', () => {
@@ -150,13 +174,16 @@ test('motherboard shows physical PCB routing without protocol controller blocks'
     const device = regions.get(`bus-${key}-device`)
     const connector = regions.get(`bus-${key}-port`)
     assert.equal(device.shortLabel, name)
+    assert.equal(device.navigationTarget, `hardware-${key}`)
     assert.equal(device.parentId, undefined)
     assert.ok(device.width <= 240 && device.height <= 100)
     assert.ok(device.x + device.width <= board.x || device.x >= board.x + board.width)
     assert.equal(connector.parentId, board.id)
+    assert.equal(connector.navigationTarget, undefined)
     assert.ok(connector.x + connector.width <= routing.x || connector.x >= routing.x + routing.width)
   }
   assert.equal(routing.shortLabel, 'PCB traces / signal routing')
+  assert.equal(regions.get('bus-dc-source').navigationTarget, undefined, 'PSU has no detail diagram')
   assert.match(routing.label, /physical copper connections.*not a chip or controller/)
   assert.ok(!scene.regions.some((region) => region.parentId === routing.id), 'routing area contains traces, not processing blocks')
   for (const id of ['bus-cpu-context', 'bus-cpu-protocol', 'bus-ram-protocol', 'bus-cpu-chipset', 'bus-cpu-cores', 'bus-coherence', 'bus-switch', 'bus-buffers', 'bus-arbiter']) {

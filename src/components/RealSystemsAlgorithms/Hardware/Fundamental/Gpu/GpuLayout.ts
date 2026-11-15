@@ -38,10 +38,11 @@ export class GpuLayout {
     this.connect(diagram)
     this.applyColors(diagram)
     const framed = HardwareDiagramFrame.create(diagram, this.externalLeft, 500)
+    HardwareDiagramFrame.addMotherboardNavigation(framed, 'gpu', 180, 1410)
     framed.paths.push(
-      { id: 'gpu-external-host', d: 'M610 310H40', label: 'PCIe / DMA / GPU transfer engines move data between mapped host RAM and the GPU memory system over this host link. Commands, MMIO, and completions also share PCIe; not every transaction is DMA', directed: true, bidirectional: true, highlighted: false, caption: { text: 'PCIe / DMA', x: 60, y: 288 } },
+      { id: 'gpu-external-host', d: 'M610 310H280', label: 'PCIe / DMA / GPU transfer engines move data between mapped host RAM and the GPU memory system over this host link. Commands, MMIO, and completions also share PCIe; not every transaction is DMA', directed: true, bidirectional: true, highlighted: false, caption: { text: 'PCIe / DMA', x: 300, y: 342 } },
       { id: 'gpu-external-display', d: 'M3830 1340H4410', label: 'HDMI / DisplayPort connector to an external display / driven by the Display Engine, independently of VRAM memory-controller signals', directed: true, highlighted: false, caption: { text: 'HDMI / DisplayPort', x: 3980, y: 1318 } },
-      { id: 'gpu-external-power', d: 'M40 1360H990', label: 'DC input from PCIe slot and auxiliary graphics-card power connectors where fitted / grouped supply to card regulators, not AC power', directed: true, dashed: true, stroke: '#b58a45', highlighted: false, caption: { text: 'Slot / auxiliary DC', x: 60, y: 1338 } },
+      { id: 'gpu-external-power', d: 'M280 1360H990', label: 'DC input from PCIe slot and auxiliary graphics-card power connectors where fitted / grouped supply to card regulators, not AC power', directed: true, dashed: true, stroke: '#b58a45', highlighted: false, caption: { text: 'Slot / auxiliary\nDC', x: 300, y: 1392 } },
     )
     return framed
   }

@@ -36,10 +36,11 @@ export class NetworkAdapterLayout {
     this.connect(diagram)
     this.applyColors(diagram)
     const framed = HardwareDiagramFrame.create(diagram, this.externalLeft, 500)
+    HardwareDiagramFrame.addMotherboardNavigation(framed, 'nic', 580, 1200)
     framed.paths.push(
-      { id: 'nic-external-host', d: 'M610 710H40', label: 'PCIe / DMA / the adapter DMA engine reads transmit data from mapped host RAM and writes receive data into it through this host link. Descriptors, control, and completions also use PCIe', directed: true, bidirectional: true, highlighted: false, caption: { text: 'PCIe / DMA', x: 60, y: 688 } },
+      { id: 'nic-external-host', d: 'M610 710H280', label: 'PCIe / DMA / the adapter DMA engine reads transmit data from mapped host RAM and writes receive data into it through this host link. Descriptors, control, and completions also use PCIe', directed: true, bidirectional: true, highlighted: false, caption: { text: 'PCIe / DMA', x: 300, y: 742 } },
       { id: 'nic-external-network', d: 'M3090 710H3610', label: 'Ethernet connector or optical module to the external LAN / bidirectional link for transmit and receive', directed: true, bidirectional: true, highlighted: false, caption: { text: 'LAN / Ethernet', x: 3180, y: 688 } },
-      { id: 'nic-external-power', d: 'M40 1100H570', label: 'DC power from the motherboard PCIe slot enters the adapter board / local distribution and regulation are abstracted', directed: true, dashed: true, stroke: '#b58a45', highlighted: false, caption: { text: 'PCIe slot DC power', x: 60, y: 1078 } },
+      { id: 'nic-external-power', d: 'M280 1100H570', label: 'DC power from the motherboard PCIe slot enters the adapter board / local distribution and regulation are abstracted', directed: true, dashed: true, stroke: '#b58a45', highlighted: false, caption: { text: 'PCIe slot DC\npower', x: 300, y: 1132 } },
     )
     return framed
   }

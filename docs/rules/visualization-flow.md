@@ -112,16 +112,19 @@
    at System Components Overview. Hardware Fundamental zooms into the server chassis,
    showing CPU, RAM, GPU, host NIC, optional RAID/HBA, PSU, HDD, SATA SSD, and NVMe
    SSD as independent blocks outside the Motherboard boundary. The motherboard
-   contains physical sockets, slots, connectors, PCH, BMC, firmware flash, and
-   dedicated management NIC/PHY. Separate labeled PCIe links connect CPU socket
-   contacts to GPU/NIC/NVMe/HBA connectors. Direct DDR connects CPU socket to DIMM
-   socket; the memory controller remains inside the CPU. DMI / chipset uplink
-   connects CPU socket to PCH. Do not draw a shared PCIe / I/O Interconnect hub.
+   shows only physical sockets, slots, connectors, and the Management LAN port.
+   Omit PCH, BMC, firmware flash, and links to these internal components from
+   the main map; keep the separate Motherboard diagram unchanged.
+   Retain external device attachments to sockets, slots, and connectors; omit
+   internal PCIe/DDR paths from the main map. Keep PCIe, DDR, and DMI / chipset
+   traces in the detailed Motherboard view. Its external CPU, GPU, RAM, HDD, SSD,
+   and Network Adapter blocks open their component maps with blue hover/focus
+   borders. Keep the PSU reference static. Do not draw a shared PCIe / I/O Interconnect hub.
    NVMe uses direct PCIe, SATA SSD uses PCH SATA, and HDD illustrates storage
    through the optional SATA/SAS HBA. Each device has one controller path.
-   USB and SPI firmware flash connect to PCH. BMC management Ethernet uses its
-   dedicated NIC/PHY; shared host-NIC management is an alternative. Use solid
-   data/sideband links and dashed amber PSU/standby-power links. Anchor arrows
+   Keep external USB and dedicated management Ethernet port connections.
+   Omit controller, firmware, management sideband, and standby-power wiring from
+   this main map. Use solid data links and dashed amber PSU links. Anchor arrows
    to named component boundaries; note platform variants in accessible descriptions.
    Keep component and port labels on the diagram. Extend external lines for GPU
    HDMI/DisplayPort, host LAN/Ethernet, USB, BMC Management LAN, and PSU AC input

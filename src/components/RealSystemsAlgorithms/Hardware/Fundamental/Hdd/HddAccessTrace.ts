@@ -34,7 +34,7 @@ export class HddAccessTrace extends ComponentFlowTrace {
     }
     HddStorageLayout.showPattern(diagram, this.memory.recordedPattern(), this.activeInterval, this.memory.kind)
     const partial = this.memory.phase === 'ready' && this.memory.writtenPreviewIntervals > 0
-    diagram.fixture('hdd-media-state', 'LBA 7 / 512 B sector', partial ? 'recording sector...' : HddAccessModel.summary(this.memory.storedData()), 370 + HddLayout.externalLeft, 670, undefined, 340, 30)
+    diagram.fixture('hdd-media-state', 'LBA 7 / 512 B sector', partial ? 'recording sector...' : HddAccessModel.summary(this.memory.storedData()), HddLayout.spindle.x + HddLayout.mechanicalOffset + HddLayout.externalLeft, 670, undefined, 340, 30)
     for (let index = 0; index < diagram.positions.length; index += 1) {
       const position = diagram.positions[index]
       if (position.id === 'hdd-write-channel-state' || position.id === 'hdd-read-channel-state') diagram.positions[index] = { ...position, y: 805 }

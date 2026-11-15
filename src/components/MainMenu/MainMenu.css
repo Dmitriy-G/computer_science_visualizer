@@ -19,6 +19,9 @@
   background: #15273b47;
   backdrop-filter: blur(3px);
 }
+.main-menu--interactive {
+  z-index: 10;
+}
 .main-menu--system::backdrop {
   background: #15273b12;
   backdrop-filter: none;

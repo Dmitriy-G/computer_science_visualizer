@@ -9,6 +9,11 @@ export class BusLayout {
   public static readonly width = 2840
   public static readonly height = 1680
   public static readonly componentCount = 15
+  private static readonly navigationTargets: Readonly<Record<string, string>> = {
+    'bus-cpu-device': 'hardware-cpu', 'bus-gpu-device': 'hardware-gpu',
+    'bus-ram-device': 'hardware-ram', 'bus-hdd-device': 'hardware-hdd',
+    'bus-ssd-device': 'hardware-ssd', 'bus-network-adapter-device': 'hardware-network-adapter',
+  }
 
   public static create(): Scene {
     const diagram = this.diagram()
@@ -156,7 +161,7 @@ export class BusLayout {
       else if (region.id === 'bus-pch' || region.id.endsWith('-port')) color = 'lavender'
       else if (region.role === 'memory') color = 'green'
       else if (region.role === 'interconnect') color = 'light-blue'
-      diagram.regions[index] = { ...region, color }
+      diagram.regions[index] = { ...region, color, navigationTarget: this.navigationTargets[region.id] }
     }
   }
 }

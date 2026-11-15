@@ -1,5 +1,5 @@
 import { Component, createRef } from 'react'
-import type { MouseEvent, SyntheticEvent, ReactNode } from 'react'
+import type { KeyboardEvent, MouseEvent, SyntheticEvent, ReactNode } from 'react'
 import type { MenuStructureGroupKind } from './MenuStructureCatalog.ts'
 import { MenuNavigation } from './MenuNavigation.ts'
 import type { MenuCategoryKind, AlgorithmGroupKind } from './MenuNavigation.ts'
@@ -37,6 +37,7 @@ export default class MainMenu extends Component<MainMenuProps> {
   private readonly dialog = createRef<HTMLDialogElement>()
   private readonly title = createRef<HTMLHeadingElement>()
   private readonly search = createRef<MenuSearch>()
+  private modal = true
 
   public componentDidMount(): void {
     this.syncDialog()
@@ -56,11 +57,25 @@ export default class MainMenu extends Component<MainMenuProps> {
   private syncDialog(): void {
     const dialog = this.dialog.current
     if (!dialog) return
+    const modal = !this.isHardwareNavigation()
+    if (dialog.open && (!this.props.open || modal !== this.modal)) dialog.close()
     if (this.props.open && !dialog.open) {
-      dialog.showModal()
+      this.modal = modal
+      if (modal) dialog.showModal()
+      else dialog.show()
       if (this.props.searchOpen) this.search.current?.focusInput()
     }
-    if (!this.props.open && dialog.open) dialog.close()
+  }
+
+  private isHardwareNavigation(): boolean {
+    return !this.props.searchOpen && this.props.navigation.screen === 'advanced-algorithms' &&
+      this.props.navigation.advancedAlgorithmGroup === 'hardware-fundamental'
+  }
+
+  private handleKeyDown = (event: KeyboardEvent<HTMLDialogElement>): void => {
+    if (this.modal || event.key !== 'Escape') return
+    event.preventDefault()
+    this.props.onClose()
   }
 
   private handleCancel = (event: SyntheticEvent<HTMLDialogElement>): void => {
@@ -276,9 +291,10 @@ export default class MainMenu extends Component<MainMenuProps> {
     return (
       <dialog
         id="main-menu"
-        className={`main-menu${!searching && navigation.screen === 'advanced-algorithms' ? ' main-menu--system' : ''}`}
+        className={`main-menu${!searching && navigation.screen === 'advanced-algorithms' ? ' main-menu--system' : ''}${this.isHardwareNavigation() ? ' main-menu--interactive' : ''}`}
         ref={this.dialog}
         onCancel={this.handleCancel}
+        onKeyDown={this.handleKeyDown}
         onClick={this.handleBackdrop}
         aria-labelledby="menu-title"
       >
