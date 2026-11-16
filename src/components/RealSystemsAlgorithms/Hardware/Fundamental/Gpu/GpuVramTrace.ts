@@ -26,8 +26,8 @@ export class GpuVramTrace extends ComponentFlowTrace {
       const position = diagram.positions[index]
       if (position.id === 'gpu-vram-transistor-state' || position.id === 'gpu-vram-capacitor-state') diagram.positions[index] = { ...position, height: 24 }
     }
-    diagram.fixture('gpu-vram-bitline-state', '', DramCellVisual.bitlineLabel(this.memory.bitlineLevel), 2930 + GpuLayout.externalLeft, 815, '', 380, 34)
-    DramCellVisual.addChargeIndicator(diagram, 'gpu-vram-charge', this.memory.capacitorCharge, 2975 + GpuLayout.externalLeft, 620)
+    diagram.fixture('gpu-vram-bitline-state', '', DramCellVisual.bitlineLabel(this.memory.bitlineLevel), 3000 + GpuLayout.externalLeft, 815, '', 300, 34)
+    DramCellVisual.addChargeIndicator(diagram, 'gpu-vram-charge', this.memory.capacitorCharge, 2980 + GpuLayout.externalLeft, 620)
   }
 
   public read(id: string): GpuVramBuffer {

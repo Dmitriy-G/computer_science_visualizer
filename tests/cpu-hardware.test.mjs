@@ -9,6 +9,7 @@ import { ReturnStackModel } from '../src/components/RealSystemsAlgorithms/Hardwa
 import { HardwareTrace } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/HardwareTrace.ts'
 import { CpuCoreLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/CpuCore/CpuCoreLayout.ts'
 import { CpuLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Cpu/CpuLayout.ts'
+import { CpuDiagramCoreLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Cpu/CpuDiagramCoreLayout.ts'
 import { SystemOverviewLayout } from '../src/components/RealSystemsAlgorithms/SystemOverview/SystemOverviewLayout.ts'
 import { ServerHardwareLayout } from '../src/components/RealSystemsAlgorithms/SystemOverview/ServerHardwareLayout.ts'
 import { BranchPredictionAnimation } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/BranchPrediction/BranchPredictionAnimation.ts'
@@ -271,11 +272,11 @@ test('branch recovery restores the surviving rename map and frees the wrong-path
   assert.equal(model.physical[1], null)
 })
 
-test('CPU category preview expands the package while preserving the existing core geometry', () => {
+test('CPU category preview uses a compact core while preserving its component identities', () => {
   const preview = SystemOverviewLayout.create('cpu', null)
   const cpu = preview.layers.find((layer) => layer.id === 'cpu-components')
   const core = cpu.scene.layers.find((layer) => layer.id === 'cpu-core')
-  const diagram = CpuCoreLayout.create([], false)
+  const diagram = CpuDiagramCoreLayout.create()
   const withoutColor = (regions) => regions.filter((region) => region.id !== 'core').map(({ color, ...region }) => region)
   assert.deepEqual(withoutColor(core.scene.regions), withoutColor(diagram.regions))
   const boundary = core.scene.regions.find((region) => region.id === 'core')
@@ -285,11 +286,21 @@ test('CPU category preview expands the package while preserving the existing cor
   assert.equal(core.scene.layers?.length ?? 0, 0)
   assert.ok(cpu.scene.regions.every((region) => !/^cpu-core-\d+$/.test(region.id)))
   assert.equal(preview.count, CpuLayout.componentCount)
-  assert.ok(Math.abs(cpu.scene.width * cpu.scale - ServerHardwareLayout.components.cpu.width * 1080 / ServerHardwareLayout.chassis.width) < 0.0001)
+  const cpuBounds = ServerHardwareLayout.components.cpu
+  const fittedScale = Math.min(cpuBounds.width / cpu.scene.width, cpuBounds.height / cpu.scene.height) * 1080 / ServerHardwareLayout.chassis.width
+  assert.ok(Math.abs(cpu.scale - fittedScale) < 0.0001)
   assert.equal(core.scale, 1)
-  assert.equal(core.scene.width, CpuCoreLayout.size)
-  assert.equal(core.scene.height, CpuCoreLayout.size)
+  assert.equal(core.scene.width, CpuDiagramCoreLayout.width)
+  assert.equal(core.scene.height, CpuDiagramCoreLayout.height)
   const regions = new Map(cpu.scene.regions.map((region) => [region.id, region]))
+  assert.ok(!regions.has('cpu-motherboard'))
+  assert.ok(cpu.scene.width < 4900 && cpu.scene.height < 3100)
+  assert.ok(cpu.scene.regions.every((region) => region.titleFontSize >= 32))
+  assert.ok(core.scene.regions.every((region) => region.titleFontSize >= 24))
+  for (const region of core.scene.regions.filter((region) => region.id.startsWith('component-'))) {
+    assert.equal(region.width, 200)
+    assert.equal(region.height, 130)
+  }
   for (const id of ['cpu-package', 'cpu-die', 'cpu-shared-cache', 'cpu-interconnect', 'cpu-memory-controller', 'cpu-io-controller', 'cpu-clock-power', 'cpu-package-contacts', 'cpu-socket']) assert.ok(regions.has(id))
   assert.equal(CpuLayout.coreCount, 4)
   assert.match(regions.get('cpu-package').shortLabel, /4-core example/)
@@ -313,10 +324,13 @@ test('CPU category preview expands the package while preserving the existing cor
     assert.equal(paths.get(id).bidirectional, true)
     assert.equal(paths.get(id).directed, true)
   }
-  assert.equal(paths.get('cpu-socket-power-contacts').dashed, true)
+  assert.ok(!paths.has('cpu-socket-power-contacts'))
+  assert.ok(!paths.has('cpu-contacts-power-control'))
+  assert.ok(!paths.get('cpu-external-power').dashed)
+  assert.equal(paths.get('cpu-core-fabric').foreground, true)
   for (const id of ['cpu-socket-clock-reset-contacts', 'cpu-contacts-clock-reset']) {
     assert.equal(paths.get(id).directed, true)
-    assert.equal(paths.get(id).dashed, true)
+    assert.ok(!paths.get(id).dashed)
   }
   const ids = new Set(diagram.regions.map((region) => region.id))
   for (const id of ['instruction-tlb', 'data-tlb', 'rename-map', 'dispatch-allocation', 'architectural-state', 'l2-cache']) {

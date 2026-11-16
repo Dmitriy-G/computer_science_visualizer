@@ -29,7 +29,7 @@ export class CpuOperationLayout {
     for (const [id, component, label] of placements) {
       const region = diagram.regions.find((candidate) => candidate.id === `component-${component}`)!
       diagram.fixture(`cpu-op-${id}`, label, values.get(id) ?? 'idle', region.x + region.width / 2,
-        region.y + (region.height > 200 ? region.height / 2 : 110), '', Math.min(520, region.width - 40), 44)
+        region.y + region.height - 25, '', Math.min(520, region.width - 40), 44)
     }
     if (activity.from && activity.to) {
       diagram.connect('cpu-operation-transfer', `cpu-op-${activity.from}`, `cpu-op-${activity.to}`, activity.message, true, 0, activity.message)
@@ -48,7 +48,7 @@ export class CpuOperationLayout {
     const paths = []
     for (const path of scene.paths!) {
       paths.push(activity.peer && path.id === 'cpu-core-fabric' ? {
-        ...path, d: 'M3050 1140H2960V2435H2880', highlighted: true, bidirectional: false,
+        ...path, d: 'M2360 600H2280V1355H1920', highlighted: true, bidirectional: false,
         label: 'Another core publishes a coherent store / cache-coherence details are abstracted',
       } : path)
     }

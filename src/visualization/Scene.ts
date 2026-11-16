@@ -54,6 +54,7 @@ export interface SceneRegion {
   readonly titleFirstLineFontSize?: number
   readonly role: 'cpu' | 'cache' | 'memory' | 'interconnect' | 'observer' | 'device'
   readonly color?: 'neutral' | 'green' | 'light-blue' | 'light-orange' | 'lavender'
+  readonly borderStyle?: 'solid' | 'dashed'
   readonly x: number
   readonly y: number
   readonly width: number
@@ -80,6 +81,8 @@ export interface ScenePath {
   readonly stroke?: string
   readonly strokeWidth?: number
   readonly caption?: { readonly text: string, readonly x: number, readonly y: number }
+  readonly crossingGaps?: readonly { readonly x: number, readonly y: number, readonly radius: number }[]
+  readonly foreground?: boolean
 }
 
 export interface Scene {

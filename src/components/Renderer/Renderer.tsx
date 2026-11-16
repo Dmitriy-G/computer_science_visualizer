@@ -6,9 +6,11 @@ import type {
   SceneNode,
   SceneSlot,
   SceneRegion,
+  ScenePath,
   SceneBounds,
   SceneDetailRange,
 } from '../../visualization/Scene.ts'
+import { HardwareWireCrossings } from '../../visualization/HardwareWireCrossings.ts'
 import './Renderer.css'
 
 interface RendererProps {
@@ -382,6 +384,21 @@ export default class Renderer extends Component<
     </rect>
   }
 
+  private renderPath(path: ScenePath, scene: Scene): ReactNode {
+    return (
+      <g key={`path-${path.id}`}>
+        {!!path.crossingGaps?.length && <defs>
+          <mask id={`crossings-${path.id}`} maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width={scene.width} height={scene.height}>
+            <rect width={scene.width} height={scene.height} fill="white" />
+            {path.crossingGaps.map((gap, index) => <circle key={index} cx={gap.x} cy={gap.y} r={gap.radius} fill="black" />)}
+          </mask>
+        </defs>}
+        <path className={`scene-edge${path.highlighted ? ' scene-edge-highlighted' : ''}${path.dashed ? ' scene-edge--dashed' : ''}`} d={path.d} transform={path.translateX || path.translateY ? `translate(${path.translateX ?? 0} ${path.translateY ?? 0})` : undefined} mask={path.crossingGaps?.length ? `url(#crossings-${path.id})` : undefined} markerStart={(path.highlighted || path.arrowheads !== false) && path.bidirectional ? `url(#${path.highlighted ? 'active-arrow' : 'default-arrow'})` : undefined} markerEnd={(path.highlighted || path.arrowheads !== false) && path.directed ? `url(#${path.highlighted ? 'active-arrow' : 'default-arrow'})` : undefined} style={{ fill: path.fill, stroke: path.highlighted ? undefined : path.stroke, strokeWidth: path.strokeWidth }} role="img" aria-label={path.label}><title>{path.label}</title></path>
+        {path.caption && <text className="scene-path-caption" x={path.caption.x} y={path.caption.y}>{path.caption.text.split('\n').map((line, index) => <tspan key={index} x={path.caption!.x} dy={index === 0 ? 0 : 32}>{line}</tspan>)}</text>}
+      </g>
+    )
+  }
+
   private renderElements(scene: Scene, cameraWidth: number, navigationVisible = true): ReactNode {
     const nodeMap = new Map<string, SceneNode>()
     const elements: ReactNode[] = []
@@ -394,15 +411,11 @@ export default class Renderer extends Component<
     const bus = scene.regions?.some((region) => region.id === 'bus-fabric') ?? false
     const server = scene.regions?.some((region) => region.id === 'motherboard') ?? false
     const schematic = cpu || hdd || ssd || ram || gpu || networkAdapter || bus || server
+    const paths = schematic ? HardwareWireCrossings.create(scene.paths ?? []) : scene.paths ?? []
     for (const region of scene.regions ?? []) elements.push(this.renderRegion(region))
     for (const slot of scene.slots ?? []) elements.push(this.renderSlot(slot))
     for (const node of scene.nodes) nodeMap.set(node.id, node)
-    for (const path of scene.paths ?? []) elements.push(
-      <g key={`path-${path.id}`}>
-        <path className={`scene-edge${path.highlighted ? ' scene-edge-highlighted' : ''}${path.dashed ? ' scene-edge--dashed' : ''}`} d={path.d} transform={path.translateX || path.translateY ? `translate(${path.translateX ?? 0} ${path.translateY ?? 0})` : undefined} markerStart={(path.highlighted || path.arrowheads !== false) && path.bidirectional ? `url(#${path.highlighted ? 'active-arrow' : 'default-arrow'})` : undefined} markerEnd={(path.highlighted || path.arrowheads !== false) && path.directed ? `url(#${path.highlighted ? 'active-arrow' : 'default-arrow'})` : undefined} style={{ fill: path.fill, stroke: path.highlighted ? undefined : path.stroke, strokeWidth: path.strokeWidth }} role="img" aria-label={path.label}><title>{path.label}</title></path>
-        {path.caption && <text className="scene-path-caption" x={path.caption.x} y={path.caption.y}>{path.caption.text.split('\n').map((line, index) => <tspan key={index} x={path.caption!.x} dy={index === 0 ? 0 : 32}>{line}</tspan>)}</text>}
-      </g>,
-    )
+    for (const path of paths) if (!path.foreground) elements.push(this.renderPath(path, scene))
     for (const edge of scene.edges)
       elements.push(this.renderEdge(edge, nodeMap))
     for (const region of scene.regions ?? []) {
@@ -444,6 +457,7 @@ export default class Renderer extends Component<
         </g>,
       )
     }
+    for (const path of paths) if (path.foreground) elements.push(this.renderPath(path, scene))
     if (this.props.onNavigate && navigationVisible) {
       for (const region of scene.regions ?? []) {
         if (region.navigationTarget) elements.push(this.renderRegionNavigation(region))
@@ -474,7 +488,7 @@ export default class Renderer extends Component<
         </title>
         <desc id="scene-description">
           {scene.count} {scene.countLabel ?? 'elements'}.
-          {scene.kind !== 'system-overview' && ' Blue marks the current node, teal marks visited nodes, and amber marks the new node.'}
+          {!this.isOverview(scene) && ' Blue marks the current node, teal marks visited nodes, and amber marks the new node.'}
           {this.describeHardwareFlow(scene, nodeMap)}
           {this.state.showSizeControls && (scene.viewportFit === 'width' ? ' Use Fit width for a readable diagram with vertical scrolling, or Actual size to inspect its details.' : ' Use Fit diagram to see the full structure, or Actual size to scroll through its details.')}
         </desc>
@@ -508,9 +522,14 @@ export default class Renderer extends Component<
   }
 
   private renderRegion(region: SceneRegion): ReactNode {
-    return <g key={`region-${region.id}`} className={`scene-region scene-region--${region.role}${region.level === 'system' ? ' scene-region--system' : ''}${region.color ? ` scene-region--color-${region.color}` : ''}`} role="group" aria-label={region.label}>
+    return <g key={`region-${region.id}`} className={`scene-region scene-region--${region.role}${region.level === 'system' ? ' scene-region--system' : ''}${region.color ? ` scene-region--color-${region.color}` : ''}${region.borderStyle ? ` scene-region--outline-${region.borderStyle}` : ''}`} role="group" aria-label={region.label}>
       <rect x={region.x} y={region.y} width={region.width} height={region.height} rx="16" />
     </g>
+  }
+
+  private isOverview(scene: Scene): boolean {
+    return scene.kind === 'system-overview' || scene.kind === 'cpu-hardware' ||
+      scene.kind === 'hardware-system' || scene.kind === 'hardware-component'
   }
 
   private describeHardwareFlow(scene: Scene, nodes: ReadonlyMap<string, SceneNode>): string {
@@ -526,19 +545,15 @@ export default class Renderer extends Component<
 
   public render() {
     const scene = this.props.scene
-    const packageScene = scene?.countLabel === 'CPU functional components'
-      ? scene.layers?.find((layer) => layer.id === 'cpu-components')?.scene ?? scene : null
-    const coreScene = packageScene?.layers?.find((layer) => layer.id === 'cpu-core')?.scene
-    const componentMap = scene?.countLabel === 'GPU component groups' || scene?.countLabel === 'network adapter component groups'
-      ? scene.layers?.find((layer) => layer.id === 'gpu-components' || layer.id === 'network-adapter-components') : undefined
+    const showNodeLegend = !!scene && !this.isOverview(scene)
     return (
       <section className={`renderer${scene?.kind === 'system-overview' ? ' renderer--overview' : ''}`} aria-label="Visualization workspace">
         <div className="renderer-content" ref={this.content}>
           {this.props.children}
           <div className="renderer-stage">
             {scene && (
-              <div className={`diagram-tools${coreScene ? ' diagram-tools--cpu' : componentMap ? ' diagram-tools--component' : ''}`} ref={this.tools}>
-                {(scene.kind !== 'system-overview' || coreScene || componentMap) && <div className="scene-legend" role="group" aria-label="Node states">
+              <div className="diagram-tools" ref={this.tools}>
+                {showNodeLegend && <div className="scene-legend" role="group" aria-label="Node states">
                   <span>
                     <i className="legend-dot current" />
                     Current

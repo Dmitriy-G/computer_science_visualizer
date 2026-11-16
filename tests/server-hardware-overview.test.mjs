@@ -45,21 +45,37 @@ test('server components are independent of the motherboard physical platform', (
   const regions = new Map(scene.regions.map((region) => [region.id, region]))
   assert.equal(regions.size, scene.regions.length)
   const board = regions.get('motherboard')
-  for (const id of ['motherboard', 'cpu', 'ram', 'gpu', 'network-adapter', 'raid-hba', 'psu', 'hdd', 'sata-ssd', 'ssd']) {
+  for (const id of ['motherboard', 'cpu', 'ram', 'gpu', 'network-adapter', 'psu', 'hdd', 'ssd']) {
     const region = regions.get(id)
     assert.equal(region.parentId, 'server-chassis')
     if (id !== 'motherboard') assert.ok(region.x + region.width <= board.x || region.x >= board.x + board.width || region.y + region.height <= board.y || region.y >= board.y + board.height, id + ' stays outside motherboard')
   }
-  const connectors = ['cpu-socket', 'dimm-sockets', 'gpu-slot', 'nic-slot', 'hba-slot', 'nvme-connector', 'sata-ports', 'host-usb-ports', 'management-lan-port']
+  const connectors = ['cpu-socket', 'dimm-sockets', 'gpu-slot', 'nic-slot', 'nvme-connector', 'sata-ports', 'host-usb-ports']
   for (const id of connectors) {
     assert.equal(regions.get(id).parentId, 'motherboard')
     assert.equal(regions.get(id).role, 'interconnect')
+    assert.equal(regions.get(id).width, regions.get('sata-ports').width)
+    assert.equal(regions.get(id).height, regions.get('sata-ports').height)
   }
   assert.deepEqual(scene.regions.filter((region) => region.parentId === 'motherboard').map((region) => region.id).sort(), connectors.slice().sort())
   for (const id of ['chipset-pch', 'bmc', 'firmware-flash']) assert.ok(!regions.has(id), id + ' is omitted from the main map')
   assert.equal(scene.count, scene.regions.length - 1)
   assert.equal(regions.get('ssd').shortLabel, 'NVMe SSD')
-  assert.equal(regions.get('sata-ssd').shortLabel, 'SATA SSD')
+  for (const id of ['sata-ssd', 'raid-hba', 'hba-slot']) assert.ok(!regions.has(id))
+  for (const [left, right] of [['cpu', 'ram'], ['gpu', 'hdd'], ['psu', 'network-adapter']]) {
+    assert.equal(regions.get(left).y, regions.get(right).y, left + ' aligns with ' + right)
+  }
+  for (const [ids, side] of [[['cpu', 'gpu', 'psu'], 'left'], [['ram', 'ssd', 'hdd', 'network-adapter'], 'right']]) {
+    let previousBottom = -Infinity
+    for (const id of ids) {
+      const region = regions.get(id)
+      assert.equal(region.width, regions.get('hdd').width)
+      assert.equal(region.height, regions.get('hdd').height)
+      assert.ok(side === 'left' ? region.x + region.width < board.x : region.x > board.x + board.width)
+      assert.ok(region.y > previousBottom)
+      previousBottom = region.y + region.height
+    }
+  }
   assert.ok(!regions.has('bus'), 'communication links are not a shared interconnect block')
   assert.ok(!regions.has('ssd-nvme') && !regions.has('ssd-sata-sas'), 'drives are separate devices, not nested interfaces')
   assert.ok(!regions.has('usb-management-ports'))
@@ -73,9 +89,8 @@ test('server components are independent of the motherboard physical platform', (
       assert.ok(region.x + region.width <= other.x || other.x + other.width <= region.x || region.y + region.height <= other.y || other.y + other.height <= region.y, region.id + ' and ' + other.id + ' do not overlap')
     }
   }
-  assert.match(regions.get('raid-hba').shortLabel, /optional/)
   assert.equal(regions.get('motherboard').navigationTarget, 'hardware-bus')
-  assert.equal(regions.get('management-lan-port').shortLabel, 'Management LAN port')
+  assert.ok(!regions.has('management-lan-port'))
 })
 
 test('main server links have physical endpoints and distinguish standards from power', () => {
@@ -88,10 +103,8 @@ test('main server links have physical endpoints and distinguish standards from p
     ['dimm-ram', 'dimm-sockets', 'ram'],
     ['gpu-slot-card', 'gpu-slot', 'gpu'],
     ['nic-slot-card', 'nic-slot', 'network-adapter'],
-    ['hba-slot-card', 'hba-slot', 'raid-hba'],
     ['nvme-ssd', 'nvme-connector', 'ssd'],
-    ['pch-sata-ssd', 'sata-ports', 'sata-ssd'],
-    ['raid-hdd', 'raid-hba', 'hdd'],
+    ['pch-sata-hdd', 'sata-ports', 'hdd'],
   ]
   for (const [id, source, destination] of links) {
     const path = paths.get(id)
@@ -101,24 +114,27 @@ test('main server links have physical endpoints and distinguish standards from p
     assert.equal(path.bidirectional, true)
     assert.ok(!path.dashed, id + ' carries data on a solid line')
   }
-  for (const [id, target] of [['psu-motherboard', 'motherboard'], ['psu-gpu', 'gpu'], ['psu-hdd', 'hdd'], ['psu-sata-ssd', 'sata-ssd'], ['psu-ssd', 'ssd']]) {
+  for (const [id, target] of [['psu-motherboard', 'motherboard'], ['psu-gpu', 'gpu'], ['psu-hdd', 'hdd'], ['psu-ssd', 'ssd']]) {
     const path = paths.get(id)
     const route = points(path)
     assert.ok(touches(route[0], regions.get('psu')))
     assert.ok(touches(route.at(-1), regions.get(target)))
-    assert.equal(path.dashed, true)
+    assert.ok(!path.dashed)
     assert.equal(path.bidirectional, false)
     assert.match(path.label, /power/i)
   }
   for (const id of ['cpu-ram', 'cpu-gpu', 'cpu-nic', 'cpu-nvme', 'cpu-hba']) assert.ok(!paths.has(id), id + ' belongs only in the detailed motherboard map')
   for (const id of ['cpu-pch', 'pch-sata', 'pch-usb', 'pch-firmware', 'pch-bmc', 'bmc-management-lan', 'psu-bmc-standby']) assert.ok(!paths.has(id), id + ' must not point to an omitted component')
   assert.match(paths.get('nvme-ssd').label, /Direct PCIe.*bypassing/)
+  const gpuPower = points(paths.get('psu-gpu'))
+  assert.equal(gpuPower.length, 2)
+  assert.equal(gpuPower[0].x, gpuPower[1].x)
 })
 
-test('native SATA, optional SATA/SAS, and NVMe cables stay visually separate', () => {
+test('native SATA and the single NVMe SSD cable stay visually separate', () => {
   const scene = ServerHardwareLayout.create()
   const paths = new Map(scene.paths.map((path) => [path.id, path]))
-  const cables = ['pch-sata-ssd', 'raid-hdd', 'nvme-ssd']
+  const cables = ['pch-sata-hdd', 'nvme-ssd']
   for (let i = 0; i < cables.length; i++) {
     const path = paths.get(cables[i])
     for (let j = i + 1; j < cables.length; j++) {
@@ -127,18 +143,17 @@ test('native SATA, optional SATA/SAS, and NVMe cables stay visually separate', (
       assert.notEqual(path.stroke, other.stroke)
     }
   }
-  for (const [device, cable] of [['ssd', 'nvme-ssd'], ['sata-ssd', 'pch-sata-ssd'], ['hdd', 'raid-hdd']]) {
+  for (const [device, cable] of [['ssd', 'nvme-ssd'], ['hdd', 'pch-sata-hdd']]) {
     const region = scene.regions.find((candidate) => candidate.id === device)
     const connections = scene.paths.filter((path) => {
-      if (path.dashed) return false
+      if (path.stroke === '#b58a45') return false
       const route = points(path)
       return touches(route[0], region) || touches(route.at(-1), region)
     })
     assert.deepEqual(connections.map((path) => path.id), [cable], device + ' has exactly one data cable')
   }
   assert.equal(paths.get('nvme-ssd').caption, undefined)
-  assert.equal(paths.get('pch-sata-ssd').caption, undefined)
-  assert.equal(paths.get('raid-hdd').caption.text, 'SATA / SAS')
+  assert.equal(paths.get('pch-sata-hdd').caption, undefined)
 })
 
 test('component zooms follow independent devices and the motherboard footprint', () => {
@@ -167,18 +182,24 @@ test('external data cables and AC input cross the chassis boundary', () => {
   const paths = new Map(scene.paths.map((path) => [path.id, path]))
   const regions = new Map(scene.regions.map((region) => [region.id, region]))
   assert.ok(scene.width > ServerHardwareLayout.chassis.width)
-  for (const id of ['external-display', 'external-lan', 'external-usb', 'external-management-lan', 'external-ac-power']) {
+  const chassis = ServerHardwareLayout.chassis
+  const leftCables = new Set(['external-display', 'external-usb', 'external-ac-power'])
+  for (const id of ['external-display', 'external-lan', 'external-usb', 'external-ac-power']) {
     const path = paths.get(id)
     assert.ok(path.caption.text.length > 0)
-    assert.ok(path.caption.x > ServerHardwareLayout.chassis.width && path.caption.x < scene.width)
+    const left = leftCables.has(id)
+    assert.ok(left ? path.caption.x < chassis.x : path.caption.x > chassis.x + chassis.width)
+    assert.ok(path.caption.x >= 0 && path.caption.x < scene.width)
     assert.equal(path.directed, true)
     const route = points(path)
-    assert.ok(route.some((point) => point.x > ServerHardwareLayout.chassis.width))
-    if (id !== 'external-ac-power') assert.ok(!path.dashed)
+    assert.ok(route.some((point) => left ? point.x < chassis.x : point.x > chassis.x + chassis.width))
+    assert.equal(route.length, 2, id + ' uses one straight segment')
+    assert.equal(route[0].y, route[1].y)
+    assert.ok(!path.dashed)
   }
-  for (const id of ['external-lan', 'external-usb', 'external-management-lan']) assert.equal(paths.get(id).bidirectional, true)
+  for (const id of ['external-lan', 'external-usb']) assert.equal(paths.get(id).bidirectional, true)
   assert.equal(paths.get('external-display').bidirectional, false)
-  assert.equal(paths.get('external-ac-power').dashed, true)
+  assert.ok(!paths.get('external-ac-power').dashed)
   assert.ok(touches(points(paths.get('external-ac-power')).at(-1), regions.get('psu')), 'AC ends at PSU')
-  assert.notEqual(paths.get('external-lan').d, paths.get('external-management-lan').d)
+  assert.ok(!paths.has('external-management-lan'))
 })

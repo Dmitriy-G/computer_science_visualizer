@@ -35,7 +35,7 @@ for (const [layout, prefix, keys] of [
   [GpuLayout, 'gpu', ['host', 'display', 'power']],
   [NetworkAdapterLayout, 'nic', ['host', 'network', 'power']],
 ]) {
-  test(`${prefix} external interfaces have labeled tails and distinct power direction`, () => {
+  test(`${prefix} external interfaces keep their labels and connection directions`, () => {
     const scene = layout.create()
     const paths = new Map(scene.paths.map((path) => [path.id, path]))
     for (const key of keys) {
@@ -46,8 +46,11 @@ for (const [layout, prefix, keys] of [
       assert.equal(path.highlighted, false)
     }
     const power = paths.get(`${prefix}-external-power`)
-    assert.equal(power.dashed, true)
+    assert.ok(!power.dashed)
     assert.ok(!power.bidirectional)
+    if (prefix === 'gpu') {
+      for (const id of ['gpu-chip-power', 'gpu-memory-power']) assert.ok(!paths.has(id))
+    }
     assert.ok(scene.paths.some((path) => path.translateX === layout.externalLeft), 'internal wires share the component offset')
     if (prefix === 'gpu' || prefix === 'nic') assert.equal(paths.get(`${prefix}-external-host`).caption.text, 'PCIe / DMA')
     if (prefix === 'cpu') {
@@ -56,7 +59,7 @@ for (const [layout, prefix, keys] of [
       assert.notEqual(paths.get('cpu-external-pcie').d, paths.get('cpu-external-chipset').d)
       for (const key of ['clock', 'reset']) {
         assert.ok(!paths.get(`cpu-external-${key}`).bidirectional, `${key} is shown as an input`)
-        assert.equal(paths.get(`cpu-external-${key}`).dashed, true)
+        assert.ok(!paths.get(`cpu-external-${key}`).dashed)
       }
       const regions = new Map(scene.regions.map((region) => [region.id, region]))
       for (const key of ['memory-controller', 'io-controller']) assert.equal(regions.get(`cpu-${key}`).parentId, 'cpu-die')
@@ -76,6 +79,8 @@ for (const [layout, prefix, keys] of [
 
 test('HDD data, control, and DC input routes terminate at their respective components', () => {
   const diagram = HddLayout.diagram()
+  assert.ok(diagram.regions.every((region) => region.borderStyle === 'solid'))
+  assert.ok(diagram.paths.every((path) => !path.dashed))
   const regions = new Map(diagram.regions.map((region) => [region.id, region]))
   const paths = new Map(diagram.paths.map((path) => [path.id, path]))
   const ends = (path) => {
@@ -126,7 +131,7 @@ test('HDD data, control, and DC input routes terminate at their respective compo
   const [powerStart, powerEnd] = ends(power)
   assert.equal(powerStart.x, 20)
   assert.ok(touches(powerEnd, 'power-connector'))
-  assert.equal(power.dashed, true)
+  assert.ok(!power.dashed)
   assert.equal(power.directed, true)
   assert.equal(power.bidirectional, undefined)
   const head = HddLayout.headPosition(1)
@@ -183,6 +188,13 @@ test('motherboard shows physical PCB routing without protocol controller blocks'
     assert.ok(connector.x + connector.width <= routing.x || connector.x >= routing.x + routing.width)
   }
   assert.equal(routing.shortLabel, 'PCB traces / signal routing')
+  const standardBlock = regions.get('bus-usb-port')
+  for (const id of ['bus-power-rails', 'bus-reset-circuit', 'bus-pch', 'bus-flash', 'bus-rtc']) {
+    assert.equal(regions.get(id).width, standardBlock.width)
+    assert.equal(regions.get(id).height, standardBlock.height)
+  }
+  assert.equal(paths.get('bus-chipset-uplink').caption, undefined)
+  assert.ok(paths.get('bus-power-dimm').crossingGaps.length > 0, 'crossing traces remain visually separate')
   assert.equal(regions.get('bus-dc-source').navigationTarget, undefined, 'PSU has no detail diagram')
   assert.match(routing.label, /physical copper connections.*not a chip or controller/)
   assert.ok(!scene.regions.some((region) => region.parentId === routing.id), 'routing area contains traces, not processing blocks')
@@ -240,6 +252,7 @@ test('every motherboard arrow touches component boundaries, including DC input a
   for (const path of scene.paths) {
     const route = points(path)
     assert.ok(route.length > 1, `${path.id} has a visible route`)
+    assert.ok(!path.dashed, `${path.id} uses a solid line`)
     for (const point of [route[0], route.at(-1)]) {
       assert.ok(scene.regions.some((region) => touches(point, region)), `${path.id} cannot end in empty space`)
     }
@@ -274,7 +287,7 @@ test('every motherboard arrow touches component boundaries, including DC input a
       assert.ok(touches(route.at(-1), regions.get(destination)), `${id} reaches the consumer`)
       assert.equal(path.directed, true)
       assert.equal(path.bidirectional, false)
-      assert.equal(path.dashed, true)
+      assert.ok(!path.dashed)
     }
   }
   const supplies = [
@@ -293,11 +306,12 @@ test('every motherboard arrow touches component boundaries, including DC input a
     const route = points(path)
     assert.ok(touches(route[0], regions.get(source)), `${id} starts at its power source`)
     assert.ok(touches(route.at(-1), regions.get(destination)), `${id} reaches its load`)
-    assert.equal(path.dashed, true)
+    assert.ok(!path.dashed)
     assert.equal(path.bidirectional, false)
     assert.equal(path.stroke, '#b58a45')
   }
-  assert.match(paths.get('bus-dc-input').caption.text, /DC input from PSU/)
+  for (const id of ['bus-dc-input', 'bus-gpu-direct', 'bus-ssd-direct', 'bus-network-adapter-direct']) assert.equal(paths.get(id).caption, undefined)
+  assert.equal(regions.get('bus-rtc').borderStyle, 'solid')
   assert.match(regions.get('bus-power-connectors').label, /no AC mains/)
   const uplink = points(paths.get('bus-chipset-uplink'))
   assert.ok(touches(uplink[0], regions.get('bus-cpu-chipset-contacts')))

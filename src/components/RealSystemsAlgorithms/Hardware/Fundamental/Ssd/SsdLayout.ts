@@ -39,7 +39,7 @@ export class SsdLayout {
     const framed = HardwareDiagramFrame.create(diagram, this.externalLeft, 0)
     framed.paths.push(
       { id: 'ssd-external-host', d: 'M360 330H20', label: 'Motherboard host connection / alternative SSD attachments: PCIe (NVMe protocol) or SATA. PCIe is the interconnect; NVMe is the storage protocol, not a separate physical link. Commands, payloads, and completions share the selected interface. Host-memory transfers reach system RAM through the platform memory/I/O system; this is not a direct DIMM or GPU connection. Only one host attachment is used by a given drive in this map', highlighted: false, directed: true, bidirectional: true, caption: { text: 'PCIe / NVMe\nor SATA\nHost link', x: 20, y: 362 } },
-      { id: 'ssd-external-power', d: 'M20 590H360', label: 'DC supply and ground through the drive power contacts / motherboard supply for an M.2 example, or a PSU drive-power connector for a SATA example. Exact form factor and supply arrangement vary; AC mains does not enter the SSD', highlighted: false, directed: true, dashed: true, stroke: '#b58a45', caption: { text: 'Motherboard / PSU DC', x: 20, y: 622 } },
+      { id: 'ssd-external-power', d: 'M20 590H360', label: 'DC supply and ground through the drive power contacts / motherboard supply for an M.2 example, or a PSU drive-power connector for a SATA example. Exact form factor and supply arrangement vary; AC mains does not enter the SSD', highlighted: false, directed: true, stroke: '#b58a45', caption: { text: 'Motherboard / PSU DC', x: 20, y: 622 } },
     )
     return framed
   }

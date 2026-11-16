@@ -19,11 +19,13 @@ export class NetworkAdapterLayout {
 
   public static diagram(): HardwareDiagram {
     const diagram = new HardwareDiagram(2600, this.height)
+    const supportBlockWidth = 600
+    const supportBlockHeight = 180
     diagram.region('nic-board', 'Network adapter / logical PCIe Ethernet example, not a manufacturer floorplan. Functions can share silicon. USB adapters use a different host interface; Wi-Fi adapters use radio/baseband circuitry and antennas instead of this Ethernet physical connection', 'device', 20, 20, 2560, 1360, 'system', undefined, 'Network adapter / Ethernet example')
       .region('nic-host-connector', 'Host PCIe connector / carries receive DMA writes and transmit DMA reads to/from mapped host RAM, plus configuration, descriptors, and completions. DMA uses PCIe rather than a separate cable. USB and integrated adapters have different host interfaces', 'interconnect', 60, 600, 260, 220, 'component', 'nic-board', 'PCIe / DMA')
       .region('nic-controller', 'Network controller / coordinates sending and receiving frames. Host interface, DMA, buffers, MAC, and offload blocks are logical functions and can be integrated into the same controller chip', 'cpu', 400, 160, 1420, 1140, 'component', 'nic-board', 'Network controller')
-      .region('nic-firmware', 'Firmware and configuration memory / stores adapter configuration, such as the assigned MAC address, and firmware where supported. Internal or external memory organization varies', 'memory', 440, 300, 520, 150, 'component', 'nic-controller', 'Firmware / configuration memory')
-      .region('nic-control', 'Control and queue management / coordinates transmit and receive queues, descriptor processing, device configuration, and completion notifications to the host', 'device', 1100, 300, 680, 150, 'component', 'nic-controller', 'Control / queue management')
+      .region('nic-firmware', 'Firmware and configuration memory / stores adapter configuration, such as the assigned MAC address, and firmware where supported. Internal or external memory organization varies', 'memory', 440, 300, supportBlockWidth, supportBlockHeight, 'component', 'nic-controller', 'Firmware / configuration memory')
+      .region('nic-control', 'Control and queue management / coordinates transmit and receive queues, descriptor processing, device configuration, and completion notifications to the host', 'device', 1100, 300, supportBlockWidth, supportBlockHeight, 'component', 'nic-controller', 'Control / queue management')
       .region('nic-host-interface', 'Host interface / exchanges descriptors, packet data, control requests, and completion notifications with the computer over PCIe', 'interconnect', 440, 600, 260, 220, 'component', 'nic-controller', 'Host interface')
       .region('nic-dma', 'DMA engine / reads transmit data from host memory and writes received data to host memory using driver-provided descriptors; payload transfers avoid CPU copying', 'interconnect', 800, 600, 260, 220, 'component', 'nic-controller', 'DMA engine')
       .region('nic-buffers', 'Packet buffers / temporary on-adapter storage for outgoing and incoming frames; actual queue counts and memory allocation vary', 'memory', 1160, 540, 280, 380, 'component', 'nic-controller', 'Packet buffers')
@@ -32,15 +34,14 @@ export class NetworkAdapterLayout {
       .region('nic-mac', 'Media Access Control (MAC) / constructs and checks Ethernet frames, handles MAC addressing and frame checksums, and exchanges frame data with the PHY', 'device', 1520, 600, 260, 220, 'component', 'nic-controller', 'MAC / Ethernet frames')
       .region('nic-phy', 'Physical-layer transceiver (PHY) / encodes and decodes physical link signals. Copper uses electrical signaling; optical interfaces add an optical transceiver. The PHY can be integrated with the controller', 'device', 1880, 600, 260, 220, 'component', 'nic-board', 'PHY / link signals')
       .region('nic-network-connection', 'Network connection hardware / Ethernet connector with magnetics for copper, or an optical module and fiber connector for an optical variant. These are alternatives, not mandatory serial stages', 'interconnect', 2280, 600, 260, 220, 'component', 'nic-board', 'Ethernet port / optical module')
-      .region('nic-offload', 'Optional offload engines / accelerate supported tasks such as IP/TCP/UDP checksums and transmit segmentation. Capabilities vary; offloads assist packet processing rather than replacing the MAC or PHY', 'device', 800, 1040, 640, 180, 'component', 'nic-controller', 'Checksum / segmentation offloads (optional)')
+      .region('nic-offload', 'Optional offload engines / accelerate supported tasks such as IP/TCP/UDP checksums and transmit segmentation. Capabilities vary; offloads assist packet processing rather than replacing the MAC or PHY', 'device', 1100, 1040, supportBlockWidth, supportBlockHeight, 'component', 'nic-controller', 'Checksum / segmentation offloads (optional)')
     this.connect(diagram)
     this.applyColors(diagram)
     const framed = HardwareDiagramFrame.create(diagram, this.externalLeft, 500)
-    HardwareDiagramFrame.addMotherboardNavigation(framed, 'nic', 580, 1200)
     framed.paths.push(
       { id: 'nic-external-host', d: 'M610 710H280', label: 'PCIe / DMA / the adapter DMA engine reads transmit data from mapped host RAM and writes receive data into it through this host link. Descriptors, control, and completions also use PCIe', directed: true, bidirectional: true, highlighted: false, caption: { text: 'PCIe / DMA', x: 300, y: 742 } },
       { id: 'nic-external-network', d: 'M3090 710H3610', label: 'Ethernet connector or optical module to the external LAN / bidirectional link for transmit and receive', directed: true, bidirectional: true, highlighted: false, caption: { text: 'LAN / Ethernet', x: 3180, y: 688 } },
-      { id: 'nic-external-power', d: 'M280 1100H570', label: 'DC power from the motherboard PCIe slot enters the adapter board / local distribution and regulation are abstracted', directed: true, dashed: true, stroke: '#b58a45', highlighted: false, caption: { text: 'PCIe slot DC\npower', x: 300, y: 1132 } },
+      { id: 'nic-external-power', d: 'M280 1100H570', label: 'DC power from the motherboard PCIe slot enters the adapter board / local distribution and regulation are abstracted', directed: true, stroke: '#b58a45', highlighted: false, caption: { text: 'PCIe slot DC\npower', x: 300, y: 1132 } },
     )
     return framed
   }
@@ -57,11 +58,11 @@ export class NetworkAdapterLayout {
       { id: 'nic-phy-mac-rx', d: 'M1880 790H1780', label: 'Receive / decoded frame data to the MAC', highlighted: false, directed: true, caption: { text: 'RX', x: 1800, y: 840 } },
       { id: 'nic-mac-rx', d: 'M1520 790H1480V815H1420', label: 'Receive / MAC delivers accepted frames to the RX buffer', highlighted: false, directed: true },
       { id: 'nic-rx-dma', d: 'M1180 815H1100V780H1060', label: 'Receive / DMA transfers incoming frame data from the RX buffer into host memory', highlighted: false, directed: true },
-      { id: 'nic-config-control', d: 'M960 375H1100', label: 'Firmware and stored configuration used by controller management', highlighted: false, directed: true, bidirectional: true },
-      { id: 'nic-host-control', d: 'M570 600V490H1140V450', label: 'Host configuration and queue setup / completion notifications return through the host interface', highlighted: false, directed: true, bidirectional: true },
-      { id: 'nic-control-dma', d: 'M1220 450V510H930V600', label: 'Queue and descriptor management controls DMA transfers', highlighted: false, directed: true },
-      { id: 'nic-control-mac', d: 'M1640 450V600', label: 'Controller configures MAC operation and link-facing frame handling', highlighted: false, directed: true },
-      { id: 'nic-control-phy', d: 'M1780 375H2010V600', label: 'Link management and PHY status / separate from frame payloads', highlighted: false, directed: true, bidirectional: true },
+      { id: 'nic-config-control', d: 'M1040 390H1100', label: 'Firmware and stored configuration used by controller management', highlighted: false, directed: true, bidirectional: true },
+      { id: 'nic-host-control', d: 'M570 600V490H1140V480', label: 'Host configuration and queue setup / completion notifications return through the host interface', highlighted: false, directed: true, bidirectional: true },
+      { id: 'nic-control-dma', d: 'M1220 480V510H930V600', label: 'Queue and descriptor management controls DMA transfers', highlighted: false, directed: true },
+      { id: 'nic-control-mac', d: 'M1640 480V600', label: 'Controller configures MAC operation and link-facing frame handling', highlighted: false, directed: true },
+      { id: 'nic-control-phy', d: 'M1700 390H2010V600', label: 'Link management and PHY status / separate from frame payloads', highlighted: false, directed: true, bidirectional: true },
       { id: 'nic-buffer-offload', d: 'M1300 920V1040', label: 'Optional packet processing on buffered data / logical offload branch, not a mandatory serial stage', highlighted: false, directed: true, bidirectional: true },
     )
   }

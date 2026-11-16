@@ -61,6 +61,17 @@ and sequencing are platform-dependent; do not add CPU internals to explain them.
 PSU DC input, VRMs, and physical power distribution feed CPU socket, DIMM,
 PCH, expansion slots, M.2, clock generator, and reset circuitry. AC stays at PSU.
 Every data/support/power arrow ends on a named physical component boundary.
+Motherboard data, clock, reset, RTC, and power lines are solid; electrical
+power feeds retain their amber color. Keep support routes separate and avoid long
+power detours around the bottom of the board. Small gaps distinguish unconnected
+traces at crossings without changing their endpoints. DC rails, reset circuitry,
+PCH, firmware flash, USB, and RTC blocks share the USB block's 340 by 100 size.
+The DMI / chipset uplink, three PCIe device links, and PSU DC input keep their
+accessible descriptions without visible wire captions. The RTC outline is solid.
+HardwareWireCrossings applies the same crossing gaps to CPU, HDD, SSD, RAM, GPU,
+and Network Adapter wiring in the shared renderer, including nested and translated
+paths. Highlighted transfers stay continuous; curved mechanisms and filled state
+indicators are excluded from wire-crossing calculations.
 Retain compact external device references and an empty motherboard overview list.
 The physical chipset/clock examples follow [Intel's C600 chipset datasheet](https://www.intel.com/content/dam/www/public/us/en/documents/datasheets/c600-series-chipset-datasheet.pdf).
 The Motherboard preview zooms from the shared server motherboard footprint
@@ -70,11 +81,18 @@ The header menu returns to Hardware Fundamental.
 System Components Overview starts with an empty renderer.
 Hardware Fundamental moves the SVG camera into that server. ServerHardwareLayout
 owns the shared chassis map and the component slots used for subsequent zooms.
-The chassis shows CPU, RAM, discrete GPU, host Network Adapter, optional RAID/HBA,
-PSU, HDD, SATA SSD, and NVMe SSD as independent blocks outside the Motherboard.
+The chassis shows CPU, discrete GPU, and PSU in a left column, and RAM, one NVMe
+SSD, HDD, and host Network Adapter in a right column, all outside the Motherboard.
+CPU aligns with RAM, GPU with HDD, and PSU with Network Adapter. Leave the left
+row opposite SSD empty so both columns follow the same row spacing.
+Every outside device uses the HDD's 300 by 100 size. All seven motherboard
+connectors use the SATA ports' 180 by 70 size. Connector rows align with their
+devices for short straight attachments. USB sits opposite the NVMe connector with a
+straight cable to the left margin. The board is compact, at 620 by 700 units.
 This is a system connection map rather than a literal installed floorplan.
 The main map's Motherboard shows only CPU/DIMM sockets, expansion slots,
-NVMe/SATA/USB connectors, a dedicated Management LAN port, and their connections.
+NVMe/SATA/USB connectors and their connections. Omit the dedicated Management LAN
+port and its cable; the host Network Adapter retains its LAN / Ethernet cable.
 Omit Chipset/PCH, BMC, SPI firmware flash, and all links to those hidden components.
 Keep the separate Motherboard diagram's existing internal detail unchanged.
 The main map has no shared PCIe / I/O Interconnect hub.
@@ -83,25 +101,24 @@ internal DDR and PCIe socket-to-socket/slot paths from the main map. These trace
 and the DMI / chipset uplink remain in the detailed Motherboard view, whose
 external CPU, GPU, RAM, HDD, SSD, and Network Adapter references open their
 component diagrams with blue hover/focus borders. Its PSU reference stays static.
-The SATA SSD uses PCH SATA; the HDD illustrates storage behind the optional
-SATA/SAS RAID/HBA. Each drive has one controller path. NVMe bypasses SATA/HBA.
-Place the HDD below the optional HBA so its short SATA/SAS cable never crosses
-the NVMe or native SATA cables. Use distinct blue PCIe/NVMe, green native SATA,
-and purple HBA SATA/SAS lines. Omit visible captions on the two SSD cables;
-retain their protocol descriptions in tooltips and accessibility labels.
-Native SATA also supports SATA HDDs; a compatible SATA/SAS SSD may use the HBA
-instead. These are alternative device examples, not extra controller attachments.
-Host USB and dedicated management Ethernet remain visible as port connections.
+The HDD uses native PCH SATA, while the single SSD uses direct CPU PCIe/NVMe.
+Omit the second SATA SSD, optional RAID/HBA, its slot, and their links from the
+main map. Each remaining drive has one controller path. Use distinct blue
+PCIe/NVMe and green SATA lines, without visible cable captions; retain protocol
+descriptions in tooltips and accessibility labels. SAS drives require a compatible
+SAS controller, which is not part of this example. Power lines use separate
+outer corridors. The GPU display cable and PSU AC input run straight to the left.
+Host USB and host Ethernet remain visible as port connections.
 Omit controller, firmware, sideband, and standby-power wiring from this main
-map. Data links are solid; dashed amber paths show PSU
+map. Data links are solid; solid amber paths show PSU
 delivery to the motherboard, GPU, and drives.
 Named component-boundary anchors keep internal arrows attached. Short component names
 appear in the renderer, with topology details in tooltips/accessibility text.
-Five labeled cables extend beyond the chassis into a dedicated right margin:
-GPU HDMI/DisplayPort output, host LAN/Ethernet, USB, dedicated BMC Management LAN,
-and AC power input to the PSU. Network and USB links are bidirectional, display
-is output-only, and the dashed amber AC input points toward the PSU. Keep the
-1800-unit chassis and internal zoom slots separate from the wider 2320-unit scene.
+Four labeled cables extend beyond the chassis: GPU HDMI/DisplayPort, USB, and
+AC power use the left margin; host LAN/Ethernet uses the right. Network and USB
+links are bidirectional, display is output-only, and solid amber AC points toward
+the PSU. The 1400 by 930 chassis starts after a 400-unit left margin within the
+2240 by 930 scene. Camera bounds and component zoom positions include that offset.
 The hardware camera fits the external labels and fully reveals the map; system
 camera bounds also include the extra margin. Only concise port labels appear on
 the cables, with explanations retained in tooltips/accessibility descriptions.
@@ -128,7 +145,7 @@ traffic, while software prepares buffers and address mappings. This distinction
 follows the [Linux DMA mapping guide](https://docs.kernel.org/core-api/dma-api-howto.html).
 RAM/VRAM state pills and charge indicators follow the same offsets during playback.
 SSD adds a motherboard host line labeled PCIe (NVMe protocol) or SATA (alternative
-attachments) and dashed amber motherboard/PSU DC input. Host RAM transfers use
+attachments) and solid amber motherboard/PSU DC input. Host RAM transfers use
 the platform I/O/memory system; there is no direct DIMM or GPU connection.
 HDD adds SATA/SAS host tails (motherboard or compatible HBA, according to drive
 type) and PSU DC input in a 650-unit left margin, with the shared clickable
@@ -147,7 +164,13 @@ dedicated/shared management arrangements follow
 Existing component categories and detail diagrams remain available. CPU moves
 closer into the independent CPU block, revealing CpuLayout's static package map.
 Its illustrative single-die, four-core example expands one representative core
-using the existing core geometry, titled "Cores (~4 per die)". It shows no empty
+using CpuDiagramCoreLayout's compact arrangement of the existing core components,
+titled "Cores (~4 per die)". The package preview and both CPU lessons share this
+3700 by 1760 map, with 200 by 130 core-function blocks, wrapped labels, and no
+Motherboard back block. Only the external DC power line is drawn; internal power
+wiring is omitted. The core-to-interconnect wire renders above the nested core
+background so its route remains visible. Legacy core-mechanism layouts retain
+their geometry. It shows no empty
 peer-core blocks. Surrounding components include shared L3 cache, on-die
 interconnect, integrated memory and I/O controllers, clock/power/thermal control,
 package contacts, and a separate electrical CPU socket with DDR memory, PCIe,
@@ -168,7 +191,8 @@ Both use HardwareDiagram, the existing opaque hardware palette and schematic
 titles, nested camera navigation, and Fit/Actual size controls. Unit placement
 is logical; accessible descriptions identify integrated-GPU and USB/Wi-Fi variants.
 GpuVramLayout expands the VRAM area as a representative GDDR chip, DRAM die,
-bank, cell array, and enlarged 1T1C cell. It shows separate access-transistor and
+bank, cell array, and enlarged 1T1C cell. GDDR chip and bank containers use light
+blue. It shows separate access-transistor and
 storage-capacitor blocks, wordline/bitline connections, row and column decoders,
 sense amplifiers / row buffer, command/address logic, refresh, and data I/O /
 prefetch buffers. The storage cell is DRAM; row-buffer latches are separate.
@@ -247,7 +271,7 @@ bits with physical magnetic bit areas.
 The enlargement distinguishes a write pole, MR read sensor, and nonvolatile
 magnetic film. A recorded area contains many magnetic grains; remanent
 magnetization retains information without power. Grain counts are technology
-dependent and are not invented. Dashed field paths touch the pole/grain/sensor
+dependent and are not invented. Solid field paths touch the pole/grain/sensor
 boundaries and differ from conductive data paths. A plus/minus strip shows the
 first 16 consecutive encoded intervals, with plus/up and minus/down magnetization
 rather than electric charge or direct user bits. Static preview uses the leading
@@ -266,7 +290,7 @@ The controller connects directly to servo, cache, read processing, and write
 encoding. Mapping is a side lookup for logical-to-physical translation and defect
 remapping, not a mandatory intermediate controller stage. Motor drivers contain
 separate Spindle Motor Driver and VCM Driver functions, connected respectively
-to platter rotation and head positioning. Dashed amber DC distribution powers
+to platter rotation and head positioning. Solid amber DC distribution powers
 the controller, DRAM cache, preamp, and both motor drivers. User data follows
 separate directed routes: Write = Cache → ECC → Write Encoder → Preamp → Head;
 Read = Head → Preamp → Read Processing → ECC → Cache. Purple Write and green
@@ -276,7 +300,8 @@ and feedback path. Block roles follow the
 spare-sector remapping follows [Seagate's bad-sector guidance](https://www.seagate.com/support/kb/what-do-i-do-if-my-drive-reports-bad-sectors-196351en/).
 The PCB appears beside
 the mechanism as an underside inset. Directed paths show data and control;
-the passive filter has a separate dashed airflow path.
+the passive filter has a separate solid airflow path. All HDD group outlines
+and paths are solid; descriptions distinguish field coupling from conductive wires.
 HddAccessModel, HddAccessTrace, and HddAccessAnimation provide separate full-sector
 write/read lessons through WriteOneSector / ReadOneSector action folders. They
 use a 512n example: one 512-byte host logical sector is also one physical sector.
@@ -355,7 +380,10 @@ the [NAND array paper](https://www.mdpi.com/2073-431X/6/2/16) and
 The host line distinguishes the PCIe interconnect from the NVMe storage protocol,
 following the [NVMe over PCIe transport specification](https://nvmexpress.org/specification/nvme-over-pcie-transport-specification/).
 Counts follow the [SkyHigh SLC datasheet](https://www.skyhighmemory.com/download/ONFI_S34ML01G2_02_04_Page_2KB_002_00499.pdf).
-Power rails are dashed and optional parts are labeled in text.
+Power rails are solid amber and optional parts are labeled in text. All hardware
+power lines retain their original colors with solid strokes. NAND command, bias,
+wordline, and data paths use separate routing lanes; the sequencer bypass runs
+on the opposite side of the functional blocks.
 SSD offers two independent page overviews through SsdPageModel, SsdPageTrace,
 SsdPageAnimation, and action folders WriteOnePage / ReadOnePage. Each transfers
 one actual 2 KiB byte array, tracking the first byte's low bit in the enlarged

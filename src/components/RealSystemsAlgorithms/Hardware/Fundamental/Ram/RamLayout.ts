@@ -50,7 +50,7 @@ export class RamLayout {
       { id: 'ram-external-dma', d: 'M340 740H20', label: 'External PCIe devices such as a GPU or Network Adapter use DMA to read or write host RAM through the CPU/SoC root complex. Software prepares and maps the memory buffers; ordinary control transactions also use PCIe. This is not a PCIe socket on the RAM module', directed: true, bidirectional: true, highlighted: false, caption: { text: 'PCIe / DMA', x: 20, y: 772 } },
       { id: 'ram-dma-memory-controller', d: 'M490 620V500', label: 'Device DMA / root complex and host memory fabric route requests to the memory controller; responses return on the same logical path. The controller then accesses DIMM memory over DDR', directed: true, bidirectional: true, highlighted: false },
       { id: 'ram-external-sideband', d: 'M340 1100H20', label: 'Platform management connection to the SPD sideband host / separate from DDR memory payload traffic; DDR4 SPD uses its configuration sideband', directed: true, bidirectional: true, highlighted: false, caption: { text: 'SPD / platform host', x: 20, y: 1132 } },
-      { id: 'ram-external-power', d: 'M20 1300H720', label: 'Motherboard DC supply and ground enter the DIMM socket for distribution to the module / DDR4 power rails are grouped, not an AC input', directed: true, dashed: true, stroke: '#b58a45', highlighted: false, caption: { text: 'DIMM DC power', x: 20, y: 1332 } },
+      { id: 'ram-external-power', d: 'M20 1300H720', label: 'Motherboard DC supply and ground enter the DIMM socket for distribution to the module / DDR4 power rails are grouped, not an AC input', directed: true, stroke: '#b58a45', highlighted: false, caption: { text: 'DIMM DC power', x: 20, y: 1332 } },
     )
     return framed
   }

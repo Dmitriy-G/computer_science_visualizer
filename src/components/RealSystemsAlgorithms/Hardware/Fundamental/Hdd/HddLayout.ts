@@ -155,11 +155,11 @@ export class HddLayout {
       else if (readPaths.has(id)) diagram.paths.push({ ...path, stroke: '#4c8f7d', caption: id === 'ecc-cache' ? { text: 'Read', x: 570, y: 550 } : undefined })
       else diagram.paths.push(path)
     }
-    diagram.paths.push({ id: 'airflow', d: 'M1770 755V1210H2180', label: 'Recirculating airflow carries particles to the passive filter; this is not an electrical connection', highlighted: false, directed: true, dashed: true, caption: { text: 'Airflow', x: 1900, y: 1190 } })
+    diagram.paths.push({ id: 'airflow', d: 'M1770 755V1210H2180', label: 'Recirculating airflow carries particles to the passive filter; this is not an electrical connection', highlighted: false, directed: true, caption: { text: 'Airflow', x: 1900, y: 1190 } })
     const framed = HardwareDiagramFrame.create(diagram, this.externalLeft, this.externalRight)
     framed.paths.push(
       { id: 'hdd-external-host', d: `M${1080 + this.electronicsOffset + this.externalLeft} 165H20`, label: 'External host attachment / SATA to a motherboard SATA port or compatible HBA, or SAS to a compatible SAS controller/HBA. These are drive/interface variants; one drive has one illustrated attachment. Carries commands, payloads, and completions', highlighted: false, directed: true, bidirectional: true, caption: { text: 'SATA / SAS\nHost / HBA', x: 20, y: 197 } },
-      { id: 'hdd-external-power', d: `M20 1295H${1080 + this.electronicsOffset + this.externalLeft}`, label: 'PSU DC supply through the drive power connector; internal regulation distributes power to controller, DRAM, preamp, spindle driver, and VCM driver. Supply voltages depend on form factor; AC mains does not enter the drive', highlighted: false, directed: true, dashed: true, stroke: '#b58a45', caption: { text: 'PSU DC power', x: 20, y: 1327 } },
+      { id: 'hdd-external-power', d: `M20 1295H${1080 + this.electronicsOffset + this.externalLeft}`, label: 'PSU DC supply through the drive power connector; internal regulation distributes power to controller, DRAM, preamp, spindle driver, and VCM driver. Supply voltages depend on form factor; AC mains does not enter the drive', highlighted: false, directed: true, stroke: '#b58a45', caption: { text: 'PSU DC power', x: 20, y: 1327 } },
     )
     const media = new HardwareDiagram(this.externalRight, height)
     HddStorageLayout.add(media)
@@ -169,6 +169,9 @@ export class HddLayout {
     for (const path of mediaFrame.paths) framed.paths.push(path.id === 'hdd-media-enlargement'
       ? { ...path, d: `M${mediaOffset - 20} 470H${mediaOffset + 20}`, translateX: undefined }
       : path)
+    for (let index = 0; index < framed.regions.length; index += 1) {
+      framed.regions[index] = { ...framed.regions[index], borderStyle: 'solid' }
+    }
     return framed
   }
 

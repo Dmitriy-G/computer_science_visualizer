@@ -33,14 +33,14 @@ export class SsdNandLayout {
 
   private static connect(diagram: HardwareDiagram): void {
     const paths: readonly [string, string, string, boolean][] = [
-      ['ssd-nand-command', 'M2200 850H2220V1980H2280', 'Command/address logic selects the row decoder and block/wordline address', false],
-      ['ssd-nand-bias', 'M2200 1630H2260V2020H2280', 'Voltage generator supplies read, program, and block-erase biases through row circuitry', false],
-      ['ssd-nand-wordline', 'M2300 1915V855H2360', 'Wordline / row decoder drives the selected memory-cell control gate; other series cells use pass biases', false],
+      ['ssd-nand-command', 'M2200 850H2250V1980H2280', 'Command/address logic selects the row decoder and block/wordline address', false],
+      ['ssd-nand-bias', 'M2200 1630H2280V1850H2380V1915', 'Voltage generator supplies read, program, and block-erase biases through row circuitry', false],
+      ['ssd-nand-wordline', 'M2310 1915V855H2360', 'Wordline / row decoder drives the selected memory-cell control gate; other series cells use pass biases', false],
       ['ssd-nand-bitline', 'M2960 1455H3020V1915', 'Bitline / selected series-string current reaches sense amplifiers on reads; page-buffer circuitry drives or inhibits programming', true],
-      ['ssd-nand-buffer-io', 'M3240 2045V2120H2210V1270H2200', 'Selected-column page data / NAND I/O to volatile page-buffer latches, separate from controller DMA buffers', true],
+      ['ssd-nand-buffer-io', 'M3240 2045V2120H2220V1270H2200', 'Selected-column page data / NAND I/O to volatile page-buffer latches, separate from controller DMA buffers', true],
       ['ssd-nand-die-io', 'M1820 1210H1900', 'Representative package contacts to die NAND I/O / commands, addresses, status, and page payloads share bus pins', true],
       ['ssd-nand-io-control', 'M2050 1090V970', 'NAND I/O supplies commands and addresses to the operation sequencer', false],
-      ['ssd-nand-sequencer', 'M2200 910H2240V1570H2200', 'Command sequencer starts voltage generation and read/program/erase control', false],
+      ['ssd-nand-sequencer', 'M1900 910H1880V1570H1900', 'Command sequencer starts voltage generation and read/program/erase control', false],
     ]
     for (const [id, d, label, bidirectional] of paths) diagram.paths.push({ id, d, label, directed: true, bidirectional, highlighted: false, strokeWidth: 2, arrowheads: id === 'ssd-nand-die-io' ? false : undefined })
   }
