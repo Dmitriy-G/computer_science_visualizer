@@ -69,10 +69,12 @@ export interface ScenePath {
   readonly id: string
   readonly d: string
   readonly translateX?: number
+  readonly translateY?: number
   readonly label: string
   readonly highlighted: boolean
   readonly directed?: boolean
   readonly bidirectional?: boolean
+  readonly arrowheads?: boolean
   readonly dashed?: boolean
   readonly fill?: string
   readonly stroke?: string
@@ -94,6 +96,7 @@ export interface Scene {
   readonly regions?: readonly SceneRegion[]
   readonly paths?: readonly ScenePath[]
   readonly camera?: SceneCamera
+  readonly viewportFit?: 'width'
   readonly layers?: readonly SceneLayer[]
 }
 

@@ -29,22 +29,29 @@ export class SsdLessonLayout {
     const feature = state.feature === 'nand' ? 'NAND access' : state.feature === 'ftl' ? 'FTL' : state.feature === 'garbage-collection' ? 'GC' : 'wear leveling'
     const hostTransfer = state.activity === 'read' || state.activity === 'buffer' || state.activity === 'program' && state.feature !== 'nand'
     const mediaAccess = state.activity === 'program' || state.activity === 'relocate' || state.activity === 'read' || state.activity === 'sense' || state.activity === 'erase'
-    this.cell(diagram, 'host', state.activity === 'lookup' ? 'LBA lookup' : hostTransfer ? state.activity === 'read' ? 'return data' : 'write payload' : 'idle', 460, 338, 200, hostTransfer || state.activity === 'lookup')
-    this.cell(diagram, 'cpu', active ? feature : 'idle', 820, 274, 280, active)
-    this.cell(diagram, 'sram', state.metadata, 1340, 266, 540, active)
-    this.cell(diagram, 'ftl', state.location, 1150, 500, 860, active && state.feature !== 'nand')
-    this.cell(diagram, 'gc', state.feature === 'garbage-collection' && active ? 'preserve / reclaim' : 'idle', 810, 706, 260, active && state.feature === 'garbage-collection')
-    this.cell(diagram, 'wear', state.feature === 'wear-leveling' && active ? 'balance wear' : 'idle', 1150, 706, 260, active && state.feature === 'wear-leveling')
-    this.cell(diagram, 'dma', transferring ? state.data : 'no payload transfer', 810, 960, 260, transferring)
-    this.cell(diagram, 'ecc-encode', writing ? state.feature === 'nand' && state.activity === 'program' ? 'encoded (concept)' : 'encode (concept)' : 'idle', 1150, 908, 260, writing)
-    this.cell(diagram, 'ecc-decode', reading ? state.activity === 'sense' ? 'await ECC stage' : 'decode (concept)' : 'idle', 1150, 1088, 260, reading && state.activity !== 'sense')
-    this.cell(diagram, 'controller', state.failed ? 'program failed' : mediaAccess ? state.activity : 'idle', 1510, 875, 260, mediaAccess)
+    this.cell(diagram, 'host', state.activity === 'lookup' ? 'LBA lookup' : hostTransfer ? state.activity === 'read' ? 'return data' : 'write payload' : 'idle', hostTransfer || state.activity === 'lookup')
+    this.cell(diagram, 'cpu', active ? feature : 'idle', active)
+    this.cell(diagram, 'sram', state.metadata, active)
+    this.cell(diagram, 'ftl', state.location, active && state.feature !== 'nand')
+    this.cell(diagram, 'gc', state.feature === 'garbage-collection' && active ? 'preserve / reclaim' : 'idle', active && state.feature === 'garbage-collection')
+    this.cell(diagram, 'wear', state.feature === 'wear-leveling' && active ? 'balance wear' : 'idle', active && state.feature === 'wear-leveling')
+    this.cell(diagram, 'dma', transferring ? state.data : 'no payload transfer', transferring)
+    this.cell(diagram, 'ecc-encode', writing ? state.feature === 'nand' && state.activity === 'program' ? 'encoded (concept)' : 'encode (concept)' : 'idle', writing)
+    this.cell(diagram, 'ecc-decode', reading ? state.activity === 'sense' ? 'await ECC stage' : 'decode (concept)' : 'idle', reading && state.activity !== 'sense')
+    this.cell(diagram, 'controller', state.failed ? 'program failed' : mediaAccess ? state.activity : 'idle', mediaAccess)
     this.activate(diagram, state)
     return diagram
   }
 
-  private static cell(diagram: HardwareDiagram, id: string, value: string, x: number, y: number, width: number, active: boolean): void {
-    diagram.fixture(`ssd-state-${id}`, '', value, x + SsdLayout.externalLeft, y, '', width, 26)
+  private static cell(diagram: HardwareDiagram, id: string, value: string, active: boolean): void {
+    const regions: Readonly<Record<string, string>> = {
+      host: 'ssd-host-interface', cpu: 'ssd-cpu', sram: 'ssd-sram', ftl: 'ssd-physical-address',
+      gc: 'ssd-garbage-collection', wear: 'ssd-wear-leveling', dma: 'ssd-dma',
+      'ecc-encode': 'ssd-ecc-encode', 'ecc-decode': 'ssd-ecc-decode', controller: 'ssd-nand-command-io',
+    }
+    const region = diagram.regions.find((candidate) => candidate.id === regions[id])
+    if (!region) throw new Error(`Missing SSD state region: ${id}`)
+    diagram.fixture(`ssd-state-${id}`, '', value, region.x + region.width / 2, region.y + region.height - 30, '', region.width - 40, 26)
     const index = diagram.fixtures.length - 1
     diagram.fixtures[index] = { ...diagram.fixtures[index], tone: active ? 'active' : 'default' }
   }
@@ -93,21 +100,37 @@ export class SsdLessonLayout {
       const path = diagram.paths[index]
       if (!ids.has(path.id)) continue
       let d = path.d
-      if (reading) {
-        if (path.id === 'ssd-data-interface') d = 'M340 305H260'
-        if (path.id === 'ssd-interface-dma') d = 'M660 960H600V305H580'
-        if (path.id === 'ssd-channel-0') d = 'M1740 890H1660'
-        if (path.id === 'ssd-channel-0-package-0') d = 'M1820 360H1740'
-        if (path.id === 'ssd-nand-die-io') d = 'M1900 1540H1880V1700H1830V360H1820'
-      } else if (path.id === 'ssd-channel-0-shared-bus') d = 'M1740 890V360'
-      if (writing) {
-        if (path.id === 'ssd-nand-buffer-io') d = 'M2180 1540H2200V1640H2600V1570H2640'
-        if (path.id === 'ssd-nand-bitline') d = 'M2740 1480V1460H2900V1250H2840'
-      }
+      if (reading && (path.id === 'ssd-data-interface' || path.id === 'ssd-interface-dma' || path.id === 'ssd-channel-0' || path.id === 'ssd-channel-0-package-0' || path.id === 'ssd-nand-die-io')) d = this.reverse(path.d)
+      if (!reading && path.id === 'ssd-channel-0-shared-bus') d = this.reverse(path.d)
+      if (writing && (path.id === 'ssd-nand-buffer-io' || path.id === 'ssd-nand-bitline')) d = this.reverse(path.d)
       const mediaData = path.id === 'ssd-channel-0' || path.id === 'ssd-channel-0-shared-bus' || path.id === 'ssd-channel-0-package-0' || path.id === 'ssd-nand-die-io' || path.id === 'ssd-nand-buffer-io' || path.id === 'ssd-nand-bitline'
       const relocating = activity === 'relocate' && mediaData
       const control = path.id === 'ssd-cpu-sram' || path.id === 'ssd-sram-ftl' || path.id === 'ssd-ftl-gc' || path.id === 'ssd-ftl-wear' || path.id === 'ssd-ftl-nand'
       diagram.paths[index] = { ...path, d, highlighted: true, directed: true, bidirectional: relocating || control && path.bidirectional, label: `${path.label} / current ${activity}${state.failed ? ' attempt failed' : ''}` }
     }
+  }
+
+  private static reverse(path: string): string {
+    const tokens = path.match(/[MHV]|-?\d+(?:\.\d+)?/g) ?? []
+    const points: { x: number, y: number }[] = []
+    let x = 0
+    let y = 0
+    for (let index = 0; index < tokens.length;) {
+      const command = tokens[index++]
+      if (command === 'M') {
+        x = Number(tokens[index++])
+        y = Number(tokens[index++])
+      } else if (command === 'H') x = Number(tokens[index++])
+      else if (command === 'V') y = Number(tokens[index++])
+      else throw new Error('SSD connections must use orthogonal paths')
+      points.push({ x, y })
+    }
+    let result = ''
+    for (let index = points.length - 1; index >= 0; index -= 1) {
+      const point = points[index]
+      if (index === points.length - 1) result = `M${point.x} ${point.y}`
+      else result += point.x === points[index + 1].x ? `V${point.y}` : `H${point.x}`
+    }
+    return result
   }
 }

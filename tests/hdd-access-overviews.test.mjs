@@ -7,6 +7,7 @@ import { HddMediaExample } from '../src/components/RealSystemsAlgorithms/Hardwar
 import { HardwareSnapshot } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/HardwareSnapshot.ts'
 import { ComponentFlowTrace } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/ComponentFlowTrace.ts'
 import { SystemOverviewLayout } from '../src/components/RealSystemsAlgorithms/SystemOverview/SystemOverviewLayout.ts'
+import { HddViewportLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Hdd/HddViewportLayout.ts'
 
 class AccessPosition {
   static align(model) {
@@ -203,4 +204,47 @@ test('HDD example capacity agrees with its complete surface/track/sector hierarc
   const enclosure = regions.get('hdd-enclosure')
   assert.ok(enclosure.x + enclosure.width < detail.x, 'the enlargement sits to the right of the mechanical assembly')
   assert.ok(detail.y + detail.height <= scene.height)
+})
+
+test('HDD viewport framing keeps its three-column layout at a readable width', () => {
+  const preview = SystemOverviewLayout.still(SystemOverviewLayout.create('hdd', null))
+  const original = structuredClone(preview)
+  const presented = HddViewportLayout.present(preview)
+  const layer = presented.layers.find((candidate) => candidate.id === 'hdd-components')
+  const pcb = layer.scene.regions.find((region) => region.id === 'hdd-electronics')
+  const mechanism = layer.scene.regions.find((region) => region.id === 'hdd-enclosure')
+  const media = layer.scene.regions.find((region) => region.id === 'hdd-storage-detail')
+  assert.ok(pcb.x + pcb.width < mechanism.x)
+  assert.ok(mechanism.x + mechanism.width < media.x)
+  assert.equal(pcb.y, mechanism.y)
+  assert.equal(mechanism.y, media.y)
+  assert.equal(presented.layers, preview.layers)
+  assert.equal(presented.camera, preview.camera)
+  assert.equal(presented.viewportFit, 'width')
+  assert.equal(presented.width, layer.scene.width + 40)
+  assert.equal(presented.height, layer.scene.height + 40)
+  assert.deepEqual(preview, original)
+  const ram = SystemOverviewLayout.create('ram', null)
+  assert.equal(HddViewportLayout.present(ram), ram)
+})
+
+test('HDD width framing preserves playback geometry, states, highlights, and camera', () => {
+  const preview = SystemOverviewLayout.still(SystemOverviewLayout.create('hdd', null))
+  for (const kind of ['hdd-write-sector', 'hdd-read-sector']) {
+    const plan = HddAlgorithmCatalog.definition(kind).create(new HardwareSnapshot())
+    const field = kind === 'hdd-write-sector' ? 'hdd-storage-write-field' : 'hdd-storage-read-field'
+    const active = plan.steps.find((step) => step.scene.paths.some((path) => path.id === field && path.highlighted))
+    for (const step of [plan.steps[0], active, plan.steps.at(-1)]) {
+      const original = structuredClone(step.scene)
+      const presented = ComponentFlowTrace.present(step.scene, preview, 'hdd-components')
+      const framed = HddViewportLayout.present(presented)
+      assert.equal(framed.layers, presented.layers)
+      assert.equal(framed.layers.find((layer) => layer.id === 'hdd-components').scene, step.scene)
+      assert.equal(framed.camera, preview.camera)
+      assert.equal(framed.viewportFit, 'width')
+      assert.equal(framed.width, step.scene.width + 40)
+      assert.equal(framed.height, step.scene.height + 40)
+      assert.deepEqual(step.scene, original)
+    }
+  }
 })

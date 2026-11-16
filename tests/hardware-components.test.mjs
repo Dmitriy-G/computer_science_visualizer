@@ -302,7 +302,7 @@ test('HDD sector playback shares the category schematic and its connected compon
   const common = HddLayout.diagram()
   const lesson = new HddSectorModel().snapshot().diagram
   assert.deepEqual(lesson.regions.slice(0, common.regions.length), common.regions)
-  for (const id of ['head-preamp', 'preamp-head', 'write-preamp', 'preamp-read', 'cache-ecc', 'ecc-cache', 'host-cache', 'cache-host', 'controller-map', 'controller-servo', 'servo-driver', 'servo-feedback', 'driver-actuator', 'driver-spindle', 'power-vcm', 'power-spindle']) {
+  for (const id of ['head-preamp', 'preamp-head', 'write-preamp', 'preamp-read', 'cache-ecc', 'ecc-cache', 'host-cache', 'cache-host', 'controller-map', 'controller-servo', 'servo-driver', 'servo-feedback', 'driver-actuator', 'driver-spindle', 'hdd-external-power']) {
     assert.equal(common.paths.find((path) => path.id === id).directed, true)
     assert.ok(lesson.paths.some((path) => path.id === id))
   }

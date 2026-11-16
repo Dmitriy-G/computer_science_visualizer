@@ -17,15 +17,15 @@ export class RamBitLayout {
       const region = diagram.regions[index]
       if (region.shortLabel) diagram.regions[index] = { ...region, shortLabel: region.shortLabel.replace(/\s*\(~[^)]*\)/g, '') }
     }
-    this.state(diagram, 'controller', model.controllerData === null ? 'waiting' : String(model.controllerData), 200, 355, 260)
+    this.state(diagram, 'controller', model.controllerData === null ? 'waiting' : String(model.controllerData), 190, 395, 260)
     this.state(diagram, 'socket-command', model.socketCommand ?? 'idle', 550, 355, 220)
-    this.state(diagram, 'socket-data', model.socketData === null ? 'no data' : String(model.socketData), 550, 780, 220)
-    this.state(diagram, 'control', model.controlCommand ?? 'idle', 1270, 355, 250)
-    this.state(diagram, 'row', model.activeRow === null ? 'no open row' : `row ${model.row}`, 1705, 650, 210)
-    this.state(diagram, 'refresh', 'idle', 1270, 710, 240)
+    this.state(diagram, 'socket-data', model.socketData === null ? 'no data' : String(model.socketData), 550, 1100, 220)
+    this.state(diagram, 'control', model.controlCommand ?? 'idle', 1270, 395, 250)
+    this.state(diagram, 'row', model.activeRow === null ? 'no open row' : `row ${model.row}`, 1730, 505, 250)
+    this.state(diagram, 'refresh', 'idle', 1270, 740, 240)
     this.state(diagram, 'io', model.ioData === null ? 'idle' : String(model.ioData), 1270, 1100, 250)
     this.state(diagram, 'column', model.columnSelected ? `column ${model.column}: ${model.columnData ?? 'selected'}` : 'not selected', 2200, 1190, 490, 34)
-    this.state(diagram, 'sense', model.buffer ? `[${model.buffer.join(' ')}]` : 'equalized', 2200, 985, 490, 38)
+    this.state(diagram, 'sense', model.buffer ? `[${model.buffer.join(' ')}]` : 'equalized', 2200, 965, 490, 38)
     this.state(diagram, 'transistor', model.wordline ? 'ON' : 'OFF', 2070, 692, 180, 24)
     this.state(diagram, 'capacitor', DramCellVisual.chargeLabel(model.capacitorCharge), 2330, 692, 180, 24)
     this.state(diagram, 'bitline', DramCellVisual.bitlineLabel(model.bitlineLevel), 2200, 835, 300, 40)
@@ -42,7 +42,7 @@ export class RamBitLayout {
   private static addCellState(diagram: HardwareDiagram, model: RamBitModel): void {
     diagram.fixture('ram-detail-row-0', '', `Row 0: [${model.rows[0].join(' ')}]`, 2200, 475, '', 450, 28)
       .fixture('ram-detail-row-1', '', `Row 1: [${model.rows[1].join(' ')}]`, 2200, 760, '', 450, 24)
-      .fixture('ram-detail-wordline', 'Wordline', model.wordline ? 'HIGH' : 'LOW', 1705, 545, '', 200, 40)
+      .fixture('ram-detail-wordline', 'Wordline', model.wordline ? 'HIGH' : 'LOW', 1730, 570, '', 240, 40)
     for (let index = 0; index < diagram.positions.length; index += 1) {
       const position = diagram.positions[index]
       diagram.positions[index] = { ...position, x: position.x + RamLayout.externalLeft }
@@ -74,11 +74,11 @@ export class RamBitLayout {
 
   private static reverse(id: string): string {
     switch (id) {
-      case 'ram-controller-data': return 'M360 430H390V750H420'
-      case 'ram-io-socket': return 'M680 750H1040V1100H1120'
-      case 'ram-column-io': return 'M1420 1100H1460V1175H1900'
-      case 'ram-sense-column': return 'M2200 1130V1030'
-      case 'ram-bit-line-0': return 'M2070 900V850H1948V660H1960'
+      case 'ram-controller-data': return 'M340 440H420'
+      case 'ram-io-socket': return 'M680 1100H1120'
+      case 'ram-column-io': return 'M1420 1175H1900'
+      case 'ram-sense-column': return 'M2200 1110V1010'
+      case 'ram-bit-line-0': return 'M2070 880V710'
       default: throw new Error(`No reverse RAM path: ${id}`)
     }
   }

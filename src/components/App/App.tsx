@@ -477,6 +477,10 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   private navigateHardwareComponent = (target: string): void => {
+    if (target === 'hardware-fundamental') {
+      this.openAdvancedAlgorithmGroup(target, new MenuNavigation('advanced-algorithms'))
+      return
+    }
     for (const group of AdvancedAlgorithmCatalog.getGroups('hardware-fundamental')) {
       if (group.kind !== target) continue
       this.openAdvancedAlgorithmGroup(group.kind, new MenuNavigation('advanced-algorithms', null, 'fundamental', 'hardware-fundamental'))
@@ -559,6 +563,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       algorithm: this.state.componentAlgorithm,
       previewScene: this.state.scene,
       onBack: this.openMenu,
+      backTarget: this.state.hardwareOverview === 'hardware-fundamental' ? undefined : this.state.hardwareOverview === 'hardware-bus' ? 'hardware-fundamental' : 'hardware-bus',
       onNavigate: this.navigateHardwareComponent,
       onSelect: this.selectComponentAlgorithm,
       onInformation: this.showComponentInformation,

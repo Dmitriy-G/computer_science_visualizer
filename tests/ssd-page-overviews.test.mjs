@@ -6,6 +6,7 @@ import { SsdAlgorithmCatalog } from '../src/components/RealSystemsAlgorithms/Har
 import { HardwareSnapshot } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/HardwareSnapshot.ts'
 import { SystemOverviewLayout } from '../src/components/RealSystemsAlgorithms/SystemOverview/SystemOverviewLayout.ts'
 import { ComponentFlowTrace } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/ComponentFlowTrace.ts'
+import { HardwareBlockSizes } from '../src/visualization/HardwareBlockSizes.ts'
 
 test('a complete page is programmed before mapping publication, with independent buffers and neighboring data', () => {
   const memory = new SsdPageModel('write')
@@ -113,6 +114,112 @@ test('the SSD source return ends on the named source terminal', () => {
     else if (command === 'V') y = Number(tokens[index++])
     else assert.fail('Source return must use supported orthogonal routing')
   }
-  assert.equal(x + path.translateX, terminal.x)
-  assert.ok(y >= terminal.y && y <= terminal.y + terminal.height)
+  assert.equal(y, terminal.y)
+  assert.ok(x + path.translateX >= terminal.x && x + path.translateX <= terminal.x + terminal.width)
+})
+
+function routePoints(path) {
+  const tokens = path.d.match(/[MHV]|-?\d+(?:\.\d+)?/g)
+  const points = []
+  let x = 0
+  let y = 0
+  for (let index = 0; index < tokens.length;) {
+    const command = tokens[index++]
+    if (command === 'M') {
+      x = Number(tokens[index++])
+      y = Number(tokens[index++])
+    } else if (command === 'H') x = Number(tokens[index++])
+    else if (command === 'V') y = Number(tokens[index++])
+    else assert.fail('SSD connection must be orthogonal')
+    points.push({ x: x + (path.translateX ?? 0), y })
+  }
+  return points
+}
+
+test('SSD uses standard leaf sizes, one power input, and aligned peripheral blocks', () => {
+  const diagram = SsdLayout.diagram()
+  const regions = new Map(diagram.regions.map((region) => [region.id, region]))
+  assert.ok(!regions.has('ssd-motherboard'))
+  assert.ok(!regions.has('ssd-plp'))
+  assert.ok(!regions.has('ssd-power-management'))
+  assert.deepEqual(diagram.paths.filter((path) => /power/.test(path.id)).map((path) => path.id), ['ssd-external-power'])
+  const parents = new Set(diagram.regions.map((region) => region.parentId))
+  const sizes = [HardwareBlockSizes.common, HardwareBlockSizes.small, HardwareBlockSizes.wide, HardwareBlockSizes.tall]
+  for (const region of regions.values()) {
+    if (parents.has(region.id)) continue
+    assert.ok(sizes.some((size) => size.width === region.width && size.height === region.height), region.id)
+  }
+  const wear = regions.get('ssd-wear-leveling')
+  const ecc = regions.get('ssd-ecc')
+  assert.equal(wear.x + wear.width / 2, ecc.x + ecc.width / 2)
+  const row = regions.get('ssd-nand-row-decoder')
+  const buffer = regions.get('ssd-nand-page-buffer')
+  assert.deepEqual([row.width, row.height], [HardwareBlockSizes.wide.width, HardwareBlockSizes.wide.height])
+  assert.deepEqual([buffer.width, buffer.height], [row.width, row.height])
+  assert.equal(row.y, buffer.y)
+  assert.equal(buffer.x - row.x - row.width, 60)
+  const input = regions.get('ssd-power-input')
+  const end = routePoints(diagram.paths.find((path) => path.id === 'ssd-external-power')).at(-1)
+  assert.equal(end.x, input.x)
+  assert.ok(end.y > input.y && end.y < input.y + input.height)
+})
+
+test('SSD NAND bus enters die I/O directly without vertical detours or duplicate static arrows', () => {
+  const diagram = SsdLayout.diagram()
+  const io = diagram.regions.find((region) => region.id === 'ssd-nand-io')
+  const paths = new Map(diagram.paths.map((path) => [path.id, path]))
+  const ids = ['ssd-channel-0', 'ssd-channel-0-shared-bus', 'ssd-channel-0-package-0', 'ssd-nand-die-io']
+  const segments = ids.map((id) => routePoints(paths.get(id)))
+  for (const id of ids) {
+    const path = paths.get(id)
+    assert.match(path.d, /^M\d+ \d+H\d+$/)
+    assert.equal(path.arrowheads, false)
+    for (const point of routePoints(path)) assert.equal(point.y, io.y + io.height / 2)
+  }
+  assert.deepEqual(segments[0].at(-1), segments[1].at(-1))
+  assert.deepEqual(segments[1][0], segments[2][0])
+  assert.deepEqual(segments[2].at(-1), segments[3][0])
+  assert.equal(segments[3].at(-1).x, io.x)
+})
+
+test('SSD signal routes remain attached to their named source and destination blocks', () => {
+  const diagram = SsdLayout.diagram()
+  const regions = new Map(diagram.regions.map((region) => [region.id, region]))
+  const paths = new Map(diagram.paths.map((path) => [path.id, path]))
+  const touches = (point, id) => {
+    const region = regions.get(id)
+    return ((point.x === region.x || point.x === region.x + region.width) && point.y >= region.y && point.y <= region.y + region.height)
+      || ((point.y === region.y || point.y === region.y + region.height) && point.x >= region.x && point.x <= region.x + region.width)
+  }
+  for (const [id, from, to] of [
+    ['ssd-data-interface', 'ssd-data', 'ssd-host-interface'],
+    ['ssd-interface-dma', 'ssd-host-interface', 'ssd-dma'],
+    ['ssd-buffer-encode', 'ssd-dma', 'ssd-ecc-encode'],
+    ['ssd-encode-nand', 'ssd-ecc-encode', 'ssd-nand-controllers'],
+    ['ssd-nand-decode', 'ssd-nand-controllers', 'ssd-ecc-decode'],
+    ['ssd-decode-buffer', 'ssd-ecc-decode', 'ssd-dma'],
+    ['ssd-controller-dram', 'ssd-dma', 'ssd-dram'],
+    ['ssd-host-ftl', 'ssd-host-interface', 'ssd-ftl'],
+    ['ssd-firmware-load', 'ssd-firmware-nvm', 'ssd-sram'],
+    ['ssd-cpu-sram', 'ssd-cpu', 'ssd-sram'],
+    ['ssd-cpu-ftl', 'ssd-cpu', 'ssd-ftl'],
+    ['ssd-cpu-nand', 'ssd-cpu', 'ssd-nand-controllers'],
+    ['ssd-sram-ftl', 'ssd-sram', 'ssd-ftl'],
+    ['ssd-ftl-gc', 'ssd-ftl', 'ssd-garbage-collection'],
+    ['ssd-ftl-wear', 'ssd-ftl', 'ssd-wear-leveling'],
+    ['ssd-ftl-dma', 'ssd-ftl', 'ssd-dma'],
+    ['ssd-ftl-nand', 'ssd-ftl', 'ssd-nand-controllers'],
+    ['ssd-nand-command', 'ssd-nand-control', 'ssd-nand-row-decoder'],
+    ['ssd-nand-bias', 'ssd-nand-voltage', 'ssd-nand-row-decoder'],
+    ['ssd-nand-wordline', 'ssd-nand-row-decoder', 'ssd-nand-gate'],
+    ['ssd-nand-bitline', 'ssd-nand-conduction', 'ssd-nand-page-buffer'],
+    ['ssd-nand-buffer-io', 'ssd-nand-page-buffer', 'ssd-nand-io'],
+    ['ssd-nand-io-control', 'ssd-nand-io', 'ssd-nand-control'],
+    ['ssd-nand-sequencer', 'ssd-nand-control', 'ssd-nand-voltage'],
+    ['ssd-nand-source-line', 'ssd-nand-conduction', 'ssd-nand-source-terminal'],
+  ]) {
+    const points = routePoints(paths.get(id))
+    assert.ok(touches(points[0], from), `${id} starts at ${from}`)
+    assert.ok(touches(points.at(-1), to), `${id} ends at ${to}`)
+  }
 })

@@ -399,7 +399,7 @@ export default class Renderer extends Component<
     for (const node of scene.nodes) nodeMap.set(node.id, node)
     for (const path of scene.paths ?? []) elements.push(
       <g key={`path-${path.id}`}>
-        <path className={`scene-edge${path.highlighted ? ' scene-edge-highlighted' : ''}${path.dashed ? ' scene-edge--dashed' : ''}`} d={path.d} transform={path.translateX ? `translate(${path.translateX} 0)` : undefined} markerStart={path.bidirectional ? `url(#${path.highlighted ? 'active-arrow' : 'default-arrow'})` : undefined} markerEnd={path.directed ? `url(#${path.highlighted ? 'active-arrow' : 'default-arrow'})` : undefined} style={{ fill: path.fill, stroke: path.highlighted ? undefined : path.stroke, strokeWidth: path.strokeWidth }} role="img" aria-label={path.label}><title>{path.label}</title></path>
+        <path className={`scene-edge${path.highlighted ? ' scene-edge-highlighted' : ''}${path.dashed ? ' scene-edge--dashed' : ''}`} d={path.d} transform={path.translateX || path.translateY ? `translate(${path.translateX ?? 0} ${path.translateY ?? 0})` : undefined} markerStart={(path.highlighted || path.arrowheads !== false) && path.bidirectional ? `url(#${path.highlighted ? 'active-arrow' : 'default-arrow'})` : undefined} markerEnd={(path.highlighted || path.arrowheads !== false) && path.directed ? `url(#${path.highlighted ? 'active-arrow' : 'default-arrow'})` : undefined} style={{ fill: path.fill, stroke: path.highlighted ? undefined : path.stroke, strokeWidth: path.strokeWidth }} role="img" aria-label={path.label}><title>{path.label}</title></path>
         {path.caption && <text className="scene-path-caption" x={path.caption.x} y={path.caption.y}>{path.caption.text.split('\n').map((line, index) => <tspan key={index} x={path.caption!.x} dy={index === 0 ? 0 : 32}>{line}</tspan>)}</text>}
       </g>,
     )
@@ -464,8 +464,8 @@ export default class Renderer extends Component<
         width={scene.width}
         height={scene.height}
         viewBox={`${camera.x} ${camera.y} ${camera.width} ${camera.height}`}
-        preserveAspectRatio={scene.camera ? 'xMidYMid meet' : 'xMidYMin meet'}
-        style={this.state.actualSize ? { width: scene.width, height: scene.height } : { maxWidth: scene.width }}
+        preserveAspectRatio={scene.viewportFit === 'width' || !scene.camera ? 'xMidYMin meet' : 'xMidYMid meet'}
+        style={this.state.actualSize ? { width: scene.width, height: scene.height } : scene.viewportFit === 'width' ? { height: 'auto', maxWidth: 'none' } : { maxWidth: scene.width }}
         role={this.props.onNavigate && scene.kind === 'system-overview' ? 'group' : 'img'}
         aria-labelledby="scene-title scene-description"
       >
@@ -476,7 +476,7 @@ export default class Renderer extends Component<
           {scene.count} {scene.countLabel ?? 'elements'}.
           {scene.kind !== 'system-overview' && ' Blue marks the current node, teal marks visited nodes, and amber marks the new node.'}
           {this.describeHardwareFlow(scene, nodeMap)}
-          {this.state.showSizeControls && ' Use Fit diagram to see the full structure, or Actual size to scroll through its details.'}
+          {this.state.showSizeControls && (scene.viewportFit === 'width' ? ' Use Fit width for a readable diagram with vertical scrolling, or Actual size to inspect its details.' : ' Use Fit diagram to see the full structure, or Actual size to scroll through its details.')}
         </desc>
         <defs>
           <marker
@@ -557,8 +557,8 @@ export default class Renderer extends Component<
                     <button
                       type="button"
                       onClick={this.fitDiagram}
-                      aria-label="Fit diagram"
-                      title="Fit diagram"
+                        aria-label={scene?.viewportFit === 'width' ? 'Fit width' : 'Fit diagram'}
+                        title={scene?.viewportFit === 'width' ? 'Fit width' : 'Fit diagram'}
                       aria-pressed={!this.state.actualSize}
                       aria-controls="diagram-viewport"
                     >
@@ -586,7 +586,7 @@ export default class Renderer extends Component<
             {this.props.showPseudocode && <div id="renderer-code" className="renderer-code-host" ref={this.codeHost} />}
             <div
               id="diagram-viewport"
-              className="renderer-viewport"
+                className={`renderer-viewport${scene?.viewportFit === 'width' ? ' renderer-viewport--fit-width' : ''}`}
               ref={this.viewport}
               style={{ height: this.state.viewportHeight ?? undefined }}
               tabIndex={scene ? 0 : -1}

@@ -103,6 +103,14 @@
 .scene-svg--actual {
   max-width: none;
 }
+.renderer-viewport--fit-width {
+  display: flex;
+  flex-direction: column;
+}
+.renderer-viewport--fit-width > .scene-svg {
+  flex-shrink: 0;
+  margin-block: auto;
+}
 .scene-node--overview .node-label {
   font-size: 22px;
 }

@@ -37,8 +37,7 @@ export class HddAccessTrace extends ComponentFlowTrace {
     diagram.fixture('hdd-media-state', 'LBA 7 / 512 B sector', partial ? 'recording sector...' : HddAccessModel.summary(this.memory.storedData()), HddLayout.spindle.x + HddLayout.mechanicalOffset + HddLayout.externalLeft, 670, undefined, 340, 30)
     for (let index = 0; index < diagram.positions.length; index += 1) {
       const position = diagram.positions[index]
-      if (position.id === 'hdd-write-channel-state' || position.id === 'hdd-read-channel-state') diagram.positions[index] = { ...position, y: 805 }
-      else if (position.id === 'hdd-write-pole-state' || position.id === 'hdd-read-sensor-state') diagram.positions[index] = { ...position, y: 745, height: 24 }
+      if (position.id === 'hdd-write-pole-state' || position.id === 'hdd-read-sensor-state') diagram.positions[index] = { ...position, y: 745, height: 24 }
     }
   }
 

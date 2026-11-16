@@ -19,6 +19,7 @@ export interface ComponentWorkspaceProps {
   readonly previewScene: Scene | null
   readonly algorithm: HardwareOverviewKind | null
   readonly onBack: () => void
+  readonly backTarget?: HardwareWorkspaceGroupKind
   readonly onNavigate?: (target: string) => void
   readonly onSelect: (algorithm: HardwareOverviewKind) => void
   readonly onInformation: (algorithm: HardwareOverviewKind) => void
@@ -85,6 +86,11 @@ export default abstract class ComponentWorkspace extends Component<ComponentWork
   private updateScene = (scene: Scene): void => { this.setState({ scene }) }
   private complete = (): void => { this.setState({ running: false }) }
 
+  private back = (): void => {
+    if (this.props.backTarget && this.props.onNavigate) this.props.onNavigate(this.props.backTarget)
+    else this.props.onBack()
+  }
+
   private select = (event: MouseEvent<HTMLButtonElement>): void => {
     for (const choice of this.choices) if (choice.kind === event.currentTarget.dataset.algorithm) this.props.onSelect(choice.kind)
   }
@@ -121,10 +127,11 @@ export default abstract class ComponentWorkspace extends Component<ComponentWork
 
   public render(): ReactNode {
     const parent = AdvancedAlgorithmCatalog.getGroup('hardware-fundamental')
+    const backLabel = `Back to previous element: ${this.props.backTarget ? AdvancedAlgorithmCatalog.getGroup(this.props.backTarget).name : 'System Components Overview'}`
     return <>
       <Renderer ref={this.renderer} scene={this.presentScene(this.state.scene ?? this.props.previewScene)} onOpenMenu={this.props.onBack} onNavigate={this.props.onNavigate} emptyState={<></>}>
         <aside className="action-menu" aria-label="Hardware overviews">
-          <button type="button" className="text-button action-menu-back-button" onClick={this.props.onBack}>← System Components Overview</button>
+          <button type="button" className="text-button action-menu-back-button" onClick={this.back} aria-label={backLabel} title={backLabel}>← Back to previous element</button>
           <h2 ref={this.heading} tabIndex={-1}>{parent.name}</h2>
           <nav aria-label="Hardware overviews">{this.renderAlgorithms()}</nav>
         </aside>

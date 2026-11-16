@@ -64,6 +64,7 @@ for (const [layout, prefix, keys] of [
       assert.match(regions.get('cpu-socket').label, /controllers are inside the CPU die/)
     }
     if (prefix === 'ram') {
+      assert.ok(!scene.regions.some((region) => region.id === 'ram-motherboard'))
       const root = scene.regions.find((region) => region.id === 'ram-pcie-root')
       assert.equal(root.parentId, undefined, 'PCIe host context is outside the RAM module')
       assert.equal(paths.get('ram-external-dma').caption.text, 'PCIe / DMA')
@@ -73,7 +74,7 @@ for (const [layout, prefix, keys] of [
   })
 }
 
-test('HDD data, control, and DC routes terminate at their respective components', () => {
+test('HDD data, control, and DC input routes terminate at their respective components', () => {
   const diagram = HddLayout.diagram()
   const regions = new Map(diagram.regions.map((region) => [region.id, region]))
   const paths = new Map(diagram.paths.map((path) => [path.id, path]))
@@ -120,14 +121,14 @@ test('HDD data, control, and DC routes terminate at their respective components'
     assert.equal(path.bidirectional, false)
   }
   assert.ok(!paths.has('map-servo'), 'mapping remains a lookup rather than a mandatory servo control hop')
-  for (const [id, destination] of [['power-controller', 'controller'], ['power-cache', 'cache'], ['power-preamp', 'preamp'], ['power-vcm', 'vcm-driver'], ['power-spindle', 'spindle-driver']]) {
-    const path = paths.get(id)
-    const [start, end] = ends(path)
-    assert.ok(touches(start, 'power-connector'))
-    assert.ok(touches(end, destination), id)
-    assert.equal(path.dashed, true)
-    assert.equal(path.stroke, paths.get('hdd-external-power').stroke)
-  }
+  for (const id of ['power-controller', 'power-cache', 'power-preamp', 'power-vcm', 'power-spindle']) assert.ok(!paths.has(id), 'internal power fan-out is omitted')
+  const power = paths.get('hdd-external-power')
+  const [powerStart, powerEnd] = ends(power)
+  assert.equal(powerStart.x, 20)
+  assert.ok(touches(powerEnd, 'power-connector'))
+  assert.equal(power.dashed, true)
+  assert.equal(power.directed, true)
+  assert.equal(power.bidirectional, undefined)
   const head = HddLayout.headPosition(1)
   const displayedHead = { x: head.x + HddLayout.mechanicalOffset + HddLayout.externalLeft, y: head.y }
   const [writeStart, writeEnd] = ends(paths.get('preamp-head'))
@@ -138,27 +139,26 @@ test('HDD data, control, and DC routes terminate at their respective components'
   assert.deepEqual(readStart, displayedHead)
 })
 
-test('HDD places Back, PCB, mechanical assembly, and media from left to right', () => {
+test('HDD places PCB, mechanical assembly, and media in one compact row', () => {
   const scene = HddLayout.create()
   const regions = new Map(scene.regions.map((region) => [region.id, region]))
-  const back = regions.get('hdd-motherboard')
   const pcb = regions.get('hdd-electronics')
   const disk = regions.get('hdd-enclosure')
   const media = regions.get('hdd-storage-detail')
-  assert.equal(back.navigationTarget, 'hardware-bus')
-  assert.equal(back.navigationLabel, 'Back to Motherboard')
+  assert.ok(!regions.has('hdd-motherboard'))
   assert.equal(pcb.label, 'PCB / logical functions, underside view')
   assert.equal(disk.label, 'HDD / mechanical assembly')
-  const groups = [back, pcb, disk, media]
+  const groups = [pcb, disk, media]
   for (let index = 0; index < groups.length; index += 1) {
     assert.ok(groups[index].x >= 0)
     assert.ok(groups[index].x + groups[index].width <= scene.width)
+    assert.equal(groups[index].y, pcb.y)
     if (index > 0) assert.ok(groups[index - 1].x + groups[index - 1].width < groups[index].x)
   }
   for (const id of ['hdd-external-host', 'hdd-external-power']) {
     const path = scene.paths.find((candidate) => candidate.id === id)
     assert.match(path.d, /^M\d+ \d+H\d+$/)
-    assert.equal(path.caption.x > back.x + back.width, true)
+    assert.ok(path.caption.x >= 0 && path.caption.x < pcb.x)
   }
 })
 
