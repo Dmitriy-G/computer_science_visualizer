@@ -1,0 +1,134 @@
+.hardware-element-info {
+  --dialog-width: 560px;
+  padding: 0;
+  border: 1px solid #dce5f0;
+  border-radius: 14px;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 4px 18px #25374c08;
+}
+.hardware-element-info[open] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.hardware-element-info::backdrop {
+  background: #15273b47;
+  backdrop-filter: blur(3px);
+}
+.hardware-element-info .hardware-element-info-heading {
+  position: static;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 24px 16px;
+}
+.hardware-element-info-heading h2 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 600;
+}
+.hardware-element-info-heading .icon-button {
+  flex-shrink: 0;
+}
+.hardware-element-info-content {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 160px;
+  padding: 0 24px 24px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+.hardware-element-info--populated {
+  --dialog-width: 760px;
+}
+.hardware-element-info--populated .hardware-element-info-content {
+  min-height: 0;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.hardware-element-photos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.hardware-element-photo {
+  min-width: 0;
+  margin: 0;
+}
+.hardware-element-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #f5f8fc;
+}
+.hardware-element-photo figcaption {
+  margin-top: 8px;
+  font-size: 13px;
+}
+.hardware-element-photo-credit {
+  display: block;
+  margin-top: 3px;
+  color: #5d6f84;
+  font-size: 12px;
+}
+.hardware-element-info-content section {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.hardware-element-info-content h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.hardware-element-info-content p {
+  margin: 0;
+}
+.hardware-element-info-content a {
+  color: #285fa8;
+  text-underline-offset: 3px;
+}
+.hardware-element-note {
+  color: #5d6f84;
+  font-size: 13px;
+}
+.hardware-element-characteristics {
+  margin: 12px 0 0;
+}
+.hardware-element-characteristics > div {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(0, 2.3fr);
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.hardware-element-characteristics dt {
+  font-weight: 600;
+}
+.hardware-element-characteristics dd {
+  margin: 0;
+}
+.hardware-element-documentation {
+  margin: 0;
+  padding-left: 20px;
+}
+.hardware-element-documentation li + li {
+  margin-top: 8px;
+}
+@media (max-width: 560px) {
+  .hardware-element-photos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hardware-element-characteristics > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+}

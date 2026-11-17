@@ -63,11 +63,14 @@ export interface SceneRegion {
   readonly parentId?: string
   readonly navigationTarget?: string
   readonly navigationLabel?: string
+  readonly interactive?: boolean
 }
 
 
 export interface ScenePath {
   readonly id: string
+  readonly fromRegionId?: string
+  readonly toRegionId?: string
   readonly d: string
   readonly translateX?: number
   readonly translateY?: number

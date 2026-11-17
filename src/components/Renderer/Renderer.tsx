@@ -1,5 +1,5 @@
 import { Component, createRef } from 'react'
-import type { CSSProperties, KeyboardEvent, MouseEvent, ReactNode } from 'react'
+import type { CSSProperties, FocusEvent, KeyboardEvent, MouseEvent, PointerEvent, ReactNode } from 'react'
 import type {
   Scene,
   SceneEdge,
@@ -11,6 +11,8 @@ import type {
   SceneDetailRange,
 } from '../../visualization/Scene.ts'
 import { HardwareWireCrossings } from '../../visualization/HardwareWireCrossings.ts'
+import { SceneRegionInteraction } from '../../visualization/SceneRegionInteraction.ts'
+import HardwareElementInfo from '../HardwareElementInfo/HardwareElementInfo.tsx'
 import './Renderer.css'
 
 interface RendererProps {
@@ -27,13 +29,20 @@ interface RendererState {
   readonly showSizeControls: boolean
   readonly viewportHeight: number | null
   readonly camera: SceneBounds | null
+  readonly hoveredRegionId: string | null
+  readonly focusedRegionId: string | null
+  readonly selectedElement: SceneRegion | null
 }
 
 export default class Renderer extends Component<
   RendererProps,
   RendererState
 > {
-  public state: RendererState = { actualSize: false, showSizeControls: false, viewportHeight: null, camera: this.props.scene?.camera?.from ?? null }
+  public state: RendererState = {
+    actualSize: false, showSizeControls: false, viewportHeight: null,
+    camera: this.props.scene?.camera?.from ?? null,
+    hoveredRegionId: null, focusedRegionId: null, selectedElement: null,
+  }
   private readonly content = createRef<HTMLDivElement>()
   private readonly tools = createRef<HTMLDivElement>()
   private readonly codeHost = createRef<HTMLDivElement>()
@@ -41,6 +50,7 @@ export default class Renderer extends Component<
   private readonly svg = createRef<SVGSVGElement>()
   private resizeObserver: ResizeObserver | null = null
   private cameraFrame: number | null = null
+  private interactionTrigger: SVGRectElement | null = null
   private readonly reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
 
   public componentDidMount(): void {
@@ -56,6 +66,7 @@ export default class Renderer extends Component<
   }
 
   public componentDidUpdate(previous: RendererProps, previousState: RendererState): void {
+    if (previous.scene !== this.props.scene || previousState.camera !== this.state.camera) this.clearUnavailableInteraction()
     this.observeLayout()
     this.updateSizeControls()
     const cameraChanged = previous.scene?.camera !== this.props.scene?.camera
@@ -69,6 +80,7 @@ export default class Renderer extends Component<
   }
 
   public componentWillUnmount(): void {
+    this.interactionTrigger = null
     this.resizeObserver?.disconnect()
     this.resizeObserver = null
     this.cancelCamera()
@@ -362,6 +374,88 @@ export default class Renderer extends Component<
     )
   }
 
+  private get activeRegionId(): string | null {
+    return this.state.selectedElement?.id ?? this.state.hoveredRegionId ?? this.state.focusedRegionId
+  }
+
+  private findInteractiveRegion(id: string, scene: Scene | null = this.props.scene): SceneRegion | null {
+    if (!scene) return null
+    for (const region of scene.regions ?? []) {
+      if (region.id === id && region.interactive) return region
+    }
+    const cameraWidth = this.state.camera?.width ?? this.props.scene?.width ?? scene.width
+    for (const layer of scene.layers ?? []) {
+      const opacity = this.detailOpacity(layer.reveal, cameraWidth) * (layer.conceal ? 1 - this.detailOpacity(layer.conceal, cameraWidth) : 1)
+      if (opacity !== 1) continue
+      const region = this.findInteractiveRegion(id, layer.scene)
+      if (region) return region
+    }
+    return null
+  }
+
+  private clearUnavailableInteraction(): void {
+    const hoveredRegionId = this.state.hoveredRegionId && this.findInteractiveRegion(this.state.hoveredRegionId) ? this.state.hoveredRegionId : null
+    const focusedRegionId = this.state.focusedRegionId && this.findInteractiveRegion(this.state.focusedRegionId) ? this.state.focusedRegionId : null
+    const selectedElement = this.state.selectedElement && this.findInteractiveRegion(this.state.selectedElement.id) ? this.state.selectedElement : null
+    if (hoveredRegionId === this.state.hoveredRegionId && focusedRegionId === this.state.focusedRegionId && selectedElement === this.state.selectedElement) return
+    if (!selectedElement) this.interactionTrigger = null
+    this.setState({ hoveredRegionId, focusedRegionId, selectedElement })
+  }
+
+  private hoverRegion = (event: PointerEvent<SVGRectElement>): void => {
+    this.setState({ hoveredRegionId: event.currentTarget.dataset.regionId ?? null })
+  }
+
+  private leaveRegion = (event: PointerEvent<SVGRectElement>): void => {
+    if (this.state.hoveredRegionId === event.currentTarget.dataset.regionId) this.setState({ hoveredRegionId: null })
+  }
+
+  private focusRegion = (event: FocusEvent<SVGRectElement>): void => {
+    this.setState({ focusedRegionId: event.currentTarget.dataset.regionId ?? null })
+  }
+
+  private blurRegion = (event: FocusEvent<SVGRectElement>): void => {
+    if (this.state.focusedRegionId === event.currentTarget.dataset.regionId) this.setState({ focusedRegionId: null })
+  }
+
+  private openElement(trigger: SVGRectElement): void {
+    const id = trigger.dataset.regionId
+    const selectedElement = id ? this.findInteractiveRegion(id) : null
+    if (!selectedElement) return
+    this.interactionTrigger = trigger
+    trigger.focus({ preventScroll: true })
+    this.setState({ selectedElement, hoveredRegionId: null })
+  }
+
+  private clickRegion = (event: MouseEvent<SVGRectElement>): void => {
+    event.stopPropagation()
+    this.openElement(event.currentTarget)
+  }
+
+  private activateRegionByKey = (event: KeyboardEvent<SVGRectElement>): void => {
+    if (event.key !== 'Enter' && event.key !== ' ') return
+    event.preventDefault()
+    event.stopPropagation()
+    if (!event.repeat) this.openElement(event.currentTarget)
+  }
+
+  private closeElement = (): void => {
+    const trigger = this.interactionTrigger
+    this.interactionTrigger = null
+    this.setState({ selectedElement: null, hoveredRegionId: null }, () => {
+      if (trigger?.isConnected) trigger.focus({ preventScroll: true })
+    })
+  }
+
+  private renderRegionInteraction(region: SceneRegion): ReactNode {
+    const label = `About ${region.shortLabel ?? region.label}`
+    return <rect key={`region-interaction-${region.id}`} className="scene-region-interaction"
+      x={region.x} y={region.y} width={region.width} height={region.height} rx="16"
+      role="button" tabIndex={0} aria-label={label} aria-haspopup="dialog" aria-controls="hardware-element-info"
+      data-region-id={region.id} onPointerEnter={this.hoverRegion} onPointerLeave={this.leaveRegion}
+      onFocus={this.focusRegion} onBlur={this.blurRegion} onClick={this.clickRegion} onKeyDown={this.activateRegionByKey} />
+  }
+
   private navigateRegion = (event: MouseEvent<SVGRectElement>): void => {
     const target = event.currentTarget.dataset.navigationTarget
     if (target) this.props.onNavigate?.(target)
@@ -384,11 +478,11 @@ export default class Renderer extends Component<
     </rect>
   }
 
-  private renderPath(path: ScenePath, scene: Scene): ReactNode {
+  private renderPath(path: ScenePath, scene: Scene, interactionHighlighted = false): ReactNode {
     const hardwareArrow = this.isOverview(scene) && (path.directed || path.bidirectional) && (!path.fill || path.fill === 'none')
     const power = path.stroke === '#b58a45'
-    const arrow = hardwareArrow ? power ? 'hardware-power-arrow' : 'hardware-data-arrow' : path.highlighted ? 'active-arrow' : 'default-arrow'
-    const stroke = hardwareArrow ? power ? '#b58a45' : '#a6b7c9' : path.highlighted ? undefined : path.stroke
+    const arrow = interactionHighlighted ? 'hardware-interaction-arrow' : hardwareArrow ? power ? 'hardware-power-arrow' : 'hardware-data-arrow' : path.highlighted ? 'active-arrow' : 'default-arrow'
+    const stroke = interactionHighlighted ? '#2563eb' : hardwareArrow ? power ? '#b58a45' : '#a6b7c9' : path.highlighted ? undefined : path.stroke
     const strokeWidth = hardwareArrow && path.highlighted ? Math.max(3, path.strokeWidth ?? 0) : path.strokeWidth
     return (
       <g key={`path-${path.id}`}>
@@ -416,11 +510,15 @@ export default class Renderer extends Component<
     const bus = scene.regions?.some((region) => region.id === 'bus-fabric') ?? false
     const server = scene.regions?.some((region) => region.id === 'motherboard') ?? false
     const schematic = cpu || hdd || ssd || ram || gpu || networkAdapter || bus || server
-    const paths = schematic ? HardwareWireCrossings.create(scene.paths ?? []) : scene.paths ?? []
+    const interaction = navigationVisible && scene.regions?.some((region) => region.interactive && region.id === this.activeRegionId)
+    const boundaryPaths = interaction ? SceneRegionInteraction.boundaryPaths(scene, this.activeRegionId) : null
+    const sourcePaths: ScenePath[] = []
+    for (const path of scene.paths ?? []) sourcePaths.push(boundaryPaths ? { ...path, highlighted: boundaryPaths.has(path.id) } : path)
+    const paths = schematic ? HardwareWireCrossings.create(sourcePaths) : sourcePaths
     for (const region of scene.regions ?? []) elements.push(this.renderRegion(region))
     for (const slot of scene.slots ?? []) elements.push(this.renderSlot(slot))
     for (const node of scene.nodes) nodeMap.set(node.id, node)
-    for (const path of paths) if (!path.foreground) elements.push(this.renderPath(path, scene))
+    for (const path of paths) if (!path.foreground) elements.push(this.renderPath(path, scene, boundaryPaths?.has(path.id)))
     for (const edge of scene.edges)
       elements.push(this.renderEdge(edge, nodeMap))
     for (const region of scene.regions ?? []) {
@@ -462,10 +560,15 @@ export default class Renderer extends Component<
         </g>,
       )
     }
-    for (const path of paths) if (path.foreground) elements.push(this.renderPath(path, scene))
+    for (const path of paths) if (path.foreground) elements.push(this.renderPath(path, scene, boundaryPaths?.has(path.id)))
     if (this.props.onNavigate && navigationVisible) {
       for (const region of scene.regions ?? []) {
         if (region.navigationTarget) elements.push(this.renderRegionNavigation(region))
+      }
+    }
+    if (navigationVisible) {
+      for (const region of scene.regions ?? []) {
+        if (region.interactive) elements.push(this.renderRegionInteraction(region))
       }
     }
     return elements
@@ -485,7 +588,7 @@ export default class Renderer extends Component<
         viewBox={`${camera.x} ${camera.y} ${camera.width} ${camera.height}`}
         preserveAspectRatio={scene.viewportFit === 'width' || !scene.camera ? 'xMidYMin meet' : 'xMidYMid meet'}
         style={this.state.actualSize ? { width: scene.width, height: scene.height } : scene.viewportFit === 'width' ? { height: 'auto', maxWidth: 'none' } : { maxWidth: scene.width }}
-        role={this.props.onNavigate && scene.kind === 'system-overview' ? 'group' : 'img'}
+        role={this.isOverview(scene) ? 'group' : 'img'}
         aria-labelledby="scene-title scene-description"
       >
         <title id="scene-title">
@@ -526,6 +629,9 @@ export default class Renderer extends Component<
           <marker id="hardware-power-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
             <path d="M 1 1 L 7 4 L 1 7" />
           </marker>
+          <marker id="hardware-interaction-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 1 L 7 4 L 1 7" />
+          </marker>
         </defs>
         {this.renderElements(scene, camera.width)}
       </svg>
@@ -533,7 +639,7 @@ export default class Renderer extends Component<
   }
 
   private renderRegion(region: SceneRegion): ReactNode {
-    return <g key={`region-${region.id}`} className={`scene-region scene-region--${region.role}${region.level === 'system' ? ' scene-region--system' : ''}${region.color ? ` scene-region--color-${region.color}` : ''}${region.borderStyle ? ` scene-region--outline-${region.borderStyle}` : ''}`} role="group" aria-label={region.label}>
+    return <g key={`region-${region.id}`} className={`scene-region scene-region--${region.role}${region.level === 'system' ? ' scene-region--system' : ''}${region.color ? ` scene-region--color-${region.color}` : ''}${region.borderStyle ? ` scene-region--outline-${region.borderStyle}` : ''}${region.interactive && region.id === this.activeRegionId ? ' scene-region--interaction-active' : ''}`} role="group" aria-label={region.label}>
       <rect x={region.x} y={region.y} width={region.width} height={region.height} rx="16" />
     </g>
   }
@@ -640,6 +746,7 @@ export default class Renderer extends Component<
             </div>
           </div>
         </div>
+        <HardwareElementInfo elementId={this.state.selectedElement?.id ?? null} title={this.state.selectedElement ? this.state.selectedElement.shortLabel ?? this.state.selectedElement.label : null} onClose={this.closeElement} />
       </section>
     )
   }

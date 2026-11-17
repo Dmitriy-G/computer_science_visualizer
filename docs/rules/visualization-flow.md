@@ -1,9 +1,28 @@
 # Visualization flow and action animations
 
-All hardware diagrams and their playback use only two arrow colors: pale blue
+All hardware diagrams and their playback use two base arrow colors: pale blue
 (#a6b7c9) for data/control/signals, and amber (#b58a45) for AC/DC power. Arrowheads
 match the line color. Active arrows become thicker while retaining their color;
 filled state indicators and mechanism drawings keep their separate palettes.
+
+Every Network Adapter block, including nested containers, supports hover and
+keyboard focus highlighting plus click/Enter/Space activation. Highlight only
+input/output arrows crossing the selected block's subtree boundary; exclude
+arrows between its descendants. Highlight the block's IO arrows and arrowheads
+bright blue (#2563eb) to match its outline, restoring base colors afterward.
+A child opens its own element dialog instead
+of the parent's. The dialog has the selected element title and authored content,
+with empty bodies for elements awaiting information. Ethernet port / optical
+module content follows this order: real credited photographs, short Overview,
+Problem it solves, Key characteristics, and Official documentation links.
+State the named device/example for dimensions, speed, and reach; copper and
+optical connections are alternatives. Use Close/Escape/backdrop dismissal with
+focus restored to the trigger. Keep the element dialog heading outside its
+scrollable body so photographs never overlap the title or Close button. Reset
+the body to the top each time the dialog opens. Hidden or
+partially revealed layers have no interactive targets. Lessons continue while
+the dialog is open; interaction highlights temporarily replace playback arrow
+highlights and restore them on leaving the block.
 
 ## Main flow
 

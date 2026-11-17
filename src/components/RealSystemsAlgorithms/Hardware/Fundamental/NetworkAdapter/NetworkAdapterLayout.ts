@@ -43,7 +43,40 @@ export class NetworkAdapterLayout {
       { id: 'nic-external-network', d: 'M3090 710H3610', label: 'Ethernet connector or optical module to the external LAN / bidirectional link for transmit and receive', directed: true, bidirectional: true, highlighted: false, caption: { text: 'LAN / Ethernet', x: 3180, y: 688 } },
       { id: 'nic-external-power', d: 'M280 1100H570', label: 'DC power from the motherboard PCIe slot enters the adapter board / local distribution and regulation are abstracted', directed: true, stroke: '#b58a45', highlighted: false, caption: { text: 'PCIe slot DC\npower', x: 300, y: 1132 } },
     )
+    this.addInteractionTargets(framed)
     return framed
+  }
+
+  private static addInteractionTargets(diagram: HardwareDiagram): void {
+    for (let index = 0; index < diagram.regions.length; index += 1) {
+      diagram.regions[index] = { ...diagram.regions[index], interactive: true }
+    }
+    const endpoints = new Map<string, readonly [string | undefined, string | undefined]>([
+      ['nic-host-link', ['nic-host-connector', 'nic-host-interface']],
+      ['nic-host-dma', ['nic-host-interface', 'nic-dma']],
+      ['nic-dma-tx', ['nic-dma', 'nic-tx-buffer']],
+      ['nic-tx-mac', ['nic-tx-buffer', 'nic-mac']],
+      ['nic-mac-phy-tx', ['nic-mac', 'nic-phy']],
+      ['nic-phy-medium-tx', ['nic-phy', 'nic-network-connection']],
+      ['nic-medium-phy-rx', ['nic-network-connection', 'nic-phy']],
+      ['nic-phy-mac-rx', ['nic-phy', 'nic-mac']],
+      ['nic-mac-rx', ['nic-mac', 'nic-rx-buffer']],
+      ['nic-rx-dma', ['nic-rx-buffer', 'nic-dma']],
+      ['nic-config-control', ['nic-firmware', 'nic-control']],
+      ['nic-host-control', ['nic-host-interface', 'nic-control']],
+      ['nic-control-dma', ['nic-control', 'nic-dma']],
+      ['nic-control-mac', ['nic-control', 'nic-mac']],
+      ['nic-control-phy', ['nic-control', 'nic-phy']],
+      ['nic-buffer-offload', ['nic-buffers', 'nic-offload']],
+      ['nic-external-host', ['nic-host-connector', undefined]],
+      ['nic-external-network', ['nic-network-connection', undefined]],
+      ['nic-external-power', [undefined, 'nic-board']],
+    ])
+    for (let index = 0; index < diagram.paths.length; index += 1) {
+      const path = diagram.paths[index]
+      const connection = endpoints.get(path.id)
+      if (connection) diagram.paths[index] = { ...path, fromRegionId: connection[0], toRegionId: connection[1] }
+    }
   }
 
   private static connect(diagram: HardwareDiagram): void {
@@ -52,10 +85,10 @@ export class NetworkAdapterLayout {
       { id: 'nic-host-dma', d: 'M700 710H800', label: 'DMA reads transmit data from host memory and writes receive data to host memory through the host interface', highlighted: false, directed: true, bidirectional: true },
       { id: 'nic-dma-tx', d: 'M1060 675H1180', label: 'Transmit / DMA stages outgoing data in the TX buffer', highlighted: false, directed: true },
       { id: 'nic-tx-mac', d: 'M1420 675H1520', label: 'Transmit / buffered frame data to the MAC', highlighted: false, directed: true },
-      { id: 'nic-mac-phy-tx', d: 'M1780 675H1880', label: 'Transmit / MAC frame data to the PHY', highlighted: false, directed: true, caption: { text: 'TX', x: 1800, y: 655 } },
+      { id: 'nic-mac-phy-tx', d: 'M1780 675H1880', label: 'Transmit / MAC frame data to the PHY', highlighted: false, directed: true },
       { id: 'nic-phy-medium-tx', d: 'M2140 675H2280', label: 'Transmit / PHY signals to the network connection', highlighted: false, directed: true },
       { id: 'nic-medium-phy-rx', d: 'M2280 790H2140', label: 'Receive / incoming link signals to the PHY', highlighted: false, directed: true },
-      { id: 'nic-phy-mac-rx', d: 'M1880 790H1780', label: 'Receive / decoded frame data to the MAC', highlighted: false, directed: true, caption: { text: 'RX', x: 1800, y: 840 } },
+      { id: 'nic-phy-mac-rx', d: 'M1880 790H1780', label: 'Receive / decoded frame data to the MAC', highlighted: false, directed: true },
       { id: 'nic-mac-rx', d: 'M1520 790H1480V815H1420', label: 'Receive / MAC delivers accepted frames to the RX buffer', highlighted: false, directed: true },
       { id: 'nic-rx-dma', d: 'M1180 815H1100V780H1060', label: 'Receive / DMA transfers incoming frame data from the RX buffer into host memory', highlighted: false, directed: true },
       { id: 'nic-config-control', d: 'M1040 390H1100', label: 'Firmware and stored configuration used by controller management', highlighted: false, directed: true, bidirectional: true },

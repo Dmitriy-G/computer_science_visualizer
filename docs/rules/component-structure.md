@@ -278,6 +278,30 @@ Network retains Fundamental and Complex. Keep component class-based layouts in
 Hardware/Fundamental/Gpu/GpuLayout.ts and
 Hardware/Fundamental/NetworkAdapter/NetworkAdapterLayout.ts, reusing HardwareDiagram,
 Renderer schematic titles/palettes, and SystemOverviewLayout's focused layers and camera.
+Network Adapter marks its SceneRegions interactive and supplies ScenePath
+fromRegionId/toRegionId metadata for every wire, including external links.
+SceneRegionInteraction in visualization uses parentId descendants to select
+only arrows with exactly one endpoint inside the hovered/focused block.
+These interaction arrows and their arrowheads temporarily use bright blue
+(#2563eb), matching the selected block outline; base colors return afterward.
+Renderer owns hover, focus, and selected-element state and preserves playback
+snapshots. Nested elements have independent targets and dialog identities.
+HardwareElementInfo is the shared class-based dialog with a matching stylesheet;
+HardwareElementCatalog dispatches by stable region ID to information classes
+beside the owning component layout, using visualization/HardwareElementInformation.
+EthernetPortInformation beside NetworkAdapter supplies real, locally bundled
+photographs with attribution/license links, overview, problem solved, key
+characteristics, and official documentation. Scope specifications to the named
+example and distinguish copper ports from optical transceivers. The annotated
+opened-transceiver photo shows a Nortel AA1419001 1000BASE-SX Ethernet GBIC;
+its Optics, Circuit ICs, Host connector, and ID memory labels do not change the scope of
+the separately named Cisco SFP specifications. The copper photo shows an empty
+RJ45 socket with no cable attached.
+Keep the source license and per-photo modification credit. Other elements
+keep empty bodies until their information is authored. Use the shared
+dialog viewport sizing with a non-scrolling heading and a separate scrollable
+body so photos cannot pass behind the title. Use Escape/backdrop/Close dismissal and
+focus restoration. Render interaction targets only in fully visible layers.
 Motherboard replaces the former Bus/Interconnect menu entry while retaining
 hardware-bus routing, BusLayout, and the bus-components scene layer. Reuse
 HardwareDiagram, camera, renderer, and shared playback; zoom from the server

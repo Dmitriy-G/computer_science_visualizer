@@ -231,7 +231,8 @@
 .scene-edge--dashed { stroke-dasharray: 6 5; }
 #default-arrow path,
 #hardware-data-arrow path,
-#hardware-power-arrow path {
+#hardware-power-arrow path,
+#hardware-interaction-arrow path {
   fill: none;
   stroke: #a6b7c9;
   stroke-width: 1.2;
@@ -247,6 +248,9 @@
 }
 #hardware-power-arrow path {
   stroke: #b58a45;
+}
+#hardware-interaction-arrow path {
+  stroke: #2563eb;
 }
 .scene-svg--hardware .scene-edge-group > .scene-edge,
 .scene-svg--hardware #active-arrow path {
@@ -395,7 +399,8 @@
   stroke-width: 1.5;
 }
 
-.scene-region-navigation {
+.scene-region-navigation,
+.scene-region-interaction {
   fill: transparent;
   stroke: transparent;
   stroke-width: 3;
@@ -405,12 +410,19 @@
 }
 
 .scene-region-navigation:hover,
-.scene-region-navigation:focus-visible {
+.scene-region-navigation:focus-visible,
+.scene-region-interaction:focus-visible {
   stroke: #2563eb;
 }
 
-.scene-region-navigation:focus-visible {
+.scene-region-navigation:focus-visible,
+.scene-region-interaction:focus-visible {
   outline: none;
+}
+.scene-region.scene-region--interaction-active > rect {
+  stroke: #2563eb;
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
 }
 
 .scene-region-title {
