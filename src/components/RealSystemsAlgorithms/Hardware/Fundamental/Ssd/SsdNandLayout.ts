@@ -51,6 +51,7 @@ export class SsdNandLayout {
       if (region.x < 1760) continue
       let color: SceneRegion['color'] = 'green'
       if (region.id === 'ssd-die-0' || region.id === 'ssd-block-0') color = 'lavender'
+      else if (region.id === 'ssd-nand-cell') color = 'light-orange'
       else if (region.id === 'ssd-page-0' || region.id === 'ssd-nand-channel' || region.id === 'ssd-nand-gate' || region.id === 'ssd-nand-gate-insulator' || region.id === 'ssd-nand-tunnel-oxide' || region.id === 'ssd-nand-conduction') color = 'neutral'
       else if (region.id === 'ssd-nand-io' || region.id === 'ssd-nand-row-decoder' || region.id === 'ssd-nand-page-buffer' || region.id === 'ssd-nand-source-terminal') color = 'light-blue'
       diagram.regions[index] = { ...region, color }

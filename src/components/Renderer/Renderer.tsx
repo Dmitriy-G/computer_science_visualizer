@@ -385,6 +385,11 @@ export default class Renderer extends Component<
   }
 
   private renderPath(path: ScenePath, scene: Scene): ReactNode {
+    const hardwareArrow = this.isOverview(scene) && (path.directed || path.bidirectional) && (!path.fill || path.fill === 'none')
+    const power = path.stroke === '#b58a45'
+    const arrow = hardwareArrow ? power ? 'hardware-power-arrow' : 'hardware-data-arrow' : path.highlighted ? 'active-arrow' : 'default-arrow'
+    const stroke = hardwareArrow ? power ? '#b58a45' : '#a6b7c9' : path.highlighted ? undefined : path.stroke
+    const strokeWidth = hardwareArrow && path.highlighted ? Math.max(3, path.strokeWidth ?? 0) : path.strokeWidth
     return (
       <g key={`path-${path.id}`}>
         {!!path.crossingGaps?.length && <defs>
@@ -393,7 +398,7 @@ export default class Renderer extends Component<
             {path.crossingGaps.map((gap, index) => <circle key={index} cx={gap.x} cy={gap.y} r={gap.radius} fill="black" />)}
           </mask>
         </defs>}
-        <path className={`scene-edge${path.highlighted ? ' scene-edge-highlighted' : ''}${path.dashed ? ' scene-edge--dashed' : ''}`} d={path.d} transform={path.translateX || path.translateY ? `translate(${path.translateX ?? 0} ${path.translateY ?? 0})` : undefined} mask={path.crossingGaps?.length ? `url(#crossings-${path.id})` : undefined} markerStart={(path.highlighted || path.arrowheads !== false) && path.bidirectional ? `url(#${path.highlighted ? 'active-arrow' : 'default-arrow'})` : undefined} markerEnd={(path.highlighted || path.arrowheads !== false) && path.directed ? `url(#${path.highlighted ? 'active-arrow' : 'default-arrow'})` : undefined} style={{ fill: path.fill, stroke: path.highlighted ? undefined : path.stroke, strokeWidth: path.strokeWidth }} role="img" aria-label={path.label}><title>{path.label}</title></path>
+        <path className={`scene-edge${path.highlighted ? ' scene-edge-highlighted' : ''}${path.dashed ? ' scene-edge--dashed' : ''}`} d={path.d} transform={path.translateX || path.translateY ? `translate(${path.translateX ?? 0} ${path.translateY ?? 0})` : undefined} mask={path.crossingGaps?.length ? `url(#crossings-${path.id})` : undefined} markerStart={(path.highlighted || path.arrowheads !== false) && path.bidirectional ? `url(#${arrow})` : undefined} markerEnd={(path.highlighted || path.arrowheads !== false) && path.directed ? `url(#${arrow})` : undefined} style={{ fill: path.fill, stroke, strokeWidth }} role="img" aria-label={path.label}><title>{path.label}</title></path>
         {path.caption && <text className="scene-path-caption" x={path.caption.x} y={path.caption.y}>{path.caption.text.split('\n').map((line, index) => <tspan key={index} x={path.caption!.x} dy={index === 0 ? 0 : 32}>{line}</tspan>)}</text>}
       </g>
     )
@@ -474,7 +479,7 @@ export default class Renderer extends Component<
     return (
       <svg
         ref={this.svg}
-        className={`scene-svg${scene.kind === 'hardware-system' || scene.kind === 'cpu-hardware' ? ' scene-svg--hardware-flow' : ''}${ssd ? ' scene-svg--ssd' : ''}${this.state.actualSize ? ' scene-svg--actual' : ''}`}
+        className={`scene-svg${this.isOverview(scene) ? ' scene-svg--hardware' : ''}${scene.kind === 'hardware-system' || scene.kind === 'cpu-hardware' ? ' scene-svg--hardware-flow' : ''}${ssd ? ' scene-svg--ssd' : ''}${this.state.actualSize ? ' scene-svg--actual' : ''}`}
         width={scene.width}
         height={scene.height}
         viewBox={`${camera.x} ${camera.y} ${camera.width} ${camera.height}`}
@@ -513,6 +518,12 @@ export default class Renderer extends Component<
             markerHeight="6"
             orient="auto-start-reverse"
           >
+            <path d="M 1 1 L 7 4 L 1 7" />
+          </marker>
+          <marker id="hardware-data-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 1 L 7 4 L 1 7" />
+          </marker>
+          <marker id="hardware-power-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
             <path d="M 1 1 L 7 4 L 1 7" />
           </marker>
         </defs>

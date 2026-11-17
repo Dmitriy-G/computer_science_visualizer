@@ -153,8 +153,10 @@ export class HddLayout {
       const path: ScenePath = { id, d, label, highlighted, directed: true, strokeWidth: 2, bidirectional: bidirectional && state.operation === 'idle' }
       if (writePaths.has(id)) diagram.paths.push({ ...path, stroke: '#8c6aaa', caption: id === 'cache-ecc' ? { text: 'Write', x: 80, y: 550 } : undefined })
       else if (readPaths.has(id)) diagram.paths.push({ ...path, stroke: '#4c8f7d', caption: id === 'ecc-cache' ? { text: 'Read', x: 570, y: 550 } : undefined })
+      else if (id === 'driver-actuator' || id === 'driver-spindle') diagram.paths.push({ ...path, stroke: '#b58a45' })
       else diagram.paths.push(path)
     }
+    diagram.paths.push({ id: 'power-motor-drivers', d: 'M660 1295H1020V1110', label: 'DC power / drive power input and internal regulation supply the VCM and spindle motor drivers', highlighted: false, directed: true, stroke: '#b58a45', strokeWidth: 2 })
     diagram.paths.push({ id: 'airflow', d: 'M1770 755V1210H2180', label: 'Recirculating airflow carries particles to the passive filter; this is not an electrical connection', highlighted: false, directed: true, caption: { text: 'Airflow', x: 1900, y: 1190 } })
     const framed = HardwareDiagramFrame.create(diagram, this.externalLeft, this.externalRight)
     framed.paths.push(

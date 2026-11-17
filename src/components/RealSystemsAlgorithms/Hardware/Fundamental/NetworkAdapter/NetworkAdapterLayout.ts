@@ -73,6 +73,7 @@ export class NetworkAdapterLayout {
       let color: SceneRegion['color'] = 'light-orange'
       if (region.id === 'nic-board') color = 'neutral'
       else if (region.id === 'nic-controller') color = 'lavender'
+      else if (region.id === 'nic-tx-buffer' || region.id === 'nic-rx-buffer') color = 'light-blue'
       else if (region.role === 'memory') color = region.id === 'nic-firmware' ? 'light-blue' : 'green'
       else if (region.role === 'interconnect') color = 'light-blue'
       diagram.regions[index] = { ...region, color }

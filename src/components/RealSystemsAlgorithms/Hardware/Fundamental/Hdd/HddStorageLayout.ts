@@ -50,7 +50,7 @@ export class HddStorageLayout {
   }
 
   private static applyColors(diagram: HardwareDiagram): void {
-    const blue = new Set(['hdd-media-sectors', 'hdd-write-pole', 'hdd-read-sensor'])
+    const blue = new Set(['hdd-media-sectors', 'hdd-write-pole', 'hdd-read-sensor', 'hdd-recorded-bit-area'])
     const neutral = new Set(['hdd-storage-detail', 'hdd-sector-payload', 'hdd-sector-format', 'hdd-storage-head'])
     const ids = new Set(['hdd-storage-detail', 'hdd-recording-surfaces', 'hdd-media-tracks', 'hdd-media-sectors', 'hdd-sector-payload', 'hdd-sector-format', 'hdd-storage-head', 'hdd-write-pole', 'hdd-read-sensor', 'hdd-recording-film', 'hdd-recorded-bit-area', 'hdd-magnetic-grains'])
     for (let index = 0; index < diagram.regions.length; index += 1) {

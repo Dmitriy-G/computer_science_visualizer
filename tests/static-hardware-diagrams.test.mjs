@@ -117,6 +117,7 @@ test('HDD data, control, and DC input routes terminate at their respective compo
     ['controller-write', 'controller', 'write-channel'], ['controller-read', 'controller', 'read-channel'],
     ['controller-spindle', 'controller', 'spindle-driver'], ['servo-driver', 'servo-controller', 'vcm-driver'],
     ['driver-actuator', 'vcm-driver', 'actuator'],
+    ['power-motor-drivers', 'power-connector', 'motor-driver'],
   ]) {
     const path = paths.get(id)
     const [start, end] = ends(path)

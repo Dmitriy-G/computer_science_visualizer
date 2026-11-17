@@ -163,6 +163,10 @@ separate rendering system for every action.
 Keep data structure operations separate from rendering and animation timing.
 Keep the algorithm overview dialog in `src/components/AlgorithmInfo/`, outside
 the renderer. The app supplies its action information and open/close state.
+Across all hardware diagrams and their playback, render data/control/signal
+arrows pale blue (#a6b7c9) and AC/DC power arrows amber (#b58a45), with matching
+arrowheads. Use greater stroke width for active arrows while preserving these
+two colors. Filled state indicators and mechanism drawings keep their palettes.
 
 Do not render inline scene hints or step pseudocode. Use the shared Show pseudocode
 button below the node-state legend only for Data Structures Algorithms actions in
@@ -452,6 +456,9 @@ window, not direct user bits or electric charge. Use the existing playback engin
 Keep SSD geometry in Hardware/Fundamental/Ssd/SsdLayout.ts. The SSD map uses the
 shared schematic style and connects the host connector/interface, controller,
 NAND channels/packages, optional DRAM, power management, and optional PLP.
+Use opaque block colors throughout the SSD diagram, with each child a different
+color from its immediate parent. The Power input block is light red. Preserve
+these colors in the static preview and lesson playback.
 Label optional components explicitly. Keep DRAM as a controller branch rather
 than a mandatory part of the host-to-NAND path. Show controller functions and
 NAND hierarchy as logical context. SsdNandLayout draws one representative of each
@@ -484,8 +491,9 @@ from the separate Spindle Motor Driver and VCM Driver functions within the
 motor-driver group. Connect controller control directly to servo, cache, read
 processing, and write encoding; use mapping as a side lookup with defect remapping.
 Draw separate one-way Write (Cache → ECC → Write Encoder → Preamp → Head) and
-Read (Head → Preamp → Read Processing → ECC → Cache) routes. Use dashed amber
-DC feeds to controller, DRAM, preamp, and both drivers. Use arrows for signal/data
+Read (Head → Preamp → Read Processing → ECC → Cache) routes. Draw a solid amber
+DC feed from Power to the Motor drivers container, supplying both motor drivers.
+Other internal supply distribution is abstracted. Use arrows for signal/data
 and motor control, and a distinct dashed airflow path to the passive filter.
 Electronic blocks are logical functions, not separate-chip or exact-wiring claims.
 Scene camera bounds and detail layers let Renderer animate one continuous zoom and progressively
@@ -512,14 +520,18 @@ only, preserving the detailed Motherboard workspace zoom.
 Show actual storage devices: NVMe uses PCIe, SATA SSD uses PCH SATA, and HDD
 illustrates the optional SATA/SAS HBA path. Give each device one controller path.
 Keep these three storage cables geometrically separate, with no intersections
-or shared segments. Place HDD beneath HBA; use distinct blue PCIe/NVMe, green
-native SATA, and purple HBA SATA/SAS strokes. Omit visible text on the two SSD
+or shared segments. Place HDD beneath HBA; use pale blue for PCIe/NVMe,
+native SATA, and HBA SATA/SAS strokes. Omit visible text on the two SSD
 cables, retaining protocol names in their tooltips and accessibility labels.
 Native SATA can serve SATA HDDs, and the optional HBA can serve compatible
 SATA/SAS SSDs as alternatives; never attach the NVMe example to this HBA.
 Retain USB and management LAN port connections in the main map. Omit PCH USB/SPI,
 BMC management sideband, and standby-power wiring from this main map.
-Visible data links are solid; PSU delivery is dashed amber.
+Visible data and power links are solid; DC power is amber. PSU feeds the
+motherboard, GPU auxiliary input, and HDD. Show separate short DC attachments
+from CPU/DIMM sockets, GPU/NIC PCIe slots, and the M.2 socket to their devices,
+below their data attachments. The main-map SSD is an M.2 NVMe example powered
+through its socket, with no separate PSU cable; its visible device title is SSD.
 Anchor internal path endpoints to named component boundaries.
 Keep platform variants in tooltips/accessibility descriptions. Do not add empty
 categories for these new context blocks or duplicate the CPU summary in another layer.

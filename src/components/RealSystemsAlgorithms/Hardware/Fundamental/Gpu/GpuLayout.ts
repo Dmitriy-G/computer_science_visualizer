@@ -84,11 +84,11 @@ export class GpuLayout {
       const region = diagram.regions[index]
       if (region.color) continue
       let color: SceneRegion['color'] = 'light-orange'
-      if (region.id === 'gpu-board' || region.id === 'gpu-power') color = 'neutral'
+      if (region.id === 'gpu-board') color = 'neutral'
       else if (region.id === 'gpu-die') color = 'lavender'
       else if (region.id === 'gpu-compute-clusters') color = 'light-blue'
       else if (region.id === 'gpu-cache' || region.id === 'gpu-vram') color = 'green'
-      else if (region.role === 'interconnect') color = 'light-blue'
+      else if (region.role === 'interconnect' || region.id === 'gpu-power') color = 'light-blue'
       diagram.regions[index] = { ...region, color }
     }
   }

@@ -229,7 +229,9 @@
   stroke-width: 2;
 }
 .scene-edge--dashed { stroke-dasharray: 6 5; }
-#default-arrow path {
+#default-arrow path,
+#hardware-data-arrow path,
+#hardware-power-arrow path {
   fill: none;
   stroke: #a6b7c9;
   stroke-width: 1.2;
@@ -242,6 +244,17 @@
   stroke-width: 1.2;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+#hardware-power-arrow path {
+  stroke: #b58a45;
+}
+.scene-svg--hardware .scene-edge-group > .scene-edge,
+.scene-svg--hardware #active-arrow path {
+  stroke: #a6b7c9;
+}
+.scene-svg--hardware .scene-edge-group > .scene-edge-highlighted,
+.scene-svg--hardware .scene-edge-group > .scene-edge-flow {
+  stroke-width: 3;
 }
 .scene-legend {
   display: flex;
@@ -450,6 +463,11 @@
   fill: #faf6ec;
   fill-opacity: 1;
   stroke: #d8bd85;
+}
+.scene-region--color-light-red > rect {
+  fill: #fbeeee;
+  fill-opacity: 1;
+  stroke: #dfb1b1;
 }
 .scene-edge-flow {
   stroke: #2563bd;

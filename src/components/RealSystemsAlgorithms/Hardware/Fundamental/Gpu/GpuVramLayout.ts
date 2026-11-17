@@ -40,8 +40,8 @@ export class GpuVramLayout {
   }
 
   private static applyColors(diagram: HardwareDiagram): void {
-    const green = new Set(['gpu-vram', 'gpu-vram-control', 'gpu-vram-refresh', 'gpu-vram-cell'])
-    const blue = new Set(['gpu-vram-chip', 'gpu-vram-bank', 'gpu-vram-io', 'gpu-vram-row-decoder', 'gpu-vram-array', 'gpu-vram-sense', 'gpu-vram-column-decoder'])
+    const green = new Set(['gpu-vram', 'gpu-vram-bank', 'gpu-vram-control', 'gpu-vram-refresh', 'gpu-vram-cell'])
+    const blue = new Set(['gpu-vram-chip', 'gpu-vram-io', 'gpu-vram-row-decoder', 'gpu-vram-array', 'gpu-vram-sense', 'gpu-vram-column-decoder'])
     for (let index = 0; index < diagram.regions.length; index += 1) {
       const region = diagram.regions[index]
       if (region.id !== 'gpu-vram' && !region.id.startsWith('gpu-vram-')) continue

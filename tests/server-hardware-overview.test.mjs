@@ -60,7 +60,7 @@ test('server components are independent of the motherboard physical platform', (
   assert.deepEqual(scene.regions.filter((region) => region.parentId === 'motherboard').map((region) => region.id).sort(), connectors.slice().sort())
   for (const id of ['chipset-pch', 'bmc', 'firmware-flash']) assert.ok(!regions.has(id), id + ' is omitted from the main map')
   assert.equal(scene.count, scene.regions.length - 1)
-  assert.equal(regions.get('ssd').shortLabel, 'NVMe SSD')
+  assert.equal(regions.get('ssd').shortLabel, 'SSD')
   for (const id of ['sata-ssd', 'raid-hba', 'hba-slot']) assert.ok(!regions.has(id))
   for (const [left, right] of [['cpu', 'ram'], ['gpu', 'hdd'], ['psu', 'network-adapter']]) {
     assert.equal(regions.get(left).y, regions.get(right).y, left + ' aligns with ' + right)
@@ -114,15 +114,26 @@ test('main server links have physical endpoints and distinguish standards from p
     assert.equal(path.bidirectional, true)
     assert.ok(!path.dashed, id + ' carries data on a solid line')
   }
-  for (const [id, target] of [['psu-motherboard', 'motherboard'], ['psu-gpu', 'gpu'], ['psu-hdd', 'hdd'], ['psu-ssd', 'ssd']]) {
+  const powerLinks = [
+    ['psu-motherboard', 'psu', 'motherboard'],
+    ['psu-gpu', 'psu', 'gpu'],
+    ['psu-hdd', 'psu', 'hdd'],
+    ['socket-cpu-power', 'cpu-socket', 'cpu'],
+    ['dimm-ram-power', 'dimm-sockets', 'ram'],
+    ['slot-gpu-power', 'gpu-slot', 'gpu'],
+    ['slot-nic-power', 'nic-slot', 'network-adapter'],
+    ['socket-ssd-power', 'nvme-connector', 'ssd'],
+  ]
+  for (const [id, source, target] of powerLinks) {
     const path = paths.get(id)
     const route = points(path)
-    assert.ok(touches(route[0], regions.get('psu')))
+    assert.ok(touches(route[0], regions.get(source)))
     assert.ok(touches(route.at(-1), regions.get(target)))
     assert.ok(!path.dashed)
     assert.equal(path.bidirectional, false)
     assert.match(path.label, /power/i)
   }
+  assert.ok(!paths.has('psu-ssd'), 'the M.2 SSD receives power through its motherboard socket')
   for (const id of ['cpu-ram', 'cpu-gpu', 'cpu-nic', 'cpu-nvme', 'cpu-hba']) assert.ok(!paths.has(id), id + ' belongs only in the detailed motherboard map')
   for (const id of ['cpu-pch', 'pch-sata', 'pch-usb', 'pch-firmware', 'pch-bmc', 'bmc-management-lan', 'psu-bmc-standby']) assert.ok(!paths.has(id), id + ' must not point to an omitted component')
   assert.match(paths.get('nvme-ssd').label, /Direct PCIe.*bypassing/)

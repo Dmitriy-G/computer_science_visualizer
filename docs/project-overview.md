@@ -48,7 +48,7 @@ for separate physical links rather than a chip, switch, or protocol controller.
 Do not render routing/packet/buffer/flow/error logic or blue logical-association
 arrows here. Protocol processing remains inside CPU, PCH, and connected devices.
 Show independent PCIe traces from separate CPU socket contact groups to GPU,
-NVMe M.2, and NIC connectors. Different trace colors identify distinct links;
+NVMe M.2, and NIC connectors. Separate physical routes identify distinct links;
 crossings on separate PCB layers are not electrical junctions.
 DDR connects CPU socket memory contacts directly to the DIMM socket. DMI/chipset
 uplink connects CPU socket chipset contacts to the physical PCH chip.
@@ -101,17 +101,25 @@ internal DDR and PCIe socket-to-socket/slot paths from the main map. These trace
 and the DMI / chipset uplink remain in the detailed Motherboard view, whose
 external CPU, GPU, RAM, HDD, SSD, and Network Adapter references open their
 component diagrams with blue hover/focus borders. Its PSU reference stays static.
-The HDD uses native PCH SATA, while the single SSD uses direct CPU PCIe/NVMe.
+The HDD uses native PCH SATA, while the single M.2 SSD uses direct CPU PCIe/NVMe
+and motherboard power through its socket. The main map labels this device SSD.
 Omit the second SATA SSD, optional RAID/HBA, its slot, and their links from the
-main map. Each remaining drive has one controller path. Use distinct blue
-PCIe/NVMe and green SATA lines, without visible cable captions; retain protocol
+main map. Each remaining drive has one controller path. Use pale blue for both
+PCIe/NVMe and SATA lines, without visible cable captions; retain protocol
 descriptions in tooltips and accessibility labels. SAS drives require a compatible
 SAS controller, which is not part of this example. Power lines use separate
 outer corridors. The GPU display cable and PSU AC input run straight to the left.
 Host USB and host Ethernet remain visible as port connections.
 Omit controller, firmware, sideband, and standby-power wiring from this main
-map. Data links are solid; solid amber paths show PSU
-delivery to the motherboard, GPU, and drives.
+map. Data links are solid; solid amber paths show PSU delivery to the motherboard,
+GPU auxiliary input, and HDD. Separate short amber lines below the data attachments
+show motherboard DC through CPU, DIMM, M.2, and PCIe power contacts to CPU, RAM,
+SSD, GPU, and Network Adapter. The M.2 SSD has no separate PSU cable. Keep these
+power paths separate from data lines and anchored to connector/device boundaries.
+All hardware diagrams share two arrow colors: pale blue (#a6b7c9) for data,
+control, and signals; amber (#b58a45) for AC/DC power. Arrowheads match their
+lines, including during playback. Active arrows become thicker without changing
+color. Filled state indicators and mechanism drawings retain their own palettes.
 Named component-boundary anchors keep internal arrows attached. Short component names
 appear in the renderer, with topology details in tooltips/accessibility text.
 Four labeled cables extend beyond the chassis: GPU HDMI/DisplayPort, USB, and
@@ -290,11 +298,11 @@ The controller connects directly to servo, cache, read processing, and write
 encoding. Mapping is a side lookup for logical-to-physical translation and defect
 remapping, not a mandatory intermediate controller stage. Motor drivers contain
 separate Spindle Motor Driver and VCM Driver functions, connected respectively
-to platter rotation and head positioning. Solid amber DC distribution powers
-the controller, DRAM cache, preamp, and both motor drivers. User data follows
+to platter rotation and head positioning. A solid amber DC feed connects Power
+to the Motor drivers container; other internal supply distribution is abstracted. User data follows
 separate directed routes: Write = Cache → ECC → Write Encoder → Preamp → Head;
-Read = Head → Preamp → Read Processing → ECC → Cache. Purple Write and green
-Read wiring also have text labels. Servo positioning uses a separate control
+Read = Head → Preamp → Read Processing → ECC → Cache. Write and Read wiring
+retain their text labels. Servo positioning uses a separate control
 and feedback path. Block roles follow the
 [Seagate HDD manual](https://www.seagate.com/www-content/support-content/samsung/internal-products/spinpoint-m-series/en-us/docs/100772113c.pdf);
 spare-sector remapping follows [Seagate's bad-sector guidance](https://www.seagate.com/support/kb/what-do-i-do-if-my-drive-reports-bad-sectors-196351en/).

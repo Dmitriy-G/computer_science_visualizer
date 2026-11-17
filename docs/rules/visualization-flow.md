@@ -1,5 +1,10 @@
 # Visualization flow and action animations
 
+All hardware diagrams and their playback use only two arrow colors: pale blue
+(#a6b7c9) for data/control/signals, and amber (#b58a45) for AC/DC power. Arrowheads
+match the line color. Active arrows become thicker while retaining their color;
+filled state indicators and mechanism drawings keep their separate palettes.
+
 ## Main flow
 
 1. Start with an empty renderer and a clickable menu icon in the top left.
@@ -127,8 +132,12 @@
    through the optional SATA/SAS HBA. Each device has one controller path.
    Keep external USB and dedicated management Ethernet port connections.
    Omit controller, firmware, management sideband, and standby-power wiring from
-   this main map. Use solid data links and dashed amber PSU links. Anchor arrows
-   to named component boundaries; note platform variants in accessible descriptions.
+   this main map. Use solid data links and solid amber DC power links. PSU feeds
+   the motherboard, GPU auxiliary input, and HDD. Show motherboard power through
+   CPU/DIMM sockets, GPU/NIC PCIe slots, and the M.2 socket to their devices,
+   with short DC lines below the data attachments. The M.2 SSD has no separate
+   PSU cable. Anchor arrows to named component boundaries; note platform variants
+   in accessible descriptions.
    Keep component and port labels on the diagram. Extend external lines for GPU
    HDMI/DisplayPort, host LAN/Ethernet, USB, BMC Management LAN, and PSU AC input
    beyond the chassis, with their labels in a dedicated scene margin. Fit the

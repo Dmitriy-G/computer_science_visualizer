@@ -53,7 +53,7 @@ export interface SceneRegion {
   readonly titleFontSize?: number
   readonly titleFirstLineFontSize?: number
   readonly role: 'cpu' | 'cache' | 'memory' | 'interconnect' | 'observer' | 'device'
-  readonly color?: 'neutral' | 'green' | 'light-blue' | 'light-orange' | 'lavender'
+  readonly color?: 'neutral' | 'green' | 'light-blue' | 'light-orange' | 'light-red' | 'lavender'
   readonly borderStyle?: 'solid' | 'dashed'
   readonly x: number
   readonly y: number

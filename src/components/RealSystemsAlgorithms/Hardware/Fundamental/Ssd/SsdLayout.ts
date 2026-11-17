@@ -2,7 +2,7 @@ import { HardwareDiagram } from '../../../../../visualization/HardwareDiagram.ts
 import { HardwareDiagramFrame } from '../../../../../visualization/HardwareDiagramFrame.ts'
 import { HardwareSceneLayout } from '../../../../../visualization/HardwareSceneLayout.ts'
 import { HardwareBlockSizes } from '../../../../../visualization/HardwareBlockSizes.ts'
-import type { Scene } from '../../../../../visualization/Scene.ts'
+import type { Scene, SceneRegion } from '../../../../../visualization/Scene.ts'
 import { SsdNandLayout } from './SsdNandLayout.ts'
 
 export class SsdLayout {
@@ -36,12 +36,30 @@ export class SsdLayout {
     SsdNandLayout.add(diagram)
     this.connectData(diagram)
     this.connectControl(diagram)
+    this.applyColors(diagram)
     const framed = HardwareDiagramFrame.create(diagram, this.externalLeft, 0)
     framed.paths.push(
       { id: 'ssd-external-host', d: 'M360 330H20', label: 'Motherboard host connection / alternative SSD attachments: PCIe (NVMe protocol) or SATA. PCIe is the interconnect; NVMe is the storage protocol, not a separate physical link. Commands, payloads, and completions share the selected interface. Host-memory transfers reach system RAM through the platform memory/I/O system; this is not a direct DIMM or GPU connection. Only one host attachment is used by a given drive in this map', highlighted: false, directed: true, bidirectional: true, caption: { text: 'PCIe / NVMe\nor SATA\nHost link', x: 20, y: 362 } },
       { id: 'ssd-external-power', d: 'M20 590H360', label: 'DC supply and ground through the drive power contacts / motherboard supply for an M.2 example, or a PSU drive-power connector for a SATA example. Exact form factor and supply arrangement vary; AC mains does not enter the SSD', highlighted: false, directed: true, stroke: '#b58a45', caption: { text: 'Motherboard / PSU DC', x: 20, y: 622 } },
     )
     return framed
+  }
+
+  private static applyColors(diagram: HardwareDiagram): void {
+    const green = new Set(['ssd-physical-address', 'ssd-ecc', 'ssd-nand-controllers', 'ssd-dram', 'ssd-firmware-nvm'])
+    const orange = new Set(['ssd-cpu', 'ssd-sram', 'ssd-dma', 'ssd-garbage-collection', 'ssd-wear-leveling'])
+    const lavender = new Set(['ssd-data', 'ssd-host-interface', 'ssd-ftl', 'ssd-nand-command-io'])
+    for (let index = 0; index < diagram.regions.length; index += 1) {
+      const region = diagram.regions[index]
+      if (region.color) continue
+      let color: SceneRegion['color'] = 'light-blue'
+      if (region.id === 'ssd-pcb') color = 'neutral'
+      else if (region.id === 'ssd-power-input') color = 'light-red'
+      else if (green.has(region.id)) color = 'green'
+      else if (orange.has(region.id)) color = 'light-orange'
+      else if (lavender.has(region.id)) color = 'lavender'
+      diagram.regions[index] = { ...region, color }
+    }
   }
 
   private static addController(diagram: HardwareDiagram): void {

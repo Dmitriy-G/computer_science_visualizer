@@ -160,6 +160,8 @@ export class BusLayout {
       const region = diagram.regions[index]
       let color: SceneRegion['color'] = 'light-orange'
       if (region.id === 'bus-motherboard') color = 'green'
+      else if (region.id === 'bus-vrm') color = 'light-blue'
+      else if (region.id === 'bus-flash' || region.id === 'bus-rtc') color = 'light-red'
       else if (region.id === 'bus-fabric' || region.role === 'device' && !region.parentId || region.role === 'observer') color = 'neutral'
       else if (region.id === 'bus-pch' || region.id.endsWith('-port')) color = 'lavender'
       else if (region.role === 'memory') color = 'green'
