@@ -200,23 +200,22 @@ focus, and click targets. Hover/focus highlights the selected block and only its
 input/output arrows in bright blue (#2563eb), including matching arrowheads.
 A parent's selection includes descendant endpoints but
 excludes arrows wholly inside that parent. Click or Enter/Space opens a dialog
-with that element's title and authored information where available. The Ethernet
-port / optical module entry has real local photographs with credits/licenses,
-a short overview, problem solved, example-specific key characteristics, and
-official Cisco/TE documentation links. Copper and optical attachments remain
-alternatives; GLC-LH-SMD specifications apply only to the named optical example.
-The left-hand photo shows an empty RJ45 socket without a cable. The right-hand
-photo is an annotated opened Nortel AA1419001 1000BASE-SX Ethernet GBIC, an older,
-larger form factor than SFP, with Optics, Circuit ICs, Host connector, and ID memory
-circled. Describe the small eight-pin Atmel chip as an apparent serial EEPROM
-for module identification, without asserting an unverified exact part number.
-Credit the source photograph
-and identify the image's AI-assisted annotations separately from device specifications.
-Other elements retain empty bodies. Escape, backdrop, and Close dismiss
-it and restore focus. The heading stays above a separately scrolling body,
-preventing title/photo collisions; opening the dialog resets body scroll.
-Only the two displayed photos are bundled, with source links and licenses
-retained in the attribution file. Interactions remain available during lessons without
+with that element's title and authored information where available.
+All fourteen Network Adapter regions have authored element information: overview,
+problem solved, scoped characteristics, and primary documentation links.
+The main Network Adapter popup shows one user-provided annotated image of a
+PCIe x1 copper Ethernet adapter, preserving the supplied labels and natural
+image proportions. Its model and link speed are unspecified. The Ethernet port / optical module
+popup retains its original RJ45 socket photograph, annotated opened Nortel GBIC
+photograph, and descriptions with separately scoped Cisco SFP specifications.
+Every other Network Adapter popup retains authored text without photographs.
+Do not substitute containing-chip pictures or diagrams for unlocated circuitry.
+Escape, backdrop, and Close dismiss the dialog and restore focus. The heading
+stays above a separately scrolling body; opening the dialog resets body scroll.
+Source credits, copyright/license terms, and modifications are retained in
+docs/hardware-image-sources.md. The single adapter image spans the photo area.
+The Ethernet pair uses two columns on wide screens and stacks on narrow screens.
+Interactions remain available during lessons without
 altering playback; hidden camera layers have no interaction targets.
 Both use HardwareDiagram, the existing opaque hardware palette and schematic
 titles, nested camera navigation, and Fit/Actual size controls. Unit placement

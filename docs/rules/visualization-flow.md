@@ -19,7 +19,14 @@ State the named device/example for dimensions, speed, and reach; copper and
 optical connections are alternatives. Use Close/Escape/backdrop dismissal with
 focus restored to the trigger. Keep the element dialog heading outside its
 scrollable body so photographs never overlap the title or Close button. Reset
-the body to the top each time the dialog opens. Hidden or
+the body to the top each time the dialog opens or its selected element changes.
+Every Network Adapter block has authored information in this same format.
+The main board entry shows one user-provided annotated PCIe x1 adapter image
+at its natural proportions, spanning the photo area. The Ethernet connection entry
+retains the original empty RJ45 socket and annotated opened Nortel GBIC photos,
+descriptions, and credits. All other Network Adapter popups show authored text
+without images. Do not substitute containing-chip photos or functional diagrams.
+Stack the Ethernet visual pair on narrow screens. Hidden or
 partially revealed layers have no interactive targets. Lessons continue while
 the dialog is open; interaction highlights temporarily replace playback arrow
 highlights and restore them on leaving the block.

@@ -43,7 +43,7 @@
   scrollbar-width: thin;
 }
 .hardware-element-info--populated {
-  --dialog-width: 760px;
+  --dialog-width: 1040px;
 }
 .hardware-element-info--populated .hardware-element-info-content {
   min-height: 0;
@@ -58,6 +58,16 @@
 .hardware-element-photo {
   min-width: 0;
   margin: 0;
+}
+.hardware-element-photo:only-child {
+  grid-column: 1 / -1;
+}
+.hardware-element-photo:only-child img {
+  aspect-ratio: auto;
+  width: auto;
+  max-width: 100%;
+  max-height: 480px;
+  margin-inline: auto;
 }
 .hardware-element-photo img {
   display: block;
@@ -123,10 +133,12 @@
 .hardware-element-documentation li + li {
   margin-top: 8px;
 }
-@media (max-width: 560px) {
+@media (max-width: 800px) {
   .hardware-element-photos {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+@media (max-width: 560px) {
   .hardware-element-characteristics > div {
     grid-template-columns: minmax(0, 1fr);
     gap: 4px;

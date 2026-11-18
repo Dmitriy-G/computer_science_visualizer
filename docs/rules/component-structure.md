@@ -292,13 +292,17 @@ beside the owning component layout, using visualization/HardwareElementInformati
 EthernetPortInformation beside NetworkAdapter supplies real, locally bundled
 photographs with attribution/license links, overview, problem solved, key
 characteristics, and official documentation. Scope specifications to the named
-example and distinguish copper ports from optical transceivers. The annotated
-opened-transceiver photo shows a Nortel AA1419001 1000BASE-SX Ethernet GBIC;
-its Optics, Circuit ICs, Host connector, and ID memory labels do not change the scope of
-the separately named Cisco SFP specifications. The copper photo shows an empty
-RJ45 socket with no cable attached.
-Keep the source license and per-photo modification credit. Other elements
-keep empty bodies until their information is authored. Use the shared
+example and distinguish copper ports from optical transceivers. Preserve the
+original Ethernet popup photographs: the empty RJ45 socket and annotated
+opened Nortel GBIC, with their original descriptions and source/license credits.
+NetworkAdapterInformation authors the remaining Network Adapter entries beside
+the component layout; NetworkAdapterIllustrations supplies the user-provided
+annotated PCIe x1 Ethernet adapter image for the main board popup only.
+All other Network Adapter entries have empty photo arrays and retain their
+authored text. Do not add chip crops, functional diagrams, or speculative
+internal highlights. The single board image spans the photo grid; the Ethernet
+pair stacks on narrow screens. Retain provenance in docs/hardware-image-sources.md.
+Other elements keep empty bodies until their information is authored. Use the shared
 dialog viewport sizing with a non-scrolling heading and a separate scrollable
 body so photos cannot pass behind the title. Use Escape/backdrop/Close dismissal and
 focus restoration. Render interaction targets only in fully visible layers.

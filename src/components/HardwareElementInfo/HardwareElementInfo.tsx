@@ -16,7 +16,10 @@ export default class HardwareElementInfo extends PureComponent<HardwareElementIn
 
   public componentDidMount(): void { this.syncDialog() }
 
-  public componentDidUpdate(): void { this.syncDialog() }
+  public componentDidUpdate(previousProps: HardwareElementInfoProps): void {
+    this.syncDialog()
+    if (previousProps.elementId !== this.props.elementId && this.content.current) this.content.current.scrollTop = 0
+  }
 
   public componentWillUnmount(): void { this.dialog.current?.close() }
 
@@ -45,15 +48,15 @@ export default class HardwareElementInfo extends PureComponent<HardwareElementIn
   private renderPhotos(information: HardwareElementInformation): ReactNode[] {
     const photos: ReactNode[] = []
     for (const photo of information.photos) photos.push(
-      <figure className="hardware-element-photo" key={photo.src}>
+      <figure className="hardware-element-photo" key={`${photo.src}-${photo.caption}`}>
         <img src={photo.src} alt={photo.alt} width="1280" height="720" decoding="async" />
         <figcaption>
           <strong>{photo.caption}</strong>
-          <span className="hardware-element-photo-credit">
-            <a href={photo.sourceUrl} target="_blank" rel="noreferrer">{photo.author}</a>
-            {' · '}<a href={photo.licenseUrl} target="_blank" rel="noreferrer">{photo.license}</a>
+          {photo.author && photo.license && <span className="hardware-element-photo-credit">
+            {photo.sourceUrl ? <a href={photo.sourceUrl} target="_blank" rel="noreferrer">{photo.author}</a> : photo.author}
+            {' · '}{photo.licenseUrl ? <a href={photo.licenseUrl} target="_blank" rel="noreferrer">{photo.license}</a> : photo.license}
             {' · '}{photo.changes ?? 'Resized from original'}
-          </span>
+          </span>}
         </figcaption>
       </figure>,
     )
@@ -70,7 +73,7 @@ export default class HardwareElementInfo extends PureComponent<HardwareElementIn
       <li key={document.url}><a href={document.url} target="_blank" rel="noreferrer">{document.title}</a></li>,
     )
     return <>
-      <div className="hardware-element-photos" aria-label="Real element photographs">{this.renderPhotos(information)}</div>
+      {information.photos.length > 0 && <div className="hardware-element-photos" aria-label="Component photographs">{this.renderPhotos(information)}</div>}
       <section aria-labelledby="hardware-element-overview-title">
         <h3 id="hardware-element-overview-title">Overview</h3>
         <p>{information.overview}</p>
