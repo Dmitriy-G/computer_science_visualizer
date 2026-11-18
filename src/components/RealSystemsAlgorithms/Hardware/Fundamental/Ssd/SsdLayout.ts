@@ -42,7 +42,56 @@ export class SsdLayout {
       { id: 'ssd-external-host', d: 'M360 330H20', label: 'Motherboard host connection / alternative SSD attachments: PCIe (NVMe protocol) or SATA. PCIe is the interconnect; NVMe is the storage protocol, not a separate physical link. Commands, payloads, and completions share the selected interface. Host-memory transfers reach system RAM through the platform memory/I/O system; this is not a direct DIMM or GPU connection. Only one host attachment is used by a given drive in this map', highlighted: false, directed: true, bidirectional: true, caption: { text: 'PCIe / NVMe\nor SATA\nHost link', x: 20, y: 362 } },
       { id: 'ssd-external-power', d: 'M20 590H360', label: 'DC supply and ground through the drive power contacts / motherboard supply for an M.2 example, or a PSU drive-power connector for a SATA example. Exact form factor and supply arrangement vary; AC mains does not enter the SSD', highlighted: false, directed: true, stroke: '#b58a45', caption: { text: 'Motherboard / PSU DC', x: 20, y: 622 } },
     )
+    this.addInteractionTargets(framed)
     return framed
+  }
+
+  private static addInteractionTargets(diagram: HardwareDiagram): void {
+    for (let index = 0; index < diagram.regions.length; index += 1) {
+      diagram.regions[index] = { ...diagram.regions[index], interactive: true }
+    }
+    const endpoints = new Map<string, readonly [string | undefined, string | undefined]>([
+      ['ssd-external-host', ['ssd-data', undefined]],
+      ['ssd-external-power', [undefined, 'ssd-power-input']],
+      ['ssd-data-interface', ['ssd-data', 'ssd-host-interface']],
+      ['ssd-interface-dma', ['ssd-host-interface', 'ssd-dma']],
+      ['ssd-buffer-encode', ['ssd-dma', 'ssd-ecc-encode']],
+      ['ssd-encode-nand', ['ssd-ecc-encode', 'ssd-nand-controllers']],
+      ['ssd-nand-decode', ['ssd-nand-controllers', 'ssd-ecc-decode']],
+      ['ssd-decode-buffer', ['ssd-ecc-decode', 'ssd-dma']],
+      ['ssd-controller-dram', ['ssd-dma', 'ssd-dram']],
+      ['ssd-channel-0', ['ssd-nand-command-io', 'ssd-nand-channel']],
+      ['ssd-channel-0-package-0', ['ssd-nand-channel', 'ssd-package-0']],
+      ['ssd-channel-0-shared-bus', ['ssd-package-0', 'ssd-nand-channel']],
+      ['ssd-host-ftl', ['ssd-host-interface', 'ssd-ftl']],
+      ['ssd-firmware-load', ['ssd-firmware-nvm', 'ssd-sram']],
+      ['ssd-cpu-sram', ['ssd-cpu', 'ssd-sram']],
+      ['ssd-cpu-ftl', ['ssd-cpu', 'ssd-ftl']],
+      ['ssd-cpu-nand', ['ssd-cpu', 'ssd-nand-controllers']],
+      ['ssd-sram-ftl', ['ssd-sram', 'ssd-ftl']],
+      ['ssd-ftl-gc', ['ssd-ftl', 'ssd-garbage-collection']],
+      ['ssd-ftl-wear', ['ssd-ftl', 'ssd-wear-leveling']],
+      ['ssd-ftl-dma', ['ssd-ftl', 'ssd-dma']],
+      ['ssd-ftl-nand', ['ssd-ftl', 'ssd-nand-controllers']],
+      ['ssd-page-wordline-view', ['ssd-nand-gate', 'ssd-page-0']],
+      ['ssd-nand-command', ['ssd-nand-control', 'ssd-nand-row-decoder']],
+      ['ssd-nand-bias', ['ssd-nand-voltage', 'ssd-nand-row-decoder']],
+      ['ssd-nand-wordline', ['ssd-nand-row-decoder', 'ssd-nand-gate']],
+      ['ssd-nand-bitline', ['ssd-nand-conduction', 'ssd-nand-page-buffer']],
+      ['ssd-nand-buffer-io', ['ssd-nand-page-buffer', 'ssd-nand-io']],
+      ['ssd-nand-die-io', ['ssd-package-0', 'ssd-nand-io']],
+      ['ssd-nand-io-control', ['ssd-nand-io', 'ssd-nand-control']],
+      ['ssd-nand-sequencer', ['ssd-nand-control', 'ssd-nand-voltage']],
+      ['ssd-nand-threshold', ['ssd-nand-gate', 'ssd-nand-charge']],
+      ['ssd-nand-tunneling', ['ssd-nand-charge', 'ssd-nand-conduction']],
+      ['ssd-nand-channel-current', ['ssd-nand-conduction', 'ssd-nand-conduction']],
+      ['ssd-nand-source-line', ['ssd-nand-conduction', 'ssd-nand-source-terminal']],
+    ])
+    for (let index = 0; index < diagram.paths.length; index += 1) {
+      const path = diagram.paths[index]
+      const connection = endpoints.get(path.id)
+      if (connection) diagram.paths[index] = { ...path, fromRegionId: connection[0], toRegionId: connection[1] }
+    }
   }
 
   private static applyColors(diagram: HardwareDiagram): void {

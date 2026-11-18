@@ -22,11 +22,25 @@ scrollable body so photographs never overlap the title or Close button. Reset
 the body to the top each time the dialog opens or its selected element changes.
 Every Network Adapter block has authored information in this same format.
 The main board entry shows one user-provided annotated PCIe x1 adapter image
-at its natural proportions, spanning the photo area. The Ethernet connection entry
-retains the original empty RJ45 socket and annotated opened Nortel GBIC photos,
-descriptions, and credits. All other Network Adapter popups show authored text
-without images. Do not substitute containing-chip photos or functional diagrams.
-Stack the Ethernet visual pair on narrow screens. Hidden or
+contained in the same responsive 16:9 frame and desktop column width as all
+other popup images, preserving its annotations and proportions without cropping.
+The Ethernet connection entry
+shows the user-provided RJ45 cable photo and the annotated opened Nortel GBIC
+photo in matching 16:9 frames without cropping or distortion, retaining the GBIC descriptions and
+credits in source metadata and docs/hardware-image-sources.md. Hide the optical
+photo's credit line in the popup as requested. The Network controller popup shows
+the supplied Microchip ENC424J600 package photograph and 44-pin diagram in the
+same 16:9 frames and columns as the Ethernet pair, with sourced Microchip
+specifications. Distinguish this SPI/parallel example from the PCIe adapter map;
+it does not identify the separate adapter board's controller. The PHY / link signals popup shows the
+supplied LAN8720 ETH Board photo at the same frame size, distinguishing the
+10/100 Ethernet PHY chip from its module, RJ45 socket, and headers, with sourced
+RMII characteristics. The PCIe / DMA popup shows the two user-supplied annotated
+motherboard-slot and connector-contact images in the same 16:9 frames and column
+widths, preserving their proportions and labels. All remaining Network Adapter popups
+show authored text without images. Do not substitute containing-chip photos or
+functional diagrams for unlocated internal circuitry.
+Stack the Ethernet, controller, and PCIe visual pairs on narrow screens. Hidden or
 partially revealed layers have no interactive targets. Lessons continue while
 the dialog is open; interaction highlights temporarily replace playback arrow
 highlights and restore them on leaving the block.
@@ -176,6 +190,14 @@ highlights and restore them on leaving the block.
    enclosure/mechanical assembly and controller-board component map. SSD zooms
    into its connected component schematic, showing host interface, controller,
    NAND channels/packages, optional DRAM, power management, and optional PLP.
+   Every SSD region, including nested containers and cell parts, supports
+   hover/focus boundary highlighting and click/Enter/Space information popups.
+   Reuse the shared hardware-element dialog, dismissal, and focus restoration.
+   Author text-only component descriptions with scoped characteristics and
+   official documentation. The main SSD block alone shows the supplied annotated
+   M.2 NVMe board image at the same responsive 16:9 frame size and desktop column
+   width as Network Adapter images, preserving all labels without cropping.
+   Keep these interactions during lessons without changing playback or geometry.
    Inside the SSD controller, show CPU cores, SRAM, FTL, DMA/data buffers,
    separate ECC encode and decode/correction stages, and NAND channel controllers.
    Show LBA-to-physical NAND mapping and one representative shared channel/package

@@ -2,6 +2,9 @@ export interface HardwareElementPhoto {
   readonly src: string
   readonly alt: string
   readonly caption: string
+  readonly width?: number
+  readonly height?: number
+  readonly hideCredit?: boolean
   readonly author?: string
   readonly sourceUrl?: string
   readonly license?: string

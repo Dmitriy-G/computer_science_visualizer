@@ -293,15 +293,31 @@ EthernetPortInformation beside NetworkAdapter supplies real, locally bundled
 photographs with attribution/license links, overview, problem solved, key
 characteristics, and official documentation. Scope specifications to the named
 example and distinguish copper ports from optical transceivers. Preserve the
-original Ethernet popup photographs: the empty RJ45 socket and annotated
-opened Nortel GBIC, with their original descriptions and source/license credits.
+Ethernet popup's user-provided RJ45 cable photograph and the annotated opened
+Nortel GBIC in matching 16:9 frames, containing each image without cropping or
+distortion. Retain the GBIC's descriptions
+and source/license credits; document the user-supplied image's provenance.
 NetworkAdapterInformation authors the remaining Network Adapter entries beside
 the component layout; NetworkAdapterIllustrations supplies the user-provided
-annotated PCIe x1 Ethernet adapter image for the main board popup only.
-All other Network Adapter entries have empty photo arrays and retain their
+annotated PCIe x1 Ethernet adapter image for the main board popup and the supplied
+Microchip ENC424J600 package photograph and 44-pin diagram for the controller popup.
+Both use the same 16:9 frames and column widths as the Ethernet pair, with sourced
+Microchip specifications. Distinguish this SPI/parallel example from the PCIe
+adapter map; it does not identify the separate adapter board's chip.
+The PHY popup uses the supplied LAN8720 ETH Board image in the same 16:9 frame
+and column width. Identify it as a complete module containing a PHY chip, with
+sourced 10/100 Mb/s and RMII characteristics. Do not imply the whole board is a
+single chip or identify this separate example as the adapter board's PHY.
+Hide the optical photo's popup credit line as requested while retaining source
+and license metadata in code and docs/hardware-image-sources.md.
+The PCIe / DMA popup uses the two supplied annotated motherboard-slot and
+connector-contact images in the same photo frames, preserving their labels.
+All remaining Network Adapter entries have empty photo arrays and retain their
 authored text. Do not add chip crops, functional diagrams, or speculative
-internal highlights. The single board image spans the photo grid; the Ethernet
-pair stacks on narrow screens. Retain provenance in docs/hardware-image-sources.md.
+internal highlights. All popup images, including the main adapter board, use
+the same responsive 16:9 frame and desktop column width without cropping or
+distortion. The photo grid stacks on narrow screens. Retain provenance in
+docs/hardware-image-sources.md.
 Other elements keep empty bodies until their information is authored. Use the shared
 dialog viewport sizing with a non-scrolling heading and a separate scrollable
 body so photos cannot pass behind the title. Use Escape/backdrop/Close dismissal and
@@ -484,6 +500,17 @@ window, not direct user bits or electric charge. Use the existing playback engin
 Keep SSD geometry in Hardware/Fundamental/Ssd/SsdLayout.ts. The SSD map uses the
 shared schematic style and connects the host connector/interface, controller,
 NAND channels/packages, optional DRAM, power management, and optional PLP.
+SsdInformation and SsdNandInformation beside the layouts author every SSD region's
+hardware-element information. Route them through HardwareElementCatalog and reuse
+HardwareElementInfo for Overview, Problem it solves, Key characteristics, and
+Official documentation. All nested regions are independently interactive;
+SsdLayout supplies connection endpoint metadata for shared boundary highlights.
+Keep individual component popups text-only. The main SSD block alone uses the
+user-supplied annotated M.2 NVMe board image, in the same responsive 16:9 frame
+and desktop column width as Network Adapter images, without cropping or distortion.
+Preserve its annotations and provenance in docs/hardware-image-sources.md.
+Keep model-specific SLC counts separate from the physical board photograph.
+Retain interaction metadata in page-lesson snapshots.
 Use opaque block colors throughout the SSD diagram, with each child a different
 color from its immediate parent. The Power input block is light red. Preserve
 these colors in the static preview and lesson playback.

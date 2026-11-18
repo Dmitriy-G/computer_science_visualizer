@@ -35,7 +35,7 @@ export class NetworkAdapterInformation {
       documentation: [this.dmaDocumentation],
     },
     'nic-host-connector': {
-      photos: [],
+      photos: NetworkAdapterIllustrations.hostConnector(),
       overview: 'The gold fingers on a PCIe adapter board are physical host-connector contacts. They mate with a compatible motherboard PCIe slot.',
       problem: 'The connector provides a removable electrical connection for data, power, and support signals between the card and computer.',
       characteristicNote: 'PCIe contacts carry data, power, and support signals. DMA is a transfer mechanism using the PCIe connection, rather than an additional physical connector.',
@@ -48,17 +48,23 @@ export class NetworkAdapterInformation {
       documentation: [this.architectureDocumentation, this.dmaDocumentation],
     },
     'nic-controller': {
-      photos: [],
+      photos: NetworkAdapterIllustrations.controller(),
       overview: 'The network controller is a physical integrated circuit containing silicon that coordinates host transfers and Ethernet transmission and reception.',
       problem: 'It combines packet movement, buffering, frame handling, and device control so the computer can send and receive network traffic.',
-      characteristicNote: 'A controller can integrate the host interface, DMA, MAC, packet memory, and management logic. PHY integration depends on the device. A photograph of the package does not reveal the boundaries of its internal circuits.',
+      characteristicNote: 'The supplied images show a Microchip ENC424J600 package and its 44-pin connection diagram. This separate example uses SPI or an 8-bit multiplexed parallel host interface; the adapter map illustrates PCIe. The images do not identify the controller on the separate adapter board. A controller can integrate the host interface, DMA, MAC, packet memory, and management logic. PHY integration depends on the device. Package photographs and pin diagrams do not show the layout of internal circuits.',
       characteristics: [
         { name: 'Visible hardware', value: 'The silicon die is contained in a chip package mounted on the board, often beneath a heatsink.' },
         { name: 'Integrated functions', value: 'Host-interface circuitry, DMA, control logic, packet memory, and MAC functions can share one controller.' },
         { name: 'Separate storage', value: 'Configuration or boot storage can be outside the controller package.' },
-        { name: 'Product example', value: 'Intel E810 is the controller used by the E810-XXVDA2 PCIe adapter.' },
+        { name: 'Product example', value: 'Microchip ENC424J600 integrates a 10/100 Mb/s Ethernet MAC and PHY with 24 KB of transmit/receive packet SRAM.' },
       ],
-      documentation: [this.controllerDocumentation, this.architectureDocumentation],
+      documentation: [{
+        title: 'Microchip / ENC424J600 Ethernet controller',
+        url: 'https://www.microchip.com/en-us/product/ENC424J600',
+      }, {
+        title: 'Microchip / ENC424J600 and ENC624J600 datasheet: features and pin diagrams',
+        url: 'https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/39935c.pdf',
+      }, this.controllerDocumentation, this.architectureDocumentation],
     },
     'nic-firmware': {
       photos: [],
@@ -165,17 +171,28 @@ export class NetworkAdapterInformation {
       documentation: [this.architectureDocumentation, this.controllerDocumentation],
     },
     'nic-phy': {
-      photos: [],
+      photos: NetworkAdapterIllustrations.phy(),
       overview: 'The PHY is a physical-layer transceiver made from digital and analog circuitry. It translates between MAC-side data and the signaling used by an Ethernet link.',
       problem: 'It creates transmit signals and recovers incoming data despite the electrical constraints and noise of the physical connection.',
-      characteristicNote: 'PHY functions may be integrated into a controller, implemented by a separate chip, or distributed across controller and transceiver hardware. The exact arrangement depends on the Ethernet medium and adapter.',
+      characteristicNote: 'The photo shows a LAN8720 ETH Board: a complete module containing an Ethernet PHY chip, an RJ45 socket, headers, and supporting components. The small square chip near the center implements the PHY function shown in the diagram. This is a separate 10/100 Mb/s example; it does not identify the PHY in the adapter board photo. PHY functions may be integrated into a controller, implemented by a separate chip, or distributed across controller and transceiver hardware.',
       characteristics: [
+        { name: 'Pictured example', value: 'LAN8720 Ethernet PHY module: 10BASE-T / 100BASE-TX, supporting 10 and 100 Mb/s copper links.' },
+        { name: 'MAC connection', value: 'The LAN8720 uses RMII to connect to an external Ethernet MAC; the module still needs a host with MAC functionality.' },
         { name: 'Transmit circuitry', value: 'Encoding, signal processing, timing, and line-driving functions.' },
         { name: 'Receive circuitry', value: 'Signal reception and recovery; copper designs can include equalization and echo cancellation.' },
         { name: 'Link management', value: 'Supports link configuration, status reporting, and supported speed negotiation.' },
         { name: 'Connection hardware', value: 'Copper magnetics and a cable connector are distinct from PHY processing; optical variants use optical transceivers.' },
       ],
-      documentation: [this.controllerDocumentation, this.architectureDocumentation],
+      documentation: [{
+        title: 'Waveshare / LAN8720 ETH Board: Ethernet PHY module and RMII interface',
+        url: 'https://www.waveshare.com/product/lan8720-eth-board.htm',
+      }, {
+        title: 'Microchip / LAN8720A: 10/100 Ethernet PHY with RMII interface',
+        url: 'https://www.microchip.com/en-us/product/LAN8720A',
+      }, {
+        title: 'Microchip / LAN8720A and LAN8720Ai datasheet: PHY, magnetics, and RJ45 application diagram',
+        url: 'https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/ProductDocuments/DataSheets/LAN8720A-LAN8720Ai-Data-Sheet-DS00002165.pdf',
+      }, this.controllerDocumentation, this.architectureDocumentation],
     },
     'nic-offload': {
       photos: [],

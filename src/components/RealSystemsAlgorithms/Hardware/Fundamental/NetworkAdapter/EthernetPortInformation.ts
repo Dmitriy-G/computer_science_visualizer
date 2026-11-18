@@ -4,14 +4,11 @@ export class EthernetPortInformation {
   public static readonly information: HardwareElementInformation = {
     photos: [
       {
-        src: '/hardware/network-adapter/ethernet-empty-port.jpg',
-        alt: 'Close-up photograph of an empty RJ45 Ethernet socket with its eight contacts visible and no cable attached.',
-        caption: 'Copper Ethernet / empty RJ45 port',
-        author: 'Pittigrilli',
-        sourceUrl: 'https://commons.wikimedia.org/wiki/File:RJ-45_Ethernet_socket_on_Lenovo_T410_Laptop_(cropped).jpg',
-        license: 'CC BY-SA 4.0',
-        licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
-        changes: 'Cropped by source author; resized by Wikimedia',
+        src: '/hardware/network-adapter/ethernet-rj45-cable.webp',
+        alt: 'Two metal-housed RJ45 (8P8C) Ethernet cable plugs with transparent tips, eight gold-colored contacts, and black cable jackets.',
+        caption: 'Copper Ethernet cable / RJ45 (8P8C) plugs',
+        width: 700,
+        height: 700,
       },
       {
         src: '/hardware/network-adapter/ethernet-gbic-annotated.png',
@@ -22,6 +19,7 @@ export class EthernetPortInformation {
         license: 'CC BY-SA 4.0',
         licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
         changes: 'Annotated (AI-assisted)',
+        hideCredit: true,
       },
     ],
     overview: 'This is the adapter’s physical connection to the network. A copper port accepts an RJ45 (8P8C) plug. An optical variant uses a pluggable transceiver and fiber connector; the module converts electrical signals to light and received light back to electrical signals. These are alternative connections in the diagram.',

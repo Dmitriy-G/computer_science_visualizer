@@ -206,14 +206,30 @@ problem solved, scoped characteristics, and primary documentation links.
 The main Network Adapter popup shows one user-provided annotated image of a
 PCIe x1 copper Ethernet adapter, preserving the supplied labels and natural
 image proportions. Its model and link speed are unspecified. The Ethernet port / optical module
-popup retains its original RJ45 socket photograph, annotated opened Nortel GBIC
-photograph, and descriptions with separately scoped Cisco SFP specifications.
-Every other Network Adapter popup retains authored text without photographs.
+popup shows the user-provided RJ45 Ethernet cable photograph alongside the
+annotated opened Nortel GBIC photograph in matching 16:9 frames, preserving
+each image's proportions without cropping, with
+descriptions and separately scoped Cisco SFP specifications.
+The Network controller popup shows the user-provided Microchip ENC424J600 package
+photograph and 44-pin diagram in the same frames and columns as the Ethernet pair,
+with model-specific Microchip documentation. The SPI/parallel controller example
+does not identify the chip on the separate PCIe adapter board.
+The PHY / link signals popup shows the user-provided LAN8720 ETH Board image at
+the same frame size. Its caption and sourced characteristics distinguish the
+10/100 Ethernet PHY chip from the complete module and its connection hardware.
+The PCIe / DMA popup shows the two supplied annotated motherboard-slot and
+connector-contact images in matching 16:9 frames and desktop column widths,
+without cropping or distortion, side by side on wide screens and stacked on
+narrow screens. Every other Network Adapter popup retains authored text without images.
 Do not substitute containing-chip pictures or diagrams for unlocated circuitry.
 Escape, backdrop, and Close dismiss the dialog and restore focus. The heading
 stays above a separately scrolling body; opening the dialog resets body scroll.
 Source credits, copyright/license terms, and modifications are retained in
-docs/hardware-image-sources.md. The single adapter image spans the photo area.
+docs/hardware-image-sources.md. All popup images, including the main adapter,
+use the same responsive 16:9 frame and desktop column width without cropping
+or distortion.
+The optical photo's credit line is hidden in the popup at the user's request;
+its source and license metadata remain in the image-source document and code.
 The Ethernet pair uses two columns on wide screens and stacks on narrow screens.
 Interactions remain available during lessons without
 altering playback; hidden camera layers have no interaction targets.
@@ -369,6 +385,16 @@ decoding/correction, NAND channel controllers, garbage collection, and wear
 leveling. SRAM holds volatile runtime firmware, working state, and temporary
 metadata. Persistent firmware belongs in nonvolatile ROM/flash; a separate logical
 backing source shows loading into SRAM without implying another NAND package.
+All SSD regions, including nested controller and cell parts, open independent
+hardware-element dialogs through click or Enter/Space. Hover/focus highlights
+the selected block and its boundary connections using the shared renderer.
+SsdInformation and SsdNandInformation supply overview, purpose, scoped
+characteristics, and primary documentation links. Component dialogs are text-only;
+the main SSD block alone shows the supplied annotated M.2 NVMe board image in
+the same responsive 16:9 frame and desktop column width as Network Adapter images,
+without cropping or distortion. Image provenance is retained in
+docs/hardware-image-sources.md. Dialogs remain available during page playback
+without changing lesson state, camera, or geometry.
 The FTL translates LBAs into physical NAND locations including channel,
 target, die, plane, block, and page; host sectors may also need an offset within
 a page. Command/status paths reach NAND controllers separately from payloads.
