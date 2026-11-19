@@ -48,7 +48,7 @@ export default class HardwareElementInfo extends PureComponent<HardwareElementIn
   private renderPhotos(information: HardwareElementInformation): ReactNode[] {
     const photos: ReactNode[] = []
     for (const photo of information.photos) photos.push(
-      <figure className={`hardware-element-photo${photo.fullWidth ? ' hardware-element-photo--wide' : ''}`} key={`${photo.src}-${photo.caption}`}>
+      <figure className="hardware-element-photo" key={`${photo.src}-${photo.caption}`}>
         <img src={photo.src} alt={photo.alt} width={photo.width} height={photo.height}
           decoding="async" />
         <figcaption>
@@ -75,7 +75,7 @@ export default class HardwareElementInfo extends PureComponent<HardwareElementIn
       <li key={document.url}><a href={document.url} target="_blank" rel="noreferrer">{document.title}</a></li>,
     )
     return <>
-      {information.photos.length > 0 && <div className="hardware-element-photos" aria-label="Component photographs">{this.renderPhotos(information)}</div>}
+      {information.photos.length > 0 && <div className={`hardware-element-photos${information.photos.length > 1 ? ' hardware-element-photos--paired' : ''}`} aria-label="Component photographs">{this.renderPhotos(information)}</div>}
       <section aria-labelledby="hardware-element-overview-title">
         <h3 id="hardware-element-overview-title">Overview</h3>
         <p>{information.overview}</p>

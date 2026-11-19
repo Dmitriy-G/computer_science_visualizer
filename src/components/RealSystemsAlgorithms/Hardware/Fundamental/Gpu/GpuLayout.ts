@@ -2,6 +2,7 @@ import { HardwareDiagram } from '../../../../../visualization/HardwareDiagram.ts
 import type { Scene, SceneRegion } from '../../../../../visualization/Scene.ts'
 import { HardwareDiagramFrame } from '../../../../../visualization/HardwareDiagramFrame.ts'
 import { GpuVramLayout } from './GpuVramLayout.ts'
+import { GpuInformation } from './GpuInformation.ts'
 
 export class GpuLayout {
   public static readonly externalLeft = 300
@@ -44,7 +45,53 @@ export class GpuLayout {
       { id: 'gpu-external-display', d: 'M3120 1410H4060', label: 'HDMI / DisplayPort connector to an external display / driven by the Display Engine, independently of VRAM memory-controller signals', directed: true, highlighted: false, caption: { text: 'HDMI / DisplayPort', x: 3730, y: 1388 } },
       { id: 'gpu-external-power', d: 'M20 1410H360', label: 'DC input from PCIe slot and auxiliary graphics-card power connectors where fitted / grouped supply to card regulators, not AC power', directed: true, stroke: '#b58a45', highlighted: false, caption: { text: 'Slot / auxiliary\nDC', x: 40, y: 1442 } },
     )
+    this.addInteractionTargets(framed)
     return framed
+  }
+
+  private static addInteractionTargets(diagram: HardwareDiagram): void {
+    for (let index = 0; index < diagram.regions.length; index += 1) {
+      const region = diagram.regions[index]
+      if (GpuInformation.get(region.id)) diagram.regions[index] = { ...region, interactive: true }
+    }
+    const endpoints = new Map<string, readonly [string | undefined, string | undefined]>([
+      ['gpu-host-link', ['gpu-connector', 'gpu-host-interface']],
+      ['gpu-command-input', ['gpu-host-interface', 'gpu-scheduler']],
+      ['gpu-schedule-compute', ['gpu-scheduler', 'gpu-compute-cores']],
+      ['gpu-schedule-graphics', ['gpu-scheduler', 'gpu-raster']],
+      ['gpu-raster-shader', ['gpu-raster', 'gpu-compute-cores']],
+      ['gpu-vertex-raster', ['gpu-compute-cores', 'gpu-raster']],
+      ['gpu-texture-requests', ['gpu-compute-cores', 'gpu-texture-units']],
+      ['gpu-ray-work', ['gpu-compute-cores', 'gpu-ray-tracing']],
+      ['gpu-matrix-work', ['gpu-compute-cores', 'gpu-ai']],
+      ['gpu-shader-output', ['gpu-compute-cores', 'gpu-render-output']],
+      ['gpu-render-cache', ['gpu-render-output', 'gpu-cache']],
+      ['gpu-compute-cache', ['gpu-compute-cores', 'gpu-cache']],
+      ['gpu-texture-cache', ['gpu-texture-units', 'gpu-cache']],
+      ['gpu-cache-memory', ['gpu-cache', 'gpu-memory-controllers']],
+      ['gpu-memory-vram', ['gpu-memory-controllers', 'gpu-vram-io']],
+      ['gpu-memory-vram-command', ['gpu-memory-controllers', 'gpu-vram-control']],
+      ['gpu-host-memory', ['gpu-host-interface', 'gpu-memory-controllers']],
+      ['gpu-frame-scanout', ['gpu-cache', 'gpu-display-engine']],
+      ['gpu-display-output', ['gpu-display-engine', 'gpu-display-ports']],
+      ['gpu-vram-control-row', ['gpu-vram-control', 'gpu-vram-row-decoder']],
+      ['gpu-vram-control-column', ['gpu-vram-control', 'gpu-vram-column-decoder']],
+      ['gpu-vram-control-refresh', ['gpu-vram-control', 'gpu-vram-refresh']],
+      ['gpu-vram-refresh-row', ['gpu-vram-refresh', 'gpu-vram-row-decoder']],
+      ['gpu-vram-wordline', ['gpu-vram-row-decoder', 'gpu-vram-transistor']],
+      ['gpu-vram-bitline', ['gpu-vram-transistor', 'gpu-vram-sense']],
+      ['gpu-vram-storage-node', ['gpu-vram-transistor', 'gpu-vram-capacitor']],
+      ['gpu-vram-sense-column', ['gpu-vram-sense', 'gpu-vram-column-decoder']],
+      ['gpu-vram-column-io', ['gpu-vram-column-decoder', 'gpu-vram-io']],
+      ['gpu-external-host', ['gpu-connector', undefined]],
+      ['gpu-external-display', ['gpu-display-ports', undefined]],
+      ['gpu-external-power', [undefined, 'gpu-power']],
+    ])
+    for (let index = 0; index < diagram.paths.length; index += 1) {
+      const path = diagram.paths[index]
+      const connection = endpoints.get(path.id)
+      if (connection) diagram.paths[index] = { ...path, fromRegionId: connection[0], toRegionId: connection[1] }
+    }
   }
 
   private static addCompute(diagram: HardwareDiagram): void {

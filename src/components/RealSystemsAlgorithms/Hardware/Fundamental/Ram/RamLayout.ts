@@ -2,6 +2,7 @@
 import type { Scene, SceneRegion } from '../../../../../visualization/Scene.ts'
 import { HardwareDiagramFrame } from '../../../../../visualization/HardwareDiagramFrame.ts'
 import { HardwareBlockSizes } from '../../../../../visualization/HardwareBlockSizes.ts'
+import { RamInformation } from './RamInformation.ts'
 
 export class RamLayout {
   public static readonly externalLeft = 300
@@ -52,7 +53,42 @@ export class RamLayout {
       { id: 'ram-external-sideband', d: 'M340 1100H20', label: 'Platform management connection to the SPD sideband host / separate from DDR memory payload traffic; DDR4 SPD uses its configuration sideband', directed: true, bidirectional: true, highlighted: false, caption: { text: 'SPD / platform host', x: 20, y: 1132 } },
       { id: 'ram-external-power', d: 'M20 1300H720', label: 'Motherboard DC supply and ground enter the DIMM socket for distribution to the module / DDR4 power rails are grouped, not an AC input', directed: true, stroke: '#b58a45', highlighted: false, caption: { text: 'DIMM DC power', x: 20, y: 1332 } },
     )
+    this.addInteractionTargets(framed)
     return framed
+  }
+
+  private static addInteractionTargets(diagram: HardwareDiagram): void {
+    for (let index = 0; index < diagram.regions.length; index += 1) {
+      const region = diagram.regions[index]
+      if (RamInformation.get(region.id)) diagram.regions[index] = { ...region, interactive: true }
+    }
+    const endpoints = new Map<string, readonly [string | undefined, string | undefined]>([
+      ['ram-controller-command', ['ram-memory-controller', 'ram-socket']],
+      ['ram-controller-data', ['ram-socket', 'ram-memory-controller']],
+      ['ram-socket-control', ['ram-socket', 'ram-control']],
+      ['ram-control-row', ['ram-control', 'ram-row-decoder']],
+      ['ram-control-column', ['ram-control', 'ram-column-decoder']],
+      ['ram-control-refresh', ['ram-control', 'ram-refresh']],
+      ['ram-refresh-row', ['ram-refresh', 'ram-row-decoder']],
+      ['ram-word-line-0', ['ram-row-decoder', 'ram-transistor']],
+      ['ram-bit-line-0', ['ram-transistor', 'ram-sense-amplifiers']],
+      ['ram-storage-node', ['ram-transistor', 'ram-capacitor']],
+      ['ram-sense-column', ['ram-sense-amplifiers', 'ram-column-decoder']],
+      ['ram-column-io', ['ram-column-decoder', 'ram-read-write']],
+      ['ram-io-socket', ['ram-read-write', 'ram-socket']],
+      ['ram-host-sideband', ['ram-sideband-host', 'ram-socket']],
+      ['ram-spd-sideband', ['ram-socket', 'ram-spd']],
+      ['ram-external-host', ['ram-memory-controller', undefined]],
+      ['ram-external-dma', ['ram-pcie-root', undefined]],
+      ['ram-dma-memory-controller', ['ram-pcie-root', 'ram-memory-controller']],
+      ['ram-external-sideband', ['ram-sideband-host', undefined]],
+      ['ram-external-power', [undefined, 'ram-socket']],
+    ])
+    for (let index = 0; index < diagram.paths.length; index += 1) {
+      const path = diagram.paths[index]
+      const connection = endpoints.get(path.id)
+      if (connection) diagram.paths[index] = { ...path, fromRegionId: connection[0], toRegionId: connection[1] }
+    }
   }
 
   private static applyColors(diagram: HardwareDiagram): void {
