@@ -84,6 +84,11 @@
   padding-top: 16px;
   border-top: 1px solid var(--border);
 }
+.hardware-element-info-content > section:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
 .hardware-element-info-content h3 {
   margin: 0 0 8px;
   font-size: 15px;

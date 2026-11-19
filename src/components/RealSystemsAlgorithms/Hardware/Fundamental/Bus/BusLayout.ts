@@ -121,6 +121,7 @@ export class BusLayout {
   private static connectPower(diagram: HardwareDiagram): void {
     const power: BusLinkStyle = { stroke: '#b58a45', bidirectional: false }
     this.connect(diagram, 'bus-dc-input', ['bus-dc-source', 'right'], ['bus-power-connectors', 'left'], 'DC input / PSU converts AC mains to DC before the motherboard power connectors', [], power)
+    this.connect(diagram, 'bus-power-hdd', ['bus-dc-source', 'bottom'], ['bus-hdd-device', 'bottom'], 'HDD DC power / separate PSU cable to the drive power connector, routed outside the motherboard. The SATA data port carries signals and ground, not drive supply power', [[140, 1660], [2560, 1660], [2560, 560], [2700, 560]], power)
     this.connect(diagram, 'bus-power-regulation', ['bus-power-connectors', 'bottom'], ['bus-vrm', 'top'], 'Motherboard DC input to voltage regulators', [], power)
     this.connect(diagram, 'bus-power-distribution', ['bus-vrm', 'right'], ['bus-power-rails', 'left', 0.65], 'Regulated motherboard DC rails / separate voltages and regulator paths are abstracted', [[760, 1470], [760, 1165]], power)
     this.connect(diagram, 'bus-power-cpu', ['bus-power-rails', 'left', 0.4], ['bus-cpu-power-contacts', 'right'], 'CPU DC rail / distribution to CPU socket power contacts', [[720, 1140], [720, 640]], power)
@@ -152,7 +153,7 @@ export class BusLayout {
       x = point[0]
       y = point[1]
     }
-    diagram.paths.push({ id, d, label, directed: true, bidirectional: true, highlighted: false, ...style })
+    diagram.paths.push({ id, fromRegionId: from[0], toRegionId: to[0], d, label, directed: true, bidirectional: true, highlighted: false, ...style })
   }
 
   private static applyColors(diagram: HardwareDiagram): void {
@@ -166,7 +167,8 @@ export class BusLayout {
       else if (region.id === 'bus-pch' || region.id.endsWith('-port')) color = 'lavender'
       else if (region.role === 'memory') color = 'green'
       else if (region.role === 'interconnect') color = 'light-blue'
-      diagram.regions[index] = { ...region, color, navigationTarget: this.navigationTargets[region.id], borderStyle: region.id === 'bus-rtc' ? 'solid' : undefined }
+      const interactive = region.id === 'bus-motherboard' || region.parentId === 'bus-motherboard' || region.parentId === 'bus-power'
+      diagram.regions[index] = { ...region, color, interactive: interactive ? true : undefined, navigationTarget: this.navigationTargets[region.id], borderStyle: region.id === 'bus-rtc' ? 'solid' : undefined }
     }
   }
 }

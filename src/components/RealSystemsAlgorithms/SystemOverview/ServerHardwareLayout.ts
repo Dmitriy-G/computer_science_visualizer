@@ -53,7 +53,7 @@ export class ServerHardwareLayout {
   }
 
   private static region(diagram: HardwareDiagram, id: string, label: string, role: SceneRegion['role'], bounds: SceneBounds, parent: string | undefined, title: string, color: SceneRegion['color'], level: SceneRegion['level'] = 'component'): void {
-    diagram.regions.push({ id, label, shortLabel: title, role, ...bounds, parentId: parent, color, level, titleFontSize: parent === 'motherboard' ? 20 : undefined, navigationTarget: this.navigationTargets[id] })
+    diagram.regions.push({ id, label, shortLabel: title, role, ...bounds, parentId: parent, color, level, titleFontSize: parent === 'motherboard' ? 20 : undefined, navigationTarget: this.navigationTargets[id], interactive: parent === 'motherboard' ? true : undefined })
   }
 
   private static connectData(diagram: HardwareDiagram): void {
@@ -87,10 +87,11 @@ export class ServerHardwareLayout {
       const start = this.anchor(diagram, from)
       const endX = side === 'left' ? 20 : 2190
       const captionX = side === 'left' ? 40 : 1840
-      diagram.paths.push({ id, d: this.route(start, [endX, y]), label, caption: { text: title, x: captionX, y: y - 22 }, directed: true, bidirectional, highlighted: false })
+      diagram.paths.push({ id, fromRegionId: from[0], d: this.route(start, [endX, y]), label, caption: { text: title, x: captionX, y: y - 22 }, directed: true, bidirectional, highlighted: false })
     }
     diagram.paths.push({
       id: 'external-ac-power', d: this.route([20, 710], this.anchor(diagram, ['psu', 'left'])),
+      toRegionId: 'psu',
       label: 'AC power input to the independent PSU / AC is converted to DC before reaching motherboard, GPU, or drives',
       caption: { text: 'AC power', x: 40, y: 688 }, directed: true, stroke: '#b58a45', highlighted: false,
     })
@@ -117,6 +118,6 @@ export class ServerHardwareLayout {
   }
 
   private static link(diagram: HardwareDiagram, id: string, from: ServerAnchor, to: ServerAnchor, label: string, via: readonly ServerPoint[] = [], style: ServerLinkStyle = {}): void {
-    diagram.paths.push({ id, d: this.route(this.anchor(diagram, from), this.anchor(diagram, to), via), label, directed: true, bidirectional: true, highlighted: false, ...style })
+    diagram.paths.push({ id, fromRegionId: from[0], toRegionId: to[0], d: this.route(this.anchor(diagram, from), this.anchor(diagram, to), via), label, directed: true, bidirectional: true, highlighted: false, ...style })
   }
 }

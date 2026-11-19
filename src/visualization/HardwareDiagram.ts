@@ -14,6 +14,7 @@ export interface HardwarePosition {
   readonly y: number
   readonly width: number
   readonly height?: number
+  readonly valueFontSize?: number
 }
 
 export class HardwareDiagram {
@@ -36,15 +37,16 @@ export class HardwareDiagram {
     return this
   }
 
-  public place(id: string, x: number, y: number, width = 180, height?: number): this {
+  public place(id: string, x: number, y: number, width = 180, height?: number, valueFontSize?: number): this {
     const position: HardwarePosition = { id, x, y, width }
-    this.positions.push(height === undefined ? position : { ...position, height })
+    const sized = height === undefined ? position : { ...position, height }
+    this.positions.push(valueFontSize === undefined ? sized : { ...sized, valueFontSize })
     return this
   }
 
-  public fixture(id: string, label: string, value: string, x: number, y: number, status?: string, width = 180, height?: number): this {
+  public fixture(id: string, label: string, value: string, x: number, y: number, status?: string, width = 180, height?: number, valueFontSize?: number): this {
     this.fixtures.push({ id, label, value, status })
-    return this.place(id, x, y, width, height)
+    return this.place(id, x, y, width, height, valueFontSize)
   }
 
   public connect(id: string, from: string, to: string, label: string, active = false, curveOffset = 0, message?: string): this {

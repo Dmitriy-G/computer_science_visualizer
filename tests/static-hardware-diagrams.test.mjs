@@ -293,6 +293,7 @@ test('every motherboard arrow touches component boundaries, including DC input a
   }
   const supplies = [
     ['bus-dc-input', 'bus-dc-source', 'bus-power-connectors'],
+    ['bus-power-hdd', 'bus-dc-source', 'bus-hdd-device'],
     ['bus-power-dimm', 'bus-power-rails', 'bus-ram-port'],
     ['bus-power-pch', 'bus-power-rails', 'bus-pch'],
     ['bus-power-m2', 'bus-power-rails', 'bus-ssd-port'],

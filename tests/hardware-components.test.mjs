@@ -301,7 +301,7 @@ test('HDD head follows a fixed-length pivoting arm and the target sector arrives
 test('HDD sector playback shares the category schematic and its connected components', () => {
   const common = HddLayout.diagram()
   const lesson = new HddSectorModel().snapshot().diagram
-  assert.deepEqual(lesson.regions.slice(0, common.regions.length), common.regions)
+  assert.deepEqual(lesson.regions.slice(0, common.regions.length).filter((region) => !region.interactionOnly), common.regions.filter((region) => !region.interactionOnly))
   for (const id of ['head-preamp', 'preamp-head', 'write-preamp', 'preamp-read', 'cache-ecc', 'ecc-cache', 'host-cache', 'cache-host', 'controller-map', 'controller-servo', 'servo-driver', 'servo-feedback', 'driver-actuator', 'driver-spindle', 'hdd-external-power']) {
     assert.equal(common.paths.find((path) => path.id === id).directed, true)
     assert.ok(lesson.paths.some((path) => path.id === id))

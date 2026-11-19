@@ -22,10 +22,16 @@ export class SsdNandInformation {
 
   private static readonly entries: Readonly<Record<string, HardwareElementInformation>> = {
     'ssd-nand': {
-      photos: [],
+      photos: [{
+        src: '/hardware/ssd/nand.jpg',
+        alt: 'User-supplied NAND package photograph showing a marked package top beside the underside solder-ball contacts of another package.',
+        caption: 'NAND flash packages / supplied photograph of package top and underside',
+        width: 4587,
+        height: 3440,
+      }],
       overview: 'NAND flash is the nonvolatile semiconductor memory holding the drive data between power cycles.',
       problem: 'It provides dense persistent storage that the controller accesses through page operations and block erasure.',
-      characteristicNote: this.geometryNote,
+      characteristicNote: `${this.geometryNote} The supplied package photograph is a separate illustration; it does not establish the modeled SLC cell construction, capacity, or die count.`,
       characteristics: [
         { name: 'Modeled capacity', value: `${SsdNandExample.rawCapacityGiB} GiB of raw data across two channels, two packages per channel, and one die per package; spare bytes and controller reserves are separate.` },
         { name: 'Access units', value: 'Reads and programs address pages; erasure resets an entire erase block.' },

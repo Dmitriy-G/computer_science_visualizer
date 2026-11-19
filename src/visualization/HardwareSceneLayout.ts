@@ -46,12 +46,13 @@ export class HardwareSceneLayout {
     for (const position of diagram.positions) {
       const cell = cells.get(position.id)
       if (!cell) throw new Error(`Missing hardware diagram cell: ${position.id}`)
-      nodes.push({
+      const node: SceneNode = {
         id: cell.id, value: nodes.length, displayValue: cell.value,
         label: cell.label, status: cell.status, x: position.x, y: position.y,
         width: position.width, height: position.height ?? 46, opacity: 1,
         tone: cell.tone ?? (cell.id === model.focusId ? 'active' : 'default'),
-      })
+      }
+      nodes.push(position.valueFontSize === undefined ? node : { ...node, valueFontSize: position.valueFontSize })
     }
     const edges = []
     for (const edge of diagram.edges) edges.push({ ...edge })

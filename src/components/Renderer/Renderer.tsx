@@ -325,7 +325,7 @@ export default class Renderer extends Component<
           className="node-value"
           textAnchor="middle"
           dominantBaseline="central"
-          style={{ fontSize: Math.min(overview ? 42 : 21, (width - 16) * 1.6 / Math.max(1, String(node.displayValue ?? node.value).length)) }}
+          style={{ fontSize: Math.min(node.valueFontSize ?? (overview ? 42 : 21), (width - 16) * 1.6 / Math.max(1, String(node.displayValue ?? node.value).length)) }}
         >
           {node.displayValue ?? node.value}
         </text>}
@@ -449,7 +449,7 @@ export default class Renderer extends Component<
 
   private renderRegionInteraction(region: SceneRegion): ReactNode {
     const label = `About ${region.shortLabel ?? region.label}`
-    return <rect key={`region-interaction-${region.id}`} className="scene-region-interaction"
+    return <rect key={`region-interaction-${region.id}`} className={`scene-region-interaction${region.id === this.activeRegionId ? ' scene-region-interaction--active' : ''}`}
       x={region.x} y={region.y} width={region.width} height={region.height} rx="16"
       role="button" tabIndex={0} aria-label={label} aria-haspopup="dialog" aria-controls="hardware-element-info"
       data-region-id={region.id} onPointerEnter={this.hoverRegion} onPointerLeave={this.leaveRegion}
@@ -515,13 +515,14 @@ export default class Renderer extends Component<
     const sourcePaths: ScenePath[] = []
     for (const path of scene.paths ?? []) sourcePaths.push(boundaryPaths ? { ...path, highlighted: boundaryPaths.has(path.id) } : path)
     const paths = schematic ? HardwareWireCrossings.create(sourcePaths) : sourcePaths
-    for (const region of scene.regions ?? []) elements.push(this.renderRegion(region))
+    for (const region of scene.regions ?? []) if (!region.interactionOnly) elements.push(this.renderRegion(region))
     for (const slot of scene.slots ?? []) elements.push(this.renderSlot(slot))
     for (const node of scene.nodes) nodeMap.set(node.id, node)
     for (const path of paths) if (!path.foreground) elements.push(this.renderPath(path, scene, boundaryPaths?.has(path.id)))
     for (const edge of scene.edges)
       elements.push(this.renderEdge(edge, nodeMap))
     for (const region of scene.regions ?? []) {
+      if (region.interactionOnly) continue
       const lines: string[] = []
       const label = region.shortLabel ?? region.label
       const fontSize = region.titleFontSize ?? (region.level === 'system' ? 32 : 26)

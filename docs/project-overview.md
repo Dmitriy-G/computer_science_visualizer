@@ -61,6 +61,8 @@ and sequencing are platform-dependent; do not add CPU internals to explain them.
 PSU DC input, VRMs, and physical power distribution feed CPU socket, DIMM,
 PCH, expansion slots, M.2, clock generator, and reset circuitry. AC stays at PSU.
 Every data/support/power arrow ends on a named physical component boundary.
+The external HDD receives a separate amber DC feed directly from the external
+PSU reference, routed outside the motherboard; its SATA data port supplies no power.
 Motherboard data, clock, reset, RTC, and power lines are solid; electrical
 power feeds retain their amber color. Keep support routes separate and avoid long
 power detours around the bottom of the board. Small gaps distinguish unconnected

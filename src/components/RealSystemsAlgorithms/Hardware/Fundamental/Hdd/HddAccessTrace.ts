@@ -25,6 +25,11 @@ export class HddAccessTrace extends ComponentFlowTrace {
 
   protected decorateDiagram(diagram: HardwareDiagram): void {
     const mechanism = HddLayout.diagram(this.memory)
+    for (let index = 0; index < diagram.regions.length; index += 1) {
+      const region = diagram.regions[index]
+      if (!region.interactionOnly) continue
+      diagram.regions[index] = { ...mechanism.regions.find((candidate) => candidate.id === region.id)! }
+    }
     const moving = new Set(['platter', 'sector', 'spindle', 'arm', 'pivot', 'head-shape', 'preamp-head', 'head-preamp'])
     for (let index = 0; index < diagram.paths.length; index += 1) {
       const path = diagram.paths[index]

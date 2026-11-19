@@ -39,7 +39,13 @@ export class SsdInformation {
       documentation: [this.flashDocumentation, this.controllerDocumentation],
     },
     'ssd-connectors': {
-      photos: [],
+      photos: [{
+        src: '/hardware/ssd/annotated-m2-edge-connector.png',
+        alt: 'User-supplied annotated M.2 SSD edge connector illustration identifying PCB traces, edge contacts for PCIe, power, ground and control, the M-key notch, and the short contact section.',
+        caption: 'M.2 SSD edge connector / illustrative contact groups, not a pin-by-pin map',
+        width: 1536,
+        height: 1024,
+      }],
       overview: 'The host connector provides the electrical contacts connecting the drive to the computer and its DC supply.',
       problem: 'It supplies a physical attachment for storage communication and power.',
       characteristicNote: 'The data and power boxes group contact functions. Connector shape and power delivery depend on the drive form factor.',
@@ -242,7 +248,13 @@ export class SsdInformation {
       documentation: [SsdNandInformation.arrayDocumentation],
     },
     'ssd-dram': {
-      photos: [],
+      photos: [{
+        src: '/hardware/ssd/dram.jpg',
+        alt: 'User-supplied DRAM package photograph showing a marked package top and the solder-ball contacts on the underside of another package.',
+        caption: 'DRAM packages / supplied photograph of package top and underside',
+        width: 800,
+        height: 800,
+      }],
       overview: 'Optional external DRAM supplies volatile working space for mapping information and buffers.',
       problem: 'It can hold more active metadata and buffered data than the controller on-chip memory alone.',
       characteristicNote: 'DRAM is optional. DRAM-less controllers use other arrangements, and supported NVMe designs can use a Host Memory Buffer. External DRAM is not persistent storage.',

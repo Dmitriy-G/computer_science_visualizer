@@ -8,6 +8,7 @@ export interface SceneNode {
   readonly id: string
   readonly value: number
   readonly displayValue?: string
+  readonly valueFontSize?: number
   readonly x: number
   readonly y: number
   readonly label: string
@@ -64,6 +65,8 @@ export interface SceneRegion {
   readonly navigationTarget?: string
   readonly navigationLabel?: string
   readonly interactive?: boolean
+  // Hit target for an existing drawing, without another background or title.
+  readonly interactionOnly?: boolean
 }
 
 

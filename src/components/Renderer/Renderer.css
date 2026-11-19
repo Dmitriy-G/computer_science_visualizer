@@ -411,6 +411,7 @@
 
 .scene-region-navigation:hover,
 .scene-region-navigation:focus-visible,
+.scene-region-interaction--active,
 .scene-region-interaction:focus-visible {
   stroke: #2563eb;
 }

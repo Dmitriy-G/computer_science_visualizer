@@ -172,9 +172,68 @@ export class HddLayout {
       ? { ...path, d: `M${mediaOffset - 20} 470H${mediaOffset + 20}`, translateX: undefined }
       : path)
     for (let index = 0; index < framed.regions.length; index += 1) {
-      framed.regions[index] = { ...framed.regions[index], borderStyle: 'solid' }
+      framed.regions[index] = { ...framed.regions[index], borderStyle: 'solid', interactive: true }
     }
+    this.addMechanismTargets(framed, state)
+    this.addConnectionEndpoints(framed)
     return framed
+  }
+
+  private static addMechanismTargets(diagram: HardwareDiagram, state: HddMechanismState): void {
+    const offset = this.mechanicalOffset + this.externalLeft
+    const head = this.headPosition(state.track)
+    const sector = this.sectorPosition(state)
+    const targets: readonly [string, string, number, number, number, number][] = [
+      ['platter', 'Platters', this.spindle.x - 285, 120, 570, 635],
+      ['sector-target', 'Selected sector', sector.x - 26, sector.y - 26, 52, 52],
+      ['spindle', 'Spindle', this.spindle.x - 65, this.spindle.y - 65, 130, 130],
+      ['arm', 'Arm', (this.pivot.x + head.x) / 2 - 10, (this.pivot.y + head.y) / 2 - 60, 100, 90],
+      ['pivot', 'Pivot', this.pivot.x - 32, this.pivot.y - 55, 160, 90],
+      ['head', 'Read/write head', head.x - 45, head.y - 65, 350, 90],
+    ]
+    for (const [id, label, x, y, width, height] of targets) diagram.regions.push({
+      id: `hdd-${id}`, label, role: 'device', parentId: 'hdd-enclosure',
+      x: x + offset, y, width, height, borderStyle: 'solid', interactive: true, interactionOnly: true,
+    })
+  }
+
+  private static addConnectionEndpoints(diagram: HardwareDiagram): void {
+    const endpoints = new Map<string, readonly [string | undefined, string | undefined]>([
+      ['hdd-external-host', ['hdd-data-connector', undefined]],
+      ['hdd-external-power', [undefined, 'hdd-power-connector']],
+      ['host-cache', ['hdd-data-connector', 'hdd-cache']],
+      ['cache-host', ['hdd-cache', 'hdd-data-connector']],
+      ['cache-ecc', ['hdd-cache', 'hdd-ecc']],
+      ['ecc-cache', ['hdd-ecc', 'hdd-cache']],
+      ['ecc-write', ['hdd-ecc', 'hdd-write-channel']],
+      ['read-ecc', ['hdd-read-channel', 'hdd-ecc']],
+      ['write-preamp', ['hdd-write-channel', 'hdd-preamp']],
+      ['preamp-read', ['hdd-preamp', 'hdd-read-channel']],
+      ['preamp-head', ['hdd-preamp', 'hdd-head']],
+      ['head-preamp', ['hdd-head', 'hdd-preamp']],
+      ['host-controller', ['hdd-data-connector', 'hdd-controller']],
+      ['controller-map', ['hdd-controller', 'hdd-firmware-map']],
+      ['controller-servo', ['hdd-controller', 'hdd-servo-controller']],
+      ['buffer-control', ['hdd-controller', 'hdd-cache']],
+      ['controller-write', ['hdd-controller', 'hdd-write-channel']],
+      ['controller-read', ['hdd-controller', 'hdd-read-channel']],
+      ['controller-spindle', ['hdd-controller', 'hdd-spindle-driver']],
+      ['servo-driver', ['hdd-servo-controller', 'hdd-vcm-driver']],
+      ['servo-feedback', ['hdd-read-channel', 'hdd-servo-controller']],
+      ['driver-actuator', ['hdd-vcm-driver', 'hdd-actuator']],
+      ['actuator-pivot', ['hdd-actuator', 'hdd-pivot']],
+      ['driver-spindle', ['hdd-spindle-driver', 'hdd-spindle']],
+      ['power-motor-drivers', ['hdd-power-connector', 'hdd-motor-driver']],
+      ['airflow', ['hdd-platter', 'hdd-filter']],
+      ['hdd-media-enlargement', ['hdd-enclosure', 'hdd-storage-detail']],
+      ['hdd-storage-write-field', ['hdd-write-pole', 'hdd-magnetic-grains']],
+      ['hdd-storage-read-field', ['hdd-magnetic-grains', 'hdd-read-sensor']],
+    ])
+    for (let index = 0; index < diagram.paths.length; index += 1) {
+      const path = diagram.paths[index]
+      const connection = endpoints.get(path.id)
+      if (connection) diagram.paths[index] = { ...path, fromRegionId: connection[0], toRegionId: connection[1] }
+    }
   }
 
   private static placeGroups(diagram: HardwareDiagram): void {

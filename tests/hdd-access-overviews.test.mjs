@@ -110,7 +110,7 @@ test('HDD access lessons preserve map geometry, camera, and independent bounded 
       assert.equal(step.scene.width, common.width)
       assert.equal(step.scene.height, common.height)
       assert.ok(step.scene.paths.filter((path) => path.highlighted).length <= 1)
-      assert.deepEqual(step.scene.regions, common.regions)
+      assert.deepEqual(step.scene.regions.filter((region) => !region.interactionOnly), common.regions.filter((region) => !region.interactionOnly))
       const presented = ComponentFlowTrace.present(step.scene, preview, 'hdd-components')
       assert.equal(presented.camera, preview.camera)
       assert.equal(presented.layers.find((layer) => layer.id === 'hdd-components').scene, step.scene)

@@ -6,8 +6,14 @@ import { SsdLayout } from '../src/components/RealSystemsAlgorithms/Hardware/Fund
 import { SsdAlgorithmCatalog } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/Ssd/SsdAlgorithmCatalog.ts'
 import { HardwareSnapshot } from '../src/components/RealSystemsAlgorithms/Hardware/Fundamental/HardwareSnapshot.ts'
 
-test('every SSD region has independent authored information, with an image only for the main board', () => {
+test('every SSD region has independent information, with images for the board, host connector, DRAM, and NAND', () => {
   const scene = SsdLayout.create()
+  const photos = new Map([
+    ['ssd-pcb', '/hardware/ssd/annotated-m2-nvme-ssd.png'],
+    ['ssd-connectors', '/hardware/ssd/annotated-m2-edge-connector.png'],
+    ['ssd-dram', '/hardware/ssd/dram.jpg'],
+    ['ssd-nand', '/hardware/ssd/nand.jpg'],
+  ])
   for (const region of scene.regions) {
     assert.equal(region.interactive, true, region.id)
     const information = HardwareElementCatalog.get(region.id)
@@ -16,9 +22,9 @@ test('every SSD region has independent authored information, with an image only 
     assert.ok(information.characteristics.length >= 2, region.id)
     assert.ok(information.documentation.length > 0, region.id)
     for (const document of information.documentation) assert.equal(new URL(document.url).protocol, 'https:')
-    if (region.id === 'ssd-pcb') {
+    if (photos.has(region.id)) {
       assert.equal(information.photos.length, 1)
-      assert.equal(information.photos[0].src, '/hardware/ssd/annotated-m2-nvme-ssd.png')
+      assert.equal(information.photos[0].src, photos.get(region.id))
     } else assert.deepEqual(information.photos, [], region.id)
   }
   const regions = new Set(scene.regions.map((region) => region.id))
