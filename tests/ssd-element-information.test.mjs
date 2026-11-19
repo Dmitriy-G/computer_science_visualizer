@@ -9,10 +9,10 @@ import { HardwareSnapshot } from '../src/components/RealSystemsAlgorithms/Hardwa
 test('every SSD region has independent information, with images for the board, host connector, DRAM, and NAND', () => {
   const scene = SsdLayout.create()
   const photos = new Map([
-    ['ssd-pcb', '/hardware/ssd/annotated-m2-nvme-ssd.png'],
-    ['ssd-connectors', '/hardware/ssd/annotated-m2-edge-connector.png'],
-    ['ssd-dram', '/hardware/ssd/dram.jpg'],
-    ['ssd-nand', '/hardware/ssd/nand.jpg'],
+    ['ssd-pcb', '/hardware/ssd/annotated-m2-nvme-ssd.svg'],
+    ['ssd-connectors', '/hardware/ssd/annotated-m2-edge-connector.svg'],
+    ['ssd-dram', '/hardware/ssd/dram.svg'],
+    ['ssd-nand', '/hardware/ssd/nand.svg'],
   ])
   for (const region of scene.regions) {
     assert.equal(region.interactive, true, region.id)

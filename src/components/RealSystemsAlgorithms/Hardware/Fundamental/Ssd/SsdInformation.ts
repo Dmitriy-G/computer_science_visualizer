@@ -22,7 +22,7 @@ export class SsdInformation {
   private static readonly entries: Readonly<Record<string, HardwareElementInformation>> = {
     'ssd-pcb': {
       photos: [{
-        src: '/hardware/ssd/annotated-m2-nvme-ssd.png',
+        src: '/hardware/ssd/annotated-m2-nvme-ssd.svg',
         alt: 'User-provided annotated M.2 NVMe SSD with blue outlines and labels identifying the edge connector, SSD controller, DRAM cache, NAND flash packages, PCB, and power-management area.',
         caption: 'Annotated M.2 NVMe SSD / board components',
         width: 1672,
@@ -40,7 +40,7 @@ export class SsdInformation {
     },
     'ssd-connectors': {
       photos: [{
-        src: '/hardware/ssd/annotated-m2-edge-connector.png',
+        src: '/hardware/ssd/annotated-m2-edge-connector.svg',
         alt: 'User-supplied annotated M.2 SSD edge connector illustration identifying PCB traces, edge contacts for PCIe, power, ground and control, the M-key notch, and the short contact section.',
         caption: 'M.2 SSD edge connector / illustrative contact groups, not a pin-by-pin map',
         width: 1536,
@@ -249,9 +249,10 @@ export class SsdInformation {
     },
     'ssd-dram': {
       photos: [{
-        src: '/hardware/ssd/dram.jpg',
+        src: '/hardware/ssd/dram.svg',
         alt: 'User-supplied DRAM package photograph showing a marked package top and the solder-ball contacts on the underside of another package.',
-        caption: 'DRAM packages / supplied photograph of package top and underside',
+        caption: 'DRAM packages',
+        description: 'The marked top of one memory package and solder-ball contacts on the underside of another.',
         width: 800,
         height: 800,
       }],

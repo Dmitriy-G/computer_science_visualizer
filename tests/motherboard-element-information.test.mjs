@@ -33,13 +33,13 @@ test('detailed motherboard sockets reuse the complete main server popup informat
 test('motherboard components use their supplied photos and external devices retain navigation', () => {
   const scene = BusLayout.create()
   const photos = new Map([
-    ['bus-fabric', '/hardware/motherboard/pcb-traces.jpg'],
-    ['bus-clock-reset', '/hardware/motherboard/clock-generator-annotated.png'],
-    ['bus-reset-circuit', '/hardware/motherboard/reset-annotated.png'],
-    ['bus-power', '/hardware/motherboard/dc-input-regulation-annotated.png'],
-    ['bus-pch', '/hardware/motherboard/pch-annotated.png'],
-    ['bus-rtc', '/hardware/motherboard/rtc-battery.jpg'],
-    ['bus-flash', '/hardware/motherboard/spi-flash-annotated.png'],
+    ['bus-fabric', '/hardware/motherboard/pcb-traces.svg'],
+    ['bus-clock-reset', '/hardware/motherboard/clock-generator-annotated.svg'],
+    ['bus-reset-circuit', '/hardware/motherboard/reset-annotated.svg'],
+    ['bus-power', '/hardware/motherboard/dc-input-regulation-annotated.svg'],
+    ['bus-pch', '/hardware/motherboard/pch-annotated.svg'],
+    ['bus-rtc', '/hardware/motherboard/rtc-battery.svg'],
+    ['bus-flash', '/hardware/motherboard/spi-flash-annotated.svg'],
   ])
   const textOnly = new Set([
     'bus-motherboard', 'bus-power-rails', 'bus-power-connectors', 'bus-vrm',

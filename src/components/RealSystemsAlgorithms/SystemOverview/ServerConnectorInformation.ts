@@ -14,34 +14,31 @@ export class ServerConnectorInformation {
   private static readonly entries: Readonly<Record<string, HardwareElementInformation>> = {
     'cpu-socket': {
       photos: [{
-        src: '/hardware/server-connectors/01_cpu_socket.png',
-        alt: 'Supplied annotated CPU socket example labeled AMD AM5 LGA, with callouts for the spring contacts, retention bracket, and locking lever.',
-        caption: 'CPU socket / annotated AMD AM5 LGA example',
-        width: 663, height: 533,
+        src: '/hardware/server-connectors/01_cpu_socket.svg',
+        alt: 'Supplied annotated LGA CPU socket example with callouts for the spring contacts, retention bracket, and locking lever.',
+        caption: 'CPU socket / annotated LGA example',
+        width: 657, height: 465,
       }],
       overview: 'The CPU socket mechanically holds a compatible processor package and connects its electrical contacts to the motherboard.',
       problem: 'It provides a removable, aligned connection for processor signals, power, and ground.',
-      characteristicNote: 'The supplied image is labeled as an AMD AM5 LGA example. It illustrates socket construction; it does not identify the processor platform of this generic server map or the separate reference motherboard manual.',
+      characteristicNote: 'The supplied image illustrates LGA socket construction. It does not identify the socket model or the processor platform of this generic server map or the separate reference motherboard manual.',
       characteristics: [
         { name: 'Contacts', value: 'An LGA socket uses spring contacts that mate with lands on the processor package.' },
         { name: 'Retention', value: 'The bracket and locking mechanism hold the package in its intended position.' },
         { name: 'Controller location', value: 'Memory and I/O controllers remain in the CPU. The socket carries their signals and motherboard-supplied power.' },
       ],
-      documentation: [{
-        title: 'AMD / Socket AM5 platform and LGA design',
-        url: 'https://ir.amd.com/news-events/press-releases/detail/1069/amdshowcases-industry-leading-gaming-commercial-and-mainstream-pc-technologies-at-computex-2022',
-      }, this.boardDocumentation],
+      documentation: [this.boardDocumentation],
     },
     'dimm-sockets': {
       photos: [{
-        src: '/hardware/server-connectors/02_dimm_sockets.png',
+        src: '/hardware/server-connectors/02_dimm_sockets.svg',
         alt: 'Supplied annotated DIMM socket image showing contacts inside the slot, the mechanical key, and a retention clip.',
         caption: 'DIMM sockets / contacts, key, and retention clip',
-        width: 733, height: 533,
+        width: 727, height: 465,
       }],
       overview: 'DIMM sockets connect removable memory modules to the motherboard memory wiring and supply contacts.',
       problem: 'They align and retain a compatible module while connecting it to the CPU memory controller.',
-      characteristicNote: 'The supplied heading mentions DDR4 and DDR5 as connector families. Those generations use different keying and electrical interfaces and are not interchangeable; the photo does not establish the exact module generation.',
+      characteristicNote: 'The photo does not establish the exact module generation. DDR4 and DDR5 use different keying and electrical interfaces and are not interchangeable.',
       characteristics: [
         { name: 'Mechanical key', value: 'The slot key must align with the notch on the supported memory module.' },
         { name: 'Retention', value: 'Clips retain the module; latch arrangements depend on the socket.' },
@@ -54,19 +51,19 @@ export class ServerConnectorInformation {
     },
     'host-usb-ports': {
       photos: [{
-        src: '/hardware/server-connectors/03_usb_ports.png',
-        alt: 'Supplied annotated stacked USB Type-A ports showing the metal housings, insulating tongues, and internal contacts.',
+        src: '/hardware/server-connectors/03_usb_ports.svg',
+        alt: 'Original stacked USB Type-A port image with corrected labels identifying the metal housing and internal metal spring tabs. The blue insulating tongues are visible above the tabs.',
         caption: 'USB Type-A ports / annotated rear I/O example',
-        width: 602, height: 533,
+        width: 583, height: 468,
       }, {
-        src: '/hardware/motherboard/usb-header-annotated.png',
+        src: '/hardware/motherboard/usb-header-annotated.svg',
         alt: 'Supplied annotated internal USB 2.0 header example identifying the plastic base, contacts, and vacant key position.',
         caption: 'Internal USB header / supplied annotated motherboard example',
         width: 583, height: 263,
       }],
       overview: 'USB ports connect external peripherals to the motherboard USB host controller.',
       problem: 'They provide a standardized removable connection for peripheral data and bus power.',
-      characteristicNote: 'The supplied image annotations are preserved. The Type-A photo contact-count label is inaccurate: USB 2.0 Type-A has four contacts, and SuperSpeed Type-A adds five for nine total. The four legacy contacts are VBUS, ground, D+, and D-. The separate internal-header image illustrates a different connector; header layouts depend on the motherboard.',
+      characteristicNote: 'USB 2.0 Type-A has four electrical contacts, and SuperSpeed Type-A adds five for nine total. The four legacy contacts are VBUS, ground, D+, and D-. The photo callouts identify the visible metal housing and tabs; they are not a contact pinout. The separate internal-header image illustrates a different connector; header layouts depend on the motherboard.',
       characteristics: [
         { name: 'Housing and tongue', value: 'The metal shell and insulating tongue guide the plug and position its contacts.' },
         { name: 'Signals and supply', value: 'Separate contacts carry USB signals, power, and return. SuperSpeed uses additional signal contacts.' },
@@ -79,10 +76,10 @@ export class ServerConnectorInformation {
     },
     'nvme-connector': {
       photos: [{
-        src: '/hardware/server-connectors/04_m2_socket.png',
+        src: '/hardware/server-connectors/04_m2_socket.svg',
         alt: 'Supplied annotated M.2 socket example showing the card connector contacts, M-key position, and mounting standoff.',
         caption: 'M.2 socket / annotated M-key example for an NVMe SSD',
-        width: 938, height: 387,
+        width: 932, height: 326,
       }],
       overview: 'The M.2 socket mates with an SSD edge connector and carries the supported interface signals and motherboard DC supply.',
       problem: 'It gives a compact storage module a direct electrical attachment to the motherboard.',
@@ -99,10 +96,10 @@ export class ServerConnectorInformation {
     },
     'gpu-slot': {
       photos: [{
-        src: '/hardware/server-connectors/05_pcie_x16_slot.png',
+        src: '/hardware/server-connectors/05_pcie_x16_slot.svg',
         alt: 'Supplied annotated PCIe x16 slot example with callouts for contacts, the connector key, and a retention latch.',
         caption: 'GPU PCIe slot / annotated x16 connector example',
-        width: 1058, height: 387,
+        width: 1044, height: 355,
       }],
       overview: 'A PCIe expansion slot mates with the graphics card edge connector and connects the card to the platform PCIe link.',
       problem: 'It provides a removable attachment for GPU communication and slot-supplied power.',
@@ -116,14 +113,14 @@ export class ServerConnectorInformation {
     },
     'sata-ports': {
       photos: [{
-        src: '/hardware/server-connectors/06_sata_ports.png',
+        src: '/hardware/server-connectors/06_sata_ports.svg',
         alt: 'Supplied annotated motherboard SATA ports showing the L-shaped key and contacts inside a data connector.',
         caption: 'SATA ports / annotated motherboard data connectors',
-        width: 997, height: 391,
+        width: 991, height: 328,
       }],
       overview: 'Motherboard SATA ports attach compatible storage drives to the platform SATA controller through data cables.',
       problem: 'They provide a keyed physical connection for SATA storage traffic.',
-      characteristicNote: 'The supplied image annotations are preserved. Its reference to power on the seven-pin data port is inaccurate: standard SATA data connectors carry signal pairs and grounds. Drive power uses a separate power connection.',
+      characteristicNote: 'The seven-pin SATA data connector carries two differential signal pairs and three grounds. Drive power uses a separate power connection.',
       characteristics: [
         { name: 'Connector', value: 'The standard data connector has seven contacts and an L-shaped key.' },
         { name: 'Main-map path', value: 'The illustrated HDD connects to native motherboard SATA; the M.2 NVMe SSD uses its separate PCIe attachment.' },
@@ -136,10 +133,10 @@ export class ServerConnectorInformation {
     },
     'nic-slot': {
       photos: [{
-        src: '/hardware/server-connectors/07_pcie_x1_slot.png',
+        src: '/hardware/server-connectors/07_pcie_x1_slot.svg',
         alt: 'Supplied annotated PCIe x1 slot example showing contacts inside the socket and the connector key.',
         caption: 'NIC PCIe slot / annotated x1 connector example',
-        width: 972, height: 391,
+        width: 954, height: 328,
       }],
       overview: 'The NIC PCIe slot connects an Ethernet adapter card to the platform PCIe interface and slot power.',
       problem: 'It gives a removable network adapter access to host communication and memory-transfer facilities.',

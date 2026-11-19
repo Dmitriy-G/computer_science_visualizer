@@ -4,14 +4,15 @@ export class EthernetPortInformation {
   public static readonly information: HardwareElementInformation = {
     photos: [
       {
-        src: '/hardware/network-adapter/ethernet-rj45-cable.webp',
+        src: '/hardware/network-adapter/ethernet-rj45-cable.svg',
         alt: 'Two metal-housed RJ45 (8P8C) Ethernet cable plugs with transparent tips, eight gold-colored contacts, and black cable jackets.',
         caption: 'Copper Ethernet cable / RJ45 (8P8C) plugs',
+        description: 'Transparent plug tips expose the contact positions, with metal shields and black strain-relief boots.',
         width: 700,
         height: 700,
       },
       {
-        src: '/hardware/network-adapter/ethernet-gbic-annotated.png',
+        src: '/hardware/network-adapter/ethernet-gbic-annotated.svg',
         alt: 'Opened Nortel 1000BASE-SX Ethernet GBIC with the optics, circuit ICs, host connector, and small eight-pin ID memory chip circled and labeled.',
         caption: 'Opened Gigabit Ethernet / Nortel AA1419001 GBIC',
         author: 'Mister rf',

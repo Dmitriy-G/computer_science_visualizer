@@ -48,11 +48,12 @@ export default class HardwareElementInfo extends PureComponent<HardwareElementIn
   private renderPhotos(information: HardwareElementInformation): ReactNode[] {
     const photos: ReactNode[] = []
     for (const photo of information.photos) photos.push(
-      <figure className="hardware-element-photo" key={`${photo.src}-${photo.caption}`}>
-        <img src={photo.src} alt={photo.alt} width={photo.width ?? 1280} height={photo.height ?? 720}
+      <figure className={`hardware-element-photo${photo.fullWidth ? ' hardware-element-photo--wide' : ''}`} key={`${photo.src}-${photo.caption}`}>
+        <img src={photo.src} alt={photo.alt} width={photo.width} height={photo.height}
           decoding="async" />
         <figcaption>
           <strong>{photo.caption}</strong>
+          {photo.description && <p>{photo.description}</p>}
           {!photo.hideCredit && photo.author && photo.license && <span className="hardware-element-photo-credit">
             {photo.sourceUrl ? <a href={photo.sourceUrl} target="_blank" rel="noreferrer">{photo.author}</a> : photo.author}
             {' · '}{photo.licenseUrl ? <a href={photo.licenseUrl} target="_blank" rel="noreferrer">{photo.license}</a> : photo.license}

@@ -23,9 +23,10 @@ export class SsdNandInformation {
   private static readonly entries: Readonly<Record<string, HardwareElementInformation>> = {
     'ssd-nand': {
       photos: [{
-        src: '/hardware/ssd/nand.jpg',
+        src: '/hardware/ssd/nand.svg',
         alt: 'User-supplied NAND package photograph showing a marked package top beside the underside solder-ball contacts of another package.',
-        caption: 'NAND flash packages / supplied photograph of package top and underside',
+        caption: 'NAND flash packages',
+        description: 'The marked top of one flash-memory package and solder-ball contacts on the underside of another.',
         width: 4587,
         height: 3440,
       }],
