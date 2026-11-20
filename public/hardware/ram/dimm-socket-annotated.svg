@@ -12,8 +12,9 @@
     <text x="49" y="449.92" text-anchor="middle" font-size="38" font-weight="700" fill="#ffffff">2</text>
     <ellipse cx="954" cy="348" rx="48" ry="55" fill="none" stroke="#2563eb" stroke-width="3" />
     <circle cx="869" cy="301" r="28" fill="#2563eb" stroke="#ffffff" stroke-width="2" />
-    <text x="869" y="313.92" text-anchor="middle" font-size="38" font-weight="700" fill="#ffffff">2</text>
+    <text x="869" y="313.92" text-anchor="middle" font-size="38" font-weight="700" fill="#ffffff">3</text>
     <text x="26.599999999999998" y="855" font-size="38" font-weight="600" fill="#163c81">1. Card slot / contacts inside</text>
-    <text x="26.599999999999998" y="925" font-size="38" font-weight="600" fill="#163c81">2. Retention clips</text>
+    <text x="26.599999999999998" y="925" font-size="38" font-weight="600" fill="#163c81">2. Left retention clip</text>
+    <text x="26.599999999999998" y="995" font-size="38" font-weight="600" fill="#163c81">3. Right retention clip</text>
   </g>
 </svg>
